@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <fieldset name="general" label="GROUPS_BASIC_SETTINGS" description="GROUPS_BASIC_SETTINGS_DESCRIPTION">
+        <field name="profileResponsibility" type="list" default="0"
+               label="GROUPS_PROFILE_RESPONSIBILITY" description="GROUPS_PROFILE_RESPONSIBILITY_DESC">
+            <option value="0">Centralized / Administrator, Localize</option>
+            <option value="1">Decentralized / Personal, Localize</option>
+        </field>
+        <field name="enableContent" type="list" default="0"
+               label="GROUPS_ENABLE_CONTENT" description="GROUPS_ENABLE_CONTENT_DESC">
+            <option value="0">No / Disabled</option>
+            <option value="1">Yes / Enabled</option>
+        </field>
+        <!-- use a preconfigured category for the personal content root -->
+        <field name="moduleMenuItem" type="menuitem" showon="enableContent:1"
+               label="GROUPS_MODULE_MENU_ITEM" description="GROUPS_MODULE_MENU_ITEM_DESC" />
+    </fieldset>
+    <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
+        <field name="rules" type="rules" component="com_groups" filter="rules" validate="rules"
+               label="JCONFIG_PERMISSIONS_LABEL" section="component"/>
+    </fieldset>
+</config>
