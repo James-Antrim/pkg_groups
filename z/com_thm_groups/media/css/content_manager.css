@@ -1,0 +1,154 @@
+[class^="icon-"], [class*=" icon-"] {
+    margin-right: .5rem;
+}
+
+[class^="icon-vcard"], [class*=" icon-vcard"] {
+    margin-left: .5rem;
+    margin-right: 0;
+}
+
+#breadcrumbs {
+    margin-top: 1rem;
+}
+
+.module-box ul.menu li:last-child {
+    border-bottom: none;
+}
+
+button, a.btn {
+    border: 2px solid #4a5c66;
+    font-family: "THM-Regular";
+    padding: .4rem .6rem .2rem .6rem;
+}
+
+button:hover, a.btn:hover {
+    background-color: #394a59;
+    color: white;
+}
+
+button:hover span:before, a.btn:hover span:before {
+    color: white;
+}
+
+div.manager-page .page-header {
+    float: left;
+}
+
+div.manager-page .page-header h2 {
+    display: inline-block;
+}
+
+div.manager-page .toolbar {
+    display: inline-block;
+    float: right;
+}
+
+div.manager-page [class^="icon-"], div.manager-page [class*=" icon-"] {
+    font-family: icomoon;
+    margin-right: 0;
+}
+
+div.manager-page a.view-link {
+    margin-left: 8px;
+}
+
+div.manager-page input[type="checkbox"] {
+    display: none;
+}
+
+div.manager-page .publish-column, div.manager-page .btn-column {
+    padding-left: .5rem;
+    padding-right: .5rem;
+    text-align: center;
+}
+
+div.manager-page .publish-column {
+    width: 6rem;
+}
+
+div.manager-page .btn-column {
+    width: 3rem;
+}
+
+div.manager-page .btn-group {
+    display: inline-block;
+}
+
+div.manager-page .btn-group .dropdown-toggle {
+    padding-bottom: .25rem;
+}
+
+div.manager-page .btn-group .dropdown-toggle .element-invisible {
+    position: absolute;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    height: 1px;
+    width: 1px;
+    overflow: hidden;
+}
+
+div.manager-page .btn-group .dropdown-toggle span:before {
+    color: #394a59;
+}
+
+div.manager-page .btn-group.open .dropdown-toggle {
+    background-color: white;
+    border: 1px solid #77858c;
+    box-shadow: none;
+    color: #394a59;
+    margin-bottom: 0;
+}
+
+div.manager-page .btn-group.open .dropdown-toggle span.caret {
+    border-top-color: #394a59;
+}
+
+div.manager-page .btn-group ul {
+    border-radius: 0;
+    margin: 0;
+    padding: 0;
+}
+
+div.manager-page .btn-group li {
+    margin: 0;
+}
+
+div.manager-page .btn-group li a {
+    padding: 6px 10px;
+}
+
+div.manager-page .btn-group li a:hover {
+    background: #4a5c66;
+}
+
+div.manager-page .btn-group li a:hover span::before {
+    color: white;
+}
+
+div.manager-page .btn-group > .btn {
+    border-radius: 0;
+}
+
+div.manager-page .title-column .btn {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+div.manager-page td span.status-container {
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+div.manager-page td .btn {
+    border: 1px solid #77858c;
+}
+
+div.manager-page td .btn.active {
+    box-shadow: none;
+}
+
+div.manager-page td .btn:hover span.caret {
+    border-top-color: white;
+}

@@ -1,0 +1,175 @@
+.contentheading {
+    word-wrap: break-word;
+}
+
+div.main .role-heading {
+    background-color: #4a5c66;
+    color: white;
+    font-family: "THM-Medium", Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+    font-weight: 300;
+    margin-bottom: .8rem;
+    padding: .6rem .6rem .4rem .6rem;
+}
+
+div.main .role-heading .group-title {
+    text-transform: uppercase;
+}
+
+div.main .row-container {
+    clear: both;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 4px;
+    overflow: auto;
+}
+
+div.main .toggled-text-link {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+div.clearFix {
+    clear: both;
+}
+
+.profile-container {
+    background-color: #f2f5f6;
+    flex: 1;
+    float: left;
+    padding: .6rem;
+}
+
+.profile-container a span.icon-vcard {
+    margin-left: .5rem;
+}
+
+.profile-container .attribute-html, .profile-container .attribute-wrap, .profile-container .toggled-text-container {
+    float: left;
+}
+
+.profile-container .attribute-wrap {
+    line-height: 1.2rem;
+    vertical-align: bottom;
+}
+
+.profile-container .action-container, .profile-container .attribute-image {
+    float: right;
+}
+
+.profile-container .attribute-image {
+    width: 4.5rem;
+}
+
+.profile-container .attribute-image img {
+    display: block;
+}
+
+.profile-container .attribute-label, .profile-container .attribute-value {
+    float: left;
+}
+
+.profile-container .attribute-html, .profile-container .attribute-wrap {
+    margin-bottom: .4rem;
+    clear: left;
+}
+
+.profile-container .attribute-name, .profile-container .attribute-title {
+    margin-right: .2rem;
+}
+
+.profile-container .attribute-label {
+    margin-right: .4rem;
+}
+
+.profile-container .attribute-label-long {
+    width: 100%;
+}
+
+.profile-container .attribute-name, .profile-container .attribute-title {
+    display: inline;
+    float: left;
+    font-family: "THM-Regular";
+}
+
+.profile-container .attribute-name {
+    font-size: 1.15rem;
+}
+
+.profile-container .attribute-header {
+    border-bottom: 1px solid #77858c;
+    height: 2.7rem;
+    width: 100%;
+}
+
+.profile-container .title-value {
+    color: #394a59;
+    font-size: .95rem;
+    padding-top: .2rem;
+}
+
+.profile-container .attribute-roles {
+    font-size: .8rem;
+    font-style: italic;
+}
+
+.profile-container .suppress {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 15rem;
+}
+
+.profile-container .toggled-text-container {
+    clear: both;
+    margin-top: .4rem;
+    padding: .4rem;
+}
+
+.profile-container .toggled-text-container ul, .profile-container .toggled-text-container ol, .profile-container .toggled-text-container table {
+    margin-bottom: 0;
+}
+
+.profile-container.with-image .suppress {
+    width: 14rem;
+}
+
+.profile-container.half {
+    width: calc(50% - 1.2rem - 2px);
+}
+
+.profile-container.half:first-child {
+    border-right: white 4px solid;
+}
+
+.profile-container.half .attribute-roles {
+    max-width: 16rem;
+}
+
+.module-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.module-box .profile-container {
+    background-color: inherit;
+}
+
+.module-box .profile-container .attribute-header {
+    height: auto;
+}
+
+.module-box .profile-container .suppress {
+    width: 14rem;
+}
+
+.module-box .profile-container.with-image .suppress {
+    width: 11rem;
+}
+
+@media screen and (max-width: 480px) {
+    .advanced-container .profile-container.half {
+        clear: left;
+        width: calc(100% - 1.2rem);
+    }
+}

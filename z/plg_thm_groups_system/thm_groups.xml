@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" version="3.*" group="system" method="upgrade">
+    <name>plg_system_thm_groups</name>
+    <description>PLG_SYSTEM_THM_GROUPS_XML_DESCRIPTION</description>
+    <author>James Antrim</author>
+    <authorUrl>www.thm.de</authorUrl>
+    <authorEmail>james.antrim@nm.thm.de</authorEmail>
+    <creationDate>June 2021</creationDate>
+    <copyright>TH Mittelhessen 2021</copyright>
+    <license>GNU GPL v.3</license>
+    <version>3.11.15</version>
+    <files>
+        <filename plugin="thm_groups">thm_groups.php</filename>
+        <filename>GroupsParser.php</filename>
+        <filename>GroupsRedirector.php</filename>
+        <filename>GroupsValidator.php</filename>
+        <folder>language</folder>
+    </files>
+    <languages folder="language">
+        <language tag="en-GB">en-GB/en-GB.plg_system_thm_groups.sys.ini</language>
+        <language tag="de-DE">de-DE/de-DE.plg_system_thm_groups.sys.ini</language>
+    </languages>
+    <dependencies>
+        <dependency before="true" type="component" minversion="3.9.*">com_thm_groups</dependency>
+    </dependencies>
+</extension>

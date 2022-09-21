@@ -1,0 +1,249 @@
+[class^="icon-"], [class*=" icon-"] {
+    margin-right: .5rem;
+}
+
+[class^="icon-vcard"], [class*=" icon-vcard"] {
+    margin-left: .5rem;
+    margin-right: 0;
+}
+
+#breadcrumbs {
+    margin-top: 1rem;
+}
+
+.module-box ul.menu li:last-child {
+    border-bottom: none;
+}
+
+button, a.btn {
+    border: 2px solid #4a5c66;
+    font-family: "THM-Regular";
+    padding: .4rem .6rem .2rem .6rem;
+}
+
+button:hover, a.btn:hover {
+    background-color: #394a59;
+    color: white;
+}
+
+button:hover span:before, a.btn:hover span:before {
+    color: white;
+}
+
+#adminForm .frontend-toolbar {
+    border-bottom: 2px solid #4a5c66;
+    border-top: 2px solid #4a5c66;
+    margin-bottom: 10px;
+    padding: 10px;
+    text-align: right;
+}
+
+#adminForm button, #adminForm a.btn {
+    margin-left: 10px;
+    margin-right: 0;
+}
+
+#adminForm button.upload, #adminForm a.btn.upload {
+    float: right;
+}
+
+#adminForm .clear, #adminForm .control-group {
+    clear: both;
+}
+
+#adminForm .published-container input {
+    margin-top: -.15rem;
+}
+
+#adminForm .published-container span {
+    margin-right: .5rem;
+}
+
+#adminForm .inline {
+    display: inline-block;
+    margin-left: 1rem;
+}
+
+#adminForm .inline {
+    float: left;
+}
+
+#adminForm .control-group .control-label {
+    display: inline-block;
+    padding: 0;
+    width: 180px;
+}
+
+#adminForm .control-group .control-label label {
+    font-weight: bold;
+    width: auto;
+}
+
+#adminForm .control-group .controls + .control-supplement {
+    display: inline-block;
+    margin-left: .5rem;
+}
+
+#adminForm .control-group .controls + .control-supplement div {
+    margin-top: 0;
+}
+
+#adminForm .control-group .controls {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+#adminForm .control-group .controls .image-container, #adminForm .control-group .controls .image-button-container, #adminForm .control-group .controls .image-button {
+    float: left;
+}
+
+#adminForm .control-group .controls .image-button {
+    clear: left;
+    margin-bottom: .5rem;
+    width: 8rem;
+}
+
+#adminForm .control-group .controls + .control-supplement {
+    display: inline-block;
+    margin-left: .5rem;
+}
+
+#adminForm .control-group .controls + .control-supplement div:first-child {
+    margin-top: 0;
+}
+
+#adminForm .control-group .view-level-container, #adminForm .control-group .published-container {
+    margin-top: .2rem;
+}
+
+#adminForm .control-group .view-level-container, #adminForm .control-group .published-container span {
+    font-size: .9rem;
+}
+
+#adminForm .control-group.control-site-text .control-label, #adminForm .control-group.control-site-text .controls, #adminForm .control-group.control-site-text .control-supplement {
+    display: table-cell;
+    vertical-align: middle;
+}
+
+#adminForm .control-group.control-site-text .control-label {
+    padding-top: .4rem;
+}
+
+#adminForm .control-group.control-site-text .controls, #adminForm .control-group.control-site-text .control-supplement {
+    padding-left: 1rem;
+}
+
+#adminForm .modal {
+    border-radius: 0;
+    height: 384px;
+    margin: 0;
+    width: 600px;
+}
+
+#adminForm .modal.fade {
+    top: -100%;
+}
+
+#adminForm .modal.fade.in {
+    left: calc(50% - 351px);
+    top: calc(50% - 193px);
+}
+
+#adminForm .modal .modal-content .modal-header, #adminForm .modal .modal-content .modal-footer {
+    background-color: #f2f5f6;
+    padding: 5px;
+    text-align: left;
+}
+
+#adminForm .modal .modal-content .modal-header .header-title, #adminForm .modal .modal-content .modal-footer .header-title {
+    border-bottom: 1px solid #77858c;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
+#adminForm .modal .modal-content .modal-header .header-title h3, #adminForm .modal .modal-content .modal-footer .header-title h3 {
+    display: block;
+    float: left;
+}
+
+#adminForm .modal .modal-content .modal-header .header-title h3 [class^="icon-"], #adminForm .modal .modal-content .modal-header .header-title h3 [class*=" icon-"], #adminForm .modal .modal-content .modal-footer .header-title h3 [class^="icon-"], #adminForm .modal .modal-content .modal-footer .header-title h3 [class*=" icon-"] {
+    margin-right: 8px;
+}
+
+#adminForm .modal .modal-content .modal-header .header-title button.close, #adminForm .modal .modal-content .modal-footer .header-title button.close {
+    background-color: #f2f5f6;
+    border: none;
+    color: #394a59;
+    display: block;
+    float: right;
+    opacity: 1;
+}
+
+#adminForm .modal .modal-content .modal-header .toolbar, #adminForm .modal .modal-content .modal-footer .toolbar {
+    clear: both;
+}
+
+#adminForm .modal .modal-content .modal-header .toolbar input[type="file"], #adminForm .modal .modal-content .modal-footer .toolbar input[type="file"] {
+    width: 250px;
+}
+
+#adminForm .modal .modal-content .modal-body {
+    border-left: #f2f5f6 5px solid;
+    border-right: #f2f5f6 5px solid;
+    height: 230px;
+    width: 98%;
+    padding: 0;
+}
+
+#adminForm .modal .modal-content .modal-body .crop-container {
+    height: 100%;
+    margin: auto;
+    padding: 0 5px;
+    width: 50%;
+}
+
+#adminForm .modal .modal-content .modal-body .crop-container .imageBox {
+    position: relative;
+    height: 220px;
+    width: 100%;
+    min-width: 150px;
+    border: 1px solid #aaa;
+    background: #fff;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    cursor: move;
+}
+
+#adminForm .modal .modal-content .modal-body .crop-container .imageBox .thumbBox {
+    position: absolute;
+    width: 150px;
+    height: 200px;
+    margin: auto;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    box-sizing: border-box;
+    border: 1px solid #666666;
+    box-shadow: 0 0 0 1000px rgba(0, 0, 0, 0.5);
+    background: none repeat scroll 0% 0% transparent;
+}
+
+#adminForm .modal .modal-content .modal-body .crop-container .imageBox .spinner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    text-align: center;
+    line-height: 400px;
+    background: rgba(0, 0, 0, 0.7);
+}
+
+#adminForm.site-edit .control-label {
+    padding-top: .3rem;
+}
+
+#adminForm.site-edit .control-default .controls {
+    margin-top: .5rem;
+}

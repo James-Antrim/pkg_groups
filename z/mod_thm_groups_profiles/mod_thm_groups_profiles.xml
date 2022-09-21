@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" version="3.*" method="upgrade" client="site">
+    <name>mod_thm_groups_profiles</name>
+    <version>3.11.1</version>
+    <description>MOD_THM_GROUPS_PROFILES_XML_DESCRIPTION</description>
+    <creationDate>February 2020</creationDate>
+    <authorEmail>james.antrim@mni.thm.de</authorEmail>
+    <author>James Antrim</author>
+    <authorUrl>www.thm.de</authorUrl>
+    <copyright>TH Mittelhessen 2020</copyright>
+    <license>GNU GPL v.3</license>
+    <files>
+        <filename module="mod_thm_groups_profiles">mod_thm_groups_profiles.php</filename>
+        <filename>helper.php</filename>
+        <folder>tmpl</folder>
+    </files>
+    <languages folder="language">
+        <language tag="en-GB">en-GB/en-GB.mod_thm_groups_profiles.ini</language>
+        <language tag="en-GB">en-GB/en-GB.mod_thm_groups_profiles.sys.ini</language>
+        <language tag="de-DE">de-DE/de-DE.mod_thm_groups_profiles.ini</language>
+        <language tag="de-DE">de-DE/de-DE.mod_thm_groups_profiles.sys.ini</language>
+    </languages>
+    <config>
+        <fields name="params">
+            <fieldset name="basic" addfieldpath="/media/com_thm_groups/fields/">
+                <field name="suffix" type="input" default="" label="MOD_THM_GROUPS_PROFILES_SUFFIX" description="MOD_THM_GROUPS_PROFILES_SUFFIX_DESC"/>
+                <field name="showImage" type="radio" class="btn-group btn-group-yesno" default="0" label="MOD_THM_GROUPS_PROFILES_SHOW_IMAGE" description="MOD_THM_GROUPS_PROFILES_SHOW_IMAGE_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="showRoles" type="radio" class="btn-group btn-group-yesno" default="0" label="MOD_THM_GROUPS_PROFILES_SHOW_ROLES" description="MOD_THM_GROUPS_PROFILES_SHOW_ROLES_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="templateID" type="genericlist" valueColumn="id" textColumn="templateName" table="thm_groups_templates" label="MOD_THM_GROUPS_PROFILES_TEMPLATE" default="1" description="MOD_THM_GROUPS_PROFILES_TEMPLATE_DESC">
+
+                </field>
+            </fieldset>
+            <fieldset name="advanced">
+                <field name="moduleclass_sfx" type="textarea" rows="3" label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL" description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC"/>
+            </fieldset>
+        </fields>
+    </config>
+    <dependencies>
+        <dependency before="true" type="component" minversion="3.10.0">com_thm_groups</dependency>
+    </dependencies>
+    <updateservers>
+        <server type="extension" priority="1" name="THM Groups Module Profiles Update Site">
+            http://jenkins-ci.mni.thm.de/view/THM%20Control/job/Releases/lastSuccessfulBuild/artifact/updates/mod_thm_groups_profiles.xml
+        </server>
+    </updateservers>
+</extension>
