@@ -9,8 +9,8 @@
     <copyright>TH Mittelhessen 2022</copyright>
     <license>GNU/GPL Version 3</license>
     <version>1.0.0</version>
-    <namespace path="src">Groups</namespace>
-    <!--<install>
+    <namespace path="src">THM\Groups</namespace>
+    <!-- <install>
         <sql>
             <file driver="mysql" charset="utf8">sql/install.sql</file>
         </sql>
@@ -24,52 +24,40 @@
         <schemas>
             <schemapath type="mysql">sql/updates/</schemapath>
         </schemas>
-    </update>-->
+    </update> not set up yet-->
     <administration>
         <menu>Groups</menu>
         <submenu>
-            <menu controller="Dashboard">COM_GROUPS_DASHBOARD</menu>
-            <!--<menu controller="Attributes">COM_GROUPS_ATTRIBUTES</menu>
+            <menu controller="Attributes">COM_GROUPS_ATTRIBUTES</menu>
             <menu controller="AttributeTypes">COM_GROUPS_ATTRIBUTE_TYPES</menu>
             <menu controller="Content">COM_GROUPS_CONTENT</menu>
             <menu controller="Groups">COM_GROUPS_GROUPS</menu>
             <menu controller="Profiles">COM_GROUPS_PROFILES</menu>
             <menu controller="Roles">COM_GROUPS_ROLES</menu>
-            <menu controller="Templates">COM_GROUPS_TEMPLATES</menu>-->
+            <menu controller="Templates">COM_GROUPS_TEMPLATES</menu>
         </submenu>
         <files folder="admin">
             <filename>access.xml</filename>
             <filename>config.xml</filename>
-            <filename>groups.php</filename>
             <filename>LICENSE</filename>
             <folder>language</folder>
             <folder>services</folder>
-            <folder>src</folder>
-            <folder>sql</folder>
-            <folder>tmpl</folder>
-            <!--<filename>controller.php</filename>
-            <folder>models</folder>
-            <folder>tables</folder>
-            <folder>views</folder>-->
         </files>
     </administration>
-    <!--<media folder="media" destination="com_thm_groups">
-        <folder>css</folder>
-        <folder>documentation</folder>
-        <folder>fields</folder>
-        <folder>helpers</folder>
-        <folder>icons</folder>
-        <folder>images</folder>
-        <folder>js</folder>
-        <folder>layouts</folder>
-        <folder>models</folder>
-        <folder>views</folder>
-    </media>-->
     <files folder="site">
-        <folder>src</folder>
-        <folder>tmpl</folder>
+        <folder>Adapters</folder>
+        <folder>Controllers</folder>
+        <folder>Helpers</folder>
+        <!-- <folder>Layouts</folder> empty now-->
+        <folder>Models</folder>
+        <folder>Providers</folder>
+        <folder>Tables</folder>
+        <folder>templates</folder>
+        <folder>Views</folder>
+        <filename>Component.php</filename>
+        <filename>LICENSE</filename>
     </files>
-    <updateservers>
+    <!--<updateservers>
         <server type="extension" priority="1" name="Groups Component Update Site"></server>
-    </updateservers>
+    </updateservers> not set up now-->
 </extension>
