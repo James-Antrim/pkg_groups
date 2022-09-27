@@ -10,7 +10,7 @@
 namespace THM\Groups\Controllers;
 
 
-class Dashboard extends Controller
+class Groups extends Controller
 {
 	//Stuff
 }

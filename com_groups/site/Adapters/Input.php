@@ -11,7 +11,6 @@
 namespace THM\Groups\Adapters;
 
 use Joomla\CMS\Application\CMSApplication;
-use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Factory;
 use Joomla\Filter\InputFilter;
 use Joomla\Input\Input as Base;
@@ -324,7 +323,7 @@ class Input
 		{
 			$app          = Component::getApplication();
 			self::$params = method_exists($app, 'getParams') ?
-				$app->getParams() : ComponentHelper::getParams('com_organizer');
+				$app->getParams() : Component::getParams('com_organizer');
 		}
 
 		return self::$params;

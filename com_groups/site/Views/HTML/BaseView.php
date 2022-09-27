@@ -21,6 +21,7 @@ abstract class BaseView extends HtmlView
 	use Named;
 
 	public bool $backend;
+	protected string $layout;
 	public bool $mobile;
 
 	/**
@@ -31,11 +32,12 @@ abstract class BaseView extends HtmlView
 		parent::__construct($config);
 
 		$this->_basePath = JPATH_COMPONENT_SITE;
+		$this->_name     = $this->getName();
 
 		// Set the default template search path
-		$this->_setPath('template', $this->_basePath . '/Templates');
 		$this->_setPath('helper', $this->_basePath . '/Helpers');
 		$this->_setPath('layout', $this->_basePath . '/Layouts');
+		$this->_setPath('template', $this->_basePath . '/templates');
 
 		$this->backend = Component::backend();
 		$this->mobile  = Component::mobile();
@@ -60,7 +62,7 @@ abstract class BaseView extends HtmlView
 			 * So many possible points of failure...
 			 */
 			Component::message($exception->getMessage(), 'error');
-			Component::redirect(Uri::getInstance()::base(), $exception->getCode());
+			Component::redirect('', $exception->getCode());
 		}
 	}
 
@@ -69,6 +71,6 @@ abstract class BaseView extends HtmlView
 	 */
 	public function getLayout(): string
 	{
-		return $this->_layout !== 'default' ? $this->_layout: strtolower($this->_name);
+		return $this->layout ?: strtolower($this->_name);
 	}
 }

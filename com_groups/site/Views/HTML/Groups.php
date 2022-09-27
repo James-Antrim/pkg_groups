@@ -14,49 +14,63 @@
 
 namespace THM\Groups\Views\HTML;
 
+use Joomla\CMS\Helper\ContentHelper as UsersAccess;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Toolbar\ToolbarHelper;
 use THM\Groups\Helpers\Can;
 use THM\Groups\Helpers\Component;
 
 /**
  * THM_GroupsViewTHM_Groups class for component com_thm_groups
  */
-class Groups extends BaseView
+class Groups extends ListView
 {
-	protected $_layout = 'list';
 
-    /**
-     * Method to get display
-     *
-     * @param   Object $tpl template
-     *
-     * @return void
-     */
-    public function display($tpl = null)
-    {
-        if ($this->backend and !Can::manage()) {
-            Component::error(403);
-        }
+	/**
+	 * Add the page title and toolbar.
+	 *
+	 * @return  void
+	 */
+	protected function addToolbar()
+	{
+		$usersAccess = UsersAccess::getActions('com_users');
 
-        //JHtml::_('bootstrap.tooltip');
+		ToolbarHelper::title(Text::_('COM_GROUPS_GROUPS'), 'users-cog groups');
 
-        //THM_GroupsHelperComponent::addSubmenu($this);
+		if ($usersAccess->get('core.create'))
+		{
+			ToolbarHelper::addNew('Group.add');
+		}
 
-        //$this->addToolBar();
+		if ($usersAccess->get('core.delete'))
+		{
+			ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Groups.delete');
+			ToolbarHelper::divider();
+		}
 
-        parent::display($tpl);
-    }
+		if ($usersAccess->get('core.admin') || $usersAccess->get('core.options'))
+		{
+			ToolbarHelper::preferences('com_groups');
+			ToolbarHelper::divider();
+		}
 
-    /**
-     *
-     *
-     * @return void
-     */
-//    protected function addToolBar()
-//    {
-//        JToolBarHelper::title(JText::_('COM_THM_GROUPS'), 'logo');
-//
-//        if (THM_GroupsHelperComponent::isAdmin()) {
-//            JToolBarHelper::preferences('com_thm_groups');
-//        }
-//    }
+		ToolbarHelper::help('Users:_Groups');
+	}
+
+	/**
+	 * Method to get display
+	 *
+	 * @param   Object  $tpl  template
+	 *
+	 * @return void
+	 */
+	public function display($tpl = null)
+	{
+		if ($this->backend and !Can::manage())
+		{
+			Component::error(403);
+		}
+
+		parent::display($tpl);
+	}
 }

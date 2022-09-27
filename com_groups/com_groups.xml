@@ -47,6 +47,7 @@
     <files folder="site">
         <folder>Adapters</folder>
         <folder>Controllers</folder>
+        <folder>forms</folder>
         <folder>Helpers</folder>
         <!-- <folder>Layouts</folder> empty now-->
         <folder>Models</folder>

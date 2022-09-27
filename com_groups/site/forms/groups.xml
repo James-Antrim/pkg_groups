@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="search" type="text" label="COM_GROUPS_SEARCH" hint="COM_GROUPS_SEARCH_TERMS"/>
+        <!--<field name="checkbox" type="checkall"/>
+        <field name="roles" type="genericlist" valueColumn="r.id" textColumn="r.name"
+               table="thm_groups_roles AS r,thm_groups_role_associations AS ra ON ra.roleID = r.id"
+               label="COM_THM_GROUPS_ROLES" onchange="this.form.submit();">
+            <option value="">JALL</option>
+            <option value="-1">JNONE</option>
+        </field>-->
+    </fields>
+    <fields name="list">
+        <field name="limit" type="limitbox" class="input-mini" label="JGLOBAL_LIST_LIMIT" onchange="this.form.submit();"/>
+    </fields>
+</form>

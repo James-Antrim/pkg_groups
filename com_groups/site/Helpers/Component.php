@@ -12,6 +12,8 @@ namespace THM\Groups\Helpers;
 
 use Exception;
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\Registry\Registry;
 use THM\Groups\Adapters\Input;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
@@ -113,6 +115,18 @@ class Component
 	}
 
 	/**
+	 * Gets the parameter object for the component
+	 *
+	 * @param   string  $component  the component name.
+	 *
+	 * @return  Registry
+	 */
+	public static function getParams(string $component = 'com_groups'): Registry
+	{
+		return ComponentHelper::getParams($component);
+	}
+
+	/**
 	 * Masks the Joomla application enqueueMessage function
 	 *
 	 * @param   string  $message  the message to enqueue
@@ -148,8 +162,10 @@ class Component
 	 *
 	 * @return  void
 	 */
-	public static function redirect(string $url, int $status)
+	public static function redirect(string $url = '', int $status = 303)
 	{
+		$url = $url ?: Uri::getInstance()::base();
+
 		/** @var CMSApplication $app */
 		$app = self::getApplication();
 		$app->redirect($url, $status);
