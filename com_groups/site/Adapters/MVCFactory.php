@@ -59,7 +59,7 @@ class MVCFactory extends Base
 
 		if (!in_array($type, $supported))
 		{
-			//501 error
+			Component::error(501);
 		}
 
 		$name      = preg_replace('/[^A-Z0-9_]/i', '', $name);
@@ -81,40 +81,13 @@ class MVCFactory extends Base
 
 		if (!in_array($name, $this->getTableClasses()))
 		{
-
+			Component::error(503);
 		}
 
 		$className = "THM\Groups\Tables\\$name";
 		$dbo       = array_key_exists('dbo', $config) ? $config['dbo'] : Factory::getDbo();
 
 		return new $className($dbo);
-	}
-
-	/**
-	 * Returns a standard classname, if the class doesn't exist null is returned.
-	 *
-	 * @param   string  $suffix  The suffix
-	 * @param   string  $prefix  The prefix
-	 *
-	 * @return  string|null  The class name
-	 *
-	 * @since   3.10.0
-	 */
-	protected function getClassName(string $suffix, string $prefix)
-	{
-		if (!$prefix)
-		{
-			$prefix = Factory::getApplication();
-		}
-
-		$className = 'THM\\Groups' . '\\' . ucfirst($prefix) . '\\' . $suffix;
-
-		if (!class_exists($className))
-		{
-			return null;
-		}
-
-		return $className;
 	}
 
 	/**
@@ -135,15 +108,13 @@ class MVCFactory extends Base
 	}
 
 	/**
-	 * Sets the internal form factory on the given object.
+	 * Sets the internal form factory on the given object. Parent has private access. :(
 	 *
-	 * @param   object  $object  The object
+	 * @param   object  $object  the object
 	 *
 	 * @return  void
-	 *
-	 * @since   4.0.0
 	 */
-	private function setFormFactoryOnObject($object)
+	private function setFormFactoryOnObject(object $object)
 	{
 		if (!$object instanceof FormFactoryAwareInterface)
 		{
@@ -161,15 +132,13 @@ class MVCFactory extends Base
 	}
 
 	/**
-	 * Sets the internal event dispatcher on the given object.
+	 * Sets the internal event dispatcher on the given object. Parent has private access. :(
 	 *
-	 * @param   object  $object  The object
+	 * @param   object  $object  the object
 	 *
 	 * @return  void
-	 *
-	 * @since   4.1.0
 	 */
-	private function setDispatcherOnObject($object)
+	private function setDispatcherOnObject(object $object)
 	{
 		if (!$object instanceof DispatcherAwareInterface)
 		{

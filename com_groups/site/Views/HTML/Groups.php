@@ -17,8 +17,8 @@ namespace THM\Groups\Views\HTML;
 use Joomla\CMS\Helper\ContentHelper as UsersAccess;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use THM\Groups\Adapters\Component;
 use THM\Groups\Helpers\Can;
-use THM\Groups\Helpers\Component;
 
 /**
  * THM_GroupsViewTHM_Groups class for component com_thm_groups

@@ -16,21 +16,17 @@ use Joomla\Filter\InputFilter;
 use Joomla\Input\Input as Base;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
-use THM\Groups\Helpers\Component;
 
 /**
  * Class provides generalized functions useful for several component files.
  */
 class Input
 {
-	private static Registry $batchItems;
 	private static InputFilter $filter;
 	private static Registry $filterItems;
-	private static Registry $formItems;
 	private static Base $input;
 	private static Registry $listItems;
 	private static Registry $params;
-	private static Registry $supplementalItems;
 
 	/**
 	 * Filters the given source data according to the type parameter.

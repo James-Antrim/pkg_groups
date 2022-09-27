@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Views;
 
-use THM\Groups\Helpers\Component;
+use THM\Groups\Adapters\Component;
 
 trait Named
 {

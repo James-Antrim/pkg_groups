@@ -9,7 +9,7 @@
 
 namespace THM\Groups\Models;
 
-use THM\Groups\Helpers\Component;
+use THM\Groups\Adapters\Component;
 
 trait Named
 {
@@ -36,7 +36,7 @@ trait Named
 	 *
 	 * @return  string  The name of the model
 	 */
-	public function getName()
+	public function getName(): string
 	{
 		if (empty($this->name))
 		{

@@ -8,13 +8,12 @@
  * @link        www.thm.de
  */
 
-namespace THM\Groups\Helpers;
+namespace THM\Groups\Adapters;
 
 use Exception;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\Registry\Registry;
-use THM\Groups\Adapters\Input;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
@@ -43,6 +42,8 @@ class Component
 	{
 		$URI     = Uri::getInstance();
 		$current = $URI->toString();
+
+		//TODO: Add logging
 
 		if ($code === 401)
 		{

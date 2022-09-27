@@ -12,8 +12,7 @@ namespace THM\Groups\Views\HTML;
 
 use Exception;
 use Joomla\CMS\MVC\View\HtmlView;
-use Joomla\CMS\Uri\Uri;
-use THM\Groups\Helpers\Component;
+use THM\Groups\Adapters\Component;
 use THM\Groups\Views\Named;
 
 abstract class BaseView extends HtmlView

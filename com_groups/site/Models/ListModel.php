@@ -14,9 +14,8 @@ use Exception;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel as Base;
-use Joomla\CMS\Uri\Uri;
 use Joomla\Database\QueryInterface;
-use THM\Groups\Helpers\Component;
+use THM\Groups\Adapters\Component;
 
 class ListModel extends Base
 {

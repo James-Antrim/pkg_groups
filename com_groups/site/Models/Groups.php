@@ -13,7 +13,7 @@ namespace THM\Groups\Models;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
-use THM\Groups\Helpers\Component;
+use THM\Groups\Adapters\Component;
 
 class Groups extends ListModel
 {

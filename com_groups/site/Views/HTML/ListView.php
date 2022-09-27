@@ -15,8 +15,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use THM\Groups\Adapters\Component;
 use THM\Groups\Helpers\Can;
-use THM\Groups\Helpers\Component;
 
 class ListView extends BaseView
 {
