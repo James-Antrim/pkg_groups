@@ -75,7 +75,7 @@ class ListModel extends Base
 	{
 		if ($column = $this->getState('list.ordering'))
 		{
-			$column    = $query->escape($column);
+			$column    = $query->quoteName($query->escape($column));
 			$direction = $query->escape($this->getState('list.direction', 'ASC'));
 			$query->order("$column $direction");
 		}

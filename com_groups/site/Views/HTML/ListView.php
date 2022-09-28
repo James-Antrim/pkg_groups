@@ -23,15 +23,11 @@ class ListView extends BaseView
 	public array $activeFilters;
 	public array $batch;
 	public Form $filterForm;
+	public array $headers = [];
 	protected array $items;
 	protected string $layout = 'list';
 	protected Pagination $pagination;
-
-	/**
-	 * Should be a registry...
-	 * @var CMSObject
-	 */
-	protected $state;
+	public CMSObject $state;
 
 	/**
 	 * Add the page title and toolbar.
