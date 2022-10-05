@@ -46,7 +46,6 @@ class Roles extends ListModel
 	 */
 	public function delete()
 	{
-
 		if (!Can::manage())
 		{
 			Component::error(403);
@@ -89,26 +88,26 @@ class Roles extends ListModel
 			$deleted++;
 		}
 
-		$id    = $db->quoteName('id');
-		$order = $db->quoteName('order');
-		$query = $db->getQuery(true);
-		$roles = $db->quoteName('#__groups_roles');
+		$id       = $db->quoteName('id');
+		$ordering = $db->quoteName('ordering');
+		$query    = $db->getQuery(true);
+		$roles    = $db->quoteName('#__groups_roles');
 
-		$query->select([$id, $order])->from($roles);
+		$query->select([$id, $ordering])->from($roles);
 		$db->setQuery($query);
-		$results = $db->loadAssocList('id', 'order');
+		$results = $db->loadAssocList('id', 'ordering');
 		$results = array_flip($results);
 		ksort($results);
 
-		$order = 1;
+		$ordering = 1;
 
 		foreach ($results as $id)
 		{
 			$table = new Table($db);
 			$table->load($id);
-			$table->order = $order;
+			$table->ordering = $ordering;
 			$table->store();
-			$order++;
+			$ordering++;
 		}
 
 		if ($skipped)
@@ -159,7 +158,7 @@ class Roles extends ListModel
 		// Select the required fields from the table.
 		$query->select([
 			$db->quoteName('r.id'),
-			$db->quoteName('r.order'),
+			$db->quoteName('r.ordering'),
 			$db->quoteName("r.name_$tag", 'name'),
 			$db->quoteName("r.names_$tag", 'names'),
 			$db->quoteName('r.protected')
@@ -202,8 +201,7 @@ class Roles extends ListModel
 			}
 		}
 
-		// Add the list ordering clause.
-		$this->order($query);
+		$this->orderBy($query);
 
 		return $query;
 	}
@@ -211,8 +209,68 @@ class Roles extends ListModel
 	/**
 	 * @inheritDoc
 	 */
-	protected function populateState($ordering = 'order', $direction = 'asc')
+	protected function populateState($ordering = 'ordering', $direction = 'asc')
 	{
 		parent::populateState($ordering, $direction);
+	}
+
+	/**
+	 * Saves the current order of entries from the list.
+	 *
+	 * @return false|void
+	 *
+	 * @since version
+	 */
+	public function saveorder()
+	{
+		if (!Can::manage())
+		{
+			return false;
+		}
+
+		if (!$ids = Input::getSelectedIDs())
+		{
+			return false;
+		}
+
+		$ordering = 1;
+		foreach ($ids as $id)
+		{
+			$table = new Table($this->getDatabase());
+		}
+		$conditions = [];
+
+
+		// Update ordering values
+		foreach ($pks as $i => $pk)
+		{
+			$table->load((int) $pk);
+
+			if ($table->ordering != $order[$i])
+			{
+				$table->ordering = $order[$i];
+
+				if (!$table->store())
+				{
+					$this->setError($table->getError());
+
+					return false;
+				}
+			}
+		}
+
+		// Execute reorder for each category.
+		foreach ($conditions as $cond)
+		{
+			$table->load($cond[0]);
+			$table->reorder($cond[1]);
+		}
+
+		// Clear the component's cache
+		$this->cleanCache();
+
+		return true;
+
+		return false;
 	}
 }

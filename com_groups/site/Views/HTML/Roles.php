@@ -57,14 +57,14 @@ class Roles extends ListView
 		}
 
 		$this->headers = [
-			'check' => ['type' => 'check'],
-			'order' => ['type' => 'order'],
-			'name'  => [
+			'check'    => ['type' => 'check'],
+			'ordering' => ['type' => 'ordering'],
+			'name'     => [
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
 				'title'      => Text::_('GROUPS_ROLE'),
 				'type'       => 'text'
 			],
-			'names' => [
+			'names'    => [
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
 				'title'      => Text::_('GROUPS_PLURAL'),
 				'type'       => 'text'

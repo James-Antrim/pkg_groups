@@ -38,7 +38,7 @@ class ListItem
 	 * @param   object  $item     the item being rendered
 	 * @param   bool    $enabled  whether sorting has been enabled
 	 */
-	private static function order(object $item, bool $enabled)
+	private static function ordering(object $item, bool $enabled)
 	{
 		$attributes = ['class' => 'sortable-handler'];
 
@@ -55,13 +55,12 @@ class ListItem
 		$properties = HTML::toProperties($attributes);
 		?>
         <td class="text-center d-none d-md-table-cell">
-			<?php
-			?>
             <span <?php echo $properties ?>>
                 <span class="icon-ellipsis-v"></span>
             </span>
 			<?php if ($item->access and $enabled) : ?>
-                <input type="text" class="hidden" name="order[]" size="5" value="<?php echo $item->order; ?>">
+                <input type="text" class="width-20 text-area-order hidden" name="order[]" size="5"
+                       value="<?php echo $item->ordering; ?>">
 			<?php endif; ?>
         </td>
 		<?php
@@ -76,11 +75,10 @@ class ListItem
 	 */
 	public static function render(ListView $view, int $rowNo, object $item)
 	{
-		$context         = $view->backend;
-		$direction       = $view->escape($view->state->get('list.direction', 'ASC'));
-		$column          = $view->escape($view->state->get('list.ordering'));
-		$orderingEnabled = ($column === 'order' and strtolower($direction) == 'asc');
-
+		$context     = $view->backend;
+		$direction   = $view->escape($view->state->get('list.direction'));
+		$orderBy     = $view->escape($view->state->get('list.ordering'));
+		$dragEnabled = ($orderBy == 'ordering' and strtolower($direction) == 'asc');
 		?>
         <thead>
         <tr>
@@ -94,8 +92,8 @@ class ListItem
 					case 'check':
 						self::check($rowNo, $item);
 						break;
-					case 'order':
-						self::order($item, $orderingEnabled);
+					case 'ordering':
+						self::ordering($item, $dragEnabled);
 						break;
 					case 'sort':
 					case 'text':

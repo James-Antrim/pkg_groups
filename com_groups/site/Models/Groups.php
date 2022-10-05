@@ -83,7 +83,7 @@ class Groups extends ListModel
 		}
 
 		// Add the list ordering clause.
-		$this->order($query);
+		$this->orderBy($query);
 
 		return $query;
 	}

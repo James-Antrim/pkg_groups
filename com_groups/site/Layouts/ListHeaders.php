@@ -28,17 +28,17 @@ class ListHeaders
 	}
 
 	/**
-	 * Renders a sort activation list header. The values in the column denoted by this header are always the column 'order' of
+	 * Renders a sort activation list header. The values in the column denoted by this header are always the column 'ordering' of
 	 * their respective tables.
 	 *
-	 * @param   string  $column
+	 * @param   string  $orderBy
 	 * @param   string  $direction
 	 */
-	private static function order(string $column, string $direction)
+	private static function ordering(string $orderBy, string $direction)
 	{
 		?>
         <th class="w-1 text-center d-none d-md-table-cell" scope="col">
-			<?php echo HTML::_('searchtools.sort', '', 'order', $direction, $column, null, 'asc', 'JGRID_HEADING_ORDERING',
+			<?php echo HTML::_('searchtools.sort', '', 'ordering', $direction, $orderBy, null, 'asc', 'JGRID_HEADING_ORDERING',
 				'icon-sort'); ?>
         </th>
 		<?php
@@ -66,8 +66,8 @@ class ListHeaders
 					case 'check':
 						self::check();
 						break;
-					case 'order':
-						self::order($column, $direction);
+					case 'ordering':
+						self::ordering($column, $direction);
 						break;
 					case 'sort':
 						self::sort($header['properties'], $header['title'], $header['column'], $column, $direction);
@@ -90,15 +90,15 @@ class ListHeaders
 	 * @param   array   $properties  the properties for the containing tag
 	 * @param   string  $title       the title text to display
 	 * @param   string  $column      the table column represented by the data displayed in this column
-	 * @param   string  $order       the column the results are currently ordered by
+	 * @param   string  $orderBy     the column the results are currently ordered by
 	 * @param   string  $direction   the current sort direction
 	 */
-	private static function sort(array $properties, string $title, string $column, string $order, string $direction)
+	private static function sort(array $properties, string $title, string $column, string $orderBy, string $direction)
 	{
 		$properties = HTML::toProperties($properties);
 		?>
         <th <?php echo $properties; ?>>
-			<?php echo HTML::_('searchtools.sort', $title, $column, $direction, $order); ?>
+			<?php echo HTML::_('searchtools.sort', $title, $column, $direction, $orderBy); ?>
         </th>
 		<?php
 	}

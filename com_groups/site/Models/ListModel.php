@@ -71,7 +71,7 @@ class ListModel extends Base
 	 *
 	 * @since version
 	 */
-	protected function order(QueryInterface $query)
+	protected function orderBy(QueryInterface $query)
 	{
 		if ($column = $this->getState('list.ordering'))
 		{

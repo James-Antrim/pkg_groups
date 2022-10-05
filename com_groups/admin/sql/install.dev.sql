@@ -1,11 +1,16 @@
-CREATE TABLE IF NOT EXISTS `#__groups_groups` (
-    `id` INT(10) UNSIGNED NOT NULL, `ignore` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0, PRIMARY KEY (`id`)
+CREATE TABLE IF NOT EXISTS `v7ocf_groups_groups` (
+    `id`      INT(10) UNSIGNED    NOT NULL,
+    `name_de` VARCHAR(100)        NOT NULL,
+    `name_en` VARCHAR(100)        NOT NULL,
+    `ignore`  TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`)
+# no unique keys for groups which may have the same name in different contexts.
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_role_associations` (
+CREATE TABLE IF NOT EXISTS `v7ocf_groups_role_associations` (
     `id`      INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `groupID` INT(11) UNSIGNED NOT NULL,
     `roleID`  INT(11) UNSIGNED NOT NULL,
@@ -15,7 +20,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_role_associations` (
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_roles` (
+CREATE TABLE IF NOT EXISTS `v7ocf_groups_roles` (
     `id`        INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `name_de`   VARCHAR(100)        NOT NULL,
     `name_en`   VARCHAR(100)        NOT NULL,
@@ -31,7 +36,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_roles` (
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-INSERT INTO `#__groups_roles` (`id`, `name_de`, `name_en`, `names_de`, `names_en`, `ordering`, `protected`)
+INSERT INTO `v7ocf_groups_roles` (`id`, `name_de`, `name_en`, `names_de`, `names_en`, `ordering`, `protected`)
 VALUES (1, 'Mitglied', 'Member', 'Mitglieder', 'Members', 17, 1),
        (2, 'Dekan', 'Dean', 'Dekane', 'Deans', 1, 0),
        (3, 'Dekanin', 'Dean', 'Dekaninnen', 'Deans', 2, 0),
@@ -51,9 +56,9 @@ VALUES (1, 'Mitglied', 'Member', 'Mitglieder', 'Members', 17, 1),
        (17, 'Student:in', 'Student', 'Studenten:innen', 'Student', 16, 0),
        (18, 'Ehemalige', 'Alumnus', 'Alumni', 'Alumni', 18, 0);
 
-ALTER TABLE `#__groups_groups`
-    ADD CONSTRAINT `groups_groupID` FOREIGN KEY (`id`) REFERENCES `#__usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `v7ocf_groups_groups`
+    ADD CONSTRAINT `groups_groupID` FOREIGN KEY (`id`) REFERENCES `v7ocf_usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `#__groups_role_associations`
-    ADD CONSTRAINT `ra_roleID` FOREIGN KEY (`roleID`) REFERENCES `#__groups_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    ADD CONSTRAINT `ra_groupID` FOREIGN KEY (`groupID`) REFERENCES `#__groups_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `v7ocf_groups_role_associations`
+    ADD CONSTRAINT `ra_roleID` FOREIGN KEY (`roleID`) REFERENCES `v7ocf_groups_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    ADD CONSTRAINT `ra_groupID` FOREIGN KEY (`groupID`) REFERENCES `v7ocf_groups_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

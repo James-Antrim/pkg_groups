@@ -10,6 +10,7 @@
 namespace THM\Groups\Controllers;
 
 use Joomla\CMS\MVC\Controller\BaseController;
+use THM\Groups\Adapters\Component;
 
 class Controller extends BaseController
 {
@@ -36,5 +37,28 @@ class Controller extends BaseController
 	public function display($cachable = false, $urlparams = []): BaseController
 	{
 		return parent::display($cachable, $urlparams);
+	}
+
+	/**
+	 * Method to save the submitted ordering values for records via AJAX.
+	 *
+	 * @return  void
+	 *
+	 * @throws Exception
+	 */
+	public function saveOrderAjax()
+	{
+		// Check for request forgeries
+		$this->checkToken();
+
+		$fqName = 'THM\\Groups\\Models\\' . $this->name;
+		$model  = new $fqName();
+
+		if ($model->saveorder())
+		{
+			echo "1";
+		}
+
+		Component::getApplication()->close();
 	}
 }

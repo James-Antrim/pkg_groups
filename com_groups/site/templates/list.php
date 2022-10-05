@@ -20,9 +20,10 @@ use THM\Groups\Views\HTML\ListView;
 
 /** @var ListView $this */
 
+$action         = Route::_('index.php?option=com_groups&view=' . $this->_name);
 $direction      = $this->escape($this->state->get('list.direction'));
-$order          = $this->escape($this->state->get('list.ordering'));
-$dragEnabled    = ($order == 'order' and strtolower($direction) == 'asc');
+$orderBy        = $this->escape($this->state->get('list.ordering'));
+$dragEnabled    = ($orderBy == 'ordering' and strtolower($direction) == 'asc');
 $dragProperties = '';
 
 if ($dragEnabled and !empty($this->items))
@@ -39,15 +40,11 @@ if ($dragEnabled and !empty($this->items))
 	$dragProperties = HTML::toProperties($dragProperties);
 }
 ?>
-<form action="<?php echo Route::_('index.php?option=com_groups&controller=' . $this->_name); ?>" method="post" name="adminForm"
-      id="adminForm">
+<form action="<?php echo $action; ?>" method="post" name="adminForm" id="adminForm">
     <div class="row">
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
-				<?php
-				// Search tools bar
-				echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]);
-				?>
+				<?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
 				<?php if (empty($this->items)) : ?>
 					<?php EmptyList::render(); ?>
 				<?php else : ?>
