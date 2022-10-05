@@ -28,17 +28,17 @@ class ListHeaders
 	}
 
 	/**
-	 * Renders a sort activation list header.
+	 * Renders a sort activation list header. The values in the column denoted by this header are always the column 'order' of
+	 * their respective tables.
 	 *
 	 * @param   string  $column
-	 * @param   string  $order
 	 * @param   string  $direction
 	 */
-	private static function order(string $column, string $order, string $direction)
+	private static function order(string $column, string $direction)
 	{
 		?>
         <th class="w-1 text-center d-none d-md-table-cell" scope="col">
-			<?php echo HTML::_('searchtools.sort', '', $column, $direction, $order, null, 'asc', 'JGRID_HEADING_ORDERING',
+			<?php echo HTML::_('searchtools.sort', '', 'order', $direction, $column, null, 'asc', 'JGRID_HEADING_ORDERING',
 				'icon-sort'); ?>
         </th>
 		<?php
@@ -51,14 +51,13 @@ class ListHeaders
 	 */
 	public static function render(ListView $view)
 	{
-		$direction = $view->escape($view->state->get('list.direction'));
-		$order     = $view->escape($view->state->get('list.ordering'));
+		$direction = $view->escape($view->state->get('list.direction', 'ASC'));
+		$column    = $view->escape($view->state->get('list.ordering'));
 
 		?>
         <thead>
         <tr>
 			<?php
-
 			foreach ($view->headers as $header)
 			{
 				$header['properties'] = $header['properties'] ?? [];
@@ -68,10 +67,10 @@ class ListHeaders
 						self::check();
 						break;
 					case 'order':
-						self::order($header['column'], $order, $direction);
+						self::order($column, $direction);
 						break;
 					case 'sort':
-						self::sort($header['properties'], $header['title'], $header['column'], $order, $direction);
+						self::sort($header['properties'], $header['title'], $header['column'], $column, $direction);
 						break;
 					case 'text':
 					default:

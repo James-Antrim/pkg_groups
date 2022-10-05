@@ -38,7 +38,7 @@ class ListView extends BaseView
 	 */
 	protected function addToolbar()
 	{
-		$titleKey = 'COM_GROUPS_' . strtoupper($this->_name);
+		$titleKey = 'GROUPS_' . strtoupper($this->_name);
 
 		ToolbarHelper::title(Text::_($titleKey), '');
 

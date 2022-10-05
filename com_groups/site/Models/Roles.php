@@ -10,10 +10,16 @@
 
 namespace THM\Groups\Models;
 
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Router\Route;
+use Joomla\Database\DatabaseDriver;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 use THM\Groups\Adapters\Component;
+use THM\Groups\Adapters\Input;
+use THM\Groups\Helpers\Can;
+use THM\Groups\Tables\Roles as Table;
 
 class Roles extends ListModel
 {
@@ -34,6 +40,111 @@ class Roles extends ListModel
 	}
 
 	/**
+	 * Deletes role entries.
+	 *
+	 * @return void
+	 */
+	public function delete()
+	{
+
+		if (!Can::manage())
+		{
+			Component::error(403);
+		}
+
+		if (!$ids = Input::getSelectedIDs())
+		{
+			Component::message(Text::_('JERROR_NO_ITEMS_SELECTED'), 'error');
+
+			return;
+		}
+
+		/** @var DatabaseDriver $db */
+		$db        = $this->getDatabase();
+		$deleted   = 0;
+		$protected = false;
+		$skipped   = 0;
+
+		foreach ($ids as $id)
+		{
+			$table = new Table($db);
+
+			if (!$table->load($id))
+			{
+				Component::error(412);
+			}
+
+			if ($table->protected or !$table->delete($id))
+			{
+				$protected = true;
+				continue;
+			}
+
+			if (!$table->delete($id))
+			{
+				$skipped++;
+				continue;
+			}
+
+			$deleted++;
+		}
+
+		$id    = $db->quoteName('id');
+		$order = $db->quoteName('order');
+		$query = $db->getQuery(true);
+		$roles = $db->quoteName('#__groups_roles');
+
+		$query->select([$id, $order])->from($roles);
+		$db->setQuery($query);
+		$results = $db->loadAssocList('id', 'order');
+		$results = array_flip($results);
+		ksort($results);
+
+		$order = 1;
+
+		foreach ($results as $id)
+		{
+			$table = new Table($db);
+			$table->load($id);
+			$table->order = $order;
+			$table->store();
+			$order++;
+		}
+
+		if ($skipped)
+		{
+			Component::message("$skipped entries could not be deleted. LOCALIZE", 'error');
+		}
+
+		if ($protected)
+		{
+			Component::message("A protected entry was not deleted. LOCALIZE", 'notice');
+		}
+
+		if ($deleted)
+		{
+			Component::message("$deleted entries were deleted successfully. LOCALIZE");
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getItems()
+	{
+		$items = parent::getItems();
+
+		foreach ($items as $item)
+		{
+			// Management access is a prerequisite of accessing this view at all.
+			$item->access   = true;
+			$item->editLink = Route::_('index.php?option=com_groups&view=RoleEdit&id=' . $item->id);
+		}
+
+		return $items;
+	}
+
+	/**
 	 * Build an SQL query to load the list data.
 	 *
 	 * @return  QueryInterface
@@ -43,14 +154,16 @@ class Roles extends ListModel
 		// Create a new query object.
 		$db    = $this->getDatabase();
 		$query = $db->getQuery(true);
+		$tag   = Component::getTag();
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select',
-				'r.*'
-			)
-		);
+		$query->select([
+			$db->quoteName('r.id'),
+			$db->quoteName('r.order'),
+			$db->quoteName("r.name_$tag", 'name'),
+			$db->quoteName("r.names_$tag", 'names'),
+			$db->quoteName('r.protected')
+		]);
 
 		$assocTable   = $db->quoteName('#__groups_role_associations', 'ra');
 		$assocGroupID = $db->quoteName('ra.groupID');
@@ -96,24 +209,10 @@ class Roles extends ListModel
 	}
 
 	/**
-	 * Method to auto-populate the model state.
-	 *
-	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 * @param   string  $ordering   An optional ordering field.
-	 * @param   string  $direction  An optional direction (asc|desc).
-	 *
-	 * @return  void
-	 *
-	 * @since   1.6
+	 * @inheritDoc
 	 */
-	protected function populateState($ordering = 'r.ordering', $direction = 'asc')
+	protected function populateState($ordering = 'order', $direction = 'asc')
 	{
-		// Load the parameters.
-		$params = Component::getParams('com_users')->merge(Component::getParams());
-		$this->setState('params', $params);
-
-		// List state information.
 		parent::populateState($ordering, $direction);
 	}
 }

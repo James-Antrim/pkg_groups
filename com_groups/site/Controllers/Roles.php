@@ -10,7 +10,6 @@
 
 namespace THM\Groups\Controllers;
 
-
 class Roles extends Controller
 {
 	//Stuff

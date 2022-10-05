@@ -10,7 +10,6 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Helper\ContentHelper as UsersAccess;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use THM\Groups\Adapters\Component;
@@ -28,17 +27,13 @@ class Roles extends ListView
 	 */
 	protected function addToolbar()
 	{
-		$usersAccess = UsersAccess::getActions('com_users');
+		ToolbarHelper::title(Text::_('GROUPS_ROLES'), 'users-cog groups');
 
-		ToolbarHelper::title(Text::_('COM_GROUPS_ROLES'), 'users-cog groups');
-
-		if (Can::manage())
-		{
-			ToolbarHelper::addNew('Role.add');
-			ToolbarHelper::editList('Role.edit');
-			ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Role.delete');
-			ToolbarHelper::divider();
-		}
+		// Manage access is a prerequisite for getting this far
+		ToolbarHelper::addNew('Role.add');
+		ToolbarHelper::editList('Role.edit');
+		ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Roles.delete');
+		ToolbarHelper::divider();
 
 		if (Can::administrate())
 		{
@@ -64,8 +59,16 @@ class Roles extends ListView
 		$this->headers = [
 			'check' => ['type' => 'check'],
 			'order' => ['type' => 'order'],
-			'name'  => ['properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'], 'type' => 'text'],
-			'names' => ['properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'], 'type' => 'text']
+			'name'  => [
+				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_ROLE'),
+				'type'       => 'text'
+			],
+			'names' => [
+				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_PLURAL'),
+				'type'       => 'text'
+			]
 		];
 
 		parent::display($tpl);

@@ -57,10 +57,10 @@ class Component
 			{
 				case 400:
 				case 404:
-				case 412:
 					$severity = 'notice';
 					break;
 				case 403:
+				case 412:
 					$severity = 'warning';
 					break;
 				case 500:
@@ -125,6 +125,18 @@ class Component
 	public static function getParams(string $component = 'com_groups'): Registry
 	{
 		return ComponentHelper::getParams($component);
+	}
+
+	/**
+	 * Gets the language portion of the localization tag.
+	 *
+	 * @return string
+	 */
+	public static function getTag(): string
+	{
+		$language = self::getApplication()->getLanguage();
+
+		return explode('-', $language->getTag())[0];
 	}
 
 	/**

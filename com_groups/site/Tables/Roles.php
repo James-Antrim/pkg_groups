@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpMissingFieldTypeInspection */
+
 /**
  * @package     Groups
  * @extension   com_groups
@@ -18,11 +19,26 @@ use Joomla\Database\DatabaseDriver;
  */
 class Roles extends Table
 {
+	// INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+	public $id;
+
+	// VARCHAR(100) NOT NULL
+	public $name_de;
+	public $name_en;
+	public $names_de;
+	public $names_en;
+
+	// INT(3) UNSIGNED NOT NULL
+	public $order;
+
+	// TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+	public $protected;
+
 	/**
 	 * @inheritDoc
 	 */
 	public function __construct(DatabaseDriver $dbo)
-    {
-        parent::__construct('#__thm_groups_roles', 'id', $dbo);
-    }
+	{
+		parent::__construct('#__groups_roles', 'id', $dbo);
+	}
 }
