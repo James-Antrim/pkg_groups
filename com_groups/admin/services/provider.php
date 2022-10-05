@@ -24,9 +24,7 @@ use Joomla\DI\ServiceProviderInterface;
 use THM\Groups\Providers;
 
 /**
- * The mywalks service provider.
- *
- * @since  4.0.0
+ * The service provider.
  */
 return new class implements ServiceProviderInterface {
 	/**
@@ -40,8 +38,8 @@ return new class implements ServiceProviderInterface {
 	 */
 	public function register(Container $container)
 	{
-		$container->registerServiceProvider(new Providers\MVC('\\THM\\Groups'));
-		$container->registerServiceProvider(new Service\Provider\ComponentDispatcherFactory('\\THM\\Groups'));
+		$container->registerServiceProvider(new Providers\MVC());
+		$container->registerServiceProvider(new Providers\Dispatcher());
 //		$container->registerServiceProvider(new Service\Provider\CategoryFactory('\\THM\\Groups'));
 //		$container->registerServiceProvider(new Service\Provider\RouterFactory('\\THM\\Groups'));
 		$container->set(

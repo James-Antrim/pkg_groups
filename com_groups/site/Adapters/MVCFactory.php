@@ -17,13 +17,22 @@ use Joomla\CMS\Form\FormFactoryAwareInterface;
 use Joomla\CMS\MVC\Factory\MVCFactory as Base;
 use Joomla\Event\DispatcherAwareInterface;
 use Joomla\Input\Input;
+use THM\Groups\Controllers\Controller;
 
 class MVCFactory extends Base
 {
 	/**
-	 * @inheritDoc
+	 * Method to load and return a controller object.
+	 *
+	 * @param   string                   $name    The name of the controller
+	 * @param   string                   $prefix  The controller prefix
+	 * @param   array                    $config  The configuration array for the controller
+	 * @param   CMSApplicationInterface  $app     The app
+	 * @param   Input                    $input   The input
+	 *
+	 * @return  Controller
 	 */
-	public function createController($name, $prefix, array $config, CMSApplicationInterface $app, Input $input)
+	public function createController($name, $prefix, array $config, CMSApplicationInterface $app, Input $input): Controller
 	{
 		$name           = preg_replace('/[^A-Z0-9_]/i', '', $name);
 		$className      = "THM\Groups\Controllers\\$name";

@@ -10,18 +10,17 @@
 
 namespace THM\Groups\Providers;
 
-use Joomla\CMS\Extension\Service\Provider\MVCFactory as Base;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormFactoryInterface;
 use Joomla\CMS\MVC\Factory\ApiMVCFactory;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\DI\Container;
+use Joomla\DI\ServiceProviderInterface;
 use Joomla\Event\DispatcherInterface;
 use THM\Groups\Adapters\MVCFactory;
 
-class MVC extends Base
+class MVC implements ServiceProviderInterface
 {
-
 	/**
 	 * Registers the service provider with a DI container.
 	 *
@@ -35,8 +34,7 @@ class MVC extends Base
 	{
 		$container->set(
 			MVCFactoryInterface::class,
-			function (Container $container)
-			{
+			function (Container $container) {
 				if (Factory::getApplication()->isClient('api'))
 				{
 					$factory = new ApiMVCFactory('\\THM\\Groups');
