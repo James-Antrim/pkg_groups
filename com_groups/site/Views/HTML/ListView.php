@@ -60,7 +60,6 @@ class ListView extends BaseView
 		$this->pagination = $this->get('Pagination');
 		$this->state      = $this->get('State');
 		$this->filterForm = $this->get('FilterForm');
-		echo "<pre>?: " . print_r($this->filterForm->getField('group'), true) . "</pre>";
 		$this->activeFilters = $this->get('ActiveFilters');
 
 		// Check for errors.

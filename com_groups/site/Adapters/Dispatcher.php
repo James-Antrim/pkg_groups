@@ -12,7 +12,6 @@ namespace THM\Groups\Adapters;
 
 use Exception;
 use Joomla\CMS\Dispatcher\ComponentDispatcher;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
