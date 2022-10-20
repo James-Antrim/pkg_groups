@@ -9,7 +9,7 @@
 
 namespace THM\Groups\Models;
 
-use THM\Groups\Adapters\Component;
+use THM\Groups\Adapters\Application;
 
 trait Named
 {
@@ -40,7 +40,7 @@ trait Named
 	{
 		if (empty($this->name))
 		{
-			$this->name    = Component::getClass($this);
+			$this->name    = Application::getClass($this);
 			$this->context = strtolower('com_groups.' . $this->getName());
 		}
 

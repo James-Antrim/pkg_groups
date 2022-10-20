@@ -12,14 +12,16 @@ namespace THM\Groups\Adapters;
 
 use Exception;
 use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\Application\WebApplication;
 use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Document\Document;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
-class Component
+class Application
 {
 	/**
 	 * Checks whether the current context is the administrator context.
@@ -113,6 +115,20 @@ class Component
 		$lastItem = array_pop($nsParts);
 
 		return empty($lastItem) ? 'Dashboard' : $lastItem;
+	}
+
+	/**
+	 * Shortcuts document access.
+	 * @return Document
+	 *
+	 * @since version
+	 */
+	public static function getDocument(): Document
+	{
+		/** @var WebApplication $app */
+		$app = self::getApplication();
+
+		return $app->getDocument();
 	}
 
 	/**

@@ -15,7 +15,7 @@ use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel as Base;
 use Joomla\Database\QueryInterface;
-use THM\Groups\Adapters\Component;
+use THM\Groups\Adapters\Application;
 
 class ListModel extends Base
 {
@@ -35,8 +35,8 @@ class ListModel extends Base
 		}
 		catch (Exception $exception)
 		{
-			Component::message($exception->getMessage(), 'error');
-			Component::redirect('', $exception->getCode());
+			Application::message($exception->getMessage(), 'error');
+			Application::redirect('', $exception->getCode());
 		}
 	}
 
@@ -59,8 +59,8 @@ class ListModel extends Base
 		}
 		catch (Exception $exception)
 		{
-			Component::message($exception->getMessage(), 'error');
-			Component::redirect('', $exception->getCode());
+			Application::message($exception->getMessage(), 'error');
+			Application::redirect('', $exception->getCode());
 		}
 
 		return null;

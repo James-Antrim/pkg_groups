@@ -13,7 +13,7 @@ namespace THM\Groups\Models;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
-use THM\Groups\Adapters\Component;
+use THM\Groups\Adapters\Application;
 
 class Groups extends ListModel
 {
@@ -104,7 +104,7 @@ class Groups extends ListModel
 	protected function populateState($ordering = 'a.lft', $direction = 'asc')
 	{
 		// Load the parameters.
-		$params = Component::getParams('com_users')->merge(Component::getParams());
+		$params = Application::getParams('com_users')->merge(Application::getParams());
 		$this->setState('params', $params);
 
 		// List state information.

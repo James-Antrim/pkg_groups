@@ -270,7 +270,7 @@ class Input
 	public static function getItemid(): int
 	{
 		/** @var CMSApplication $app */
-		$app     = Component::getApplication();
+		$app     = Application::getApplication();
 		$default = (empty($app->getMenu()) or empty($app->getMenu()->getActive())) ? 0 : $app->getMenu()->getActive()->id;
 
 		return self::getInt('Itemid', $default);
@@ -285,7 +285,7 @@ class Input
 	{
 		if (empty(self::$input))
 		{
-			self::$input = Component::getApplication()->input;
+			self::$input = Application::getApplication()->input;
 		}
 
 		return self::$input;
@@ -317,9 +317,9 @@ class Input
 	{
 		if (empty(self::$params))
 		{
-			$app          = Component::getApplication();
+			$app          = Application::getApplication();
 			self::$params = method_exists($app, 'getParams') ?
-				$app->getParams() : Component::getParams('com_organizer');
+				$app->getParams() : Application::getParams('com_organizer');
 		}
 
 		return self::$params;

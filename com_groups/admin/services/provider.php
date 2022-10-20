@@ -38,8 +38,8 @@ return new class implements ServiceProviderInterface {
 	 */
 	public function register(Container $container)
 	{
-		$container->registerServiceProvider(new Providers\MVC());
 		$container->registerServiceProvider(new Providers\Dispatcher());
+		$container->registerServiceProvider(new Providers\MVC());
 //		$container->registerServiceProvider(new Service\Provider\CategoryFactory('\\THM\\Groups'));
 //		$container->registerServiceProvider(new Service\Provider\RouterFactory('\\THM\\Groups'));
 		$container->set(

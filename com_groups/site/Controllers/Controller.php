@@ -10,7 +10,7 @@
 namespace THM\Groups\Controllers;
 
 use Joomla\CMS\MVC\Controller\BaseController;
-use THM\Groups\Adapters\Component;
+use THM\Groups\Adapters\Application;
 
 class Controller extends BaseController
 {
@@ -59,6 +59,6 @@ class Controller extends BaseController
 			echo "1";
 		}
 
-		Component::getApplication()->close();
+		Application::getApplication()->close();
 	}
 }

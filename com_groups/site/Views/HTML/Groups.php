@@ -17,7 +17,7 @@ namespace THM\Groups\Views\HTML;
 use Joomla\CMS\Helper\ContentHelper as UsersAccess;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use THM\Groups\Adapters\Component;
+use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
 
 /**
@@ -68,7 +68,7 @@ class Groups extends ListView
 	{
 		if ($this->backend and !Can::manage())
 		{
-			Component::error(403);
+			Application::error(403);
 		}
 
 		parent::display($tpl);

@@ -72,7 +72,7 @@ class Dispatcher extends ComponentDispatcher
 		}
 		catch (Exception $exception)
 		{
-			Component::error(500);
+			Application::error(500);
 		}
 
 		$controller->redirect();

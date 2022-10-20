@@ -68,7 +68,7 @@ class MVCFactory extends Base
 
 		if (!in_array($type, $supported))
 		{
-			Component::error(501);
+			Application::error(501);
 		}
 
 		$name      = preg_replace('/[^A-Z0-9_]/i', '', $name);
@@ -90,7 +90,7 @@ class MVCFactory extends Base
 
 		if (!in_array($name, $this->getTableClasses()))
 		{
-			Component::error(503);
+			Application::error(503);
 		}
 
 		$className = "THM\Groups\Tables\\$name";

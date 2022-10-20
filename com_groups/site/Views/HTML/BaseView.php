@@ -12,7 +12,7 @@ namespace THM\Groups\Views\HTML;
 
 use Exception;
 use Joomla\CMS\MVC\View\HtmlView;
-use THM\Groups\Adapters\Component;
+use THM\Groups\Adapters\Application;
 use THM\Groups\Views\Named;
 
 abstract class BaseView extends HtmlView
@@ -38,8 +38,8 @@ abstract class BaseView extends HtmlView
 		$this->_setPath('layout', $this->_basePath . '/Layouts');
 		$this->_setPath('template', $this->_basePath . '/templates');
 
-		$this->backend = Component::backend();
-		$this->mobile  = Component::mobile();
+		$this->backend = Application::backend();
+		$this->mobile  = Application::mobile();
 	}
 
 	/**
@@ -60,8 +60,8 @@ abstract class BaseView extends HtmlView
 			/**
 			 * So many possible points of failure...
 			 */
-			Component::message($exception->getMessage(), 'error');
-			Component::redirect('', $exception->getCode());
+			Application::message($exception->getMessage(), 'error');
+			Application::redirect('', $exception->getCode());
 		}
 	}
 

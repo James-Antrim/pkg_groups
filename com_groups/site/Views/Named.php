@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Views;
 
-use THM\Groups\Adapters\Component;
+use THM\Groups\Adapters\Application;
 
 trait Named
 {
@@ -31,7 +31,7 @@ trait Named
 	{
 		if (empty($this->_name))
 		{
-			$this->_name = Component::getClass($this);
+			$this->_name = Application::getClass($this);
 		}
 
 		return $this->_name;

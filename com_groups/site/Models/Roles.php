@@ -16,7 +16,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
-use THM\Groups\Adapters\Component;
+use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Roles as Table;
@@ -48,12 +48,12 @@ class Roles extends ListModel
 	{
 		if (!Can::manage())
 		{
-			Component::error(403);
+			Application::error(403);
 		}
 
 		if (!$ids = Input::getSelectedIDs())
 		{
-			Component::message(Text::_('JERROR_NO_ITEMS_SELECTED'), 'error');
+			Application::message(Text::_('JERROR_NO_ITEMS_SELECTED'), 'error');
 
 			return;
 		}
@@ -70,7 +70,7 @@ class Roles extends ListModel
 
 			if (!$table->load($id))
 			{
-				Component::error(412);
+				Application::error(412);
 			}
 
 			if ($table->protected or !$table->delete($id))
@@ -112,17 +112,17 @@ class Roles extends ListModel
 
 		if ($skipped)
 		{
-			Component::message("$skipped entries could not be deleted. LOCALIZE", 'error');
+			Application::message("$skipped entries could not be deleted. LOCALIZE", 'error');
 		}
 
 		if ($protected)
 		{
-			Component::message("A protected entry was not deleted. LOCALIZE", 'notice');
+			Application::message("A protected entry was not deleted. LOCALIZE", 'notice');
 		}
 
 		if ($deleted)
 		{
-			Component::message("$deleted entries were deleted successfully. LOCALIZE");
+			Application::message("$deleted entries were deleted successfully. LOCALIZE");
 		}
 	}
 
@@ -153,7 +153,7 @@ class Roles extends ListModel
 		// Create a new query object.
 		$db    = $this->getDatabase();
 		$query = $db->getQuery(true);
-		$tag   = Component::getTag();
+		$tag   = Application::getTag();
 
 		// Select the required fields from the table.
 		$query->select([
