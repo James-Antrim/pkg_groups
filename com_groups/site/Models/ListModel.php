@@ -15,20 +15,35 @@ use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel as Base;
 use Joomla\Database\QueryInterface;
+use Joomla\Registry\Registry;
 use THM\Groups\Adapters\Application;
 
-class ListModel extends Base
+/**
+ * Model class for handling lists of items.
+ * - Overrides/-writes to avoid deprecated code in the platform or promote ease of use
+ * - Supplemental functions to extract common code from list models
+ */
+abstract class ListModel extends Base
 {
 	use Named;
 
 	/**
-	 * Constructor
+	 * A state object
+	 *
+	 * @var    Registry
+	 */
+	protected $state = null;
+
+	/**
+	 * Constructor. The state is set here to prevent the use of a deprecated CMSObject as the state in the stateAwareTrait.
 	 *
 	 * @param   array                     $config   An array of configuration options (name, state, dbo, table_path, ignore_request).
 	 * @param   MVCFactoryInterface|null  $factory  The factory.
 	 */
 	public function __construct($config = [], MVCFactoryInterface $factory = null)
 	{
+		$this->state = new Registry();
+
 		try
 		{
 			parent::__construct($config, $factory);
@@ -41,20 +56,23 @@ class ListModel extends Base
 	}
 
 	/**
-	 * @inheritDoc
+	 * Gets the filter form. Overwrites the parent to have form names analog to the view names in which they are used.
+	 * Also has enhanced error reporting in the event of failure.
+	 *
+	 * @param   array  $data      data
+	 * @param   bool   $loadData  load current data
+	 *
+	 * @return  Form|null  the form object or null if the form can't be found
 	 */
 	public function getFilterForm($data = [], $loadData = true): ?Form
 	{
 		$this->filterFormName = strtolower($this->name);
 
-		Form::addFieldPath(JPATH_COMPONENT_SITE . '/Fields');
-		Form::addFormPath(JPATH_COMPONENT_SITE . '/forms');
+		$context = $this->context . '.filter';
+		$options = ['control' => '', 'load_data' => $loadData];
 
 		try
 		{
-			$context = $this->context . '.filter';
-			$options = ['control' => '', 'load_data' => $loadData];
-
 			return $this->loadForm($context, $this->filterFormName, $options);
 		}
 		catch (Exception $exception)

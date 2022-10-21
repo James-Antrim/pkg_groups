@@ -12,13 +12,18 @@ namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use THM\Groups\Adapters\Component;
+use Joomla\Registry\Registry;
+use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
 
-class ListView extends BaseView
+/**
+ * View class for handling lists of items.
+ * - Overrides/-writes to avoid deprecated code in the platform or promote ease of use
+ * - Supplemental functions to extract common code from list models
+ */
+abstract class ListView extends BaseView
 {
 	public array $activeFilters;
 	public array $batch;
@@ -27,7 +32,7 @@ class ListView extends BaseView
 	protected array $items;
 	protected string $layout = 'list';
 	protected Pagination $pagination;
-	public CMSObject $state;
+	public Registry $state;
 
 	/**
 	 * Add the page title and toolbar.
@@ -56,17 +61,17 @@ class ListView extends BaseView
 	 */
 	public function display($tpl = null)
 	{
-		$this->items      = $this->get('Items');
-		$this->pagination = $this->get('Pagination');
-		$this->state      = $this->get('State');
-		$this->filterForm = $this->get('FilterForm');
+		$this->items         = $this->get('Items');
+		$this->pagination    = $this->get('Pagination');
+		$this->state         = $this->get('State');
+		$this->filterForm    = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
 
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
-			Component::message(implode("\n", $errors), 'error');
-			Component::redirect('', 500);
+			Application::message(implode("\n", $errors), 'error');
+			Application::redirect('', 500);
 		}
 
 		$this->addToolbar();
