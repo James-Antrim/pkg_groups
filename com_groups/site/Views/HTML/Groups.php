@@ -15,7 +15,6 @@
 namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Helper\ContentHelper as UsersAccess;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
@@ -35,8 +34,6 @@ class Groups extends ListView
 	{
 		$usersAccess = UsersAccess::getActions('com_users');
 
-		ToolbarHelper::title(Text::_('COM_GROUPS_GROUPS'), 'users-cog groups');
-
 		if ($usersAccess->get('core.create'))
 		{
 			ToolbarHelper::addNew('Group.add');
@@ -47,14 +44,6 @@ class Groups extends ListView
 			ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Groups.delete');
 			ToolbarHelper::divider();
 		}
-
-		if ($usersAccess->get('core.admin') || $usersAccess->get('core.options'))
-		{
-			ToolbarHelper::preferences('com_groups');
-			ToolbarHelper::divider();
-		}
-
-		ToolbarHelper::help('Users:_Groups');
 	}
 
 	/**

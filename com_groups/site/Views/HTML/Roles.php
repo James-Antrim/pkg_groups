@@ -27,19 +27,13 @@ class Roles extends ListView
 	 */
 	protected function addToolbar()
 	{
-		ToolbarHelper::title(Text::_('GROUPS_ROLES'), 'users-cog groups');
-
 		// Manage access is a prerequisite for getting this far
 		ToolbarHelper::addNew('Role.add');
 		ToolbarHelper::editList('Role.edit');
 		ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Roles.delete');
 		ToolbarHelper::divider();
 
-		if (Can::administrate())
-		{
-			ToolbarHelper::preferences('com_groups');
-			ToolbarHelper::divider();
-		}
+		parent::addToolbar();
 	}
 
 	/**
