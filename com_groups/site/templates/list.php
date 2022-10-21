@@ -9,13 +9,11 @@
  */
 
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use THM\Groups\Adapters\HTML;
-use THM\Groups\Layouts\EmptyList;
-use THM\Groups\Layouts\ListHeaders;
-use THM\Groups\Layouts\ListItem;
+use THM\Groups\Layouts\
+{EmptyList, ListHeaders, ListTools, ListItem};
 use THM\Groups\Views\HTML\ListView;
 
 /** @var ListView $this */
@@ -44,7 +42,7 @@ if ($dragEnabled and !empty($this->items))
     <div class="row">
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
-				<?php echo LayoutHelper::render('joomla.searchtools.default', ['view' => $this]); ?>
+				<?php ListTools::render($this); ?>
 				<?php if (empty($this->items)) : ?>
 					<?php EmptyList::render(); ?>
 				<?php else : ?>
