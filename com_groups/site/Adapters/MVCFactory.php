@@ -12,15 +12,65 @@ namespace THM\Groups\Adapters;
 
 use Exception;
 use Joomla\CMS\Application\CMSApplicationInterface;
-use Joomla\CMS\Factory;
 use Joomla\CMS\Form\FormFactoryAwareInterface;
 use Joomla\CMS\MVC\Factory\MVCFactory as Base;
 use Joomla\Event\DispatcherAwareInterface;
 use Joomla\Input\Input;
 use THM\Groups\Controllers\Controller;
 
+/**
+ * Factory for MVC Object creation.
+ */
 class MVCFactory extends Base
 {
+	/**
+	 * Sets the internal event dispatcher on the given object. Parent has private access. :(
+	 *
+	 * @param   object  $object  the object
+	 *
+	 * @return  void
+	 */
+	private function addDispatcher(object $object)
+	{
+		if (!$object instanceof DispatcherAwareInterface)
+		{
+			return;
+		}
+
+		try
+		{
+			$object->setDispatcher($this->getDispatcher());
+		}
+		catch (Exception $exception)
+		{
+			// Ignore it
+		}
+	}
+
+	/**
+	 * Sets the internal form factory on the given object. Parent has private access. :(
+	 *
+	 * @param   object  $object  the object
+	 *
+	 * @return  void
+	 */
+	private function addFormFactory(object $object)
+	{
+		if (!$object instanceof FormFactoryAwareInterface)
+		{
+			return;
+		}
+
+		try
+		{
+			$object->setFormFactory($this->getFormFactory());
+		}
+		catch (Exception $exception)
+		{
+			// Ignore it
+		}
+	}
+
 	/**
 	 * Method to load and return a controller object.
 	 *
@@ -38,8 +88,8 @@ class MVCFactory extends Base
 		$className      = "THM\Groups\Controllers\\$name";
 		$config['name'] = $name;
 		$controller     = new $className($config, $this, $app, $input);
-		$this->setFormFactoryOnObject($controller);
-		$this->setDispatcherOnObject($controller);
+		$this->addDispatcher($controller);
+		$this->addFormFactory($controller);
 
 		return $controller;
 	}
@@ -52,8 +102,8 @@ class MVCFactory extends Base
 		$name      = preg_replace('/[^A-Z0-9_]/i', '', $name);
 		$className = "THM\Groups\Models\\$name";
 		$model     = new $className($config, $this);
-		$this->setFormFactoryOnObject($model);
-		$this->setDispatcherOnObject($model);
+		$this->addDispatcher($model);
+		$this->addFormFactory($model);
 
 		return $model;
 	}
@@ -74,8 +124,8 @@ class MVCFactory extends Base
 		$name      = preg_replace('/[^A-Z0-9_]/i', '', $name);
 		$className = "THM\Groups\Views\\$type\\$name";
 		$view      = new $className($config);
-		$this->setFormFactoryOnObject($view);
-		$this->setDispatcherOnObject($view);
+		$this->addDispatcher($view);
+		$this->addFormFactory($view);
 
 		return $view;
 	}
@@ -94,7 +144,7 @@ class MVCFactory extends Base
 		}
 
 		$className = "THM\Groups\Tables\\$name";
-		$dbo       = array_key_exists('dbo', $config) ? $config['dbo'] : Factory::getDbo();
+		$dbo       = array_key_exists('dbo', $config) ? $config['dbo'] : $this->getDatabase();
 
 		return new $className($dbo);
 	}
@@ -114,53 +164,5 @@ class MVCFactory extends Base
 		}
 
 		return $tables;
-	}
-
-	/**
-	 * Sets the internal form factory on the given object. Parent has private access. :(
-	 *
-	 * @param   object  $object  the object
-	 *
-	 * @return  void
-	 */
-	private function setFormFactoryOnObject(object $object)
-	{
-		if (!$object instanceof FormFactoryAwareInterface)
-		{
-			return;
-		}
-
-		try
-		{
-			$object->setFormFactory($this->getFormFactory());
-		}
-		catch (Exception $exception)
-		{
-			// Ignore it
-		}
-	}
-
-	/**
-	 * Sets the internal event dispatcher on the given object. Parent has private access. :(
-	 *
-	 * @param   object  $object  the object
-	 *
-	 * @return  void
-	 */
-	private function setDispatcherOnObject(object $object)
-	{
-		if (!$object instanceof DispatcherAwareInterface)
-		{
-			return;
-		}
-
-		try
-		{
-			$object->setDispatcher($this->getDispatcher());
-		}
-		catch (Exception $exception)
-		{
-			// Ignore it
-		}
 	}
 }

@@ -19,8 +19,6 @@ use THM\Groups\Adapters\DispatcherFactory;
 
 /**
  * Service provider for the service dispatcher factory.
- *
- * @since  4.0.0
  */
 class Dispatcher implements ServiceProviderInterface
 {
@@ -31,7 +29,8 @@ class Dispatcher implements ServiceProviderInterface
 	{
 		$container->set(
 			ComponentDispatcherFactoryInterface::class,
-			function (Container $container) {
+			function (Container $container)
+			{
 				return new DispatcherFactory('\\THM\\Groups', $container->get(MVCFactoryInterface::class));
 			}
 		);
