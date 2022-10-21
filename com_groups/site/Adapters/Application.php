@@ -15,12 +15,17 @@ use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Application\WebApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Document\Document;
+use Joomla\CMS\Language\Language;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
+/**
+ * Aggregates various core joomla functions spread around multiple core classes and offers shortcuts to them with no
+ * thrown exceptions.
+ */
 class Application
 {
 	/**
@@ -42,15 +47,14 @@ class Application
 	 */
 	public static function error(int $code)
 	{
-		$URI     = Uri::getInstance();
-		$current = $URI->toString();
+		$current = Uri::getInstance()->toString();
 
 		//TODO: Add logging
 
 		if ($code === 401)
 		{
 			$return   = urlencode(base64_encode($current));
-			$URL      = Uri::base() . "?option=com_users&view=login&return=$return";
+			$url      = Uri::base() . "?option=com_users&view=login&return=$return";
 			$severity = 'notice';
 		}
 		else
@@ -75,11 +79,11 @@ class Application
 			}
 
 			$referrer = Input::getInput()->server->getString('HTTP_REFERER', Uri::base());
-			$URL      = $referrer === $current ? Uri::base() : $referrer;
+			$url      = $referrer === $current ? Uri::base() : $referrer;
 		}
 
 		self::message(Text::_("GROUPS_$code"), $severity);
-		self::redirect($URL, $code);
+		self::redirect($url, $code);
 	}
 
 	/**
@@ -129,6 +133,16 @@ class Application
 		$app = self::getApplication();
 
 		return $app->getDocument();
+	}
+
+	/**
+	 * Method to get the application language object.
+	 *
+	 * @return  Language  The language object
+	 */
+	public static function getLanguage(): Language
+	{
+		return self::getApplication()->getLanguage();
 	}
 
 	/**
