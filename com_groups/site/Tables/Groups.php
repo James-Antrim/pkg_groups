@@ -16,7 +16,7 @@ use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
 
 /**
- * Class representing the roles table.
+ * Class representing the groups table.
  */
 class Groups extends Table
 {
@@ -26,9 +26,6 @@ class Groups extends Table
 	// VARCHAR(100) NOT NULL
 	public $name_de;
 	public $name_en;
-
-	// TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
-	public $ignore;
 
 	/**
 	 * @inheritDoc

@@ -1,8 +1,7 @@
 CREATE TABLE IF NOT EXISTS `v7ocf_groups_groups` (
-    `id`      INT(10) UNSIGNED    NOT NULL,
-    `name_de` VARCHAR(100)        NOT NULL,
-    `name_en` VARCHAR(100)        NOT NULL,
-    `ignore`  TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `id`      INT(10) UNSIGNED NOT NULL,
+    `name_de` VARCHAR(100)     NOT NULL,
+    `name_en` VARCHAR(100)     NOT NULL,
     PRIMARY KEY (`id`)
 # no unique keys for groups which may have the same name in different contexts.
 )
