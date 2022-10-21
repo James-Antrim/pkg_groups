@@ -61,7 +61,7 @@ class Roles extends ListModel
 		/** @var DatabaseDriver $db */
 		$db        = $this->getDatabase();
 		$deleted   = 0;
-		$protected = false;
+		$protected = 0;
 		$skipped   = 0;
 
 		foreach ($ids as $id)
@@ -75,7 +75,7 @@ class Roles extends ListModel
 
 			if ($table->protected or !$table->delete($id))
 			{
-				$protected = true;
+				$protected++;
 				continue;
 			}
 
@@ -112,17 +112,17 @@ class Roles extends ListModel
 
 		if ($skipped)
 		{
-			Application::message("$skipped entries could not be deleted. LOCALIZE", 'error');
+			Application::message(Text::sprintf('GROUPS_X_SKIPPPED_NOT_DELETED', $skipped), 'error');
 		}
 
 		if ($protected)
 		{
-			Application::message("A protected entry was not deleted. LOCALIZE", 'notice');
+			Application::message(Text::sprintf('GROUPS_X_PROTECTED_NOT_DELETED', $protected), 'notice');
 		}
 
 		if ($deleted)
 		{
-			Application::message("$deleted entries were deleted successfully. LOCALIZE");
+			Application::message(Text::sprintf('GROUPS_X_DELETED', $deleted));
 		}
 	}
 
@@ -138,6 +138,20 @@ class Roles extends ListModel
 			// Management access is a prerequisite of accessing this view at all.
 			$item->access   = true;
 			$item->editLink = Route::_('index.php?option=com_groups&view=RoleEdit&id=' . $item->id);
+
+			if ($item->groups === 0)
+			{
+				$item->groups = Text::_('GROUPS_NO_GROUPS');
+			}
+			elseif ($item->groups === 1)
+			{
+				$item->groups = $item->group;
+			}
+			else
+			{
+				//TODO: link to groups view with role filter set to this one
+				$item->groups = $item->group;
+			}
 		}
 
 		return $items;
@@ -151,9 +165,13 @@ class Roles extends ListModel
 	protected function getListQuery(): QueryInterface
 	{
 		// Create a new query object.
-		$db    = $this->getDatabase();
-		$query = $db->getQuery(true);
-		$tag   = Application::getTag();
+		$db     = $this->getDatabase();
+		$groups = $db->quoteName('g.id', 'groups');
+		$groups = 'COUNT(' . implode(') AS ', explode(' AS ', $groups));
+		$query  = $db->getQuery(true);
+		$tag    = Application::getTag();
+
+		//'COUNT(' . $db->quoteName('id') . ')'
 
 		// Select the required fields from the table.
 		$query->select([
@@ -161,43 +179,38 @@ class Roles extends ListModel
 			$db->quoteName('r.ordering'),
 			$db->quoteName("r.name_$tag", 'name'),
 			$db->quoteName("r.names_$tag", 'names'),
-			$db->quoteName('r.protected')
+			$db->quoteName('r.protected'),
+			$db->quoteName("g.name_$tag", 'group'),
+			$groups
 		]);
 
 		$assocTable   = $db->quoteName('#__groups_role_associations', 'ra');
 		$assocGroupID = $db->quoteName('ra.groupID');
 		$assocRoleID  = $db->quoteName('ra.roleID');
-		$groupsID     = $db->quoteName('ug.id');
-		$groupsTable  = $db->quoteName('#__usergroups', 'ug');
+		$groupsID     = $db->quoteName('g.id');
+		$groupsTable  = $db->quoteName('#__groups_groups', 'g');
 		$roleID       = $db->quoteName('r.id');
 		$rolesTable   = $db->quoteName('#__groups_roles', 'r');
 
-		$query->from($rolesTable)
-			->join('left', $assocTable, "$assocRoleID = $roleID")
-			->join('left', $groupsTable, "$groupsID = $assocGroupID");
+		$query->from($rolesTable)->group($roleID);
 
-		// Filter the comments over the search string if set.
-		$search = $this->getState('filter.search');
-
-		if (!empty($search))
+		$groupID = $this->getState('filter.groupID');
+		if (is_numeric($groupID) and intval($groupID) > 0)
 		{
-			if (stripos($search, 'id:') === 0)
-			{
-				$ids = (int) substr($search, 3);
-				$query->where("$roleID = :id");
-				$query->bind(':id', $ids, ParameterType::INTEGER);
-			}
-			else
-			{
-				$search  = '%' . trim($search) . '%';
-				$nameDE  = $db->quoteName('r.name_de') . ' LIKE :title';
-				$nameEN  = $db->quoteName('r.name_en') . ' LIKE :title';
-				$namesDE = $db->quoteName('r.names_de') . ' LIKE :title';
-				$namesEN = $db->quoteName('r.names_en') . ' LIKE :title';
-				$group   = $db->quoteName('ug.title') . ' LIKE :title';
+			$groupID = (int) $groupID;
+			$query->join('inner', $assocTable, "$assocRoleID = $roleID")
+				->join('inner', $groupsTable, "$groupsID = $assocGroupID")
+				->where($groupsID . ' = :groupID')
+				->bind(':groupID', $groupID, ParameterType::INTEGER);
+		}
+		else
+		{
+			$query->join('left', $assocTable, "$assocRoleID = $roleID")
+				->join('left', $groupsTable, "$groupsID = $assocGroupID");
 
-				$query->where("($nameDE OR $nameEN OR $namesDE OR $namesEN OR $group)");
-				$query->bind(':title', $search);
+			if (is_numeric($groupID) and intval($groupID) < 0)
+			{
+				$query->where($groupsID . ' IS NULL');
 			}
 		}
 

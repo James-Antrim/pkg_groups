@@ -50,6 +50,7 @@ class Roles extends ListView
 			Application::error(403);
 		}
 
+		//TODO: supress ordering if a filter has been used
 		$this->headers = [
 			'check'    => ['type' => 'check'],
 			'ordering' => ['type' => 'ordering'],
@@ -62,6 +63,11 @@ class Roles extends ListView
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
 				'title'      => Text::_('GROUPS_PLURAL'),
 				'type'       => 'text'
+			],
+			'groups'   => [
+				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_GROUPS'),
+				'type'       => 'value'
 			]
 		];
 

@@ -10,35 +10,45 @@
 namespace THM\Groups\Fields;
 
 use Joomla\CMS\Form\Field\ListField;
+use Joomla\CMS\Helper\UserGroupsHelper;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Tables\Groups as GT;
 
+/**
+ * Provides a list of context relevant groups.
+ */
 class Groups extends ListField
 {
 	protected $type = 'Groups';
 
+	/**
+	 * Method to get the group options.
+	 *
+	 * @return  array  the group option objects
+	 */
 	protected function getOptions(): array
 	{
 		$defaultOptions = parent::getOptions();
+		$nameColumn     = 'name_' . Application::getTag();
+		$options        = [];
 
-		$db = $this->getDatabase();
+		foreach (UserGroupsHelper::getInstance()->getAll() as $groupID => $group)
+		{
+			$disabled = $groupID <= 9 ? 'disabled' : '';
+			$table    = new GT($this->getDatabase());
 
-		$gID   = $db->quoteName('g.id');
-		$tag   = Application::getTag();
-		$query = $db->getQuery(true);
-		$ugID  = $db->quoteName('ug.id');
+			if ($table->load($groupID) and $name = $table->$nameColumn ?? null)
+			{
+				$group->title = $name;
+			}
 
-		$query->select([
-			"DISTINCT $ugID",
-			$db->quoteName('ug.level'),
-			$db->quoteName('ug.lft', 'left'),
-			$db->quoteName("g.name_$tag", 'name'),
-			$db->quoteName('ug.rgt', 'right'),
-			$db->quoteName('ug.title')
-		])
-			->from($db->quoteName('#__usergroups', 'ug'))
-			->join('inner', $db->quoteName('#__groups_groups', 'g'), "$gID = $ugID");
-		echo "<pre>" . print_r((string) $query, true) . "</pre>";
+			$options[] = (object) [
+				'disable' => $disabled,
+				'text'    => str_repeat('- ', $group->level) . $group->title,
+				'value'   => $group->id
+			];
+		}
 
-		return $defaultOptions;
+		return array_merge($defaultOptions, $options);
 	}
 }
