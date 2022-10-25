@@ -14,6 +14,7 @@ use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Tools\Migration;
 
 class Groups extends ListModel
 {
@@ -22,6 +23,8 @@ class Groups extends ListModel
 	 */
 	public function __construct($config = [], MVCFactoryInterface $factory = null)
 	{
+		Migration::migrate();
+
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = [
@@ -87,7 +90,6 @@ class Groups extends ListModel
 
 		return $query;
 	}
-
 
 	/**
 	 * Method to auto-populate the model state.

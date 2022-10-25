@@ -1,3 +1,8 @@
+DROP TABLE IF EXISTS
+    `v7ocf_groups_role_associations`,
+    `v7ocf_groups_roles`,
+    `v7ocf_groups_groups`;
+
 CREATE TABLE IF NOT EXISTS `v7ocf_groups_groups` (
     `id`      INT(10) UNSIGNED NOT NULL,
     `name_de` VARCHAR(100)     NOT NULL,
