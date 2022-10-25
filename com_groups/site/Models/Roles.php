@@ -179,7 +179,6 @@ class Roles extends ListModel
 			$db->quoteName('r.ordering'),
 			$db->quoteName("r.name_$tag", 'name'),
 			$db->quoteName("r.names_$tag", 'names'),
-			$db->quoteName('r.protected'),
 			$db->quoteName("g.name_$tag", 'group'),
 			$groups
 		]);
