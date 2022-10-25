@@ -39,7 +39,6 @@
         <files folder="admin">
             <filename>access.xml</filename>
             <filename>config.xml</filename>
-            <filename>LICENSE</filename>
             <folder>language</folder>
             <folder>services</folder>
         </files>
@@ -56,7 +55,6 @@
         <folder>templates</folder>
         <folder>Views</folder>
         <filename>Component.php</filename>
-        <filename>LICENSE</filename>
     </files>
     <!--<updateservers>
         <server type="extension" priority="1" name="Groups Component Update Site"></server>

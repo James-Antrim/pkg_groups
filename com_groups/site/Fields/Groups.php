@@ -12,6 +12,7 @@ namespace THM\Groups\Fields;
 use Joomla\CMS\Form\Field\ListField;
 use Joomla\CMS\Helper\UserGroupsHelper;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Helpers\Groups as Helper;
 use THM\Groups\Tables\Groups as GT;
 
 /**
@@ -34,7 +35,7 @@ class Groups extends ListField
 
 		foreach (UserGroupsHelper::getInstance()->getAll() as $groupID => $group)
 		{
-			$disabled = $groupID <= 9 ? 'disabled' : '';
+			$disabled = in_array($groupID, Helper::DEFAULT) ? 'disabled' : '';
 			$table    = new GT($this->getDatabase());
 
 			if ($table->load($groupID) and $name = $table->$nameColumn ?? null)
