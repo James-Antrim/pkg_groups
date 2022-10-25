@@ -22,7 +22,7 @@ class Can
 	{
 		$user = Factory::getUser();
 
-		return ($user->authorise('core.admin') OR $user->authorise('core.admin', 'com_groups'));
+		return ($user->authorise('core.admin') or $user->authorise('core.admin', 'com_groups'));
 	}
 
 	/**

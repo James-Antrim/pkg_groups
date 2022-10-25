@@ -23,6 +23,6 @@ class TemplateAttributes extends Table
 	 */
 	public function __construct(DatabaseDriver $dbo)
 	{
-        parent::__construct('#__thm_groups_template_attributes', 'id', $dbo);
-    }
+		parent::__construct('#__thm_groups_template_attributes', 'id', $dbo);
+	}
 }

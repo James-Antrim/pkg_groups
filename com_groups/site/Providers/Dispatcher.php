@@ -29,8 +29,7 @@ class Dispatcher implements ServiceProviderInterface
 	{
 		$container->set(
 			ComponentDispatcherFactoryInterface::class,
-			function (Container $container)
-			{
+			function (Container $container) {
 				return new DispatcherFactory('\\THM\\Groups', $container->get(MVCFactoryInterface::class));
 			}
 		);

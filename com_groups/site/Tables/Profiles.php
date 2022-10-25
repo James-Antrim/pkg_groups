@@ -22,7 +22,7 @@ class Profiles extends Table
 	 * @inheritDoc
 	 */
 	public function __construct(DatabaseDriver $dbo)
-    {
-        parent::__construct('#__thm_groups_profiles', 'id', $dbo);
-    }
+	{
+		parent::__construct('#__thm_groups_profiles', 'id', $dbo);
+	}
 }

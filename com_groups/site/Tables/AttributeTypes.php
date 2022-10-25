@@ -18,11 +18,11 @@ use Joomla\Database\DatabaseDriver;
  */
 class AttributeTypes extends Table
 {
-    /**
-     * @inheritDoc
-     */
-    public function __construct(DatabaseDriver $dbo)
-    {
-        parent::__construct('#__thm_groups_attribute_types', 'id', $dbo);
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public function __construct(DatabaseDriver $dbo)
+	{
+		parent::__construct('#__thm_groups_attribute_types', 'id', $dbo);
+	}
 }

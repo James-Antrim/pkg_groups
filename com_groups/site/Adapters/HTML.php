@@ -17,7 +17,7 @@ class HTML extends HTMLHelper
 	/**
 	 * Converts an array $property => $value to a string for use in HTML tags.
 	 *
-	 * @param   array  $array the properties and their values
+	 * @param   array  $array  the properties and their values
 	 *
 	 * @return string
 	 */

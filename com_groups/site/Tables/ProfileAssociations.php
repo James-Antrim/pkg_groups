@@ -21,8 +21,8 @@ class ProfileAssociations extends Table
 	/**
 	 * @inheritDoc
 	 */
-    public function __construct(DatabaseDriver $dbo)
-    {
-        parent::__construct('#__thm_groups_profile_associations', 'id', $dbo);
-    }
+	public function __construct(DatabaseDriver $dbo)
+	{
+		parent::__construct('#__thm_groups_profile_associations', 'id', $dbo);
+	}
 }
