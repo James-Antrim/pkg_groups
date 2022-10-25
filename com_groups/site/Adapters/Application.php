@@ -16,6 +16,8 @@ use Joomla\CMS\Application\WebApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Language\Language;
+use Joomla\Database\DatabaseDriver;
+use Joomla\DI\Container;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
@@ -122,10 +124,26 @@ class Application
 	}
 
 	/**
+	 * Shortcuts container access.
+	 * @return Container
+	 */
+	public static function getContainer(): Container
+	{
+		return Factory::getContainer();
+	}
+
+	/**
+	 * Shortcuts container access.
+	 * @return DatabaseDriver
+	 */
+	public static function getDB(): DatabaseDriver
+	{
+		return self::getContainer()->get('DatabaseDriver');
+	}
+
+	/**
 	 * Shortcuts document access.
 	 * @return Document
-	 *
-	 * @since version
 	 */
 	public static function getDocument(): Document
 	{
