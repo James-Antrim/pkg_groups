@@ -30,4 +30,47 @@ class HTML extends HTMLHelper
 
 		return $array ? implode(' ', $array) : '';
 	}
+
+	/**
+	 * Creates an icon with tooltip as appropriate.
+	 *
+	 * @param   string  $class  the icon class(es)
+	 *
+	 * @return string the HTML for the icon to be displayed
+	 */
+	public static function icon(string $class): string
+	{
+		return "<span class=\"icon-$class\" aria-hidden=\"true\"></span>";
+	}
+
+	/**
+	 * The content wrapped with a link referencing a tip and the tip.
+	 *
+	 * @param   string  $content  the content referenced by the tip
+	 * @param   string  $tip      the tip to be displayed
+	 * @param   string  $url      the url linked by the tip as applicable
+	 * @param   bool    $newTab   whether the url should open in a new tab
+	 *
+	 * @return string the HTML for the content and tip
+	 */
+	public static function tip(string $content, string $context, string $tip, string $url = '', bool $newTab = false): string
+	{
+		if (empty($tip) and empty($url))
+		{
+			return $content;
+		}
+
+		$properties = ['aria-describedby' => $context];
+
+		if ($url and $newTab)
+		{
+			$properties['target'] = '_blank';
+		}
+
+		$url     = $url ?: '#';
+		$content = self::link($url, $content, $properties);
+		$tip     = "<div role=\"tooltip\" id=\"$context\">" . $tip . '</div>';
+
+		return $content . $tip;
+	}
 }

@@ -20,6 +20,7 @@ use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Roles as Table;
+use THM\Groups\Tools\Migration;
 
 class Roles extends ListModel
 {
@@ -28,6 +29,8 @@ class Roles extends ListModel
 	 */
 	public function __construct($config = [], MVCFactoryInterface $factory = null)
 	{
+		Migration::migrate();
+
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = [
@@ -112,7 +115,7 @@ class Roles extends ListModel
 
 		if ($skipped)
 		{
-			Application::message(Text::sprintf('GROUPS_X_SKIPPPED_NOT_DELETED', $skipped), 'error');
+			Application::message(Text::sprintf('GROUPS_X_SKIPPED_NOT_DELETED', $skipped), 'error');
 		}
 
 		if ($protected)
@@ -224,65 +227,5 @@ class Roles extends ListModel
 	protected function populateState($ordering = 'ordering', $direction = 'asc')
 	{
 		parent::populateState($ordering, $direction);
-	}
-
-	/**
-	 * Saves the current order of entries from the list.
-	 *
-	 * @return false|void
-	 *
-	 * @since version
-	 */
-	public function saveorder()
-	{
-		if (!Can::manage())
-		{
-			return false;
-		}
-
-		if (!$ids = Input::getSelectedIDs())
-		{
-			return false;
-		}
-
-		$ordering = 1;
-		foreach ($ids as $id)
-		{
-			$table = new Table($this->getDatabase());
-		}
-		$conditions = [];
-
-
-		// Update ordering values
-		foreach ($pks as $i => $pk)
-		{
-			$table->load((int) $pk);
-
-			if ($table->ordering != $order[$i])
-			{
-				$table->ordering = $order[$i];
-
-				if (!$table->store())
-				{
-					$this->setError($table->getError());
-
-					return false;
-				}
-			}
-		}
-
-		// Execute reorder for each category.
-		foreach ($conditions as $cond)
-		{
-			$table->load($cond[0]);
-			$table->reorder($cond[1]);
-		}
-
-		// Clear the component's cache
-		$this->cleanCache();
-
-		return true;
-
-		return false;
 	}
 }
