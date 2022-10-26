@@ -18,6 +18,35 @@ use THM\Groups\Tables;
 class Migration
 {
 	/**
+	 * Compares the values of the role associations table to determine if a migration should be executed.
+	 * @return bool true if migration should be executed, otherwise false
+	 */
+	private static function compare(): bool
+	{
+		$db = Application::getDB();
+
+		$count = 'COUNT(' . $db->quoteName('id') . ')';
+
+		$query = $db->getQuery(true);
+		$ras   = $db->quoteName('#__groups_role_associations');
+		$query->select($count)->from($ras);
+		$db->setQuery($query);
+
+		if (!$count1 = (int) $db->loadResult())
+		{
+			return true;
+		}
+
+		$query  = $db->getQuery(true);
+		$thmRAs = $db->quoteName('#__thm_groups_role_associations');
+		$query->select($count)->from($thmRAs);
+		$db->setQuery($query);
+		$count2 = (int) $db->loadResult();
+
+		return $count2 > $count1;
+	}
+
+	/**
 	 * Migrates the existing store of usergroups to groups.
 	 */
 	private static function groups()
@@ -51,13 +80,28 @@ class Migration
 		}
 	}
 
+	/**
+	 * Migrates exiting data to the new tables.
+	 */
 	public static function migrate()
 	{
+		if (!self::compare())
+		{
+			return;
+		}
+
 		self::groups();
 		$rMap  = self::roles();
 		$raMap = self::roleAssociations($rMap);
 	}
 
+	/**
+	 * Migrates the role associations table.
+	 *
+	 * @param   array  $rMap  an array mapping the existing roles table to the new one
+	 *
+	 * @return array an array mapping the existing role associations table to the new one
+	 */
 	private static function roleAssociations(array $rMap): array
 	{
 		$db = Application::getDB();
