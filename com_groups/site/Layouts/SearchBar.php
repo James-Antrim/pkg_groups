@@ -38,7 +38,7 @@ class SearchBar
 		}
 
 		// Other than search...
-		$filtersExist = (bool) count($filters) > 1;
+		$filtersExist = count($filters) > 1;
 		$search       = $view->filterForm->getGroup('filter')['filter_search'];
 
 		?>

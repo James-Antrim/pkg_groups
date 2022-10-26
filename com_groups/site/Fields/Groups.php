@@ -10,10 +10,7 @@
 namespace THM\Groups\Fields;
 
 use Joomla\CMS\Form\Field\ListField;
-use Joomla\CMS\Helper\UserGroupsHelper;
-use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Groups as Helper;
-use THM\Groups\Tables\Groups as GT;
 
 /**
  * Provides a list of context relevant groups.
@@ -30,25 +27,7 @@ class Groups extends ListField
 	protected function getOptions(): array
 	{
 		$defaultOptions = parent::getOptions();
-		$nameColumn     = 'name_' . Application::getTag();
-		$options        = [];
-
-		foreach (UserGroupsHelper::getInstance()->getAll() as $groupID => $group)
-		{
-			$disabled = in_array($groupID, Helper::DEFAULT) ? 'disabled' : '';
-			$table    = new GT($this->getDatabase());
-
-			if ($table->load($groupID) and $name = $table->$nameColumn ?? null)
-			{
-				$group->title = $name;
-			}
-
-			$options[] = (object) [
-				'disable' => $disabled,
-				'text'    => str_repeat('- ', $group->level) . $group->title,
-				'value'   => $group->id
-			];
-		}
+		$options        = Helper::getOptions();
 
 		return array_merge($defaultOptions, $options);
 	}

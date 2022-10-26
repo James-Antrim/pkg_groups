@@ -10,10 +10,14 @@
 
 namespace THM\Groups\Helpers;
 
+use Joomla\CMS\Helper\UserGroupsHelper;
+use THM\Groups\Adapters\Application;
+use THM\Groups\Tables\Groups as GT;
+
 /**
  *  Constants and functions for dealing with groups from an external read context.
  */
-class Groups
+class Groups implements Selectable
 {
 	public const PUBLIC = 1, REGISTERED = 2, AUTHOR = 3, EDITOR = 4, PUBLISHER = 5, MANAGER = 6, ADMIN = 7, SUPER_ADMIN = 8;
 
@@ -27,4 +31,46 @@ class Groups
 		self::REGISTERED,
 		self::SUPER_ADMIN
 	];
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getAll(): array
+	{
+		$groups     = UserGroupsHelper::getInstance()->getAll();
+		$nameColumn = 'name_' . Application::getTag();
+
+		foreach ($groups as $groupID => $group)
+		{
+			$table = new GT(Application::getDB());
+
+			if ($table->load($groupID) and $name = $table->$nameColumn ?? null)
+			{
+				$group->title = $name;
+			}
+		}
+
+		return $groups;
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public static function getOptions(): array
+	{
+		$options = [];
+
+		foreach (self::getAll() as $groupID => $group)
+		{
+			$disabled = in_array($groupID, self::DEFAULT) ? 'disabled' : '';
+
+			$options[] = (object) [
+				'disable' => $disabled,
+				'text'    => str_repeat('- ', $group->level) . $group->title,
+				'value'   => $group->id
+			];
+		}
+
+		return $options;
+	}
 }
