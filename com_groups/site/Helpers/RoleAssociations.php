@@ -19,6 +19,25 @@ use THM\Groups\Adapters\Application;
 class RoleAssociations
 {
 	/**
+	 * Gets the ids of the associated roles
+	 *
+	 * @param   int  $groupID  the id of the group
+	 *
+	 * @return int[] the associated groups in the form assocID => roleID
+	 */
+	public static function byGroupID(int $groupID): array
+	{
+		$db        = Application::getDB();
+		$query     = $db->getQuery(true);
+		$ras       = $db->quoteName('#__groups_role_associations');
+		$gIDColumn = $db->quoteName('groupID');
+		$query->select('*')->from($ras)->where("$gIDColumn = :groupID")->bind(':groupID', $groupID, ParameterType::INTEGER);
+		$db->setQuery($query);
+
+		return $db->loadAssocList('id', 'roleID');
+	}
+
+	/**
 	 * Gets the ids of the associated groups
 	 *
 	 * @param   int  $roleID  the id of the role

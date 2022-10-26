@@ -48,6 +48,8 @@ class Groups implements Selectable
 			{
 				$group->title = $name;
 			}
+
+			$group->roles = RoleAssociations::byGroupID($groupID);
 		}
 
 		return $groups;
@@ -62,6 +64,11 @@ class Groups implements Selectable
 
 		foreach (self::getAll() as $groupID => $group)
 		{
+			if (empty($group->roles))
+			{
+				continue;
+			}
+
 			$disabled = in_array($groupID, self::DEFAULT) ? 'disabled' : '';
 
 			$options[] = (object) [
