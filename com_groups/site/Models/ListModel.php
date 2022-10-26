@@ -54,6 +54,31 @@ abstract class ListModel extends Base
 	}
 
 	/**
+	 * @inheritDoc
+	 * Replacing the deprecated CMSObject with Registry makes the parent no longer function correctly this compensates for that.
+	 */
+	public function getActiveFilters(): array
+	{
+		$activeFilters = [];
+
+		if (!empty($this->filter_fields))
+		{
+			foreach ($this->filter_fields as $filter)
+			{
+				$filterName = 'filter.' . $filter;
+				$value      = $this->state->get($filterName);
+
+				if ($value or is_numeric($value))
+				{
+					$activeFilters[$filter] = $value;
+				}
+			}
+		}
+
+		return $activeFilters;
+	}
+
+	/**
 	 * Gets the filter form. Overwrites the parent to have form names analog to the view names in which they are used.
 	 * Also has enhanced error reporting in the event of failure.
 	 *

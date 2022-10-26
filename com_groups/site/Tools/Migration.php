@@ -209,10 +209,7 @@ class Migration
 				'ordering' => 0
 			];
 
-			if (!$table->save($migrant))
-			{
-				echo "<pre>" . print_r($table->getErrors(), true) . "</pre>";
-			}
+			$table->save($migrant);
 			$map[$thmID] = $table->id;
 		}
 

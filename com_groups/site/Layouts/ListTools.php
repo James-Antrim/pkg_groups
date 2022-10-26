@@ -43,7 +43,7 @@ class ListTools
 		$options = [
 			'defaultLimit'   => Application::getApplication()->get('list_limit', 50),
 			'orderSelector'  => '#list_fullordering',
-			'searchSelector' => '#filter_search',
+			'searchSelector' => '#filter_search'
 		];
 
 		$class = (($filtersExist and !$searchExists) or !empty($view->activeFilters)) ? ' js-stools-container-filters-visible' : '';

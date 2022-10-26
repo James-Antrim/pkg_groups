@@ -20,7 +20,7 @@ use THM\Groups\Views\HTML\ListView;
 class FilterBar
 {
 	/**
-	 * Renders the list bar.
+	 * Renders the filter bar.
 	 *
 	 * @param   ListView  $view
 	 */
