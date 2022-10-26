@@ -28,17 +28,15 @@ abstract class ListModel extends Base
 	use Named;
 
 	/**
-	 * A state object
+	 * A state object. Overrides the use of the deprecated CMSObject.
 	 *
 	 * @var    Registry
 	 */
 	protected $state = null;
 
 	/**
-	 * Constructor. The state is set here to prevent the use of a deprecated CMSObject as the state in the stateAwareTrait.
-	 *
-	 * @param   array                     $config   An array of configuration options (name, state, dbo, table_path, ignore_request).
-	 * @param   MVCFactoryInterface|null  $factory  The factory.
+	 * @inheritdoc
+	 * The state is set here to prevent the use of a deprecated CMSObject as the state in the stateAwareTrait.
 	 */
 	public function __construct($config = [], MVCFactoryInterface $factory = null)
 	{
@@ -86,8 +84,6 @@ abstract class ListModel extends Base
 
 	/**
 	 * Adds a standard order clause for the given $query;
-	 *
-	 * @since version
 	 */
 	protected function orderBy(QueryInterface $query)
 	{

@@ -14,21 +14,14 @@ use Joomla\CMS\Form\FormFactoryInterface;
 use Joomla\Database\DatabaseAwareTrait;
 
 /**
- * Default factory for creating Form objects
- *
- * @since  4.0.0
+ * A factory which can create Form objects.
  */
 class FormFactory implements FormFactoryInterface
 {
 	use DatabaseAwareTrait;
 
 	/**
-	 * Method to get an instance of a form.
-	 *
-	 * @param   string  $name     The name of the form.
-	 * @param   array   $options  An array of form options.
-	 *
-	 * @return  Form
+	 * @inheritdoc
 	 */
 	public function createForm(string $name, array $options = []): Form
 	{

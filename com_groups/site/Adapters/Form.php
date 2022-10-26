@@ -18,25 +18,13 @@ use SimpleXMLElement;
 use function get_class;
 
 /**
- * Form Class for the Joomla Platform.
- *
- * This class implements a robust API for constructing, populating, filtering, and validating forms.
- * It uses XML definitions to construct form fields and a variety of field and rule classes to
- * render and validate the form.
- *
- * @link   https://www.w3.org/TR/html4/interact/forms.html
- * @link   https://html.spec.whatwg.org/multipage/forms.html
- * @since  1.7.0
+ * @inheritDoc
+ * Adapts the Form to load properly namespaced fields.
  */
 class Form extends Base
 {
 	/**
-	 * Method to instantiate the form object.
-	 *
-	 * @param   string  $name     The name of the form.
-	 * @param   array   $options  An array of form options.
-	 *
-	 * @since   1.7.0
+	 * @inheritDoc
 	 */
 	public function __construct($name, array $options = [])
 	{

@@ -15,27 +15,18 @@ use Joomla\CMS\Dispatcher\ComponentDispatcher;
 use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
- * Base class for a Joomla Component Dispatcher
- *
- * Dispatchers are responsible for checking ACL of a component if appropriate and
- * choosing an appropriate controller (and if necessary, a task) and executing it.
- *
- * @since  4.0.0
+ * @inheritDoc
+ * Adjusts the component dispatcher which kept calling for a controller named 'display'.
  */
 class Dispatcher extends ComponentDispatcher
 {
 	/**
-	 * The MVC factory
-	 *
-	 * @var  MVCFactory
+	 * @inheritdoc
 	 */
 	protected $mvcFactory;
 
 	/**
-	 * The URL option for the component.
-	 *
-	 * @var    string
-	 * @since  4.0.0
+	 * @inheritdoc
 	 */
 	protected $option = 'com_groups';
 
@@ -79,15 +70,7 @@ class Dispatcher extends ComponentDispatcher
 	}
 
 	/**
-	 * Get a controller from the component
-	 *
-	 * @param   string  $name    Controller name
-	 * @param   string  $client  Optional client (like Administrator, Site etc.)
-	 * @param   array   $config  Optional controller config
-	 *
-	 * @return  BaseController
-	 *
-	 * @since   4.0.0
+	 * @inheritDoc
 	 */
 	public function getController(string $name, string $client = '', array $config = []): BaseController
 	{
