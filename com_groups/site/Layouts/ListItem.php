@@ -59,6 +59,7 @@ class ListItem
                 <span class="icon-ellipsis-v"></span>
             </span>
 			<?php if ($item->access and $enabled) : ?>
+                <!--suppress HtmlFormInputWithoutLabel -->
                 <input type="text" class="width-20 text-area-order hidden" name="order[]" size="5"
                        value="<?php echo $item->ordering; ?>">
 			<?php endif; ?>
@@ -161,6 +162,12 @@ class ListItem
 			<?php echo $linkOpen; ?>
 			<?php echo $value; ?>
 			<?php echo $linkClose; ?>
+			<?php if (!empty($item->icon)): ?>
+				<?php echo $item->icon; ?>
+			<?php endif; ?>
+			<?php if (!empty($item->supplement)): ?>
+                <br><span class="small"><?php echo $item->supplement; ?></span>
+			<?php endif; ?>
         </td>
 		<?php
 	}

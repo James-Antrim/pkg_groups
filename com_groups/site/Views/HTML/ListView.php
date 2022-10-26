@@ -38,8 +38,6 @@ abstract class ListView extends BaseView
 	 * Add the page title and toolbar.
 	 *
 	 * @return  void
-	 *
-	 * @since   1.6
 	 */
 	protected function addToolbar()
 	{
@@ -67,6 +65,9 @@ abstract class ListView extends BaseView
 		$this->filterForm    = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
 
+		// All the tools are now there.
+		$this->supplementItems();
+
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
@@ -76,5 +77,40 @@ abstract class ListView extends BaseView
 
 		$this->addToolbar();
 		parent::display($tpl);
+	}
+
+	/**
+	 * Checks whether the list items have been filtered.
+	 * @return bool true if the results have been filtered, otherwise false
+	 */
+	protected function filtered(): bool
+	{
+		if ($filters = (array) $this->state->get('filter'))
+		{
+			// Search for filter value which has been set
+			foreach ($filters as $filter)
+			{
+				if ($filter)
+				{
+					return true;
+				}
+
+				// Positive empty values
+				if ($filter === 0 or $filter === '0')
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Supplements item information for display purposes.
+	 */
+	protected function supplementItems()
+	{
+		// Filled by inheriting classes
 	}
 }

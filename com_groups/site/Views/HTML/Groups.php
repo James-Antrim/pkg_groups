@@ -1,30 +1,29 @@
 <?php
 /**
- * @package     THM_Groups
- * @extension   com_thm_groups
- * @author      Dennis Priefer, <dennis.priefer@mni.thm.de>
- * @author      Niklas Simonis, <niklas.simonis@mni.thm.de>
- * @author      Ilja Michajlow, <ilja.michajlow@mni.thm.de>
- * @author      Dieudonne Timma Meyatchie, <dieudonne.timma.meyatchie@mni.thm.de>
+ * @package     Groups
+ * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
- * @copyright   2018 TH Mittelhessen
- * @license     GNU GPL v.2
+ * @copyright   2022 TH Mittelhessen
+ * @license     GNU GPL v.3
  * @link        www.thm.de
  */
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Helper\ContentHelper as UsersAccess;
+use Joomla\CMS\Helper\ContentHelper as CoreAccess;
+use Joomla\CMS\Helper\UserGroupsHelper as UGH;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
+use THM\Groups\Helpers\Groups as Helper;
+use THM\Groups\Adapters\HTML;
 
 /**
  * THM_GroupsViewTHM_Groups class for component com_thm_groups
  */
 class Groups extends ListView
 {
-
 	/**
 	 * Add the page title and toolbar.
 	 *
@@ -32,7 +31,7 @@ class Groups extends ListView
 	 */
 	protected function addToolbar()
 	{
-		$usersAccess = UsersAccess::getActions('com_users');
+		$usersAccess = CoreAccess::getActions('com_users');
 
 		if ($usersAccess->get('core.create'))
 		{
@@ -60,6 +59,59 @@ class Groups extends ListView
 			Application::error(403);
 		}
 
+		$this->headers = [
+			'check' => ['type' => 'check'],
+			//'ordering' => ['type' => 'ordering'],
+			'name'  => [
+				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_GROUP'),
+				'type'       => 'text'
+			]/*,
+			'names'    => [
+				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_PLURAL'),
+				'type'       => 'text'
+			],
+			'groups'   => [
+				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_GROUPS'),
+				'type'       => 'value'
+			]*/
+		];
+
 		parent::display($tpl);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function supplementItems()
+	{
+		$ugh = UGH::getInstance();
+
+		foreach ($this->items as $item)
+		{
+			$item->name = str_repeat('- ', $item->level) . $item->name;
+
+			if (in_array($item->id, Helper::DEFAULT))
+			{
+				$context = "groups-group-$item->id";
+				$tip     = Text::_('GROUPS_PROTECTED_GROUP');
+
+				$item->icon = HTML::tip(HTML::icon('lock'), $context, $tip);
+			}
+
+			if ($this->filtered())
+			{
+				// The last item is the $item->name
+				array_pop($item->path);
+
+				foreach ($item->path as $key => $parentID)
+				{
+					$item->path[$key] = $ugh->get($parentID)->title;
+				}
+				$item->supplement = implode(' / ', $item->path);
+			}
+		}
 	}
 }

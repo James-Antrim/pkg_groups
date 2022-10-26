@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Models;
 
+use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
@@ -27,21 +28,26 @@ class Groups extends ListModel
 
 		if (empty($config['filter_fields']))
 		{
-			$config['filter_fields'] = [
-				'id',
-				'a.id',
-				'parent_id',
-				'a.parent_id',
-				'title',
-				'a.title',
-				'lft',
-				'a.lft',
-				'rgt',
-				'a.rgt',
-			];
+			$config['filter_fields'] = ['id', 'title'];
 		}
 
 		parent::__construct($config, $factory);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getItems()
+	{
+		$items    = parent::getItems() ?: [];
+		$ugHelper = UGH::getInstance();
+
+		foreach ($items as $item)
+		{
+			$ugHelper->populateGroupData($item);
+		}
+
+		return $items;
 	}
 
 	/**
@@ -54,17 +60,18 @@ class Groups extends ListModel
 		// Create a new query object.
 		$db    = $this->getDatabase();
 		$query = $db->getQuery(true);
+		$tag   = Application::getTag();
 
+		$id       = $db->quoteName('g.id', 'id');
+		$name     = $db->quoteName("g.name_$tag", 'name');
+		$parentID = $db->quoteName('ug.parent_id');
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select',
-				'a.*'
-			)
-		);
+		$query->select([$id, $name, $parentID]);
 
-		$query->from($db->quoteName('#__usergroups') . ' AS a')
-			->join('inner', $db->quoteName('#__groups_groups', 'g'), $db->quoteName('g.id') . ' = ' . $db->quoteName('a.id'));
+		$condition  = $db->quoteName('ug.id') . ' = ' . $db->quoteName('g.id');
+		$groups     = $db->quoteName('#__groups_groups', 'g');
+		$userGroups = $db->quoteName('#__usergroups', 'ug');
+		$query->from($groups)->join('inner', $userGroups, $condition);
 
 		// Filter the comments over the search string if set.
 		$search = $this->getState('filter.search');
@@ -74,14 +81,17 @@ class Groups extends ListModel
 			if (stripos($search, 'id:') === 0)
 			{
 				$ids = (int) substr($search, 3);
-				$query->where($db->quoteName('a.id') . ' = :id');
+				$query->where($db->quoteName('g.id') . ' = :id');
 				$query->bind(':id', $ids, ParameterType::INTEGER);
 			}
 			else
 			{
+				$nameDE = $db->quoteName('g.name_de');
+				$nameEN = $db->quoteName('g.name_en');
 				$search = '%' . trim($search) . '%';
-				$query->where($db->quoteName('a.title') . ' LIKE :title');
-				$query->bind(':title', $search);
+				$query->where("($nameDE LIKE :title1 OR $nameEN LIKE :title2)");
+				$query->bind(':title1', $search);
+				$query->bind(':title2', $search);
 			}
 		}
 
@@ -92,18 +102,9 @@ class Groups extends ListModel
 	}
 
 	/**
-	 * Method to auto-populate the model state.
-	 *
-	 * Note. Calling getState in this method will result in recursion.
-	 *
-	 * @param   string  $ordering   An optional ordering field.
-	 * @param   string  $direction  An optional direction (asc|desc).
-	 *
-	 * @return  void
-	 *
-	 * @since   1.6
+	 * @inheritDoc
 	 */
-	protected function populateState($ordering = 'a.lft', $direction = 'asc')
+	protected function populateState($ordering = 'ug.lft', $direction = 'asc')
 	{
 		// Load the parameters.
 		$params = Application::getParams('com_users')->merge(Application::getParams());
