@@ -91,16 +91,6 @@ class Groups extends ListView
 
 		foreach ($this->items as $item)
 		{
-			$item->name = str_repeat('- ', $item->level) . $item->name;
-
-			if (in_array($item->id, Helper::DEFAULT))
-			{
-				$context = "groups-group-$item->id";
-				$tip     = Text::_('GROUPS_PROTECTED_GROUP');
-
-				$item->icon = HTML::tip(HTML::icon('lock'), $context, $tip);
-			}
-
 			if ($this->filtered())
 			{
 				// The last item is the $item->name
@@ -111,6 +101,18 @@ class Groups extends ListView
 					$item->path[$key] = $ugh->get($parentID)->title;
 				}
 				$item->supplement = implode(' / ', $item->path);
+			}
+			else
+			{
+				$item->name = str_repeat('- ', $item->level) . $item->name;
+			}
+
+			if (in_array($item->id, Helper::DEFAULT))
+			{
+				$context = "groups-group-$item->id";
+				$tip     = Text::_('GROUPS_PROTECTED_GROUP');
+
+				$item->icon = HTML::tip(HTML::icon('lock'), $context, $tip);
 			}
 		}
 	}
