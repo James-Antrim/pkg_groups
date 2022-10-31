@@ -13,6 +13,8 @@ namespace THM\Groups\Helpers\Inputs;
 class Date extends Input
 {
 	public int $id = 5;
+	public string $message_de = 'Das Datum ist ungültig.';
+	public string $message_en = 'The date is invalid.';
 	public string $name_de = 'Datum';
 	public string $name_en = 'Date';
 	public string $type = 'date';

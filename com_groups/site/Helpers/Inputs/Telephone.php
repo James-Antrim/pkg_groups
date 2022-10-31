@@ -15,6 +15,8 @@ class Telephone extends Text
 	public string $hint = '';
 	public int $id = 7;
 	public int $maxLength = 100;
+	public string $message_de = 'Die Telefonnummer ist ungültig.';
+	public string $message_en = 'The telephone number is invalid.';
 	public string $name_de = 'Telefonnummer';
 	public string $name_en = 'Telephone Number';
 	public string $pattern = '';

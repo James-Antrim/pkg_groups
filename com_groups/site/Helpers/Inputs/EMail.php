@@ -14,6 +14,8 @@ class EMail extends Text
 {
 	public string $hint = 'maxine.mustermann@fb.thm.de';
 	public int $id = 6;
+	public string $message_de = 'Die Adresse ist ungültig.';
+	public string $message_en = 'The address is invalid.';
 	public string $name_de = 'E-Mail Adresse';
 	public string $name_en = 'E-Mail Address';
 	public string $pattern = '^([\w\d\-_\.]+)@([\w\d\-_\.]+)$';
