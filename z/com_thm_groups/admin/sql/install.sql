@@ -212,27 +212,6 @@ VALUES (1, 'text', '{"maxlength":"255","hint":"","regex":"simple_text"}'),
        (6, 'email', '{"maxlength":"255","hint":"","validate":1,"regex":"email"}'),
        (7, 'tel', '{"maxlength":"255","hint":"","validate":1,"regex":""}');
 
-INSERT INTO `#__groups_roles` (`id`, `name`, `ordering`)
-VALUES (2, 'Dekan', 1),
-       (3, 'Dekanin', 2),
-       (4, 'Prodekan', 3),
-       (5, 'Prodekanin', 4),
-       (6, 'Studiendekan', 5),
-       (7, 'Studiendekanin', 6),
-       (8, 'Leitung', 7),
-       (9, 'Koordinator', 8),
-       (10, 'Koordinatorin', 9),
-       (11, 'ProfessorInnen', 10),
-       (12, 'Sekretariat', 11),
-       (13, 'Mitarbeiter', 12),
-       (14, 'Lehrbeauftragte', 13),
-       (15, 'Studentische Mitarbeiter', 14),
-       (16, 'Praktikant', 15),
-       (17, 'Schülerpraktikant', 16),
-       (18, 'Student', 17),
-       (19, 'Ehemalige', 18),
-       (1, 'Mitglied', 19);
-
 INSERT INTO `#__groups_template_attributes` (`id`, `templateID`, `attributeID`, `published`, `ordering`, `showLabel`, `showIcon`)
 VALUES (1, 1, 3, 1, 1, 0, 0),
        (2, 1, 5, 1, 2, 0, 0),
