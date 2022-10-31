@@ -1,3 +1,23 @@
+DROP TABLE IF EXISTS
+    `#__groups_attribute_types`,
+    `#__groups_role_associations`,
+    `#__groups_roles`,
+    `#__groups_groups`;
+
+CREATE TABLE IF NOT EXISTS `#__groups_attribute_types` (
+    `id`            INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
+    `name_de`       VARCHAR(100)        NOT NULL,
+    `name_en`       VARCHAR(100)        NOT NULL,
+    `inputID`       TINYINT(2) UNSIGNED NOT NULL DEFAULT 1 COMMENT 'Resolves via Helpers\\Inputs.',
+    `configuration` TEXT COMMENT 'A JSON string containing the configuration of the attribute type.',
+    PRIMARY KEY (`id`),
+    UNIQUE (`name_de`),
+    UNIQUE (`name_en`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `#__groups_groups` (
     `id`      INT(10) UNSIGNED NOT NULL,
     `name_de` VARCHAR(100)     NOT NULL,
@@ -33,6 +53,17 @@ CREATE TABLE IF NOT EXISTS `#__groups_roles` (
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
+
+INSERT INTO `#__groups_attribute_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
+VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
+       (2, 'HTML', 'HTML', 2, '{}'),
+       (3, 'Internet Adresse', 'Internet Address', 3, '{}'),
+       (4, 'Bild', 'Image', 4, '{"accept":".bmp,.BMP,.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG"}'),
+       (5, 'Datum', 'Date', 5, '{}'),
+       (6, 'E-Mail', 'E-Mail', 6, '{}'),
+       (7, 'Telefonnummer (EU)', 'Telephone Number (EU)', 7, '{"pattern":"^(\\+[\\d]+ ?)?( ?((\\(0?[\\d]*\\))|(0?[\\d]+(\\/| \\/)?)))?(([ \\-]|[\\d]+)+)$"}'),
+       (8, 'Name', 'Name', 1, '{"message_de":"Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.","message_en":"Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.","pattern":"^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\.|[a-zß-ÿ]+))*$"}'),
+       (9, 'Namenszusatz', 'Name Supplement', 1, '{"message_de":"Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.","message_en":"The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.","pattern":"^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\-()†]+$"}');
 
 INSERT INTO `#__groups_roles` (`id`, `name_de`, `name_en`, `names_de`, `names_en`, `ordering`)
 VALUES (1, 'Mitglied', 'Member', 'Mitglieder', 'Members', 17),

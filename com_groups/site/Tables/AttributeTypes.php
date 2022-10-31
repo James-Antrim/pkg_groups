@@ -12,6 +12,7 @@ namespace THM\Groups\Tables;
 
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Class representing the attribute types table.
@@ -19,10 +20,27 @@ use Joomla\Database\DatabaseDriver;
 class AttributeTypes extends Table
 {
 	/**
+	 * A JSON string containing the configuration of the attribute type.
+	 * TEXT
+	 */
+	public $configuration;
+
+	// INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+	public $id;
+
+	// TINYINT(2) UNSIGNED NOT NULL DEFAULT 1
+	public $inputID;
+
+	// VARCHAR(100) NOT NULL
+	public $name_de;
+	public $name_en;
+
+	/**
 	 * @inheritDoc
 	 */
-	public function __construct(DatabaseDriver $dbo)
+	public function __construct(DatabaseInterface $dbo)
 	{
-		parent::__construct('#__thm_groups_attribute_types', 'id', $dbo);
+		/** @var DatabaseDriver $dbo */
+		parent::__construct('#__groups_attribute_types', 'id', $dbo);
 	}
 }

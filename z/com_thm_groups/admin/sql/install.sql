@@ -2,19 +2,6 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-CREATE TABLE IF NOT EXISTS `#__groups_attribute_types` (
-    `id`      INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `fieldID` INT(11) UNSIGNED NOT NULL,
-    `type`    VARCHAR(100)     NOT NULL,
-    `options` TEXT,
-    `message` VARCHAR(100) DEFAULT '',
-    PRIMARY KEY (`id`),
-    UNIQUE (`type`)
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4
-    COLLATE = utf8mb4_unicode_ci;
-
 CREATE TABLE IF NOT EXISTS `#__groups_attributes` (
     `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `typeID`      INT(11) UNSIGNED    NOT NULL,
@@ -128,17 +115,6 @@ CREATE TABLE IF NOT EXISTS `#__groups_templates` (
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-INSERT INTO `#__groups_attribute_types` (`id`, `type`, `fieldID`, `message`, `options`)
-VALUES (1, 'Einfaches Text', 1, 'COM_GROUPS_INVALID_TEXT', '{}'),
-       (2, 'Ausführlicher Text / HTML', 2, '', '{}'),
-       (3, 'Link', 3, 'COM_GROUPS_INVALID_URL', '{}'),
-       (4, 'Bild', 4, '', '{"accept":".bmp,.BMP,.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG"}'),
-       (5, 'Datum (EU)', 5, 'COM_GROUPS_INVALID_DATE_EU', '{"calendarformat":"%d.%m.%Y","regex":"european_date"}'),
-       (6, 'E-Mail', 6, 'COM_GROUPS_INVALID_EMAIL', '{}'),
-       (7, 'Telefon (EU)', 7, 'COM_GROUPS_INVALID_TELEPHONE', '{"regex":"european_telephone"}'),
-       (8, 'Name', 1, 'COM_GROUPS_INVALID_NAME', '{"regex":"name"}'),
-       (9, 'Namenszusatz', 1, 'COM_GROUPS_INVALID_NAME_SUPPLEMENT', '{"regex":"name_supplement"}');
-
 INSERT INTO `#__groups_attributes` (`id`, `typeID`, `label`, `showLabel`, `icon`, `showIcon`, `options`, `ordering`, `published`, `required`, `viewLevelID`)
 VALUES (3, 4, 'Bild', 0, '', 0, '{"mode":1}', 1, 1, 0, 1),
        (5, 9, 'Namenszusatz (vor)', 0, '', 0, '{"hint":"Prof. Dr."}', 2, 1, 0, 1),
@@ -168,11 +144,6 @@ VALUES (1, 1, 3, 1, 1, 0, 0),
 
 INSERT INTO `#__groups_templates` (`id`, `templateName`)
 VALUES (1, 'Default');
-
-ALTER TABLE `#__groups_attribute_types`
-    ADD CONSTRAINT `attributetypes_fieldid` FOREIGN KEY (`fieldID`) REFERENCES `#__groups_fields` (`id`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE;
 
 ALTER TABLE `#__groups_attributes`
     ADD CONSTRAINT `attributes_typeid` FOREIGN KEY (`typeID`)
