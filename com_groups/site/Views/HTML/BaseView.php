@@ -15,6 +15,9 @@ use Joomla\CMS\MVC\View\HtmlView;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Views\Named;
 
+/**
+ * View class for setting general context variables.
+ */
 abstract class BaseView extends HtmlView
 {
 	use Named;
@@ -30,7 +33,7 @@ abstract class BaseView extends HtmlView
 	{
 		parent::__construct($config);
 
-		$this->_basePath = JPATH_COMPONENT_SITE;
+		$this->_basePath = JPATH_SITE . '/components/com_groups';
 		$this->_name     = $this->getName();
 
 		// Set the default template search path

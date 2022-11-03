@@ -22,6 +22,9 @@ use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Roles as Table;
 use THM\Groups\Tools\Migration;
 
+/**
+ * Model class for aggregating available roles data.
+ */
 class Roles extends ListModel
 {
 	/**

@@ -20,7 +20,7 @@ use THM\Groups\Helpers\Groups as Helper;
 use THM\Groups\Adapters\HTML;
 
 /**
- * THM_GroupsViewTHM_Groups class for component com_thm_groups
+ * View class for displaying available groups.
  */
 class Groups extends ListView
 {

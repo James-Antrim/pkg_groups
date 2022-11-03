@@ -10,6 +10,9 @@
 
 namespace THM\Groups\Controllers;
 
+/**
+ * Controller class for roles.
+ */
 class Roles extends Controller
 {
 	//Stuff

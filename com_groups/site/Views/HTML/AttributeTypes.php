@@ -14,11 +14,12 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
+use THM\Groups\Helpers\Inputs\Input;
 
 /**
- * View class for displaying available roles.
+ * View class for displaying available attribute types.
  */
-class Roles extends ListView
+class AttributeTypes extends ListView
 {
 	/**
 	 * Add the page title and toolbar.
@@ -28,11 +29,17 @@ class Roles extends ListView
 	protected function addToolbar()
 	{
 		// Manage access is a prerequisite for getting this far
-		ToolbarHelper::addNew('Role.add');
-		ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Roles.delete');
+		ToolbarHelper::addNew('AttributeTypes.add');
+		ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'AttributeTypes.delete');
 		ToolbarHelper::divider();
 
-		parent::addToolbar();
+		ToolbarHelper::title(Text::_('GROUPS_ATTRIBUTE_TYPES'), '');
+
+		if (Can::administrate())
+		{
+			ToolbarHelper::preferences('com_groups');
+			//ToolbarHelper::divider();
+		}
 	}
 
 	/**
@@ -51,25 +58,32 @@ class Roles extends ListView
 
 		//TODO: supress ordering if a filter has been used
 		$this->headers = [
-			'check'    => ['type' => 'check'],
-			'ordering' => ['type' => 'ordering'],
-			'name'     => [
+			'check' => ['type' => 'check'],
+			'name'  => [
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_ROLE'),
+				'title'      => Text::_('GROUPS_ATTRIBUTE_TYPE'),
 				'type'       => 'text'
 			],
-			'names'    => [
+			'input' => [
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_PLURAL'),
+				'title'      => Text::_('GROUPS_INPUT'),
 				'type'       => 'text'
 			],
-			'groups'   => [
-				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_GROUPS'),
-				'type'       => 'value'
-			]
 		];
 
 		parent::display($tpl);
+	}
+
+	/**
+	 * Supplements item information for display purposes.
+	 */
+	protected function supplementItems()
+	{
+		foreach ($this->items as $item)
+		{
+			/** @var Input $input */
+			$input       = $item->input;
+			$item->input = $input->getName();
+		}
 	}
 }

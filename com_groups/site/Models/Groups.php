@@ -17,6 +17,9 @@ use Joomla\Database\QueryInterface;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Tools\Migration;
 
+/**
+ * Model class for aggregating available groups data.
+ */
 class Groups extends ListModel
 {
 	/**
