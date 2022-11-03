@@ -19,7 +19,7 @@ class Editor extends Input
 	// 'Array' of plugin buttons to be hidden. Buttons must be set to true for this to work.
 	public string $hide = 'all';
 	public int $id = 2;
-	public string $name_de = 'HTML Inhalt';
-	public string $name_en = 'HTML Content';
+	public string $name_de = 'WYSIWYG-Editor';
+	public string $name_en = 'WYSIWYG-Editor';
 	public string $type = 'editor';
 }

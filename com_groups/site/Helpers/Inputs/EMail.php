@@ -16,8 +16,8 @@ class EMail extends Text
 	public int $id = 6;
 	public string $message_de = 'Die Adresse ist ungültig.';
 	public string $message_en = 'The address is invalid.';
-	public string $name_de = 'E-Mail Adresse';
-	public string $name_en = 'E-Mail Address';
+	public string $name_de = 'E-Mail Eingabekästchen';
+	public string $name_en = 'E-Mail Entry Box';
 	public string $pattern = '^([\w\d\-_\.]+)@([\w\d\-_\.]+)$';
 	public string $type = 'email';
 }

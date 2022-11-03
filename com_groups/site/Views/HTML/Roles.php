@@ -29,7 +29,6 @@ class Roles extends ListView
 	{
 		// Manage access is a prerequisite for getting this far
 		ToolbarHelper::addNew('Role.add');
-		ToolbarHelper::editList('Role.edit');
 		ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Roles.delete');
 		ToolbarHelper::divider();
 

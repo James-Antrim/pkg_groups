@@ -17,8 +17,8 @@ class Text extends Input
 	public int $maxLength = 255;
 	public string $message_de = 'Einfache Texte dürfen weder Tags noch Zeilenumbrüche beinhalten.';
 	public string $message_en = 'Simple texts may not contain tags or new lines.';
-	public string $name_de = 'Text';
-	public string $name_en = 'Text';
+	public string $name_de = 'Text Eingabekästchen';
+	public string $name_en = 'Text Entry Box';
 	public string $pattern = '^[^<>{}]+$';
 	public string $type = 'text';
 	public bool $validate = true;

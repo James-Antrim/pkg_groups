@@ -17,7 +17,7 @@ class File extends Input
 	public int $id = 4;
 	public bool $mode = true;
 	public bool $multiple = false;
-	public string $name_de = 'Datei';
-	public string $name_en = 'File';
+	public string $name_de = 'Datei Auswahlkästchen';
+	public string $name_en = 'File Select Box';
 	public string $type = 'file';
 }

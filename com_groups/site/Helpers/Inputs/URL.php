@@ -16,8 +16,8 @@ class URL extends Text
 	public int $id = 3;
 	public string $message_de = 'Die Adresse ist ungültig.';
 	public string $message_en = 'The address is invalid.';
-	public string $name_de = 'Internet Adresse';
-	public string $name_en = 'Internet Address';
+	public string $name_de = 'URL Eingabekästchen';
+	public string $name_en = 'URL Entry Box';
 	public string $pattern = '';
 	public string $type = 'url';
 }
