@@ -15,6 +15,9 @@ use Joomla\Database\ParameterType;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Tables;
 
+/**
+ * Has functions for migrating resources from the old structures.
+ */
 class Migration
 {
 	/**
@@ -93,6 +96,8 @@ class Migration
 		self::groups();
 		$rMap  = self::roles();
 		$raMap = self::roleAssociations($rMap);
+
+		$atMap = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 12 => 7];
 	}
 
 	/**
