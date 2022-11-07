@@ -29,7 +29,7 @@ class Roles extends Table
 	public $names_de;
 	public $names_en;
 
-	// INT(3) UNSIGNED NOT NULL
+	// INT(3) UNSIGNED NOT NULL DEFAULT 0
 	public $ordering;
 
 	// TINYINT(1) UNSIGNED NOT NULL DEFAULT 0

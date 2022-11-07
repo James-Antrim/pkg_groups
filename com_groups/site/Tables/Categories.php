@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpMissingFieldTypeInspection */
+
 /**
  * @package     Groups
  * @extension   com_groups
@@ -12,6 +13,7 @@ namespace THM\Groups\Tables;
 
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Class representing the category <=> profile relations.
@@ -21,8 +23,9 @@ class Categories extends Table
 	/**
 	 * @inheritDoc
 	 */
-	public function __construct(DatabaseDriver $dbo)
+	public function __construct(DatabaseInterface $dbo)
 	{
+		/** @var DatabaseDriver $dbo */
 		parent::__construct('#__thm_groups_categories', 'id', $dbo);
 	}
 }

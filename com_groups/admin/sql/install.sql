@@ -12,12 +12,30 @@ CREATE TABLE IF NOT EXISTS `#__groups_attribute_types` (
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `#__groups_attributes` (
+    `id`            INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
+    `label_de`      VARCHAR(100)        NOT NULL,
+    `label_en`      VARCHAR(100)        NOT NULL,
+    `icon`          VARCHAR(255)        NOT NULL DEFAULT '',
+    `typeID`        INT(11) UNSIGNED    NOT NULL,
+    `configuration` TEXT COMMENT 'A JSON string containing the configuration of the attribute.',
+    `ordering`      INT(3) UNSIGNED     NOT NULL DEFAULT 0,
+    `required`      TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `viewLevelID`   INT(10) UNSIGNED             DEFAULT 1,
+    PRIMARY KEY (`id`),
+    UNIQUE (`label_de`),
+    UNIQUE (`label_en`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
+# no unique keys for groups which may have the same name in different contexts.
 CREATE TABLE IF NOT EXISTS `#__groups_groups` (
     `id`      INT(10) UNSIGNED NOT NULL,
     `name_de` VARCHAR(100)     NOT NULL,
     `name_en` VARCHAR(100)     NOT NULL,
     PRIMARY KEY (`id`)
-# no unique keys for groups which may have the same name in different contexts.
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
@@ -39,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_roles` (
     `name_en`  VARCHAR(100)     NOT NULL,
     `names_de` VARCHAR(100)     NOT NULL,
     `names_en` VARCHAR(100)     NOT NULL,
-    `ordering` INT(3) UNSIGNED  NOT NULL,
+    `ordering` INT(3) UNSIGNED  NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     UNIQUE KEY `entry` (`name_de`, `name_en`),
     UNIQUE KEY `entries` (`names_de`, `names_en`)
@@ -48,7 +66,19 @@ CREATE TABLE IF NOT EXISTS `#__groups_roles` (
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-#Telephone Number (EU) message default derived from telephone input class
+INSERT INTO `#__groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `ordering`, `required`, `viewLevelID`)
+VALUES (1, 'Vornamen', 'First Names', '', 8, '{"hint":"Maxine"}', 3, 0, 1),
+       (2, 'Nachnamen', 'Surnames', '', 8, '{"hint":"Mustermann"}', 4, 1, 1),
+       (3, 'Profilbild', 'Profile Picture', '', 4, '{}', 1, 0, 1),
+       (4, 'E-Mail', 'E-Mail', 'icon-mail', 6, '{"hint":"maxine.mustermann@fb.thm.de"}', 6, 1, 1),
+       (5, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 9, '{"hint":"Prof. Dr."}', 2, 0, 1),
+       (6, 'Telefon', 'Telephone', 'icon-phone', 7, '{"hint":"+49 (0) 641 309 1234"}', 7, 0, 1),
+       (7, 'Namenszusatz (nach)', 'Supplement (Post)', '', 9, '{"hint":"M.Sc."}', 5, 0, 1),
+       (8, 'Fax', 'Fax', 'icon-print', 7, '{"hint":"+49 (0) 641 309 1235"}', 8, 0, 1),
+       (9, 'Homepage', 'Homepage', 'icon-new-tab', 3, '{"hint":"www.thm.de/fb/maxine-mustermann"}', 9, 0, 1),
+       (10, 'Raum', 'Room', 'icon-home', 1, '{"hint":"A1.0.01", "pattern":"([A-Z]{1}[\\d]{1,2})[.| ].*"}', 10, 0, 1);
+
+# Default messages and patterns derive from input classes
 INSERT INTO `#__groups_attribute_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
 VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
        (2, 'HTML', 'HTML', 2, '{}'),
@@ -80,9 +110,15 @@ VALUES (1, 'Mitglied', 'Member', 'Mitglieder', 'Members', 17),
        (17, 'Student:in', 'Student', 'Studenten:innen', 'Student', 16),
        (18, 'Ehemalige', 'Alumnus', 'Alumni', 'Alumni', 18);
 
+ALTER TABLE `#__groups_attributes`
+    ADD CONSTRAINT `fk_attributes_typeID` FOREIGN KEY (`typeID`) REFERENCES `#__thm_groups_attribute_types` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+    ADD CONSTRAINT `fk_attributes_viewlevelID` FOREIGN KEY (`viewLevelID`) REFERENCES `#__viewlevels` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
 ALTER TABLE `#__groups_groups`
-    ADD CONSTRAINT `groups_groupID` FOREIGN KEY (`id`) REFERENCES `#__usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `fk_groups_groupID` FOREIGN KEY (`id`) REFERENCES `#__usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `#__groups_role_associations`
-    ADD CONSTRAINT `ra_roleID` FOREIGN KEY (`roleID`) REFERENCES `#__groups_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    ADD CONSTRAINT `ra_groupID` FOREIGN KEY (`groupID`) REFERENCES `#__groups_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `fk_roleAssocs_roleID` FOREIGN KEY (`roleID`) REFERENCES `#__groups_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    ADD CONSTRAINT `fk_roleAssocs_groupID` FOREIGN KEY (`groupID`) REFERENCES `#__groups_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+SET foreign_key_checks = 1;

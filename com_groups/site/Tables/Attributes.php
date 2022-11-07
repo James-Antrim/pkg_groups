@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpMissingFieldTypeInspection */
+
 /**
  * @package     Groups
  * @extension   com_groups
@@ -12,6 +13,7 @@ namespace THM\Groups\Tables;
 
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
+use Joomla\Database\DatabaseInterface;
 
 /**
  * Class representing the attributes table.
@@ -19,10 +21,39 @@ use Joomla\Database\DatabaseDriver;
 class Attributes extends Table
 {
 	/**
+	 * A JSON string containing the configuration of the attribute type.
+	 * TEXT
+	 */
+	public $configuration;
+
+	// VARCHAR(255) NOT NULL DEFAULT ''
+	public $icon;
+
+	// INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+	public $id;
+
+	// VARCHAR(100) NOT NULL
+	public $label_de;
+	public $label_en;
+
+	// INT(3) UNSIGNED NOT NULL DEFAULT 0
+	public $ordering;
+
+	// TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+	public $required;
+
+	// INT(11) UNSIGNED NOT NULL
+	public $typeID;
+
+	// INT(10) UNSIGNED DEFAULT 1
+	public $viewLevelID;
+
+	/**
 	 * @inheritDoc
 	 */
-	public function __construct(DatabaseDriver $dbo)
+	public function __construct(DatabaseInterface $dbo)
 	{
-		parent::__construct('#__thm_groups_attributes', 'id', $dbo);
+		/** @var DatabaseDriver $dbo */
+		parent::__construct('#__groups_attribute_types', 'id', $dbo);
 	}
 }

@@ -66,17 +66,21 @@ class Groups extends ListView
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
 				'title'      => Text::_('GROUPS_GROUP'),
 				'type'       => 'text'
-			]/*,
-			'names'    => [
-				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_PLURAL'),
-				'type'       => 'text'
-			],
-			'groups'   => [
-				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_GROUPS'),
-				'type'       => 'value'
-			]*/
+			]
+			/*
+			 * TODO
+			Old Groups had...
+			- a batch interface for adding/removing roles
+			- a column for all related roles
+			-- with buttons to remove them once added
+			- a column displaying the number of users assigned to the group
+			Joomla User Groups has...
+			- a list field with explicit ordering options
+			- a table tool for selecting which columns are displayed
+			- a column that directly links access rights
+			- a column for the number of active users
+			- a column for the number of blocked users
+			*/
 		];
 
 		parent::display($tpl);

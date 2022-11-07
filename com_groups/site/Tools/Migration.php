@@ -97,6 +97,7 @@ class Migration
 		$rMap  = self::roles();
 		$raMap = self::roleAssociations($rMap);
 
+		// Fax was added as an attribute type by someone who didn't understand the difference between attributes and types.
 		$atMap = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 12 => 7];
 	}
 
