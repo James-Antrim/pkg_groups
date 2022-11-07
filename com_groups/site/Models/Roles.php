@@ -46,9 +46,7 @@ class Roles extends ListModel
 	}
 
 	/**
-	 * Deletes role entries.
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function delete()
 	{

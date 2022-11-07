@@ -23,7 +23,7 @@ use THM\Groups\Tools\Migration;
 /**
  * Model class for aggregating available attribute types data.
  */
-class AttributeTypes extends ListModel
+class Attributes extends ListModel
 {
 	/**
 	 * @inheritDoc
@@ -36,7 +36,8 @@ class AttributeTypes extends ListModel
 		{
 			$config['filter_fields'] = [
 				'assigned',
-				'inputID',
+				'typeID',
+				'viewlevelID',
 			];
 		}
 
@@ -67,13 +68,7 @@ class AttributeTypes extends ListModel
 		{
 			// Management access is a prerequisite of accessing this view at all.
 			$item->access   = true;
-			$item->editLink = Route::_('index.php?option=com_groups&view=AttributeType&id=' . $item->id);
-
-			$input = Inputs::INPUTS[$item->inputID];
-			$input = "THM\Groups\Helpers\Inputs\\$input";
-
-			/** @var Inputs\Input input */
-			$item->input = new $input();
+			$item->editLink = Route::_('index.php?option=com_groups&view=Attribute&id=' . $item->id);
 		}
 
 		return $items;
@@ -91,20 +86,38 @@ class AttributeTypes extends ListModel
 		$tag   = Application::getTag();
 
 		$query->select([
-			$db->quoteName('at.id'),
-			$db->quoteName("at.name_$tag", 'name'),
-			$db->quoteName('at.inputID', 'inputID')
+			$db->quoteName('a.id'),
+			$db->quoteName("a.label_$tag", 'name'),
+			$db->quoteName('a.icon'),
+			$db->quoteName("at.name_$tag", 'type'),
+			$db->quoteName('vl.title', 'level'),
+			//vl.title
 		]);
 
-		$query->from($db->quoteName('#__groups_attribute_types', 'at'));
+		$attributes = $db->quoteName('#__groups_attributes', 'a');
+		$levelID    = $db->quoteName('vl.id');
+		$lCondition = $db->quoteName('a.viewlevelID') . " = $levelID";
+		$levels     = $db->quoteName('#__viewlevels', 'vl');
+		$typeID     = $db->quoteName('at.id');
+		$tCondition = $db->quoteName('a.typeID') . " = $typeID";
+		$types      = $db->quoteName('#__groups_attribute_types', 'at');
 
-		$iIDColumn = $db->quoteName('at.inputID');
-		$inputID   = $this->getState('filter.inputID');
-		if (is_numeric($inputID) and intval($inputID) > 0)
+		$query->from($attributes)->join('inner', $levels, $lCondition)->join('inner', $types, $tCondition);
+
+		$levelValue = $this->getState('filter.levelID');
+		if (is_numeric($levelValue) and intval($levelValue) > 0)
 		{
-			$inputID = (int) $inputID;
-			$query->where($iIDColumn . ' = :inputID')
-				->bind(':inputID', $inputID, ParameterType::INTEGER);
+			$levelValue = (int) $levelValue;
+			$query->where($levelID . ' = :levelID')
+				->bind(':levelID', $levelValue, ParameterType::INTEGER);
+		}
+
+		$typeValue = $this->getState('filter.typeID');
+		if (is_numeric($typeValue) and intval($typeValue) > 0)
+		{
+			$typeValue = (int) $typeValue;
+			$query->where($typeID . ' = :typeID')
+				->bind(':typeID', $typeValue, ParameterType::INTEGER);
 		}
 
 		$this->orderBy($query);

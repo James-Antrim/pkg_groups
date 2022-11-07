@@ -12,11 +12,13 @@ namespace THM\Groups\Models;
 
 use Exception;
 use Joomla\CMS\Form\Form;
+use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel as Base;
 use Joomla\Database\QueryInterface;
 use Joomla\Registry\Registry;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Helpers\Can;
 
 /**
  * Model class for handling lists of items.
@@ -52,6 +54,13 @@ abstract class ListModel extends Base
 			Application::redirect('', $exception->getCode());
 		}
 	}
+
+	/**
+	 * Deletes entries.
+	 *
+	 * @return void
+	 */
+	abstract public function delete();
 
 	/**
 	 * @inheritDoc

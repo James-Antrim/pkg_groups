@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter">
+        <field name="typeID" type="AttributeTypes" label="GROUPS_ATTRIBUTE_TYPE" onchange="this.form.submit();">
+            <option value="">GROUPS_ALL_ATTRIBUTE_TYPES</option>
+        </field>
+        <field name="levelID" type="ViewLevels" label="GROUPS_VIEW_LEVEL" onchange="this.form.submit();">
+            <option value="">GROUPS_ALL_VIEW_LEVELS</option>
+        </field>
+    </fields>
+</form>

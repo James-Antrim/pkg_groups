@@ -81,7 +81,7 @@ VALUES (1, 'Vornamen', 'First Names', '', 8, '{"hint":"Maxine"}', 3, 0, 1),
 # Default messages and patterns derive from input classes
 INSERT INTO `#__groups_attribute_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
 VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
-       (2, 'HTML', 'HTML', 2, '{}'),
+       (2, 'Ausführlicher Text / HTML', 'Descriptive Text / HTML', 2, '{}'),
        (3, 'Internet Adresse', 'Internet Address', 3, '{}'),
        (4, 'Bild', 'Picture', 4, '{"accept":".bmp,.BMP,.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG"}'),
        (5, 'Datum', 'Date', 5, '{}'),

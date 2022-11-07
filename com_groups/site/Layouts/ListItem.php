@@ -124,7 +124,8 @@ class ListItem
 	 */
 	private static function text(object $item, string $column, bool $context, bool $link = true, bool $newTab = false)
 	{
-		$value = $item->$column;
+		$supplement = $column === 'name';
+		$value      = $item->$column;
 
 		if (is_array($value))
 		{
@@ -163,10 +164,10 @@ class ListItem
 			<?php echo $linkOpen; ?>
 			<?php echo $value; ?>
 			<?php echo $linkClose; ?>
-			<?php if (!empty($item->icon)): ?>
+			<?php if ($supplement and !empty($item->icon)): ?>
 				<?php echo $item->icon; ?>
 			<?php endif; ?>
-			<?php if (!empty($item->supplement)): ?>
+			<?php if ($supplement and !empty($item->supplement)): ?>
                 <br><span class="small"><?php echo $item->supplement; ?></span>
 			<?php endif; ?>
         </td>
