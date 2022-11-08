@@ -17,7 +17,6 @@ use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
-use THM\Groups\Helpers\Inputs;
 use THM\Groups\Tools\Migration;
 
 /**
@@ -37,7 +36,7 @@ class Attributes extends ListModel
 			$config['filter_fields'] = [
 				'assigned',
 				'typeID',
-				'viewlevelID',
+				'viewLevelID',
 			];
 		}
 
@@ -86,17 +85,15 @@ class Attributes extends ListModel
 		$tag   = Application::getTag();
 
 		$query->select([
-			$db->quoteName('a.id'),
+			$db->quoteName('a') . '.*',
 			$db->quoteName("a.label_$tag", 'name'),
-			$db->quoteName('a.icon'),
 			$db->quoteName("at.name_$tag", 'type'),
-			$db->quoteName('vl.title', 'level'),
-			//vl.title
+			$db->quoteName('vl.title', 'level')
 		]);
 
 		$attributes = $db->quoteName('#__groups_attributes', 'a');
 		$levelID    = $db->quoteName('vl.id');
-		$lCondition = $db->quoteName('a.viewlevelID') . " = $levelID";
+		$lCondition = $db->quoteName('a.viewLevelID') . " = $levelID";
 		$levels     = $db->quoteName('#__viewlevels', 'vl');
 		$typeID     = $db->quoteName('at.id');
 		$tCondition = $db->quoteName('a.typeID') . " = $typeID";

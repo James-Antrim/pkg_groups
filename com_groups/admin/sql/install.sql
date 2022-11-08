@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_attributes` (
     `icon`          VARCHAR(255)        NOT NULL DEFAULT '',
     `typeID`        INT(11) UNSIGNED    NOT NULL,
     `configuration` TEXT COMMENT 'A JSON string containing the configuration of the attribute.',
-    `ordering`      INT(3) UNSIGNED     NOT NULL DEFAULT 0,
+    `context`       TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group',
     `required`      TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     `viewLevelID`   INT(10) UNSIGNED             DEFAULT 1,
     PRIMARY KEY (`id`),
@@ -67,16 +67,17 @@ CREATE TABLE IF NOT EXISTS `#__groups_roles` (
     COLLATE = utf8mb4_unicode_ci;
 
 INSERT INTO `#__groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `ordering`, `required`, `viewLevelID`)
-VALUES (1, 'Vornamen', 'First Names', '', 8, '{"hint":"Maxine"}', 3, 0, 1),
-       (2, 'Nachnamen', 'Surnames', '', 8, '{"hint":"Mustermann"}', 4, 1, 1),
+VALUES (1, 'Vornamen', 'First Names', '', 8, '{"hint":"Maxine"}', 1, 0, 1),
+       (2, 'Namen', 'Names', '', 8, '{"hint":"Mustermann"}', 0, 1, 1),
        (3, 'Profilbild', 'Profile Picture', '', 4, '{}', 1, 0, 1),
-       (4, 'E-Mail', 'E-Mail', 'icon-mail', 6, '{"hint":"maxine.mustermann@fb.thm.de"}', 6, 1, 1),
-       (5, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 9, '{"hint":"Prof. Dr."}', 2, 0, 1),
-       (6, 'Telefon', 'Telephone', 'icon-phone', 7, '{"hint":"+49 (0) 641 309 1234"}', 7, 0, 1),
-       (7, 'Namenszusatz (nach)', 'Supplement (Post)', '', 9, '{"hint":"M.Sc."}', 5, 0, 1),
-       (8, 'Fax', 'Fax', 'icon-print', 7, '{"hint":"+49 (0) 641 309 1235"}', 8, 0, 1),
-       (9, 'Homepage', 'Homepage', 'icon-new-tab', 3, '{"hint":"www.thm.de/fb/maxine-mustermann"}', 9, 0, 1),
-       (10, 'Raum', 'Room', 'icon-home', 1, '{"hint":"A1.0.01", "pattern":"([A-Z]{1}[\\d]{1,2})[.| ].*"}', 10, 0, 1);
+       (4, 'E-Mail', 'E-Mail', 'icon-mail', 6, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 1, 1),
+       (5, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 9, '{"hint":"Prof. Dr."}', 1, 0, 1),
+       (6, 'Telefon', 'Telephone', 'icon-phone', 7, '{"hint":"+49 (0) 641 309 1234"}', 0, 0, 1),
+       (7, 'Namenszusatz (nach)', 'Supplement (Post)', '', 9, '{"hint":"M.Sc."}', 1, 0, 1),
+       (8, 'Fax', 'Fax', 'icon-print', 7, '{"hint":"+49 (0) 641 309 1235"}', 0, 0, 1),
+       (9, 'Homepage', 'Homepage', 'icon-new-tab', 3, '{"hint":"www.thm.de/fb/maxine-mustermann"}', 0, 0, 1),
+       (10, 'Raum', 'Room', 'icon-home', 1, '{"hint":"A1.0.01", "pattern":"([A-Z]{1}[\\d]{1,2})[.| ].*"}', 0, 0, 1);
+# TODO check regex in this context
 
 # Default messages and patterns derive from input classes
 INSERT INTO `#__groups_attribute_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
