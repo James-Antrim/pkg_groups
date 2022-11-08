@@ -11,6 +11,7 @@
 namespace THM\Groups\Helpers\Inputs;
 
 use THM\Groups\Adapters\Application;
+use THM\Groups\Tables;
 
 abstract class Input
 {
@@ -31,6 +32,45 @@ abstract class Input
 	public bool $supported = true;
 	public string $type;
 	public bool $validate = false;
+
+	/**
+	 * Creates the input derivative class.
+	 *
+	 * @param   Tables\AttributeTypes|null  $type  the type implementing the input
+	 */
+	public function __construct(Tables\AttributeTypes $type = null)
+	{
+		if ($type)
+		{
+			$inputName = $this->getName();
+
+			$this->id      = $type->id;
+			$this->name_de = $type->name_de;
+			$this->name_en = $type->name_en;
+
+			$typeName = $this->getName();
+
+			if ($configuration = json_decode($type->configuration, true))
+			{
+				foreach ($configuration as $property => $value)
+				{
+					if (property_exists($this, $property))
+					{
+						$this->$property = $value;
+					}
+					else
+					{
+						echo "<pre>Attribute Type $typeName is configured with the property $property, which is unsupported in $inputName.</pre>";
+					}
+				}
+			}
+
+			if (empty($this->pattern))
+			{
+				$this->validate = false;
+			}
+		}
+	}
 
 	/**
 	 * Gets the localized invalid message.
