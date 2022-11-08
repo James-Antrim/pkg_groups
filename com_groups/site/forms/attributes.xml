@@ -7,11 +7,11 @@
         <field name="levelID" type="ViewLevels" label="GROUPS_VIEW_LEVEL" onchange="this.form.submit();">
             <option value="">GROUPS_ALL_VIEW_LEVELS</option>
         </field>
-        <field name="context" type="list" label="GROUPS_ATTRIBUTE_CONTEXT" description="GROUPS_ATTRIBUTE_CONTEXT_DESC">
+        <field name="context" type="list" label="GROUPS_ATTRIBUTE_CONTEXT" description="GROUPS_ATTRIBUTE_CONTEXT_DESC"
+               onchange="this.form.submit();">
             <option value="">GROUPS_ALL_CONTEXTS</option>
-            <option value="0">GROUPS_GROUPS_AND_PROFILES</option>
             <option value="1">GROUPS_PROFILES</option>
-            <option value="0">GROUPS_GROUPS</option>
+            <option value="2">GROUPS_GROUPS</option>
         </field>
     </fields>
 </form>

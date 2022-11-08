@@ -16,6 +16,21 @@ use THM\Groups\Tables\AttributeTypes as Table;
 
 class AttributeTypes implements Selectable
 {
+	public const DATE = 5, EMAIL = 6, HTML = 2, IMAGE = 4, NAME = 8, NAME_SUPPLEMENT = 9, TELEPHONE_EU = 7, TEXT = 1, URL = 3;
+
+	// IDs for quick range validation
+	public const PROTECTED_IDS = [
+		self::DATE,
+		self::EMAIL,
+		self::HTML,
+		self::IMAGE,
+		self::NAME,
+		self::NAME_SUPPLEMENT,
+		self::TELEPHONE_EU,
+		self::TEXT,
+		self::URL,
+	];
+
 	/**
 	 * @inheritDoc
 	 */

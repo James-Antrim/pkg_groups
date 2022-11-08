@@ -16,7 +16,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 use THM\Groups\Adapters\Application;
-use THM\Groups\Helpers\Can;
+use THM\Groups\Helpers;
 use THM\Groups\Tools\Migration;
 
 /**
@@ -48,7 +48,7 @@ class Attributes extends ListModel
 	 */
 	public function delete()
 	{
-		if (!Can::manage())
+		if (!Helpers\Can::manage())
 		{
 			Application::error(403);
 		}
@@ -92,6 +92,7 @@ class Attributes extends ListModel
 		]);
 
 		$attributes = $db->quoteName('#__groups_attributes', 'a');
+		$contextID  = $db->quoteName('a.context');
 		$levelID    = $db->quoteName('vl.id');
 		$lCondition = $db->quoteName('a.viewLevelID') . " = $levelID";
 		$levels     = $db->quoteName('#__viewlevels', 'vl');
@@ -100,6 +101,21 @@ class Attributes extends ListModel
 		$types      = $db->quoteName('#__groups_attribute_types', 'at');
 
 		$query->from($attributes)->join('inner', $levels, $lCondition)->join('inner', $types, $tCondition);
+
+		$contextValue = $this->getState('filter.context');
+		$positiveInt  = (is_numeric($contextValue) and $contextValue = (int) $contextValue);
+
+		if ($positiveInt and in_array($contextValue, Helpers\AttributeTypes::PROTECTED_IDS))
+		{
+			if ($contextValue === Helpers\Attributes::PROFILES_CONTEXT)
+			{
+				$query->where($contextID . ' != ' . Helpers\Attributes::GROUPS_CONTEXT);
+			}
+			elseif ($contextValue === Helpers\Attributes::GROUPS_CONTEXT)
+			{
+				$query->where($contextID . ' != ' . Helpers\Attributes::PROFILES_CONTEXT);
+			}
+		}
 
 		$levelValue = $this->getState('filter.levelID');
 		if (is_numeric($levelValue) and intval($levelValue) > 0)

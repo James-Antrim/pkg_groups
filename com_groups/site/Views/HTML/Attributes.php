@@ -14,8 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\HTML;
-use THM\Groups\Helpers\Can;
-use THM\Groups\Helpers\Inputs\Input;
+use THM\Groups\Helpers;
 
 /**
  * View class for displaying available attribute types.
@@ -46,26 +45,30 @@ class Attributes extends ListView
 	 */
 	public function display($tpl = null)
 	{
-		if (!Can::manage())
+		if (!Helpers\Can::manage())
 		{
 			Application::error(403);
 		}
 
-		//TODO: supress ordering if a filter has been used
 		$this->headers = [
-			'check' => ['type' => 'check'],
-			'name'  => [
+			'check'   => ['type' => 'check'],
+			'name'    => [
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
 				'title'      => Text::_('GROUPS_ATTRIBUTE'),
 				'type'       => 'text'
 			],
-			'type'  => [
+			'type'    => [
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
 				'title'      => Text::_('GROUPS_ATTRIBUTE_TYPE'),
 				'type'       => 'text'
 			],
-			'level' => [
-				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+			'context' => [
+				'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_CONTEXT'),
+				'type'       => 'text'
+			],
+			'level'   => [
+				'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
 				'title'      => Text::_('GROUPS_VIEW_LEVEL'),
 				'type'       => 'text'
 			],
@@ -89,6 +92,19 @@ class Attributes extends ListView
 			else
 			{
 				$item->icon = null;
+			}
+
+			switch ($item->context)
+			{
+				case Helpers\Attributes::GROUPS_CONTEXT:
+					$item->context = Text::_('GROUPS_GROUPS');
+					break;
+				case Helpers\Attributes::PROFILES_CONTEXT:
+					$item->context = Text::_('GROUPS_PROFILES');
+					break;
+				default:
+					$item->context = Text::_('GROUPS_GROUPS_AND_PROFILES');
+					break;
 			}
 		}
 	}

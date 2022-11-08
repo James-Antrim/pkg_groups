@@ -10,10 +10,7 @@
 
 namespace THM\Groups\Helpers;
 
-use Joomla\CMS\Helper\UserGroupsHelper;
-use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Inputs\Input;
-use THM\Groups\Tables\Groups as GT;
 
 /**
  *  Constants and functions for dealing with groups from an external read context.
@@ -24,7 +21,7 @@ class Inputs implements Selectable
 	public const DATE = 5, EDITOR = 2, EMAIL = 6, FILE = 4, TELEPHONE = 7, TEXT = 1, URL = 3;
 
 	// IDs for quick range validation
-	public const InputIDs = [
+	public const IDS = [
 		self::DATE,
 		self::EDITOR,
 		self::EMAIL,
