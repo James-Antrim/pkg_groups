@@ -14,7 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
-use THM\Groups\Helpers\Inputs\Input;
+use THM\Groups\Inputs\Input;
 
 /**
  * View class for displaying available attribute types.
@@ -56,7 +56,7 @@ class AttributeTypes extends ListView
 			Application::error(403);
 		}
 
-		//TODO: supress ordering if a filter has been used
+		//TODO: suppress ordering if a filter has been used
 		$this->headers = [
 			'check' => ['type' => 'check'],
 			'name'  => [

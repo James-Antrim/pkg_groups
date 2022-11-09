@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-namespace THM\Groups\Helpers\Inputs;
+namespace THM\Groups\Inputs;
 
 use THM\Groups\Adapters\Application;
 use THM\Groups\Tables;

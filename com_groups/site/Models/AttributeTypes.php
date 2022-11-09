@@ -18,6 +18,7 @@ use Joomla\Database\QueryInterface;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
 use THM\Groups\Helpers\Inputs;
+use THM\Groups\Inputs\Input;
 use THM\Groups\Tools\Migration;
 
 /**
@@ -70,9 +71,9 @@ class AttributeTypes extends ListModel
 			$item->editLink = Route::_('index.php?option=com_groups&view=AttributeType&id=' . $item->id);
 
 			$input = Inputs::INPUTS[$item->inputID];
-			$input = "THM\Groups\Helpers\Inputs\\$input";
+			$input = "THM\Groups\Inputs\\$input";
 
-			/** @var Inputs\Input input */
+			/** @var Input $input */
 			$item->input = new $input();
 		}
 

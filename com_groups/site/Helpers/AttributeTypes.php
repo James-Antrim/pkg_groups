@@ -11,7 +11,7 @@
 namespace THM\Groups\Helpers;
 
 use THM\Groups\Adapters\Application;
-use THM\Groups\Helpers\Inputs\Input;
+use THM\Groups\Inputs\Input;
 use THM\Groups\Tables\AttributeTypes as Table;
 
 class AttributeTypes implements Selectable
@@ -56,7 +56,7 @@ class AttributeTypes implements Selectable
 			$type->load($typeID);
 
 			$input = Inputs::INPUTS[$type->inputID];
-			$input = "THM\Groups\Helpers\Inputs\\$input";
+			$input = "THM\Groups\Inputs\\$input";
 
 			/** @var Input $input */
 			$return[] = new $input($type);

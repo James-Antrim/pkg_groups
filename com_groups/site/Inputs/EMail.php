@@ -8,16 +8,16 @@
  * @link        www.thm.de
  */
 
-namespace THM\Groups\Helpers\Inputs;
+namespace THM\Groups\Inputs;
 
-class URL extends Text
+class EMail extends Text
 {
-	public string $hint = 'https://www.website.com';
-	public int $id = 3;
+	public string $hint = 'maxine.mustermann@fb.thm.de';
+	public int $id = 6;
 	public string $message_de = 'Die Adresse ist ungültig.';
 	public string $message_en = 'The address is invalid.';
-	public string $name_de = 'URL Eingabekästchen';
-	public string $name_en = 'URL Entry Box';
-	public string $pattern = '';
-	public string $type = 'url';
+	public string $name_de = 'E-Mail Eingabekästchen';
+	public string $name_en = 'E-Mail Entry Box';
+	public string $pattern = '^([\w\d\-_\.]+)@([\w\d\-_\.]+)$';
+	public string $type = 'email';
 }

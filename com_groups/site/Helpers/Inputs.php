@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Helpers;
 
-use THM\Groups\Helpers\Inputs\Input;
+use THM\Groups\Inputs\Input;
 
 /**
  *  Constants and functions for dealing with groups from an external read context.
@@ -51,7 +51,7 @@ class Inputs implements Selectable
 
 		foreach (self::INPUTS as $input)
 		{
-			$input = "THM\Groups\Helpers\Inputs\\$input";
+			$input = "THM\Groups\Inputs\\$input";
 
 			/** @var Input $input */
 			$input = new $input();
