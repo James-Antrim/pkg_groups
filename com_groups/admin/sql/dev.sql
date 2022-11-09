@@ -85,17 +85,20 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_roles` (
 # homepage 1 / 1
 # room 1 / 1
 INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `required`, `viewLevelID`)
-VALUES (1, 'Vornamen', 'First Names', '', 8, '{"hint":"Maxine"}', 1, 0, 1),
-       (2, 'Namen', 'Names', '', 8, '{"hint":"Mustermann"}', 0, 1, 1),
-       (3, 'Profilbild', 'Profile Picture', '', 4, '{}', 1, 0, 1),
-       (4, 'E-Mail', 'E-Mail', 'mail', 6, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 1, 1),
+VALUES (1, 'Namen', 'Names', '', 8, '{"hint":"Mustermann"}', 0, 1, 1),
+       (2, 'Vornamen', 'First Names', '', 8, '{"hint":"Maxine"}', 1, 0, 1),
+       (3, 'E-Mail', 'E-Mail', 'mail', 6, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 1, 1),
+       (4, 'Profilbild', 'Profile Picture', '', 4, '{}', 1, 0, 1),
        (5, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 9, '{"hint":"Prof. Dr."}', 1, 0, 1),
-       (6, 'Telefon', 'Telephone', 'phone', 7, '{}', 0, 0, 1),
-       (7, 'Namenszusatz (nach)', 'Supplement (Post)', '', 9, '{"hint":"M.Sc."}', 1, 0, 1),
+       (6, 'Namenszusatz (nach)', 'Supplement (Post)', '', 9, '{"hint":"M.Sc."}', 1, 0, 1),
+       (7, 'Telefon', 'Telephone', 'phone', 7, '{}', 0, 0, 1),
        (8, 'Fax', 'Fax', 'print', 7, '{}', 0, 0, 1),
        (9, 'Homepage', 'Homepage', 'new-tab', 3, '{"hint":"www.thm.de/fb/maxine-mustermann"}', 0, 0, 1),
-       (10, 'Raum', 'Room', 'home', 1, '{"hint":"A1.0.01", "pattern":"([A-Z]{1}[\\d]{1,2})[.| ].*"}', 0, 0, 1);
-# TODO check regex in this context
+       (10, 'Anschrift', 'Address', 'location', 2, '{"buttons": 0}', 0, 0, 1),
+       (11, 'Büro', 'Office', 'home', 10, '{}', 0, 0, 1),
+       (12, 'Raum', 'Room', 'home', 10, '{}', 0, 0, 1),
+       (13, 'Sprechstunden', 'Consultation Hours', 'comment', 2, '{"buttons": 0}', 0, 0, 1),
+       (14, 'Weitere  Informationen', 'Further Information', 'info', 2, '{"buttons": 0}', 0, 0, 1);
 
 # Default messages and patterns derive from input classes
 INSERT INTO `v7ocf_groups_attribute_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
@@ -107,7 +110,10 @@ VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
        (6, 'E-Mail Adresse', 'E-Mail Address', 6, '{}'),
        (7, 'Telefonnummer (EU)', 'Telephone Number (EU)', 7, '{"hint":"+49 (0) 641 309 1234","pattern":"^(\\\\+[\\\\d]+ ?)?( ?((\\\\(0?[\\\\d]*\\\\))|(0?[\\\\d]+(\\/| \\\\/)?)))?(([ \\\\-]|[\\\\d]+)+)$"}'),
        (8, 'Name', 'Name', 1, '{"message_de":"Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.","message_en":"Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.","pattern":"^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$"}'),
-       (9, 'Namenszusatz', 'Name Supplement', 1, '{"message_de":"Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.","message_en":"The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.","pattern":"^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$"}');
+       (9, 'Namenszusatz', 'Name Supplement', 1, '{"message_de":"Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.","message_en":"The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.","pattern":"^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$"}'),
+       (10, 'Raum', 'Room', 1, '{"hint":"A1.0.01", "pattern":"([A-Z]{1}[\\d]{1,2})[.| ].*"}');
+
+#TODO:
 
 INSERT INTO `v7ocf_groups_roles` (`id`, `name_de`, `name_en`, `names_de`, `names_en`, `ordering`)
 VALUES (1, 'Mitglied', 'Member', 'Mitglieder', 'Members', 17),
