@@ -88,13 +88,13 @@ INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `ty
 VALUES (1, 'Vornamen', 'First Names', '', 8, '{"hint":"Maxine"}', 1, 0, 1),
        (2, 'Namen', 'Names', '', 8, '{"hint":"Mustermann"}', 0, 1, 1),
        (3, 'Profilbild', 'Profile Picture', '', 4, '{}', 1, 0, 1),
-       (4, 'E-Mail', 'E-Mail', 'icon-mail', 6, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 1, 1),
+       (4, 'E-Mail', 'E-Mail', 'mail', 6, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 1, 1),
        (5, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 9, '{"hint":"Prof. Dr."}', 1, 0, 1),
-       (6, 'Telefon', 'Telephone', 'icon-phone', 7, '{}', 0, 0, 1),
+       (6, 'Telefon', 'Telephone', 'phone', 7, '{}', 0, 0, 1),
        (7, 'Namenszusatz (nach)', 'Supplement (Post)', '', 9, '{"hint":"M.Sc."}', 1, 0, 1),
-       (8, 'Fax', 'Fax', 'icon-print', 7, '{}', 0, 0, 1),
-       (9, 'Homepage', 'Homepage', 'icon-new-tab', 3, '{"hint":"www.thm.de/fb/maxine-mustermann"}', 0, 0, 1),
-       (10, 'Raum', 'Room', 'icon-home', 1, '{"hint":"A1.0.01", "pattern":"([A-Z]{1}[\\d]{1,2})[.| ].*"}', 0, 0, 1);
+       (8, 'Fax', 'Fax', 'print', 7, '{}', 0, 0, 1),
+       (9, 'Homepage', 'Homepage', 'new-tab', 3, '{"hint":"www.thm.de/fb/maxine-mustermann"}', 0, 0, 1),
+       (10, 'Raum', 'Room', 'home', 1, '{"hint":"A1.0.01", "pattern":"([A-Z]{1}[\\d]{1,2})[.| ].*"}', 0, 0, 1);
 # TODO check regex in this context
 
 # Default messages and patterns derive from input classes

@@ -21,8 +21,8 @@ class EmptyList
 	{
 		?>
         <div class="alert alert-info">
-            <span class="icon-info-circle" aria-hidden="true"></span><span
-                    class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
+            <span class="fa fa-info-circle" aria-hidden="true"></span>
+            <span class="visually-hidden"><?php echo Text::_('INFO'); ?></span>
 			<?php echo Text::_('JGLOBAL_NO_MATCHING_RESULTS'); ?>
         </div>
 		<?php

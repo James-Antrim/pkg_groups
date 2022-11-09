@@ -40,7 +40,7 @@ class HTML extends HTMLHelper
 	 */
 	public static function icon(string $class): string
 	{
-		return "<span class=\"icon-$class\" aria-hidden=\"true\"></span>";
+		return "<i class=\"fa fa-$class\" aria-hidden=\"true\"></i>";
 	}
 
 	/**

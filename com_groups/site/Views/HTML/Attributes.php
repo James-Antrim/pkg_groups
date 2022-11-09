@@ -84,9 +84,11 @@ class Attributes extends ListView
 	{
 		foreach ($this->items as $item)
 		{
-			if ($item->icon and strpos($item->icon, 'icon-') === 0)
+			if ($item->icon)
 			{
-				$icon       = str_replace('icon-', '', $item->icon);
+				$icon = str_replace('icon-', '', $item->icon);
+				$icon = str_replace('fa-', '', $icon);
+
 				$item->icon = HTML::icon($icon);
 			}
 			else
