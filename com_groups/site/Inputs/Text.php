@@ -12,7 +12,6 @@ namespace THM\Groups\Inputs;
 
 class Text extends Input
 {
-	public string $hint = '';
 	public int $id = 1;
 	public int $maxLength = 255;
 	public string $message_de = 'Einfache Texte dürfen weder Tags noch Zeilenumbrüche beinhalten.';

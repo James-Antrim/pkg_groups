@@ -20,6 +20,7 @@ abstract class Input
 	// defaultValue (default): FF, none
 	// disabled: FF, false
 	// form: FF, none and references a Form object, not form element
+	public string $hint = '';
 	public int $id = 0;
 	public string $message_de = '';
 	public string $message_en = '';

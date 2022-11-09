@@ -12,7 +12,6 @@ namespace THM\Groups\Inputs;
 
 class Telephone extends Text
 {
-	public string $hint = '';
 	public int $id = 7;
 	public int $maxLength = 100;
 	public string $message_de = 'Die Telefonnummer ist ungültig.';
