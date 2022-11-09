@@ -65,12 +65,9 @@ abstract class Input
 					}
 				}
 			}
-
-			if (empty($this->pattern))
-			{
-				$this->validate = false;
-			}
 		}
+
+		$this->validate = !empty($this->pattern);
 	}
 
 	/**
