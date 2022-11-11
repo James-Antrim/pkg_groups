@@ -26,9 +26,7 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_attributes` (
     `context`       TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group',
     `required`      TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     `viewLevelID`   INT(10) UNSIGNED             DEFAULT 1,
-    PRIMARY KEY (`id`),
-    UNIQUE (`label_de`),
-    UNIQUE (`label_en`)
+    PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
@@ -98,22 +96,26 @@ VALUES (1, 'Namen', 'Names', '', 8, '{"hint":"Mustermann"}', 0, 1, 1),
        (11, 'Büro', 'Office', 'home', 10, '{}', 0, 0, 1),
        (12, 'Raum', 'Room', 'home', 10, '{}', 0, 0, 1),
        (13, 'Sprechstunden', 'Consultation Hours', 'comment', 2, '{"buttons": 0}', 0, 0, 1),
-       (14, 'Weitere  Informationen', 'Further Information', 'info', 2, '{"buttons": 0}', 0, 0, 1);
+       (14, 'Weitere  Informationen', 'Further Information', 'info', 2, '{"buttons": 0}', 0, 0, 1),
+       (15, 'Twitter', 'Twitter', 'b,twitter', 13, '{}', 0, 0, 1),
+       (16, 'XING', 'XING', 'b,xing', 13, '{}', 0, 0, 1),
+       (17, 'LinkedIn', 'LinkedIn', 'b,linkedin', 13, '{}', 0, 0, 1);
 
 # Default messages and patterns derive from input classes
 INSERT INTO `v7ocf_groups_attribute_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
 VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
        (2, 'Ausführlicher Text / HTML', 'Descriptive Text / HTML', 2, '{}'),
-       (3, 'Internet Adresse', 'Internet Address', 3, '{}'),
+       (3, 'Link', 'Link', 3, '{"display":1}'),
        (4, 'Bild', 'Picture', 4, '{"accept":".bmp,.BMP,.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG"}'),
        (5, 'Datum', 'Date', 5, '{}'),
        (6, 'E-Mail Adresse', 'E-Mail Address', 6, '{}'),
        (7, 'Telefonnummer (EU)', 'Telephone Number (EU)', 7, '{"hint":"+49 (0) 641 309 1234","pattern":"^(\\\\+[\\\\d]+ ?)?( ?((\\\\(0?[\\\\d]*\\\\))|(0?[\\\\d]+(\\/| \\\\/)?)))?(([ \\\\-]|[\\\\d]+)+)$"}'),
        (8, 'Name', 'Name', 1, '{"message_de":"Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.","message_en":"Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.","pattern":"^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$"}'),
        (9, 'Namenszusatz', 'Name Supplement', 1, '{"message_de":"Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.","message_en":"The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.","pattern":"^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$"}'),
-       (10, 'Raum', 'Room', 1, '{"hint":"A1.0.01", "pattern":"([A-Z]{1}[\\d]{1,2})[.| ].*"}');
-
-#TODO:
+       (10, 'Raum', 'Room', 1, '{"hint":"A1.0.01","maxlength":50,"pattern":"([A-Z]{1}[\\d]{1,2})[.| ].*"}'),
+       (11, 'Liste', 'List', 1, '{"maxlength":0,"pattern":"^(([^<>{},]+); ?)*[^<>{},]+$"}'),
+       (12, 'Link-Liste', 'Link List', 1, '{"maxlength":0,"pattern":"^((<a[^>]+>[^<>{},]+)</a>; ?)*<a[^>]+>[^<>{},]+</a>$"}'),
+       (13, 'Verlinkte Icon ', 'Linked Icon', 3, '{"display":2}');
 
 INSERT INTO `v7ocf_groups_roles` (`id`, `name_de`, `name_en`, `names_de`, `names_en`, `ordering`)
 VALUES (1, 'Mitglied', 'Member', 'Mitglieder', 'Members', 17),
