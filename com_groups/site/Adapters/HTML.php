@@ -40,7 +40,15 @@ class HTML extends HTMLHelper
 	 */
 	public static function icon(string $class): string
 	{
-		return "<i class=\"fa fa-$class\" aria-hidden=\"true\"></i>";
+		$subset = '';
+
+		if (strpos($class, ','))
+		{
+			[$subset, $class] = explode(',', $class);
+			$subset = "$subset";
+		}
+
+		return "<i class=\"fa$subset fa-$class\" aria-hidden=\"true\"></i>";
 	}
 
 	/**

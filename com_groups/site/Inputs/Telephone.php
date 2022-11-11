@@ -15,7 +15,7 @@ use THM\Groups\Helpers\Inputs;
 class Telephone extends Text
 {
 	public int $id = Inputs::TELEPHONE;
-	public int $maxLength = 100;
+	public int $maxlength = 100;
 	public string $message_de = 'Die Telefonnummer ist ungültig.';
 	public string $message_en = 'The telephone number is invalid.';
 	public string $name_de = 'Telefonnummer Eingabekästchen';

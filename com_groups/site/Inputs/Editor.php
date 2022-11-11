@@ -14,11 +14,10 @@ use THM\Groups\Helpers\Inputs;
 
 class Editor extends Input
 {
-	// Can be an array of plugin buttons to be excluded or set to false.
-	public bool $buttons = true;
-	// TODO: implement 'all' and selection in the attribute type definitions
-	// 'Array' of plugin buttons to be hidden. Buttons must be set to true for this to work.
-	public string $hide = 'all';
+	// Enabled / disabled (all hidden).
+	public bool $buttons = false;
+	// 'Array' of plugin buttons to be hidden. Buttons must be enabled for this to work.
+	public string $hide = '';
 	public int $id = Inputs::EDITOR;
 	public string $name_de = 'WYSIWYG-Editor';
 	public string $name_en = 'WYSIWYG-Editor';
