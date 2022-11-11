@@ -10,10 +10,12 @@
 
 namespace THM\Groups\Inputs;
 
+use THM\Groups\Helpers\Inputs;
+
 class EMail extends Text
 {
 	public string $hint = 'maxine.mustermann@fb.thm.de';
-	public int $id = 6;
+	public int $id = Inputs::EMAIL;
 	public string $message_de = 'Die Adresse ist ungültig.';
 	public string $message_en = 'The address is invalid.';
 	public string $name_de = 'E-Mail Eingabekästchen';

@@ -10,11 +10,12 @@
 
 namespace THM\Groups\Inputs;
 
+use THM\Groups\Helpers\Inputs;
 
 class File extends Input
 {
 	public string $accept = '';
-	public int $id = 4;
+	public int $id = Inputs::FILE;
 	public bool $multiple = false;
 	public string $name_de = 'Datei Auswahlkästchen';
 	public string $name_en = 'File Select Box';

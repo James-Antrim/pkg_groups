@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Inputs;
 
+use THM\Groups\Helpers\Inputs;
 
 class Editor extends Input
 {
@@ -18,7 +19,7 @@ class Editor extends Input
 	// TODO: implement 'all' and selection in the attribute type definitions
 	// 'Array' of plugin buttons to be hidden. Buttons must be set to true for this to work.
 	public string $hide = 'all';
-	public int $id = 2;
+	public int $id = Inputs::EDITOR;
 	public string $name_de = 'WYSIWYG-Editor';
 	public string $name_en = 'WYSIWYG-Editor';
 	public string $type = 'editor';

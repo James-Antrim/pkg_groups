@@ -10,9 +10,11 @@
 
 namespace THM\Groups\Inputs;
 
+use THM\Groups\Helpers\Inputs;
+
 class Text extends Input
 {
-	public int $id = 1;
+	public int $id = Inputs::TEXT;
 	public int $maxLength = 255;
 	public string $message_de = 'Einfache Texte dürfen weder Tags noch Zeilenumbrüche beinhalten.';
 	public string $message_en = 'Simple texts may not contain tags or new lines.';
