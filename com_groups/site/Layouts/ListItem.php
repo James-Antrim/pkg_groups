@@ -78,8 +78,9 @@ class ListItem
 	public static function render(ListView $view, int $rowNo, object $item)
 	{
 		$context     = $view->backend;
-		$direction   = $view->escape($view->state->get('list.direction'));
-		$orderBy     = $view->escape($view->state->get('list.ordering'));
+		$state       = $view->get('state');
+		$direction   = $view->escape($state->get('list.direction'));
+		$orderBy     = $view->escape($state->get('list.ordering'));
 		$dragEnabled = ($orderBy == 'ordering' and strtolower($direction) == 'asc');
 		?>
         <thead>

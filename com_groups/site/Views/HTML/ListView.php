@@ -10,29 +10,42 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Pagination\Pagination;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\Registry\Registry;
+use Joomla\CMS\MVC\View\ListView as Base;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
+use THM\Groups\Views\Named;
 
 /**
  * View class for handling lists of items.
  * - Overrides/-writes to avoid deprecated code in the platform or promote ease of use
  * - Supplemental functions to extract common code from list models
  */
-abstract class ListView extends BaseView
+abstract class ListView extends Base
 {
-	public array $activeFilters;
+	use Configured, Named;
+
+	public bool $backend;
 	public array $batch;
-	public Form $filterForm;
 	public array $headers = [];
-	protected array $items;
-	protected string $layout = 'list';
-	protected Pagination $pagination;
-	public Registry $state;
+	public bool $mobile;
+	protected $_layout = 'list';
+
+	/**
+	 * Constructor
+	 *
+	 * @param   array  $config  An optional associative array of configuration settings.
+	 */
+	public function __construct(array $config)
+	{
+		// If this is not explicitly set going in Joomla will default to default without looking at the object property value.
+		$config['layout'] = $this->_layout;
+
+		parent::__construct($config);
+
+		$this->configure();
+	}
 
 	/**
 	 * Add the page title and toolbar.
@@ -59,15 +72,6 @@ abstract class ListView extends BaseView
 	 */
 	public function display($tpl = null)
 	{
-		$this->items         = $this->get('Items');
-		$this->pagination    = $this->get('Pagination');
-		$this->state         = $this->get('State');
-		$this->filterForm    = $this->get('FilterForm');
-		$this->activeFilters = $this->get('ActiveFilters');
-
-		// All the tools are now there.
-		$this->supplementItems();
-
 		// Check for errors.
 		if (count($errors = $this->get('Errors')))
 		{
@@ -104,6 +108,21 @@ abstract class ListView extends BaseView
 		}
 
 		return false;
+	}
+
+	/**
+	 * Prepare view data
+	 *
+	 * @return  void
+	 */
+	protected function initializeView()
+	{
+		// TODO: check submenu viability
+
+		parent::initializeView();
+
+		// All the tools are now there.
+		$this->supplementItems();
 	}
 
 	/**

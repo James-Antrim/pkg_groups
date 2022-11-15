@@ -52,8 +52,9 @@ class ListHeaders
 	 */
 	public static function render(ListView $view)
 	{
-		$direction = $view->escape($view->state->get('list.direction', 'ASC'));
-		$column    = $view->escape($view->state->get('list.ordering'));
+		$state     = $view->get('state');
+		$direction = $view->escape($state->get('list.direction', 'ASC'));
+		$column    = $view->escape($state->get('list.ordering'));
 
 		?>
         <thead>
