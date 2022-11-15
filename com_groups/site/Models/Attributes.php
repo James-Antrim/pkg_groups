@@ -105,7 +105,7 @@ class Attributes extends ListModel
 		$contextValue = $this->getState('filter.context');
 		$positiveInt  = (is_numeric($contextValue) and $contextValue = (int) $contextValue);
 
-		if ($positiveInt and in_array($contextValue, Helpers\AttributeTypes::PROTECTED_IDS))
+		if ($positiveInt and in_array($contextValue, Helpers\Types::PROTECTED_IDS))
 		{
 			if ($contextValue === Helpers\Attributes::PROFILES_CONTEXT)
 			{

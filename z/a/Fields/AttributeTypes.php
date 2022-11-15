@@ -11,7 +11,7 @@
 namespace THM\Groups\Fields;
 
 use Joomla\CMS\Form\Field\ListField;
-use THM\Groups\Helpers\AttributeTypes as Helper;
+use THM\Groups\Helpers\Types as Helper;
 
 /**
  * Provides a list of context relevant groups.
