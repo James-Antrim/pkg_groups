@@ -12,7 +12,6 @@ namespace THM\Groups\Models;
 
 use Exception;
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel as Base;
 use Joomla\Database\QueryInterface;
