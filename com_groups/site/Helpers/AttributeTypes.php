@@ -14,7 +14,7 @@ use THM\Groups\Adapters\Application;
 use THM\Groups\Inputs\Input;
 use THM\Groups\Tables\AttributeTypes as Table;
 
-class Types implements Selectable
+class AttributeTypes implements Selectable
 {
 	public const DATE = 5, EMAIL = 6, HTML = 2, IMAGE = 4, NAME = 8, NAME_SUPPLEMENT = 9, TELEPHONE_EU = 7, TEXT = 1, URL = 3;
 
