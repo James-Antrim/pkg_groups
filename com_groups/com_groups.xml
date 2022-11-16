@@ -29,12 +29,12 @@
         <menu>Groups</menu>
         <submenu>
             <menu controller="Attributes">GROUPS_ATTRIBUTES</menu>
-            <menu controller="AttributeTypes">GROUPS_ATTRIBUTE_TYPES</menu>
-            <menu controller="Content">GROUPS_CONTENT</menu>
+            <menu controller="Contents">GROUPS_CONTENTS</menu>
             <menu controller="Groups">GROUPS_GROUPS</menu>
             <menu controller="Profiles">GROUPS_PROFILES</menu>
             <menu controller="Roles">GROUPS_ROLES</menu>
             <menu controller="Templates">GROUPS_TEMPLATES</menu>
+            <menu controller="Types">GROUPS_TYPES</menu>
         </submenu>
         <files folder="admin">
             <filename>access.xml</filename>

@@ -24,7 +24,7 @@ use THM\Groups\Tools\Migration;
 /**
  * Model class for aggregating available attribute types data.
  */
-class AttributeTypes extends ListModel
+class Types extends ListModel
 {
 	/**
 	 * @inheritDoc
@@ -68,7 +68,7 @@ class AttributeTypes extends ListModel
 		{
 			// Management access is a prerequisite of accessing this view at all.
 			$item->access   = true;
-			$item->editLink = Route::_('index.php?option=com_groups&view=AttributeType&id=' . $item->id);
+			$item->editLink = Route::_('index.php?option=com_groups&view=Type&id=' . $item->id);
 
 			$input = Inputs::INPUTS[$item->inputID];
 			$input = "THM\Groups\Inputs\\$input";
@@ -92,14 +92,14 @@ class AttributeTypes extends ListModel
 		$tag   = Application::getTag();
 
 		$query->select([
-			$db->quoteName('at.id'),
-			$db->quoteName("at.name_$tag", 'name'),
-			$db->quoteName('at.inputID', 'inputID')
+			$db->quoteName('t.id'),
+			$db->quoteName("t.name_$tag", 'name'),
+			$db->quoteName('t.inputID', 'inputID')
 		]);
 
-		$query->from($db->quoteName('#__groups_attribute_types', 'at'));
+		$query->from($db->quoteName('#__groups_types', 't'));
 
-		$iIDColumn = $db->quoteName('at.inputID');
+		$iIDColumn = $db->quoteName('t.inputID');
 		$inputID   = $this->getState('filter.inputID');
 		if (is_numeric($inputID) and intval($inputID) > 0)
 		{

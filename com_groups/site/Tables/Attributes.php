@@ -54,6 +54,6 @@ class Attributes extends Table
 	public function __construct(DatabaseInterface $dbo)
 	{
 		/** @var DatabaseDriver $dbo */
-		parent::__construct('#__groups_attribute_types', 'id', $dbo);
+		parent::__construct('#__groups_attributes', 'id', $dbo);
 	}
 }

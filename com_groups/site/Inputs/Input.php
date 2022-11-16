@@ -37,9 +37,9 @@ abstract class Input
 	/**
 	 * Creates the input derivative class.
 	 *
-	 * @param   Tables\AttributeTypes|null  $type  the type implementing the input
+	 * @param   Tables\Types|null  $type  the type implementing the input
 	 */
-	public function __construct(Tables\AttributeTypes $type = null)
+	public function __construct(Tables\Types $type = null)
 	{
 		if ($type)
 		{

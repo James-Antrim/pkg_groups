@@ -71,6 +71,9 @@ class Dispatcher extends ComponentDispatcher
 		}
 		catch (Exception $exception)
 		{
+			// TODO add constants to the application adapter with message types
+			Application::message($exception->getMessage(), 'error');
+			Application::message("<pre>" . print_r($exception->getTraceAsString(), true) . "</pre>", 'error');
 			Application::error(500);
 		}
 

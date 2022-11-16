@@ -13,7 +13,7 @@ namespace THM\Groups\Controllers;
 /**
  * Controller class for attribute types.
  */
-class AttributeTypes extends Controller
+class Types extends Controller
 {
 	//Stuff
 }

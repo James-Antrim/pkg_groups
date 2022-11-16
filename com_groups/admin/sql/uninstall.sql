@@ -1,7 +1,6 @@
 SET foreign_key_checks = 0;
 
 DROP TABLE IF EXISTS
-    `#__groups_attribute_types`,
     `#__groups_attributes`,
     `#__groups_categories`,
     `#__groups_content`,
@@ -12,6 +11,7 @@ DROP TABLE IF EXISTS
     `#__groups_role_associations`,
     `#__groups_roles`,
     `#__groups_template_attributes`,
-    `#__groups_templates`;
+    `#__groups_templates`,
+    `#__groups_types`;
 
 SET foreign_key_checks = 1;

@@ -18,7 +18,7 @@ use Joomla\Database\DatabaseInterface;
 /**
  * Class representing the attribute types table.
  */
-class AttributeTypes extends Table
+class Types extends Table
 {
 	/**
 	 * A JSON string containing the configuration of the attribute type.
@@ -42,6 +42,6 @@ class AttributeTypes extends Table
 	public function __construct(DatabaseInterface $dbo)
 	{
 		/** @var DatabaseDriver $dbo */
-		parent::__construct('#__groups_attribute_types', 'id', $dbo);
+		parent::__construct('#__groups_types', 'id', $dbo);
 	}
 }

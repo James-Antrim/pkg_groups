@@ -19,7 +19,7 @@ use THM\Groups\Inputs\Input;
 /**
  * View class for displaying available attribute types.
  */
-class AttributeTypes extends ListView
+class Types extends ListView
 {
 	/**
 	 * Add the page title and toolbar.
@@ -29,11 +29,11 @@ class AttributeTypes extends ListView
 	protected function addToolbar()
 	{
 		// Manage access is a prerequisite for getting this far
-		ToolbarHelper::addNew('AttributeTypes.add');
-		ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'AttributeTypes.delete');
+		ToolbarHelper::addNew('Types.add');
+		ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Types.delete');
 		ToolbarHelper::divider();
 
-		ToolbarHelper::title(Text::_('GROUPS_ATTRIBUTE_TYPES'), '');
+		ToolbarHelper::title(Text::_('GROUPS_TYPES'), '');
 
 		if (Can::administrate())
 		{
@@ -43,11 +43,7 @@ class AttributeTypes extends ListView
 	}
 
 	/**
-	 * Method to get display
-	 *
-	 * @param   Object  $tpl  template
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function display($tpl = null)
 	{
@@ -61,7 +57,7 @@ class AttributeTypes extends ListView
 			'check' => ['type' => 'check'],
 			'name'  => [
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_ATTRIBUTE_TYPE'),
+				'title'      => Text::_('GROUPS_TYPE'),
 				'type'       => 'text'
 			],
 			'input' => [

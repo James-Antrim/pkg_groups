@@ -12,9 +12,9 @@ namespace THM\Groups\Helpers;
 
 use THM\Groups\Adapters\Application;
 use THM\Groups\Inputs\Input;
-use THM\Groups\Tables\AttributeTypes as Table;
+use THM\Groups\Tables\Types as Table;
 
-class AttributeTypes implements Selectable
+class Types implements Selectable
 {
 	public const DATE = 5, EMAIL = 6, HTML = 2, IMAGE = 4, NAME = 8, NAME_SUPPLEMENT = 9, TELEPHONE_EU = 7, TEXT = 1, URL = 3;
 
@@ -39,7 +39,7 @@ class AttributeTypes implements Selectable
 		$db    = Application::getDB();
 		$query = $db->getQuery(true);
 		$id    = 'DISTINCT ' . $db->quoteName('id');
-		$types = $db->quoteName('#__groups_attribute_types');
+		$types = $db->quoteName('#__groups_types');
 		$query->select($id)->from($types);
 		$db->setQuery($query);
 

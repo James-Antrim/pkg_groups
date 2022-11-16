@@ -1,20 +1,6 @@
 SET foreign_key_checks = 0;
 
-DROP TABLE IF EXISTS `v7ocf_groups_attributes`, `v7ocf_groups_attribute_types`, `v7ocf_groups_role_associations`, `v7ocf_groups_roles`, `v7ocf_groups_groups`;
-
-CREATE TABLE IF NOT EXISTS `v7ocf_groups_attribute_types` (
-    `id`            INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
-    `name_de`       VARCHAR(100)        NOT NULL,
-    `name_en`       VARCHAR(100)        NOT NULL,
-    `inputID`       TINYINT(2) UNSIGNED NOT NULL DEFAULT 1 COMMENT 'Resolves via Helpers\\Inputs.',
-    `configuration` TEXT COMMENT 'A JSON string containing the configuration of the attribute type.',
-    PRIMARY KEY (`id`),
-    UNIQUE (`name_de`),
-    UNIQUE (`name_en`)
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4
-    COLLATE = utf8mb4_unicode_ci;
+DROP TABLE IF EXISTS `v7ocf_groups_attributes`, `v7ocf_groups_groups`, `v7ocf_groups_role_associations`, `v7ocf_groups_roles`, `v7ocf_groups_types`;
 
 CREATE TABLE IF NOT EXISTS `v7ocf_groups_attributes` (
     `id`            INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
@@ -71,6 +57,20 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_roles` (
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `v7ocf_groups_types` (
+    `id`            INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
+    `name_de`       VARCHAR(100)        NOT NULL,
+    `name_en`       VARCHAR(100)        NOT NULL,
+    `inputID`       TINYINT(2) UNSIGNED NOT NULL DEFAULT 1 COMMENT 'Resolves via Helpers\\Inputs.',
+    `configuration` TEXT COMMENT 'A JSON string containing the configuration of the attribute type.',
+    PRIMARY KEY (`id`),
+    UNIQUE (`name_de`),
+    UNIQUE (`name_en`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
 # old values show label / show icon
 # first name 0 / 0
 # surname 0 / 0
@@ -102,7 +102,7 @@ VALUES (1, 'Namen', 'Names', '', 8, '{"hint":"Mustermann"}', 0, 1, 1),
        (17, 'LinkedIn', 'LinkedIn', 'b,linkedin', 13, '{}', 0, 0, 1);
 
 # Default messages and patterns derive from input classes
-INSERT INTO `v7ocf_groups_attribute_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
+INSERT INTO `v7ocf_groups_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
 VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
        (2, 'Ausführlicher Text / HTML', 'Descriptive Text / HTML', 2, '{}'),
        (3, 'Link', 'Link', 3, '{"display":1}'),
@@ -138,7 +138,7 @@ VALUES (1, 'Mitglied', 'Member', 'Mitglieder', 'Members', 17),
        (18, 'Ehemalige', 'Alumnus', 'Alumni', 'Alumni', 18);
 
 ALTER TABLE `v7ocf_groups_attributes`
-    ADD CONSTRAINT `fk_attributes_typeID` FOREIGN KEY (`typeID`) REFERENCES `v7ocf_thm_groups_attribute_types` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+    ADD CONSTRAINT `fk_attributes_typeID` FOREIGN KEY (`typeID`) REFERENCES `v7ocf_groups_types` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
     ADD CONSTRAINT `fk_attributes_viewLevelID` FOREIGN KEY (`viewLevelID`) REFERENCES `v7ocf_viewlevels` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `v7ocf_groups_groups`

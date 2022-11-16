@@ -37,11 +37,7 @@ class Attributes extends ListView
 	}
 
 	/**
-	 * Method to get display
-	 *
-	 * @param   Object  $tpl  template
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function display($tpl = null)
 	{
@@ -59,7 +55,7 @@ class Attributes extends ListView
 			],
 			'type'    => [
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_ATTRIBUTE_TYPE'),
+				'title'      => Text::_('GROUPS_TYPE'),
 				'type'       => 'text'
 			],
 			'context' => [

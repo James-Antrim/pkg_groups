@@ -87,7 +87,7 @@ class Attributes extends ListModel
 		$query->select([
 			$db->quoteName('a') . '.*',
 			$db->quoteName("a.label_$tag", 'name'),
-			$db->quoteName("at.name_$tag", 'type'),
+			$db->quoteName("t.name_$tag", 'type'),
 			$db->quoteName('vl.title', 'level')
 		]);
 
@@ -96,16 +96,16 @@ class Attributes extends ListModel
 		$levelID    = $db->quoteName('vl.id');
 		$lCondition = $db->quoteName('a.viewLevelID') . " = $levelID";
 		$levels     = $db->quoteName('#__viewlevels', 'vl');
-		$typeID     = $db->quoteName('at.id');
+		$typeID     = $db->quoteName('t.id');
 		$tCondition = $db->quoteName('a.typeID') . " = $typeID";
-		$types      = $db->quoteName('#__groups_attribute_types', 'at');
+		$types      = $db->quoteName('#__groups_types', 't');
 
 		$query->from($attributes)->join('inner', $levels, $lCondition)->join('inner', $types, $tCondition);
 
 		$contextValue = $this->getState('filter.context');
 		$positiveInt  = (is_numeric($contextValue) and $contextValue = (int) $contextValue);
 
-		if ($positiveInt and in_array($contextValue, Helpers\AttributeTypes::PROTECTED_IDS))
+		if ($positiveInt and in_array($contextValue, Helpers\Types::PROTECTED_IDS))
 		{
 			if ($contextValue === Helpers\Attributes::PROFILES_CONTEXT)
 			{
