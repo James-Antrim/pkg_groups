@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
-    <fieldset name="general" label="GROUPS_BASIC_SETTINGS" description="GROUPS_BASIC_SETTINGS_DESCRIPTION">
-        <field name="profileResponsibility" type="list" default="0" label="GROUPS_PROFILE_RESPONSIBILITY"
-               description="GROUPS_PROFILE_RESPONSIBILITY_DESC">
-            <option value="0">Centralized / Administrator, Localize</option>
-            <option value="1">Decentralized / Personal, Localize</option>
+    <fieldset name="general" label="GROUPS_FEATURES" description="GROUPS_FEATURES_DESC">
+        <field name="profiles" type="list" label="GROUPS_PROFILES" description="GROUPS_PROFILES_DESC">
+            <option value="0">GROUPS_CENTRALIZED</option>
+            <option value="1">GROUPS_DECENTRALIZED</option>
         </field>
-        <field name="enableContent" type="list" default="0" label="GROUPS_ENABLE_CONTENT"
-               description="GROUPS_ENABLE_CONTENT_DESC">
-            <option value="0">No / Disabled</option>
-            <option value="1">Yes / Enabled</option>
+        <field name="content" type="list" label="GROUPS_CONTENT" description="GROUPS_CONTENT_DESC">
+            <option value="0">GROUPS_DISABLED</option>
+            <option value="1">GROUPS_ENABLED</option>
         </field>
-        <!-- use a preconfigured category for the personal content root -->
-        <field name="moduleMenuItem" type="menuitem" showon="enableContent:1" label="GROUPS_MODULE_MENU_ITEM"
-               description="GROUPS_MODULE_MENU_ITEM_DESC"/>
+        <!-- TODO: ensure that a preditermined category is specified as the content root -->
+        <field name="itemid" type="menuitem" label="GROUPS_MENU_ITEM" description="GROUPS_MENU_ITEM_DESC"/>
+        <field name="organizer" type="text" label="GROUPS_ORGANIZER_URL" description="GROUPS_ORGANIZER_URL_DESC" default="www.thm.de/organizer"/>
     </fieldset>
-    <fieldset name="permissions" description="JCONFIG_PERMISSIONS_DESC" label="JCONFIG_PERMISSIONS_LABEL">
+    <fieldset name="permissions" label="GROUPS_PERMISSIONS" description="GROUPS_PERMISSIONS_DESC">
         <field name="rules" type="rules" component="com_groups" filter="rules" validate="rules" label="JCONFIG_PERMISSIONS_LABEL"
                section="component"/>
     </fieldset>

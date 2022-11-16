@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="component" method="upgrade">
     <name>COM_GROUPS</name>
-    <description>COM_GROUPS_XML_DESCRIPTION</description>
+    <description>GROUPS_XML_DESCRIPTION</description>
     <creationDate>September 2022</creationDate>
     <author>James Antrim</author>
     <authorEmail>james.antrim@nm.thm.de</authorEmail>
@@ -28,13 +28,13 @@
     <administration>
         <menu>Groups</menu>
         <submenu>
-            <menu controller="Attributes">COM_GROUPS_ATTRIBUTES</menu>
-            <menu controller="AttributeTypes">COM_GROUPS_ATTRIBUTE_TYPES</menu>
-            <menu controller="Content">COM_GROUPS_CONTENT</menu>
-            <menu controller="Groups">COM_GROUPS_GROUPS</menu>
-            <menu controller="Profiles">COM_GROUPS_PROFILES</menu>
-            <menu controller="Roles">COM_GROUPS_ROLES</menu>
-            <menu controller="Templates">COM_GROUPS_TEMPLATES</menu>
+            <menu controller="Attributes">GROUPS_ATTRIBUTES</menu>
+            <menu controller="AttributeTypes">GROUPS_ATTRIBUTE_TYPES</menu>
+            <menu controller="Content">GROUPS_CONTENT</menu>
+            <menu controller="Groups">GROUPS_GROUPS</menu>
+            <menu controller="Profiles">GROUPS_PROFILES</menu>
+            <menu controller="Roles">GROUPS_ROLES</menu>
+            <menu controller="Templates">GROUPS_TEMPLATES</menu>
         </submenu>
         <files folder="admin">
             <filename>access.xml</filename>

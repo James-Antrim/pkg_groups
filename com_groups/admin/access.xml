@@ -3,7 +3,5 @@
     <section name="component">
         <action name="core.admin" title="JACTION_ADMIN" description="JACTION_ADMIN_COMPONENT_DESC"/>
         <action name="core.manage" title="JACTION_MANAGE" description="JACTION_MANAGE_COMPONENT_DESC"/>
-        <action name="profile.manage" title="GROUPS_MANAGE_PROFILE" description="GROUPS_MANAGE_PROFILE_DESC"/>
-        <action name="content.manage" title="GROUPS_MANAGE_CONTENT" description="GROUPS_MANAGE_CONTENT_DESC"/>
     </section>
 </access>
