@@ -319,7 +319,7 @@ class Input
 		{
 			$app          = Application::getApplication();
 			self::$params = method_exists($app, 'getParams') ?
-				$app->getParams() : Application::getParams('com_groups');
+				$app->getParams() : Application::getParams();
 		}
 
 		return self::$params;
