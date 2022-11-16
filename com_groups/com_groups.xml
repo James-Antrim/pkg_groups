@@ -46,12 +46,15 @@
     <files folder="site">
         <folder>Adapters</folder>
         <folder>Controllers</folder>
+        <folder>Fields</folder>
         <folder>forms</folder>
         <folder>Helpers</folder>
-        <!-- <folder>Layouts</folder> empty now-->
+        <folder>Inputs</folder>
+        <folder>Layouts</folder>
         <folder>Models</folder>
         <folder>Providers</folder>
         <folder>Tables</folder>
+        <folder>Tools</folder>
         <folder>templates</folder>
         <folder>Views</folder>
         <filename>Component.php</filename>
