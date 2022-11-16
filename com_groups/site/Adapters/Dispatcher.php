@@ -47,11 +47,19 @@ class Dispatcher extends ComponentDispatcher
 			$this->input->set('controller', $controller);
 			$this->input->set('task', $task);
 		}
-		else
+		elseif (!$controller = $this->input->get('controller'))
 		{
-			$controller = $this->input->get('controller', 'Controller');
-			$task       = $command;
+			if (Application::backend())
+			{
+				$controller = 'Groups';
+			}
+			else
+			{
+				Application::redirect();
+			}
 		}
+
+		$task = $task ?? $command;
 
 		$config['option'] = $this->option;
 		$config['name']   = $controller;
