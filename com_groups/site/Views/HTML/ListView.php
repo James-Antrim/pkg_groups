@@ -30,6 +30,7 @@ abstract class ListView extends Base
 	public array $batch;
 	public array $headers = [];
 	public bool $mobile;
+	public array $todo = [];
 	protected $_layout = 'list';
 
 	/**

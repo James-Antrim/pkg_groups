@@ -77,7 +77,6 @@ VALUES (1, 'Vornamen', 'First Names', '', 8, '{"hint":"Maxine"}', 1, 0, 1),
        (8, 'Fax', 'Fax', 'icon-print', 7, '{"hint":"+49 (0) 641 309 1235"}', 0, 0, 1),
        (9, 'Homepage', 'Homepage', 'icon-new-tab', 3, '{"hint":"www.thm.de/fb/maxine-mustermann"}', 0, 0, 1),
        (10, 'Raum', 'Room', 'icon-home', 1, '{"hint":"A1.0.01", "pattern":"([A-Z]{1}[\\d]{1,2})[.| ].*"}', 0, 0, 1);
-# TODO check regex in this context
 
 # Default messages and patterns derive from input classes
 INSERT INTO `#__groups_attribute_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)

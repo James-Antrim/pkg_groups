@@ -37,6 +37,16 @@ if ($dragEnabled and !empty($this->items))
 	$dragProperties = HTML::toProperties($dragProperties);
 }
 
+if ($this->todo)
+{
+    echo '<ul>';
+    foreach ($this->todo as $todo)
+    {
+        echo "<li>$todo</li>";
+    }
+	echo '</ul>';
+}
+
 $wa = $this->document->getWebAssetManager();
 $wa->useScript('table.columns');
 

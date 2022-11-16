@@ -58,6 +58,16 @@ class Groups extends ListView
 			Application::error(403);
 		}
 
+		$this->todo = [
+			'Add batch processing for adding / removing roles.',
+			'Add filter for view level.',
+			'Add batch processing for view levels.',
+			'Add column for view level output.',
+			'Add column for roles output.',
+			'Add column for user count active / blocked.',
+			'Add column for access debugging.'
+		];
+
 		$this->headers = [
 			'check' => ['type' => 'check'],
 			//'ordering' => ['type' => 'ordering'],
@@ -71,20 +81,6 @@ class Groups extends ListView
 				'title'      => Text::_('GROUPS_ID'),
 				'type'       => 'value'
 			]
-			/*
-			 * TODO
-			Old Groups had...
-			- a batch interface for adding/removing roles
-			- a column for all related roles
-			-- with buttons to remove them once added
-			- a column displaying the number of users assigned to the group
-			Joomla User Groups has...
-			- a list field with explicit ordering options
-			- a table tool for selecting which columns are displayed
-			- a column that directly links access rights
-			- a column for the number of active users
-			- a column for the number of blocked users
-			*/
 		];
 
 		parent::display($tpl);
