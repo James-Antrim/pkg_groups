@@ -108,7 +108,7 @@ class Groups extends ListView
 			}
 			else
 			{
-				$item->name = Helper::getPrefix($item->level) . $item->name;
+				$item->prefix = Helper::getPrefix($item->level);
 			}
 
 			if (in_array($item->id, Helper::DEFAULT))

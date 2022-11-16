@@ -159,6 +159,9 @@ class ListItem
 
 		?>
         <td <?php echo $properties; ?>>
+	        <?php if ($supplement and !empty($item->prefix)): ?>
+		        <?php echo $item->prefix; ?>
+	        <?php endif; ?>
 			<?php echo $linkOpen; ?>
 			<?php echo $value; ?>
 			<?php echo $linkClose; ?>
