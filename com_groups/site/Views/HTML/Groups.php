@@ -43,6 +43,8 @@ class Groups extends ListView
 			ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Groups.delete');
 			ToolbarHelper::divider();
 		}
+
+		parent::addToolbar();
 	}
 
 	/**

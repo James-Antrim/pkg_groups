@@ -79,7 +79,6 @@ abstract class ListView extends Base
 			Application::redirect('', 500);
 		}
 
-		$this->addToolbar();
 		parent::display($tpl);
 	}
 
