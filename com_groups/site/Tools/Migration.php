@@ -106,35 +106,6 @@ id  typeID  label   showLabel   icon    showIcon    options     ordering    publ
 	}
 
 	/**
-	 * Compares the values of the role associations table to determine if a migration should be executed.
-	 * @return bool true if migration should be executed, otherwise false
-	 */
-	private static function compare(): bool
-	{
-		$db = Application::getDB();
-
-		$count = 'COUNT(' . $db->quoteName('id') . ')';
-
-		$query = $db->getQuery(true);
-		$ras   = $db->quoteName('#__groups_role_associations');
-		$query->select($count)->from($ras);
-		$db->setQuery($query);
-
-		if (!$count1 = (int) $db->loadResult())
-		{
-			return true;
-		}
-
-		$query  = $db->getQuery(true);
-		$thmRAs = $db->quoteName('#__thm_groups_role_associations');
-		$query->select($count)->from($thmRAs);
-		$db->setQuery($query);
-		$count2 = (int) $db->loadResult();
-
-		return $count2 > $count1;
-	}
-
-	/**
 	 * Migrates the existing store of usergroups to groups.
 	 */
 	private static function groups()
@@ -173,18 +144,28 @@ id  typeID  label   showLabel   icon    showIcon    options     ordering    publ
 	 */
 	public static function migrate()
 	{
-		/*if (!self::compare())
+		$session = Application::getSession();
+
+		if (!$session->get('com_groups.migrated.groups'))
 		{
-			return;
+			self::groups();
+			$session->set('com_groups.migrate.groups', true);
 		}
 
-		self::groups();
-		$rMap  = self::roles();
-		$raMap = self::roleAssociations($rMap);*/
+		if (!$session->get('com_groups.migrated.roles'))
+		{
+			$rMap  = self::roles();
+			$raMap = self::roleAssociations($rMap);
+			$session->set('com_groups.migrate.roles', true);
+		}
 
-		// Fax was added as an attribute type by someone who didn't understand the difference between attributes and types.
-		$atMap = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 12 => 7];
-		$aMap  = self::attributes($atMap);
+		if (!$session->get('com_groups.migrated.attributes'))
+		{
+			// Fax was added as an attribute type by someone who didn't understand the difference between attributes and types.
+			//$atMap = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 12 => 7];
+			//$aMap  = self::attributes($atMap);
+			//$session->set('com_groups.migrated.attributes', true);
+		}
 	}
 
 	/**
