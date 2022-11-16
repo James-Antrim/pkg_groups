@@ -202,7 +202,7 @@ class Input
 		if (empty(self::$filterItems))
 		{
 			$view     = self::getView();
-			$previous = Factory::getSession()->get('registry')->get("com_groups.$view.filter", []);
+			$previous = Application::getSession()->get('registry')->get("com_groups.$view.filter", []);
 
 			self::$filterItems = new Registry(self::getArray('filter', $previous));
 		}
@@ -301,7 +301,7 @@ class Input
 		if (empty(self::$listItems))
 		{
 			$view            = self::getView();
-			$previous        = Factory::getSession()->get('registry')->get("com_groups.$view.list", []);
+			$previous        = Application::getSession()->get('registry')->get("com_groups.$view.list", []);
 			self::$listItems = new Registry(self::getArray('list', $previous));
 		}
 

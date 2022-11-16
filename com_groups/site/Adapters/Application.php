@@ -16,6 +16,7 @@ use Joomla\CMS\Application\WebApplication;
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Language\Language;
+use Joomla\CMS\Session\Session;
 use Joomla\Database\DatabaseDriver;
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
@@ -173,6 +174,18 @@ class Application
 	public static function getParams(string $component = 'com_groups'): Registry
 	{
 		return ComponentHelper::getParams($component);
+	}
+
+	/**
+	 * Gets the session from the application container.
+	 *
+	 * @return Session
+	 */
+	public static function getSession(): Session
+	{
+		/** @var Session $session */
+		$session = self::getApplication()->getSession();
+		return $session;
 	}
 
 	/**
