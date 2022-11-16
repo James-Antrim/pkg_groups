@@ -202,7 +202,7 @@ class Input
 		if (empty(self::$filterItems))
 		{
 			$view     = self::getView();
-			$previous = Factory::getSession()->get('registry')->get("com_organizer.$view.filter", []);
+			$previous = Factory::getSession()->get('registry')->get("com_groups.$view.filter", []);
 
 			self::$filterItems = new Registry(self::getArray('filter', $previous));
 		}
@@ -301,7 +301,7 @@ class Input
 		if (empty(self::$listItems))
 		{
 			$view            = self::getView();
-			$previous        = Factory::getSession()->get('registry')->get("com_organizer.$view.list", []);
+			$previous        = Factory::getSession()->get('registry')->get("com_groups.$view.list", []);
 			self::$listItems = new Registry(self::getArray('list', $previous));
 		}
 
@@ -319,7 +319,7 @@ class Input
 		{
 			$app          = Application::getApplication();
 			self::$params = method_exists($app, 'getParams') ?
-				$app->getParams() : Application::getParams('com_organizer');
+				$app->getParams() : Application::getParams('com_groups');
 		}
 
 		return self::$params;
