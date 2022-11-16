@@ -83,7 +83,6 @@ class ListItem
 		$orderBy     = $view->escape($state->get('list.ordering'));
 		$dragEnabled = ($orderBy == 'ordering' and strtolower($direction) == 'asc');
 		?>
-        <thead>
         <tr>
 			<?php
 
@@ -110,7 +109,6 @@ class ListItem
 			}
 			?>
         </tr>
-        </thead>
 		<?php
 	}
 
@@ -147,16 +145,15 @@ class ListItem
 			$viewLink = $item->viewLink ?? '';
 			if ($url = $context === self::ADMIN ? $editLink : $viewLink)
 			{
-				$properties = ['href' => $url];
+				$lProperties = ['href' => $url];
 
 				if ($newTab)
 				{
-					$properties['target'] = '_blank';
+					$lProperties['target'] = '_blank';
 				}
 
-				$properties = HTML::toProperties($properties);
-				$linkOpen   = '<a ' . $properties . '>';
-				$linkClose  = '</a>';
+				$linkOpen  = '<a ' . HTML::toProperties($lProperties) . '>';
+				$linkClose = '</a>';
 			}
 		}
 

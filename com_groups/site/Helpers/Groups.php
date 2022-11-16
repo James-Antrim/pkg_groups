@@ -73,11 +73,32 @@ class Groups implements Selectable
 
 			$options[] = (object) [
 				'disable' => $disabled,
-				'text'    => str_repeat('- ', $group->level) . $group->title,
+				'text'    => self::getPrefix($group->level) . $group->title,
 				'value'   => $group->id
 			];
 		}
 
 		return $options;
+	}
+
+	/**
+	 * Gets the prefix for hierarchical list displays.
+	 *
+	 * @param   int  $level  the nested level of the group
+	 *
+	 * @return string the prefix to display
+	 *
+	 */
+	public static function getPrefix(int $level): string
+	{
+		$prefix = '';
+		if ($level > 1)
+		{
+			$prefix = '<span class="text-muted">';
+			$prefix .= str_repeat('&#8942;&nbsp;&nbsp;&nbsp;', $level - 2);
+			$prefix .= '</span>&ndash;&nbsp;';
+		}
+
+		return $prefix;
 	}
 }

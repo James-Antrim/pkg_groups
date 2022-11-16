@@ -13,6 +13,7 @@ namespace THM\Groups\Views\HTML;
 use Joomla\CMS\Helper\ContentHelper as CoreAccess;
 use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
@@ -48,11 +49,7 @@ class Groups extends ListView
 	}
 
 	/**
-	 * Method to get display
-	 *
-	 * @param   Object  $tpl  template
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function display($tpl = null)
 	{
@@ -68,6 +65,11 @@ class Groups extends ListView
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
 				'title'      => Text::_('GROUPS_GROUP'),
 				'type'       => 'text'
+			],
+			'id'    => [
+				'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_ID'),
+				'type'       => 'value'
 			]
 			/*
 			 * TODO
@@ -110,7 +112,7 @@ class Groups extends ListView
 			}
 			else
 			{
-				$item->name = str_repeat('- ', $item->level) . $item->name;
+				$item->name = Helper::getPrefix($item->level) . $item->name;
 			}
 
 			if (in_array($item->id, Helper::DEFAULT))
@@ -120,6 +122,8 @@ class Groups extends ListView
 
 				$item->icon = HTML::tip(HTML::icon('lock'), $context, $tip);
 			}
+
+			$item->editLink = Route::_('index.php?option=com_groups&view=Group&id=' . $item->id);
 		}
 	}
 }

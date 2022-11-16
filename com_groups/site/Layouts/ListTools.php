@@ -46,7 +46,7 @@ class ListTools
 			'searchSelector' => '#filter_search'
 		];
 
-		$class = (($filtersExist and !$searchExists) or !empty($view->activeFilters)) ? ' js-stools-container-filters-visible' : '';
+		$class = ($filtersExist and !empty($view->activeFilters)) ? ' js-stools-container-filters-visible' : '';
 		HTML::_('searchtools.form', '#adminForm', $options);
 		?>
         <div class="js-stools" role="search">

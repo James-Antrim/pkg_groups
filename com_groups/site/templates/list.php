@@ -12,8 +12,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
 use THM\Groups\Adapters\HTML;
-use THM\Groups\Layouts\
-{EmptyList, ListHeaders, ListTools, ListItem};
+use THM\Groups\Layouts;
 use THM\Groups\Views\HTML\ListView;
 
 /** @var ListView $this */
@@ -37,14 +36,18 @@ if ($dragEnabled and !empty($this->items))
 	];
 	$dragProperties = HTML::toProperties($dragProperties);
 }
+
+$wa = $this->document->getWebAssetManager();
+$wa->useScript('table.columns');
+
 ?>
 <form action="<?php echo $action; ?>" method="post" name="adminForm" id="adminForm">
     <div class="row">
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container">
-				<?php ListTools::render($this); ?>
+				<?php Layouts\ListTools::render($this); ?>
 				<?php if (empty($this->items)) : ?>
-					<?php EmptyList::render(); ?>
+					<?php Layouts\EmptyList::render(); ?>
 				<?php else : ?>
                     <table class="table" id="<?php echo $this->_name ?>List">
                         <caption class="visually-hidden">
@@ -52,10 +55,10 @@ if ($dragEnabled and !empty($this->items))
                             <span id="orderedBy"><?php echo Text::_('JGLOBAL_SORTED_BY'); ?> </span>,
                             <span id="filteredBy"><?php echo Text::_('JGLOBAL_FILTERED_BY'); ?></span>
                         </caption>
-						<?php ListHeaders::render($this); ?>
+						<?php Layouts\ListHeaders::render($this); ?>
                         <tbody <?php echo $dragProperties; ?>>
 						<?php foreach ($this->items as $rowNo => $item) : ?>
-							<?php ListItem::render($this, $rowNo, $item); ?>
+							<?php Layouts\ListItem::render($this, $rowNo, $item); ?>
 						<?php endforeach; ?>
                         </tbody>
                     </table>

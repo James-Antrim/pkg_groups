@@ -30,34 +30,34 @@ class SearchBar
 			return;
 		}
 
-		$filters = $view->filterForm->getGroup('filter');
+		$filters      = $view->filterForm->getGroup('filter');
+		$searchExists = isset($filters['filter_search']);
+		$filtersExist = $searchExists ? count($filters) > 1 : (bool) $filters;
 
-		if (!isset($filters['filter_search']))
+		if (isset($filters['filter_search']))
 		{
-			return;
-		}
+			$search = $view->filterForm->getGroup('filter')['filter_search'];
 
-		// Other than search...
-		$filtersExist = count($filters) > 1;
-		$search       = $view->filterForm->getGroup('filter')['filter_search'];
-
-		?>
-        <div class="filter-search-bar btn-group">
-            <div class="input-group">
-				<?php echo $search->__get('input'); ?>
-				<?php if ($search->__get('description')) : ?>
-                    <div role="tooltip" id="<?php echo ($search->__get('id') ?: $search->__get('name')) . '-desc'; ?>"
-                         class="filter-search-bar__description">
-						<?php echo htmlspecialchars(Text::_($search->__get('description')), ENT_COMPAT); ?>
-                    </div>
-				<?php endif; ?>
-                <span class="filter-search-bar__label visually-hidden"><?php echo $search->__get('label'); ?></span>
-                <button type="submit" class="filter-search-bar__button btn btn-primary"
-                        aria-label="<?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>">
-                    <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
-                </button>
+			?>
+            <div class="filter-search-bar btn-group">
+                <div class="input-group">
+					<?php echo $search->__get('input'); ?>
+					<?php if ($search->__get('description')) : ?>
+                        <div role="tooltip" id="<?php echo ($search->__get('id') ?: $search->__get('name')) . '-desc'; ?>"
+                             class="filter-search-bar__description">
+							<?php echo htmlspecialchars(Text::_($search->__get('description')), ENT_COMPAT); ?>
+                        </div>
+					<?php endif; ?>
+                    <span class="filter-search-bar__label visually-hidden"><?php echo $search->__get('label'); ?></span>
+                    <button type="submit" class="filter-search-bar__button btn btn-primary"
+                            aria-label="<?php echo Text::_('JSEARCH_FILTER_SUBMIT'); ?>">
+                        <span class="filter-search-bar__button-icon icon-search" aria-hidden="true"></span>
+                    </button>
+                </div>
             </div>
-        </div>
+			<?php
+		}
+		?>
         <div class="filter-search-actions btn-group">
 			<?php if ($filtersExist) : ?>
                 <button type="button" class="filter-search-actions__button btn btn-primary js-stools-btn-filter">
