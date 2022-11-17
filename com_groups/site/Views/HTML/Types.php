@@ -22,9 +22,7 @@ use THM\Groups\Inputs\Input;
 class Types extends ListView
 {
 	/**
-	 * Add the page title and toolbar.
-	 *
-	 * @return  void
+	 * @inheritDoc
 	 */
 	protected function addToolbar()
 	{
@@ -52,7 +50,27 @@ class Types extends ListView
 			Application::error(403);
 		}
 
-		//TODO: suppress ordering if a filter has been used
+		parent::display($tpl);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function completeItems()
+	{
+		foreach ($this->items as $item)
+		{
+			/** @var Input $input */
+			$input       = $item->input;
+			$item->input = $input->getName();
+		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeHeaders()
+	{
 		$this->headers = [
 			'check' => ['type' => 'check'],
 			'name'  => [
@@ -66,20 +84,5 @@ class Types extends ListView
 				'type'       => 'text'
 			],
 		];
-
-		parent::display($tpl);
-	}
-
-	/**
-	 * Supplements item information for display purposes.
-	 */
-	protected function supplementItems()
-	{
-		foreach ($this->items as $item)
-		{
-			/** @var Input $input */
-			$input       = $item->input;
-			$item->input = $input->getName();
-		}
 	}
 }

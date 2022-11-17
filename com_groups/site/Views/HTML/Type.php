@@ -17,7 +17,7 @@ use THM\Groups\Helpers\Can;
 /**
  * View class for displaying available attribute types.
  */
-class Type extends ListView
+class Type extends FormView
 {
 	/**
 	 * Add the page title and toolbar.

@@ -22,9 +22,7 @@ use THM\Groups\Helpers;
 class Attributes extends ListView
 {
 	/**
-	 * Add the page title and toolbar.
-	 *
-	 * @return  void
+	 * @inheritDoc
 	 */
 	protected function addToolbar()
 	{
@@ -46,37 +44,13 @@ class Attributes extends ListView
 			Application::error(403);
 		}
 
-		$this->headers = [
-			'check'   => ['type' => 'check'],
-			'name'    => [
-				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_ATTRIBUTE'),
-				'type'       => 'text'
-			],
-			'type'    => [
-				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_TYPE'),
-				'type'       => 'text'
-			],
-			'context' => [
-				'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_CONTEXT'),
-				'type'       => 'text'
-			],
-			'level'   => [
-				'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_VIEW_LEVEL'),
-				'type'       => 'text'
-			],
-		];
-
 		parent::display($tpl);
 	}
 
 	/**
-	 * Supplements item information for display purposes.
+	 * @inheritDoc
 	 */
-	protected function supplementItems()
+	protected function completeItems()
 	{
 		foreach ($this->items as $item)
 		{
@@ -105,5 +79,35 @@ class Attributes extends ListView
 					break;
 			}
 		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeHeaders()
+	{
+		$this->headers = [
+			'check'   => ['type' => 'check'],
+			'name'    => [
+				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_ATTRIBUTE'),
+				'type'       => 'text'
+			],
+			'type'    => [
+				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_TYPE'),
+				'type'       => 'text'
+			],
+			'context' => [
+				'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_CONTEXT'),
+				'type'       => 'text'
+			],
+			'level'   => [
+				'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_VIEW_LEVEL'),
+				'type'       => 'text'
+			],
+		];
 	}
 }

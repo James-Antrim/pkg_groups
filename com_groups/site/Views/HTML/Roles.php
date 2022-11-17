@@ -36,11 +36,7 @@ class Roles extends ListView
 	}
 
 	/**
-	 * Method to get display
-	 *
-	 * @param   Object  $tpl  template
-	 *
-	 * @return void
+	 * @inheritDoc
 	 */
 	public function display($tpl = null)
 	{
@@ -49,7 +45,15 @@ class Roles extends ListView
 			Application::error(403);
 		}
 
-		//TODO: supress ordering if a filter has been used
+		parent::display($tpl);
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeHeaders()
+	{
+		//TODO: suppress ordering if a filter has been used
 		$this->headers = [
 			'check'    => ['type' => 'check'],
 			'ordering' => ['type' => 'ordering'],
@@ -69,7 +73,5 @@ class Roles extends ListView
 				'type'       => 'value'
 			]
 		];
-
-		parent::display($tpl);
 	}
 }

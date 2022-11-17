@@ -26,9 +26,7 @@ use THM\Groups\Adapters\HTML;
 class Groups extends ListView
 {
 	/**
-	 * Add the page title and toolbar.
-	 *
-	 * @return  void
+	 * @inheritDoc
 	 */
 	protected function addToolbar()
 	{
@@ -67,27 +65,13 @@ class Groups extends ListView
 			'Add column for access debugging.'
 		];
 
-		$this->headers = [
-			'check' => ['type' => 'check'],
-			'name'  => [
-				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_GROUP'),
-				'type'       => 'text'
-			],
-			'id'    => [
-				'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_ID'),
-				'type'       => 'value'
-			]
-		];
-
 		parent::display($tpl);
 	}
 
 	/**
 	 * @inheritDoc
 	 */
-	protected function supplementItems()
+	protected function completeItems()
 	{
 		$ugh = UGH::getInstance();
 
@@ -119,5 +103,25 @@ class Groups extends ListView
 
 			$item->editLink = Route::_('index.php?option=com_groups&view=Group&id=' . $item->id);
 		}
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	protected function initializeHeaders()
+	{
+		$this->headers = [
+			'check' => ['type' => 'check'],
+			'name'  => [
+				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_GROUP'),
+				'type'       => 'text'
+			],
+			'id'    => [
+				'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_ID'),
+				'type'       => 'value'
+			]
+		];
 	}
 }

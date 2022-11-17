@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Views\HTML;
 
+use Exception;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\MVC\View\ListView as Base;
@@ -69,7 +70,13 @@ abstract class ListView extends Base
 	}
 
 	/**
-	 * @inheritDoc
+	 * Execute and display a template script. Inheriting classes handle the conditional access rights.
+	 *
+	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+	 *
+	 * @return  void
+	 *
+	 * @throws  Exception
 	 */
 	public function display($tpl = null)
 	{
@@ -111,9 +118,12 @@ abstract class ListView extends Base
 	}
 
 	/**
-	 * Prepare view data
-	 *
-	 * @return  void
+	 * Initializes the headers after the view has been initialized.
+	 */
+	abstract protected function initializeHeaders();
+
+	/**
+	 * @inheritDoc
 	 */
 	protected function initializeView()
 	{
@@ -122,14 +132,15 @@ abstract class ListView extends Base
 		parent::initializeView();
 
 		// All the tools are now there.
-		$this->supplementItems();
+		$this->initializeHeaders();
+		$this->completeItems();
 	}
 
 	/**
-	 * Supplements item information for display purposes.
+	 * Supplements item information for display purposes as necessary.
 	 */
-	protected function supplementItems()
+	protected function completeItems()
 	{
-		// Filled by inheriting classes
+		// Filled by inheriting classes as necessary.
 	}
 }
