@@ -60,7 +60,6 @@ class Groups extends ListView
 
 		$this->todo = [
 			'Add batch processing for adding / removing roles.',
-			'Add filter for view level.',
 			'Add batch processing for view levels.',
 			'Add column for view level output.',
 			'Add column for roles output.',
@@ -70,7 +69,6 @@ class Groups extends ListView
 
 		$this->headers = [
 			'check' => ['type' => 'check'],
-			//'ordering' => ['type' => 'ordering'],
 			'name'  => [
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
 				'title'      => Text::_('GROUPS_GROUP'),

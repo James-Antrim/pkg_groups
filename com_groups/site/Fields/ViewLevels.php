@@ -32,20 +32,25 @@ class ViewLevels extends ListField
 		$query = $db->getQuery(true);
 
 		$levels = $db->quoteName('#__viewlevels', 'vl');
+		$rules  = $db->quoteName('vl.rules');
 		$text   = $db->quoteName('vl.title', 'text');
 		$title  = $db->quoteName('vl.title');
 		$value  = 'DISTINCT ' . $db->quoteName('vl.id', 'value');
 
+		$context = $this->form->getName();
 		$query->select([$value, $text])->from($levels)->order($title);
 
-		if ($this->form->getName() === 'com_groups.attributes.filter')
+		if ($context === 'com_groups.attributes.filter')
 		{
 			$attributes = $db->quoteName('#__groups_attributes', 'a');
 			$condition  = $db->quoteName('a.viewLevelID') . ' = ' . $db->quoteName('vl.id');
 			$query->join('inner', $attributes, $condition);
 		}
 
-		// TODO: supplement query for the groups context
+		if ($context === 'com_groups.groups.filter')
+		{
+			$query->where("$rules != '[]'");
+		}
 
 		$db->setQuery($query);
 

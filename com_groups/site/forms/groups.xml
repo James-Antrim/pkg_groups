@@ -2,6 +2,9 @@
 <form>
     <fields name="filter">
         <field name="search" type="text" label="GROUPS_SEARCH" hint="GROUPS_SEARCH_TERMS"/>
+        <field name="levelID" type="ViewLevels" label="GROUPS_VIEW_LEVEL" onchange="this.form.submit();">
+            <option value="">GROUPS_ALL_VIEW_LEVELS</option>
+        </field>
         <field name="roleID" type="Roles" label="GROUPS_ROLE" onchange="this.form.submit();">
             <option value="">GROUPS_ALL_ROLES</option>
             <option value="-1">GROUPS_NO_ROLES</option>

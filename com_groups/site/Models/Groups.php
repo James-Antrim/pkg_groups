@@ -33,7 +33,7 @@ class Groups extends ListModel
 
 		if (empty($config['filter_fields']))
 		{
-			$config['filter_fields'] = ['roleID'];
+			$config['filter_fields'] = ['levelID', 'roleID'];
 		}
 
 		parent::__construct($config, $factory);
@@ -92,23 +92,34 @@ class Groups extends ListModel
 		$userGroups = $db->quoteName('#__usergroups', 'ug');
 		$query->from($groups)->join('inner', $userGroups, $condition);
 
-		if ($roleID = (int) $this->getState('filter.roleID'))
+		if ($filterID = (int) $this->getState('filter.roleID'))
 		{
 			$condition = $db->quoteName('ra.groupID') . " = $groupID";
 			$ra        = $db->quoteName('#__groups_role_associations', 'ra');
-			$raRoleID  = $db->quoteName('ra.roleID');
+			$roleID    = $db->quoteName('ra.roleID');
 
-			if ($roleID >= 1)
+			if ($filterID >= 1)
 			{
 				$query->join('inner', $ra, $condition)
-					->where("$raRoleID = :roleID")
-					->bind(':roleID', $roleID, ParameterType::INTEGER);
+					->where("$roleID = :roleID")
+					->bind(':roleID', $filterID, ParameterType::INTEGER);
 			}
 			else
 			{
 				$query->join('left', $ra, $condition)
-					->where("$raRoleID IS NULL");
+					->where("$roleID IS NULL");
 			}
+		}
+
+		if ($filterID = (int) $this->getState('filter.levelID'))
+		{
+			$levelID = $db->quoteName('vl.id');
+			$levels  = $db->quoteName('#__viewlevels', 'vl');
+			$regex   = $query->concatenate(["'[,\\\\[]'", $groupID, "'[,\\\\]]'"]);
+			$rules   = $db->quoteName('vl.rules');
+			$query->join('inner', $levels, "$rules REGEXP $regex")
+				->where("$levelID = :levelID")
+				->bind(':levelID', $filterID, ParameterType::INTEGER);
 		}
 
 		// Filter the comments over the search string if set.
@@ -127,9 +138,9 @@ class Groups extends ListModel
 				$nameDE = $db->quoteName('g.name_de');
 				$nameEN = $db->quoteName('g.name_en');
 				$search = '%' . trim($search) . '%';
-				$query->where("($nameDE LIKE :title1 OR $nameEN LIKE :title2)");
-				$query->bind(':title1', $search);
-				$query->bind(':title2', $search);
+				$query->where("($nameDE LIKE :title1 OR $nameEN LIKE :title2)")
+					->bind(':title1', $search)
+					->bind(':title2', $search);
 			}
 		}
 
