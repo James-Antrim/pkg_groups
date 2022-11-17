@@ -11,6 +11,7 @@
 namespace THM\Groups\Helpers;
 
 use Joomla\CMS\Helper\UserGroupsHelper;
+use Joomla\Database\ParameterType;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Tables\Groups as GT;
 
@@ -53,6 +54,46 @@ class Groups implements Selectable
 		}
 
 		return $groups;
+	}
+
+	/**
+	 * Gets the view levels associated with the group.
+	 *
+	 * @param   int  $groupID  the id of the group to get levels for
+	 *
+	 * @return array [id => title]
+	 */
+	public static function getLevels(int $groupID): array
+	{
+		$group    = UserGroupsHelper::getInstance()->get($groupID);
+		$groupIDs = $group->path;
+
+		$db     = Application::getDB();
+		$id     = $db->quoteName('id');
+		$rules  = $db->quoteName('rules');
+		$title  = $db->quoteName('title');
+		$levels = $db->quoteName('#__viewlevels');
+
+		$query  = $db->getQuery(true);
+		$regex  = $query->concatenate(["'[,\\\\[]'", ':groupID', "'[,\\\\]]'"]);
+		$return = [];
+		$query->select([$id, $title])->from($levels)->where("$rules REGEXP $regex");
+
+		do
+		{
+			$groupID = array_pop($groupIDs);
+			$query->bind(':groupID', $groupID, ParameterType::INTEGER);
+			$db->setQuery($query);
+
+			if ($results = $db->loadAssocList('id', 'title'))
+			{
+				$return += $results;
+			}
+		} while ($groupIDs);
+
+		asort($return);
+
+		return $return;
 	}
 
 	/**
@@ -100,5 +141,41 @@ class Groups implements Selectable
 		}
 
 		return $prefix;
+	}
+
+	/**
+	 * Gets the roles associated with the group.
+	 *
+	 * @param   int  $groupID  the id of the group to get roles for
+	 *
+	 * @return array [id => name]
+	 */
+	public static function getRoles(int $groupID): array
+	{
+		$tag = Application::getTag();
+		$db  = Application::getDB();
+
+		$id        = $db->quoteName("r.id");
+		$ra        = $db->quoteName('#__groups_role_associations', 'ra');
+		$raGroupID = $db->quoteName("ra.groupID");
+		$raRoleID  = $db->quoteName("ra.roleID");
+		$name      = $db->quoteName("r.name_$tag", 'name');
+		$nameTag   = $db->quoteName("r.name_$tag");
+		$roles     = $db->quoteName('#__groups_roles', 'r');
+
+		$condition = "$raRoleID = $id";
+		$query     = $db->getQuery(true);
+
+		$query->select([$id, $name])
+			->from($roles)
+			->join('inner', $ra, $condition)
+			->where("$raGroupID = :groupID")
+			->bind(':groupID', $groupID, ParameterType::INTEGER)
+			->order($nameTag);
+		$db->setQuery($query);
+
+		$results = $db->loadAssocList('id', 'name');
+
+		return $results ?? [];
 	}
 }

@@ -16,7 +16,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use THM\Groups\Adapters\Application;
-use THM\Groups\Helpers\Can;
+use THM\Groups\Helpers;
 use THM\Groups\Helpers\Groups as Helper;
 use THM\Groups\Adapters\HTML;
 
@@ -51,7 +51,7 @@ class Groups extends ListView
 	 */
 	public function display($tpl = null)
 	{
-		if ($this->backend and !Can::manage())
+		if ($this->backend and !Helpers\Can::manage())
 		{
 			Application::error(403);
 		}
@@ -59,10 +59,9 @@ class Groups extends ListView
 		$this->todo = [
 			'Add batch processing for adding / removing roles.',
 			'Add batch processing for view levels.',
-			'Add column for view level output.',
-			'Add column for roles output.',
 			'Add column for user count active / blocked.',
-			'Add column for access debugging.'
+			'Add column for access debugging.',
+			'Expand the view level filter for inheritance'
 		];
 
 		parent::display($tpl);
@@ -101,6 +100,53 @@ class Groups extends ListView
 				$item->icon = HTML::tip(HTML::icon('lock'), $context, $tip);
 			}
 
+			if (!$this->state->get('filter.roleID'))
+			{
+				$roles = Helper::getRoles($item->id);
+				$count = count($roles);
+
+				//$item->viewLevel = implode(', ', $levels);
+				switch (true)
+				{
+					case $count === 0:
+						$item->role = Text::_('GROUPS_NONE');
+						break;
+					case $count === 1:
+						$item->role = $roles[Helpers\Roles::MEMBER];
+						break;
+					// Doesn't take up too much space I hope...
+					case $count === 2:
+					case $count === 3:
+						unset($roles[Helpers\Roles::MEMBER]);
+						$item->viewLevel = implode(', ', $roles);
+						break;
+					default:
+						$item->role = Text::_('GROUPS_MULTIPLE');
+						break;
+
+				}
+			}
+
+			if (!$this->state->get('filter.levelID'))
+			{
+				$levels = Helper::getLevels($item->id);
+				$count  = count($levels);
+
+				switch (true)
+				{
+					case $count === 0:
+						$item->viewLevel = Text::_('GROUPS_NONE');
+						break;
+					case $count > 2:
+						$item->viewLevel = Text::_('GROUPS_MULTIPLE');
+						break;
+					default:
+						$item->viewLevel = implode(', ', $levels);
+						break;
+
+				}
+			}
+
 			$item->editLink = Route::_('index.php?option=com_groups&view=Group&id=' . $item->id);
 		}
 	}
@@ -116,12 +162,31 @@ class Groups extends ListView
 				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
 				'title'      => Text::_('GROUPS_GROUP'),
 				'type'       => 'text'
-			],
-			'id'    => [
-				'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_ID'),
-				'type'       => 'value'
 			]
+		];
+
+		if (!$this->state->get('filter.roleID'))
+		{
+			$this->headers['role'] = [
+				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_ROLE'),
+				'type'       => 'value'
+			];
+		}
+
+		if (!$this->state->get('filter.levelID'))
+		{
+			$this->headers['viewLevel'] = [
+				'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+				'title'      => Text::_('GROUPS_LEVEL'),
+				'type'       => 'value'
+			];
+		}
+
+		$this->headers['id'] = [
+			'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+			'title'      => Text::_('GROUPS_ID'),
+			'type'       => 'value'
 		];
 	}
 }

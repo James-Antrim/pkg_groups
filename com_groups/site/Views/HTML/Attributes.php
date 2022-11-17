@@ -105,7 +105,7 @@ class Attributes extends ListView
 			],
 			'level'   => [
 				'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-				'title'      => Text::_('GROUPS_VIEW_LEVEL'),
+				'title'      => Text::_('GROUPS_LEVEL'),
 				'type'       => 'text'
 			],
 		];
