@@ -92,17 +92,17 @@ class Groups extends ListModel
 		$userGroups = $db->quoteName('#__usergroups', 'ug');
 		$query->from($groups)->join('inner', $userGroups, $condition);
 
-		if ($filterID = (int) $this->getState('filter.roleID'))
+		if ($filterRoleID = (int) $this->getState('filter.roleID'))
 		{
 			$condition = $db->quoteName('ra.groupID') . " = $groupID";
 			$ra        = $db->quoteName('#__groups_role_associations', 'ra');
 			$roleID    = $db->quoteName('ra.roleID');
 
-			if ($filterID >= 1)
+			if ($filterRoleID >= 1)
 			{
 				$query->join('inner', $ra, $condition)
 					->where("$roleID = :roleID")
-					->bind(':roleID', $filterID, ParameterType::INTEGER);
+					->bind(':roleID', $filterRoleID, ParameterType::INTEGER);
 			}
 			else
 			{
@@ -111,7 +111,7 @@ class Groups extends ListModel
 			}
 		}
 
-		if ($filterID = (int) $this->getState('filter.levelID'))
+		if ($filterLevelID = (int) $this->getState('filter.levelID'))
 		{
 			$levelID = $db->quoteName('vl.id');
 			$levels  = $db->quoteName('#__viewlevels', 'vl');
@@ -119,7 +119,7 @@ class Groups extends ListModel
 			$rules   = $db->quoteName('vl.rules');
 			$query->join('inner', $levels, "$rules REGEXP $regex")
 				->where("$levelID = :levelID")
-				->bind(':levelID', $filterID, ParameterType::INTEGER);
+				->bind(':levelID', $filterLevelID, ParameterType::INTEGER);
 		}
 
 		// Filter the comments over the search string if set.
