@@ -80,7 +80,7 @@ class Groups extends ListModel
 		$query = $db->getQuery(true);
 		$tag   = Application::getTag();
 
-		$id       = $db->quoteName('g.id', 'id');
+		$id       = 'DISTINCT ' . $db->quoteName('g.id', 'id');
 		$groupID  = $db->quoteName('g.id');
 		$name     = $db->quoteName("g.name_$tag", 'name');
 		$parentID = $db->quoteName('ug.parent_id');
@@ -91,6 +91,15 @@ class Groups extends ListModel
 		$groups     = $db->quoteName('#__groups_groups', 'g');
 		$userGroups = $db->quoteName('#__usergroups', 'ug');
 		$query->from($groups)->join('inner', $userGroups, $condition);
+
+		$gLeft     = $db->quoteName('ug.lft');
+		$gRight    = $db->quoteName('ug.rgt');
+		$parent    = $db->quoteName('#__usergroups', 'p');
+		$pID       = $db->quoteName('p.id');
+		$pLeft     = $db->quoteName('p.lft');
+		$pRight    = $db->quoteName('p.rgt');
+		$condition = "$pLeft < $gLeft AND $gRight < $pRight";
+		$query->join('left', $parent, $condition);
 
 		if ($filterRoleID = (int) $this->getState('filter.roleID'))
 		{
@@ -115,9 +124,10 @@ class Groups extends ListModel
 		{
 			$levelID = $db->quoteName('vl.id');
 			$levels  = $db->quoteName('#__viewlevels', 'vl');
-			$regex   = $query->concatenate(["'[,\\\\[]'", $groupID, "'[,\\\\]]'"]);
+			$regex1   = $query->concatenate(["'[,\\\\[]'", $groupID, "'[,\\\\]]'"]);
+			$regex2   = $query->concatenate(["'[,\\\\[]'", $pID, "'[,\\\\]]'"]);
 			$rules   = $db->quoteName('vl.rules');
-			$query->join('inner', $levels, "$rules REGEXP $regex")
+			$query->join('inner', $levels, "$rules REGEXP $regex1 OR $rules REGEXP $regex2")
 				->where("$levelID = :levelID")
 				->bind(':levelID', $filterLevelID, ParameterType::INTEGER);
 		}

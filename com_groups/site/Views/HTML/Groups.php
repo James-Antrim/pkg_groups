@@ -60,8 +60,7 @@ class Groups extends ListView
 			'Add batch processing for adding / removing roles.',
 			'Add batch processing for view levels.',
 			'Add column for user count active / blocked.',
-			'Add column for access debugging.',
-			'Expand the view level filter for inheritance'
+			'Add column for access debugging.'
 		];
 
 		parent::display($tpl);
