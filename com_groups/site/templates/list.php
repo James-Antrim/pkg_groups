@@ -39,11 +39,11 @@ if ($dragEnabled and !empty($this->items))
 
 if ($this->todo)
 {
-    echo '<ul>';
-    foreach ($this->todo as $todo)
-    {
-        echo "<li>$todo</li>";
-    }
+	echo '<ul>';
+	foreach ($this->todo as $todo)
+	{
+		echo "<li>$todo</li>";
+	}
 	echo '</ul>';
 }
 

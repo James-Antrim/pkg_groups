@@ -14,7 +14,7 @@ use Joomla\CMS\Helper\ContentHelper as CoreAccess;
 use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Toolbar\Toolbar;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers;
 use THM\Groups\Helpers\Groups as Helper;
@@ -30,17 +30,47 @@ class Groups extends ListView
 	 */
 	protected function addToolbar()
 	{
-		$usersAccess = CoreAccess::getActions('com_users');
+		$actions = CoreAccess::getActions('com_users');
+		$toolbar = Toolbar::getInstance();
 
-		if ($usersAccess->get('core.create'))
+		if ($actions->get('core.create'))
 		{
-			ToolbarHelper::addNew('Group.add');
+			$toolbar->addNew('Group.add');
 		}
 
-		if ($usersAccess->get('core.delete'))
+		$dropdown = $toolbar->dropdownButton('status-group');
+		$dropdown->text('GROUPS_ACTIONS');
+		$dropdown->toggleSplit(false);
+		$dropdown->icon('icon-ellipsis-h');
+		$dropdown->buttonClass('btn btn-action');
+		$dropdown->listCheck(true);
+
+		$childBar = $dropdown->getChildToolbar();
+
+		if ($actions->get('core.edit'))
 		{
-			ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Groups.delete');
-			ToolbarHelper::divider();
+			$button = $childBar->popupButton('roles');
+			$button->icon('fa fa-hat-wizard');
+			$button->text('GROUPS_BATCH_ROLES');
+			$button->selector('batchRoles');
+			$button->listCheck(true);
+		}
+
+		if ($actions->get('core.edit'))
+		{
+			$button = $childBar->popupButton('levels');
+			$button->icon('icon-eye');
+			$button->text('GROUPS_BATCH_LEVELS');
+			$button->selector('batchLevels');
+			$button->listCheck(true);
+		}
+
+		if ($actions->get('core.delete'))
+		{
+			$button = $childBar->delete('users.delete');
+			$button->text('GROUPS_REMOVE');
+			$button->message('GROUPS_REMOVE_CONFIRM');
+			$button->listCheck(true);
 		}
 
 		parent::addToolbar();
