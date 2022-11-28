@@ -40,15 +40,17 @@ class HTML extends HTMLHelper
 	 */
 	public static function icon(string $class): string
 	{
-		$subset = '';
-
 		if (strpos($class, ','))
 		{
 			[$subset, $class] = explode(',', $class);
-			$subset = "$subset";
+			$class  = "fa$subset fa-$class";
+		}
+		elseif (strpos($class, 'fa') === false)
+		{
+			$class = "fa fa-$class";
 		}
 
-		return "<i class=\"fa$subset fa-$class\" aria-hidden=\"true\"></i>";
+		return "<i class=\"$class\" aria-hidden=\"true\"></i>";
 	}
 
 	/**
@@ -61,23 +63,30 @@ class HTML extends HTMLHelper
 	 *
 	 * @return string the HTML for the content and tip
 	 */
-	public static function tip(string $content, string $context, string $tip, string $url = '', bool $newTab = false): string
+	public static function tip(
+		string $content,
+		string $context,
+		string $tip,
+		array $properties = [],
+		string $url = '',
+		bool $newTab = false
+	): string
 	{
 		if (empty($tip) and empty($url))
 		{
 			return $content;
 		}
 
-		$properties = ['aria-describedby' => $context];
+		$properties['aria-describedby'] = $context;
 
 		if ($url and $newTab)
 		{
 			$properties['target'] = '_blank';
 		}
 
-		$url     = $url ?: '#';
+		$url = $url ?: '#';
 		$content = self::link($url, $content, $properties);
-		$tip     = "<div role=\"tooltip\" id=\"$context\">" . $tip . '</div>';
+		$tip = "<div role=\"tooltip\" id=\"$context\">" . $tip . '</div>';
 
 		return $content . $tip;
 	}

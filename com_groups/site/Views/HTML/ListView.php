@@ -14,7 +14,9 @@ use Exception;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\MVC\View\ListView as Base;
+use Joomla\CMS\Uri\Uri;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\HTML;
 use THM\Groups\Helpers\Can;
 use THM\Groups\Views\Named;
 
@@ -86,6 +88,8 @@ abstract class ListView extends Base
 			Application::message(implode("\n", $errors), 'error');
 			Application::redirect('', 500);
 		}
+
+		HTML::stylesheet(Uri::root() . 'components/com_groups/css/global.css');
 
 		parent::display($tpl);
 	}

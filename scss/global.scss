@@ -1,0 +1,7 @@
+@import "variables";
+
+.j-main-container.groups {
+  a[target=_blank]::before {
+    content: none;
+  }
+}

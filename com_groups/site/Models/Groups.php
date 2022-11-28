@@ -15,6 +15,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
+use stdClass;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
 use THM\Groups\Tools\Migration;
@@ -63,7 +64,9 @@ class Groups extends ListModel
 		foreach ($items as $item)
 		{
 			$ugHelper->populateGroupData($item);
+			$this->getUserCounts($item);
 		}
+
 
 		return $items;
 	}
@@ -124,8 +127,8 @@ class Groups extends ListModel
 		{
 			$levelID = $db->quoteName('vl.id');
 			$levels  = $db->quoteName('#__viewlevels', 'vl');
-			$regex1   = $query->concatenate(["'[,\\\\[]'", $groupID, "'[,\\\\]]'"]);
-			$regex2   = $query->concatenate(["'[,\\\\[]'", $pID, "'[,\\\\]]'"]);
+			$regex1  = $query->concatenate(["'[,\\\\[]'", $groupID, "'[,\\\\]]'"]);
+			$regex2  = $query->concatenate(["'[,\\\\[]'", $pID, "'[,\\\\]]'"]);
 			$rules   = $db->quoteName('vl.rules');
 			$query->join('inner', $levels, "$rules REGEXP $regex1 OR $rules REGEXP $regex2")
 				->where("$levelID = :levelID")
@@ -158,6 +161,43 @@ class Groups extends ListModel
 		$this->orderBy($query);
 
 		return $query;
+	}
+
+	/**
+	 * Adds associated user counts to the group
+	 *
+	 * @param   stdClass  $group  the group to set values for
+	 *
+	 * @return void
+	 */
+	private function getUserCounts(stdClass $group)
+	{
+		$db = $this->getDatabase();
+
+		$block      = $db->quoteName('u.block');
+		$map        = $db->quoteName('#__user_usergroup_map', 'map');
+		$mapGroupID = $db->quoteName('map.group_id');
+		$mapUserID  = $db->quoteName('map.user_id');
+		$query      = $db->getQuery(true);
+		$userID     = $db->quoteName('u.id');
+		$users      = $db->quoteName('#__users', 'u');
+
+		$blocked   = 0;
+		$condition = "$userID = $mapUserID";
+		$select    = "COUNT(DISTINCT $mapUserID)";
+
+		// Count the objects in the user group.
+		$query->select($select)->from($map)->join('LEFT', $users, $condition)
+			->where("$mapGroupID = $group->id")
+			->where("$block = :blocked")
+			->group($mapGroupID)
+			->bind(':blocked', $blocked, ParameterType::INTEGER);
+		$db->setQuery($query);
+
+		$group->enabled = (int) $db->loadResult();
+
+		$blocked        = 1;
+		$group->blocked = (int) $db->loadResult();
 	}
 
 	/**

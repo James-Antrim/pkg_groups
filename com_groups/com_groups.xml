@@ -46,6 +46,7 @@
     <files folder="site">
         <folder>Adapters</folder>
         <folder>Controllers</folder>
+        <folder>css</folder>
         <folder>Fields</folder>
         <folder>forms</folder>
         <folder>Helpers</folder>

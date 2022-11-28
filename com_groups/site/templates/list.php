@@ -54,7 +54,7 @@ $wa->useScript('table.columns');
 <form action="<?php echo $action; ?>" method="post" name="adminForm" id="adminForm">
     <div class="row">
         <div class="col-md-12">
-            <div id="j-main-container" class="j-main-container">
+            <div id="j-main-container" class="j-main-container groups">
 				<?php Layouts\ListTools::render($this); ?>
 				<?php if (empty($this->items)) : ?>
 					<?php Layouts\EmptyList::render(); ?>

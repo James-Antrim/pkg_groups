@@ -89,8 +89,7 @@ class Groups extends ListView
 		$this->todo = [
 			'Add batch processing for adding / removing roles.',
 			'Add batch processing for view levels.',
-			'Add column for user count active / blocked.',
-			'Add column for access debugging.'
+			'Add column for published / unpublished profile counts with links to profiles. (After profiles is there :))'
 		];
 
 		parent::display($tpl);
@@ -176,7 +175,31 @@ class Groups extends ListView
 				}
 			}
 
-			$item->editLink = Route::_('index.php?option=com_groups&view=Group&id=' . $item->id);
+			if ($item->enabled or $item->blocked)
+			{
+				$link = "?option=com_groups&view=Profiles&filter[groupID]=$item->id&filter[state]=";
+
+				$eLink       = Route::_($link . 1);
+				$properties  = ['class' => 'btn btn-success'];
+				$tip         = Text::_('GROUPS_ENABLED_USERS');
+				$item->users = HTML::tip($item->enabled, "enabled-tip->$item->id", $tip, $properties, $eLink);
+
+				$bLink       = Route::_($link . 0);
+				$properties  = ['class' => 'btn btn-danger'];
+				$tip         = Text::_('GROUPS_BLOCKED_USERS');
+				$item->users .= HTML::tip($item->blocked, "blocked-tip->$item->id", $tip, $properties, $bLink);
+			}
+			else
+			{
+				$item->users = '';
+			}
+
+			$link         = "?option=com_users&view=debuggroup&group_id=$item->id";
+			$tip          = Text::_('GROUPS_DEBUG_GROUP_RIGHTS');
+			$icon         = HTML::icon('fas fa-th');
+			$item->rights = HTML::tip($icon, "rights-tip->$item->id", $tip, [], $link, true);
+
+			$item->editLink = Route::_('?option=com_groups&view=Group&id=' . $item->id);
 		}
 	}
 
@@ -212,9 +235,21 @@ class Groups extends ListView
 			];
 		}
 
+		$this->headers['users'] = [
+			'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+			'title'      => Text::_('GROUPS_USERS'),
+			'type'       => 'value'
+		];
+
 		$this->headers['id'] = [
 			'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
 			'title'      => Text::_('GROUPS_ID'),
+			'type'       => 'value'
+		];
+
+		$this->headers['rights'] = [
+			'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+			'title'      => Text::_('GROUPS_RIGHTS'),
 			'type'       => 'value'
 		];
 	}
