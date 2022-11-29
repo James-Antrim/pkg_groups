@@ -14,12 +14,15 @@ namespace THM\Groups\Tables;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
+use THM\Groups\Adapters\Application;
 
 /**
  * Class representing the attributes table.
  */
 class Attributes extends Table
 {
+    use Incremented;
+
     /**
      * TEXT
      * @var string
@@ -31,12 +34,6 @@ class Attributes extends Table
      * @var string
      */
     public $icon;
-
-    /**
-     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
-     * @var int
-     */
-    public $id;
 
     /**
      * VARCHAR(100) NOT NULL
@@ -51,12 +48,6 @@ class Attributes extends Table
     public $label_en;
 
     /**
-     * INT(3) UNSIGNED NOT NULL DEFAULT 0
-     * @var int
-     */
-    public $ordering;
-
-    /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var bool
      */
@@ -67,7 +58,6 @@ class Attributes extends Table
      * @var int
      */
     public $typeID;
-
 
     /**
      * INT(10) UNSIGNED DEFAULT 1 (fk_attributes_viewLevelID -> viewlevels.id)
@@ -82,5 +72,29 @@ class Attributes extends Table
     {
         /** @var DatabaseDriver $dbo */
         parent::__construct('#__groups_attributes', 'id', $dbo);
+    }
+
+    /**
+     * Gets the localized entry name.
+     *
+     * @param int $id
+     *
+     * @return string     *
+     */
+    public function getLabel(int $id): string
+    {
+        if (!$id) {
+            return '';
+        }
+
+        if (!$this->load($id)) {
+            return '';
+        }
+
+        if (Application::getTag() === 'en') {
+            return $this->label_en;
+        }
+
+        return $this->label_de;
     }
 }

@@ -20,6 +20,8 @@ use Joomla\Database\DatabaseInterface;
  */
 class Types extends Table
 {
+    use Incremented, Named;
+
     /**
      * TEXT
      * @var string
@@ -27,28 +29,10 @@ class Types extends Table
     public $configuration;
 
     /**
-     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
-     * @var int
-     */
-    public $id;
-
-    /**
      * TINYINT(2) UNSIGNED NOT NULL DEFAULT 1
      * @var int
      */
     public $inputID;
-
-    /**
-     * VARCHAR(100) NOT NULL
-     * @var string
-     */
-    public $name_de;
-
-    /**
-     * VARCHAR(100) NOT NULL
-     * @var string
-     */
-    public $name_en;
 
     /**
      * @inheritDoc

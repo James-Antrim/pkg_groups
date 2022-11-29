@@ -14,29 +14,14 @@ namespace THM\Groups\Tables;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
+use THM\Groups\Adapters\Application;
 
 /**
  * Class representing the roles table.
  */
 class Roles extends Table
 {
-    /**
-     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
-     * @var int
-     */
-    public $id;
-
-    /**
-     * VARCHAR(100) NOT NULL
-     * @var string
-     */
-    public $name_de;
-
-    /**
-     * VARCHAR(100) NOT NULL
-     * @var string
-     */
-    public $name_en;
+    use Incremented, Named;
 
     /**
      * VARCHAR(100) NOT NULL
@@ -69,5 +54,29 @@ class Roles extends Table
     {
         /** @var DatabaseDriver $dbo */
         parent::__construct('#__groups_roles', 'id', $dbo);
+    }
+
+    /**
+     * Gets the localized entry name.
+     *
+     * @param int $id
+     *
+     * @return string     *
+     */
+    public function getPlural(int $id): string
+    {
+        if (!$id) {
+            return '';
+        }
+
+        if (!$this->load($id)) {
+            return '';
+        }
+
+        if (Application::getTag() === 'en') {
+            return $this->names_en;
+        }
+
+        return $this->names_de;
     }
 }

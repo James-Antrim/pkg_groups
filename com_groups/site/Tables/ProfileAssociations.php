@@ -20,17 +20,13 @@ use Joomla\Database\DatabaseInterface;
  */
 class ProfileAssociations extends Table
 {
+    use Incremented;
+
     /**
      * INT(11) UNSIGNED NOT NULL (fk_pAssocs_assocID -> groups_role_associations.id)
      * @var int
      */
     public $assocID;
-
-    /**
-     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
-     * @var int
-     */
-    public $id;
 
     /**
      * INT(11) NOT NULL (fk_pAssocs_profileID -> groups_profiles.id -> fk: users.id)

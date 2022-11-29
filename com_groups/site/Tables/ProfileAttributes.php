@@ -20,17 +20,13 @@ use Joomla\Database\DatabaseInterface;
  */
 class ProfileAttributes extends Table
 {
+    use Incremented;
+
     /**
      * INT(11) UNSIGNED NOT NULL (fk_pAttribs_attributeID -> groups_attributes.id)
      * @var int
      */
     public $attributeID;
-
-    /**
-     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
-     * @var int
-     */
-    public $id;
 
     /**
      * INT(11) NOT NULL (fk_pAttribs_profileID -> groups_profiles.id -> fk: users.id)

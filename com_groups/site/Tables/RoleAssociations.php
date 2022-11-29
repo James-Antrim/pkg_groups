@@ -20,11 +20,7 @@ use Joomla\Database\DatabaseInterface;
  */
 class RoleAssociations extends Table
 {
-    /**
-     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
-     * @var int
-     */
-    public $id;
+    use Incremented;
 
     /**
      * INT(11) UNSIGNED NOT NULL (fk: groups.id)

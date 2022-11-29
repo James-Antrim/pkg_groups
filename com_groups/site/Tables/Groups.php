@@ -20,23 +20,13 @@ use Joomla\Database\DatabaseInterface;
  */
 class Groups extends Table
 {
+    use Named;
+
     /**
-     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT (fk_groups_groupID -> usergroups.id)
+     * INT(10) UNSIGNED NOT NULL (fk_groups_groupID -> usergroups.id)
      * @var int
      */
     public $id;
-
-    /**
-     * VARCHAR(100) NOT NULL
-     * @var string
-     */
-    public $name_de;
-
-    /**
-     * VARCHAR(100) NOT NULL
-     * @var string
-     */
-    public $name_en;
 
     /**
      * @inheritDoc
