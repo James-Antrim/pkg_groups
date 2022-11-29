@@ -20,12 +20,12 @@ use Joomla\Database\DatabaseInterface;
  */
 class Content extends Table
 {
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct(DatabaseInterface $dbo)
-	{
-		/** @var DatabaseDriver $dbo */
-		parent::__construct('#__thm_groups_content', 'id', $dbo);
-	}
+    /**
+     * @inheritDoc
+     */
+    public function __construct(DatabaseInterface $dbo)
+    {
+        /** @var DatabaseDriver $dbo */
+        parent::__construct('#__thm_groups_content', 'id', $dbo);
+    }
 }

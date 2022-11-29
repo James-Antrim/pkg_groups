@@ -20,27 +20,54 @@ use Joomla\Database\DatabaseInterface;
  */
 class Roles extends Table
 {
-	// INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
-	public $id;
+    /**
+     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+     * @var int
+     */
+    public $id;
 
-	// VARCHAR(100) NOT NULL
-	public $name_de;
-	public $name_en;
-	public $names_de;
-	public $names_en;
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $name_de;
 
-	// INT(3) UNSIGNED NOT NULL DEFAULT 0
-	public $ordering;
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $name_en;
 
-	// TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
-	public $protected;
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $names_de;
 
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct(DatabaseInterface $dbo)
-	{
-		/** @var DatabaseDriver $dbo */
-		parent::__construct('#__groups_roles', 'id', $dbo);
-	}
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $names_en;
+
+    /**
+     * INT(3) UNSIGNED NOT NULL DEFAULT 0
+     * @var int
+     */
+    public $ordering;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $protected;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct(DatabaseInterface $dbo)
+    {
+        /** @var DatabaseDriver $dbo */
+        parent::__construct('#__groups_roles', 'id', $dbo);
+    }
 }

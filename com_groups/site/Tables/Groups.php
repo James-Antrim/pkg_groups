@@ -20,19 +20,30 @@ use Joomla\Database\DatabaseInterface;
  */
 class Groups extends Table
 {
-	// INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
-	public $id;
+    /**
+     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT (fk_groups_groupID -> usergroups.id)
+     * @var int
+     */
+    public $id;
 
-	// VARCHAR(100) NOT NULL
-	public $name_de;
-	public $name_en;
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $name_de;
 
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct(DatabaseInterface $dbo)
-	{
-		/** @var DatabaseDriver $dbo */
-		parent::__construct('#__groups_groups', 'id', $dbo);
-	}
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $name_en;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct(DatabaseInterface $dbo)
+    {
+        /** @var DatabaseDriver $dbo */
+        parent::__construct('#__groups_groups', 'id', $dbo);
+    }
 }

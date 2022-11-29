@@ -20,12 +20,44 @@ use Joomla\Database\DatabaseInterface;
  */
 class Profiles extends Table
 {
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct(DatabaseInterface $dbo)
-	{
-		/** @var DatabaseDriver $dbo */
-		parent::__construct('#__thm_groups_profiles', 'id', $dbo);
-	}
+    /**
+     * VARCHAR(255) DEFAULT null
+     * @var string
+     */
+    public $alias;
+
+    /**
+     * INT(11) NOT NULL (fk_profiles_userID -> users.id)
+     * @var int
+     */
+    public $id;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $canEdit;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $contentEnabled;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $published;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct(DatabaseInterface $dbo)
+    {
+        /** @var DatabaseDriver $dbo */
+        parent::__construct('#__groups_profiles', 'id', $dbo);
+    }
+
+    // todo overwrite the appropriate function that doesn't create an fk entry on save/store
 }

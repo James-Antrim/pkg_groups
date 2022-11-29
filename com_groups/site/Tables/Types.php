@@ -20,28 +20,42 @@ use Joomla\Database\DatabaseInterface;
  */
 class Types extends Table
 {
-	/**
-	 * A JSON string containing the configuration of the attribute type.
-	 * TEXT
-	 */
-	public $configuration;
+    /**
+     * TEXT
+     * @var string
+     */
+    public $configuration;
 
-	// INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
-	public $id;
+    /**
+     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+     * @var int
+     */
+    public $id;
 
-	// TINYINT(2) UNSIGNED NOT NULL DEFAULT 1
-	public $inputID;
+    /**
+     * TINYINT(2) UNSIGNED NOT NULL DEFAULT 1
+     * @var int
+     */
+    public $inputID;
 
-	// VARCHAR(100) NOT NULL
-	public $name_de;
-	public $name_en;
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $name_de;
 
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct(DatabaseInterface $dbo)
-	{
-		/** @var DatabaseDriver $dbo */
-		parent::__construct('#__groups_types', 'id', $dbo);
-	}
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $name_en;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct(DatabaseInterface $dbo)
+    {
+        /** @var DatabaseDriver $dbo */
+        parent::__construct('#__groups_types', 'id', $dbo);
+    }
 }

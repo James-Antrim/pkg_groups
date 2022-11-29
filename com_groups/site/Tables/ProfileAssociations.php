@@ -20,12 +20,30 @@ use Joomla\Database\DatabaseInterface;
  */
 class ProfileAssociations extends Table
 {
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct(DatabaseInterface $dbo)
-	{
-		/** @var DatabaseDriver $dbo */
-		parent::__construct('#__thm_groups_profile_associations', 'id', $dbo);
-	}
+    /**
+     * INT(11) UNSIGNED NOT NULL (fk_pAssocs_assocID -> groups_role_associations.id)
+     * @var int
+     */
+    public $assocID;
+
+    /**
+     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+     * @var int
+     */
+    public $id;
+
+    /**
+     * INT(11) NOT NULL (fk_pAssocs_profileID -> groups_profiles.id -> fk: users.id)
+     * @var int
+     */
+    public $profileID;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct(DatabaseInterface $dbo)
+    {
+        /** @var DatabaseDriver $dbo */
+        parent::__construct('#__groups_profile_associations', 'id', $dbo);
+    }
 }

@@ -20,40 +20,67 @@ use Joomla\Database\DatabaseInterface;
  */
 class Attributes extends Table
 {
-	/**
-	 * A JSON string containing the configuration of the attribute type.
-	 * TEXT
-	 */
-	public $configuration;
+    /**
+     * TEXT
+     * @var string
+     */
+    public $configuration;
 
-	// VARCHAR(255) NOT NULL DEFAULT ''
-	public $icon;
+    /**
+     * VARCHAR(255) NOT NULL DEFAULT ''
+     * @var string
+     */
+    public $icon;
 
-	// INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
-	public $id;
+    /**
+     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+     * @var int
+     */
+    public $id;
 
-	// VARCHAR(100) NOT NULL
-	public $label_de;
-	public $label_en;
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $label_de;
 
-	// INT(3) UNSIGNED NOT NULL DEFAULT 0
-	public $ordering;
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $label_en;
 
-	// TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
-	public $required;
+    /**
+     * INT(3) UNSIGNED NOT NULL DEFAULT 0
+     * @var int
+     */
+    public $ordering;
 
-	// INT(11) UNSIGNED NOT NULL
-	public $typeID;
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $required;
 
-	// INT(10) UNSIGNED DEFAULT 1
-	public $viewLevelID;
+    /**
+     * INT(11) UNSIGNED NOT NULL (fk_attributes_typeID -> groups_types.id)
+     * @var int
+     */
+    public $typeID;
 
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct(DatabaseInterface $dbo)
-	{
-		/** @var DatabaseDriver $dbo */
-		parent::__construct('#__groups_attributes', 'id', $dbo);
-	}
+
+    /**
+     * INT(10) UNSIGNED DEFAULT 1 (fk_attributes_viewLevelID -> viewlevels.id)
+     * @var int
+     */
+    public $viewLevelID;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct(DatabaseInterface $dbo)
+    {
+        /** @var DatabaseDriver $dbo */
+        parent::__construct('#__groups_attributes', 'id', $dbo);
+    }
 }

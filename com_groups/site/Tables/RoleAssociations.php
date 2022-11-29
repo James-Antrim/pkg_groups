@@ -20,19 +20,30 @@ use Joomla\Database\DatabaseInterface;
  */
 class RoleAssociations extends Table
 {
-	// INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
-	public $id;
+    /**
+     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+     * @var int
+     */
+    public $id;
 
-	// INT(11) UNSIGNED NOT NULL
-	public $groupID;
-	public $roleID;
+    /**
+     * INT(11) UNSIGNED NOT NULL (fk: groups.id)
+     * @var int
+     */
+    public $groupID;
 
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct(DatabaseInterface $dbo)
-	{
-		/** @var DatabaseDriver $dbo */
-		parent::__construct('#__groups_role_associations', 'id', $dbo);
-	}
+    /**
+     * INT(11) UNSIGNED NOT NULL (fk: roles.id)
+     * @var int
+     */
+    public $roleID;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct(DatabaseInterface $dbo)
+    {
+        /** @var DatabaseDriver $dbo */
+        parent::__construct('#__groups_role_associations', 'id', $dbo);
+    }
 }
