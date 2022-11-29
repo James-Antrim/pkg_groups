@@ -42,4 +42,22 @@ class RoleAssociations extends Table
         /** @var DatabaseDriver $dbo */
         parent::__construct('#__groups_role_associations', 'id', $dbo);
     }
+
+    /**
+     * Gets the id of the association for the given group and role ids.
+     *
+     * @param int $groupID
+     * @param int $roleID
+     *
+     * @return int|null the id if existent, otherwise null
+     */
+    public function getAssocID(int $groupID, int $roleID): ?int
+    {
+        if ($this->load(['groupID' => $groupID, 'roleID' => $roleID]))
+        {
+            return $this->id;
+        }
+
+        return null;
+    }
 }

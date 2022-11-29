@@ -20,162 +20,180 @@ use THM\Groups\Tables\Groups as GT;
  */
 class Groups implements Selectable
 {
-	public const PUBLIC = 1, REGISTERED = 2, AUTHOR = 3, EDITOR = 4, PUBLISHER = 5, MANAGER = 6, ADMIN = 7, SUPER_ADMIN = 8;
+    public const PUBLIC = 1, REGISTERED = 2, AUTHOR = 3, EDITOR = 4, PUBLISHER = 5, MANAGER = 6, ADMIN = 7, SUPER_ADMIN = 8;
 
-	public const DEFAULT = [
-		self::ADMIN,
-		self::AUTHOR,
-		self::EDITOR,
-		self::MANAGER,
-		self::PUBLIC,
-		self::PUBLISHER,
-		self::REGISTERED,
-		self::SUPER_ADMIN
-	];
+    public const DEFAULT = [
+        self::ADMIN,
+        self::AUTHOR,
+        self::EDITOR,
+        self::MANAGER,
+        self::PUBLIC,
+        self::PUBLISHER,
+        self::REGISTERED,
+        self::SUPER_ADMIN
+    ];
 
-	/**
-	 * @inheritDoc
-	 */
-	public static function getAll(): array
-	{
-		$groups     = UserGroupsHelper::getInstance()->getAll();
-		$nameColumn = 'name_' . Application::getTag();
+    /**
+     * @inheritDoc
+     */
+    public static function getAll(): array
+    {
+        $groups     = self::getUserGroups();
+        $nameColumn = 'name_' . Application::getTag();
 
-		foreach ($groups as $groupID => $group)
-		{
-			$table = new GT(Application::getDB());
+        foreach ($groups as $groupID => $group)
+        {
+            $table = new GT(Application::getDB());
 
-			if ($table->load($groupID) and $name = $table->$nameColumn ?? null)
-			{
-				$group->title = $name;
-			}
+            if ($table->load($groupID) and $name = $table->$nameColumn ?? null)
+            {
+                $group->title = $name;
+            }
 
-			$group->roles = RoleAssociations::byGroupID($groupID);
-		}
+            $group->roles = RoleAssociations::byGroupID($groupID);
+        }
 
-		return $groups;
-	}
+        return $groups;
+    }
 
-	/**
-	 * Gets the view levels associated with the group.
-	 *
-	 * @param   int  $groupID  the id of the group to get levels for
-	 *
-	 * @return array [id => title]
-	 */
-	public static function getLevels(int $groupID): array
-	{
-		$group    = UserGroupsHelper::getInstance()->get($groupID);
-		$groupIDs = $group->path;
+    /**
+     * Gets the view levels associated with the group.
+     *
+     * @param int $groupID the id of the group to get levels for
+     *
+     * @return array [id => title]
+     */
+    public static function getLevels(int $groupID): array
+    {
+        $group    = UserGroupsHelper::getInstance()->get($groupID);
+        $groupIDs = $group->path;
 
-		$db     = Application::getDB();
-		$id     = $db->quoteName('id');
-		$rules  = $db->quoteName('rules');
-		$title  = $db->quoteName('title');
-		$levels = $db->quoteName('#__viewlevels');
+        $db     = Application::getDB();
+        $id     = $db->quoteName('id');
+        $rules  = $db->quoteName('rules');
+        $title  = $db->quoteName('title');
+        $levels = $db->quoteName('#__viewlevels');
 
-		$query  = $db->getQuery(true);
-		$regex  = $query->concatenate(["'[,\\\\[]'", ':groupID', "'[,\\\\]]'"]);
-		$return = [];
-		$query->select([$id, $title])->from($levels)->where("$rules REGEXP $regex");
+        $query  = $db->getQuery(true);
+        $regex  = $query->concatenate(["'[,\\\\[]'", ':groupID', "'[,\\\\]]'"]);
+        $return = [];
+        $query->select([$id, $title])->from($levels)->where("$rules REGEXP $regex");
 
-		do
-		{
-			$groupID = array_pop($groupIDs);
-			$query->bind(':groupID', $groupID, ParameterType::INTEGER);
-			$db->setQuery($query);
+        do
+        {
+            $groupID = array_pop($groupIDs);
+            $query->bind(':groupID', $groupID, ParameterType::INTEGER);
+            $db->setQuery($query);
 
-			if ($results = $db->loadAssocList('id', 'title'))
-			{
-				$return += $results;
-			}
-		} while ($groupIDs);
+            if ($results = $db->loadAssocList('id', 'title'))
+            {
+                $return += $results;
+            }
+        } while ($groupIDs);
 
-		asort($return);
+        asort($return);
 
-		return $return;
-	}
+        return $return;
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public static function getOptions(): array
-	{
-		$options = [];
+    /**
+     * Gets the IDs of existing user groups.
+     * @return int[]
+     */
+    public static function getIDs(): array
+    {
+        return array_keys(self::getAll());
+    }
 
-		foreach (self::getAll() as $groupID => $group)
-		{
-			if (empty($group->roles))
-			{
-				continue;
-			}
+    /**
+     * @inheritDoc
+     */
+    public static function getOptions(): array
+    {
+        $options = [];
 
-			$disabled = in_array($groupID, self::DEFAULT) ? 'disabled' : '';
+        foreach (self::getAll() as $groupID => $group)
+        {
+            if (empty($group->roles))
+            {
+                continue;
+            }
 
-			$options[] = (object) [
-				'disable' => $disabled,
-				'text'    => self::getPrefix($group->level) . $group->title,
-				'value'   => $group->id
-			];
-		}
+            $disabled = in_array($groupID, self::DEFAULT) ? 'disabled' : '';
 
-		return $options;
-	}
+            $options[] = (object)[
+                'disable' => $disabled,
+                'text' => self::getPrefix($group->level) . $group->title,
+                'value' => $group->id
+            ];
+        }
 
-	/**
-	 * Gets the prefix for hierarchical list displays.
-	 *
-	 * @param   int  $level  the nested level of the group
-	 *
-	 * @return string the prefix to display
-	 *
-	 */
-	public static function getPrefix(int $level): string
-	{
-		$prefix = '';
-		if ($level > 1)
-		{
-			$prefix = '<span class="text-muted">';
-			$prefix .= str_repeat('&#8942;&nbsp;&nbsp;&nbsp;', $level - 2);
-			$prefix .= '</span>&ndash;&nbsp;';
-		}
+        return $options;
+    }
 
-		return $prefix;
-	}
+    /**
+     * Gets the prefix for hierarchical list displays.
+     *
+     * @param int $level the nested level of the group
+     *
+     * @return string the prefix to display
+     *
+     */
+    public static function getPrefix(int $level): string
+    {
+        $prefix = '';
+        if ($level > 1)
+        {
+            $prefix = '<span class="text-muted">';
+            $prefix .= str_repeat('&#8942;&nbsp;&nbsp;&nbsp;', $level - 2);
+            $prefix .= '</span>&ndash;&nbsp;';
+        }
 
-	/**
-	 * Gets the roles associated with the group.
-	 *
-	 * @param   int  $groupID  the id of the group to get roles for
-	 *
-	 * @return array [id => name]
-	 */
-	public static function getRoles(int $groupID): array
-	{
-		$tag = Application::getTag();
-		$db  = Application::getDB();
+        return $prefix;
+    }
 
-		$id        = $db->quoteName("r.id");
-		$ra        = $db->quoteName('#__groups_role_associations', 'ra');
-		$raGroupID = $db->quoteName("ra.groupID");
-		$raRoleID  = $db->quoteName("ra.roleID");
-		$name      = $db->quoteName("r.name_$tag", 'name');
-		$nameTag   = $db->quoteName("r.name_$tag");
-		$roles     = $db->quoteName('#__groups_roles', 'r');
+    /**
+     * Gets the roles associated with the group.
+     *
+     * @param int $groupID the id of the group to get roles for
+     *
+     * @return array [id => name]
+     */
+    public static function getRoles(int $groupID): array
+    {
+        $tag = Application::getTag();
+        $db  = Application::getDB();
 
-		$condition = "$raRoleID = $id";
-		$query     = $db->getQuery(true);
+        $id        = $db->quoteName("r.id");
+        $ra        = $db->quoteName('#__groups_role_associations', 'ra');
+        $raGroupID = $db->quoteName("ra.groupID");
+        $raRoleID  = $db->quoteName("ra.roleID");
+        $name      = $db->quoteName("r.name_$tag", 'name');
+        $nameTag   = $db->quoteName("r.name_$tag");
+        $roles     = $db->quoteName('#__groups_roles', 'r');
 
-		$query->select([$id, $name])
-			->from($roles)
-			->join('inner', $ra, $condition)
-			->where("$raGroupID = :groupID")
-			->bind(':groupID', $groupID, ParameterType::INTEGER)
-			->order($nameTag);
-		$db->setQuery($query);
+        $condition = "$raRoleID = $id";
+        $query     = $db->getQuery(true);
 
-		$results = $db->loadAssocList('id', 'name');
+        $query->select([$id, $name])
+            ->from($roles)
+            ->join('inner', $ra, $condition)
+            ->where("$raGroupID = :groupID")
+            ->bind(':groupID', $groupID, ParameterType::INTEGER)
+            ->order($nameTag);
+        $db->setQuery($query);
 
-		return $results ?? [];
-	}
+        $results = $db->loadAssocList('id', 'name');
+
+        return $results ?? [];
+    }
+
+    /**
+     * Gets the existing stock of usergroups. stdClass[id => ug];
+     * @return array
+     */
+    private static function getUserGroups(): array
+    {
+        return UserGroupsHelper::getInstance()->getAll();
+    }
 }

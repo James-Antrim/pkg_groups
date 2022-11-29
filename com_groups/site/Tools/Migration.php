@@ -13,6 +13,8 @@ namespace THM\Groups\Tools;
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Helpers\Groups;
+use THM\Groups\Helpers\Roles;
 use THM\Groups\Tables;
 
 /**
@@ -20,295 +22,425 @@ use THM\Groups\Tables;
  */
 class Migration
 {
-	/**
-	 * Migrates the attributes table.
-	 *
-	 * @param   array  $atMap  an array mapping the existing attribute types to the new ones
-	 *
-	 * @return array an array mapping the existing attributes table to the new one
-	 */
-	private static function attributes(array $atMap)
-	{
-		$db = Application::getDB();
+    /**
+     * Migrates the attributes table.
+     *
+     * @param array $atMap an array mapping the existing attribute types to the new ones
+     *
+     * @return array an array mapping the existing attributes table to the new one
+     */
+    private static function attributes(array $atMap)
+    {
+        $db = Application::getDB();
 
-		$query         = $db->getQuery(true);
-		$oldAttributes = $db->quoteName('#__thm_groups_attributes');
-		$query->select('*')->from($oldAttributes);
-		$db->setQuery($query);
+        $query         = $db->getQuery(true);
+        $oldAttributes = $db->quoteName('#__thm_groups_attributes');
+        $query->select('*')->from($oldAttributes);
+        $db->setQuery($query);
+        $old = $db->loadObjectList('label');
 
-		$oldAttributes = $db->loadObjectList('id');
-		//echo "<pre>" . print_r($oldAttributes, true) . "</pre>";
-		//die;
-/*
- * ignore config: mode, path, regex (if it holds a constant), required
- *
+        echo "<pre>old: " . print_r($old, true) . "</pre>";
 
-migrate:
-'Nachname' 2 => 'Namen' 1
-'Vorname' 1 => 'Vornamen' 2
-'Email' 4 => 'E-Mail' 3
-'Bild' / 'Profilbild' ? => 'Profilbild' 4
-'Namenszusatz (vor)' 5 => 'Namenszusatz (vor)' 5
-'Namenszusatz (nach)' 7 => 'Namenszusatz (nach)' 6
-'Telefon' ? => 'Telefon' 7
-'Fax' ? => 'Fax' 8
-'Homepage' / 'Web' / 'Webseite' ? => 'Homepage' 9
-'Anschrift' / 'Kontakt' ? => 'Anschrift' 10
-'Büro' ? => 'Office' 11
-'Raum' ? => 'Raum' 12
-'Sprechstunden' / 'Sprechzeiten' ? => 'Sprechstunden' 12
-'Weitere Informationen' / 'Weitere-Informationen' ? => 'Weitere Informationen' 13
-'XING' ? => 'XING' 16
-'Twitter' ? => 'Twitter' 15
+        $query         = $db->getQuery(true);
+        $oldAttributes = $db->quoteName('#__groups_attributes');
+        $query->select('*')->from($oldAttributes);
+        $db->setQuery($query);
+        $new = $db->loadObjectList('label_de');
 
-// other
-'%E-Mail%' at:6
-'%Telefon%' at:7
-'%Mobil%' at:7
-'%Fax%' at:7
-'%Raum%' at:10
-'weiterer Kontakt' at:2
-'Quelle  Bild' at:1
-'Zur  Person' at:2
-'Geburtstag' at: 5
-'Ohne  Überschrift' => 'Nachruf' / 'Obituary'
+        $equivalences = [
+            'Name'
+        ];
 
-// other with data migration
-'Lebenslauf' (W) => content
-'Publikationen' (W) at: 3 display: 2 icon: stack
--> 'Publikationen' in other attribute values....
--> Content...
-'Fachgebiete' (IEM) at: 11
-'Weiterführende  Links' (IEM) at: 12
-'Funktionen' (IEM) at: 11
-'Weitere Profile' (IEM) ???
-'Profil' (WI) => to 'Weiterführende Links'
-'Fachgebiet' (MND) => to 'Fachgebiete'
-'Besondere Funktionen' (MND) => to 'Funktionen'
-'Arbeitsgebiete' (MND) at: 11
+        echo "<pre>---------------------------------------------------------------------------------------------</pre>";
+        echo "<pre>---------------------------------------------------------------------------------------------</pre>";
+        echo "<pre>new: " . print_r($new, true) . "</pre>";
+        die;
+        /*
+         * ignore config: mode, path, regex (if it holds a constant), required
+         *
 
+        */
+    }
 
-// other with removal
-'Ansprechpartner' (MNI): garbage
-'Leerzeile' (LSE): formatting
-'Aktuell' (MND): old stuff, empty stuff, lebenslauf stuff to content, publications to linked list...
+    /**
+     * Migrates the existing store of usergroups to groups.
+     */
+    private static function groups()
+    {
+        $db    = Application::getDB();
+        $query = $db->getQuery(true);
+        $query->insert($db->quoteName('#__groups_groups'))
+            ->columns([$db->quoteName('id'), $db->quoteName('name_de'), $db->quoteName('name_en')])
+            ->values(":id, :name_de, :name_en")
+            ->bind(':id', $groupID, ParameterType::INTEGER)
+            ->bind(':name_de', $name)
+            ->bind(':name_en', $name);
 
-// other!!
+        foreach (UserGroupsHelper::getInstance()->getAll() as $groupID => $group)
+        {
+            $table = new Tables\Groups($db);
 
-`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `required`, `viewLevelID`
+            // Already there
+            if ($table->load($groupID))
+            {
+                continue;
+            }
 
-id  typeID  label   showLabel   icon    showIcon    options     ordering    published   required    viewLevelID
--IEM--------------------------------------------------------------------------------------------------------------------
-1122Forschungsgebiete10{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}17101
-1132Projekte10{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}18101
-1142Veranstaltungen10{"buttons":"1","hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}16101
-*/
-	}
+            $id   = $groupID;
+            $name = $group->title;
 
-	/**
-	 * Migrates the existing store of usergroups to groups.
-	 */
-	private static function groups()
-	{
-		$db = Application::getDB();
+            $db->setQuery($query);
+            $db->execute();
+        }
+    }
 
-		$groups = $db->quoteName('#__groups_groups');
-		$id     = $db->quoteName('id');
-		$nameDE = $db->quoteName('name_de');
-		$nameEN = $db->quoteName('name_en');
-		$query  = $db->getQuery(true);
-		$query->insert($groups)->columns([$id, $nameDE, $nameEN])->values(":groupID, :name_de, :name_en");
+    /**
+     * Migrates exiting data to the new tables.
+     */
+    public static function migrate()
+    {
+        $session = Application::getSession();
 
-		foreach (UserGroupsHelper::getInstance()->getAll() as $groupID => $group)
-		{
-			$table = new Tables\Groups($db);
+        if (!$session->get('com_groups.migrated.groups'))
+        {
+            self::groups();
+            $session->set('com_groups.migrate.groups', true);
+        }
 
-			// Already there
-			if ($table->load($groupID))
-			{
-				continue;
-			}
+        if (!$session->get('com_groups.migrated.profiles'))
+        {
+            self::profiles();
+            $session->set('com_groups.migrate.profiles', true);
+        }
 
-			// Array binding was sometimes failing without providing any clue to why.
-			$query->bind(':groupID', $groupID, ParameterType::INTEGER)
-				->bind(':name_de', $group->title)
-				->bind(':name_en', $group->title);
+        if (!$session->get('com_groups.migrated.roles'))
+        {
+            $rMap  = self::roles();
+            $raMap = self::roleAssociations($rMap);
+            self::profileAssociations($raMap);
+            die;
+            $session->set('com_groups.migrate.roles', true);
 
-			$db->setQuery($query);
-			$db->execute();
-		}
-	}
+        }
+        die;
 
-	/**
-	 * Migrates exiting data to the new tables.
-	 */
-	public static function migrate()
-	{
-		$session = Application::getSession();
+        if (!$session->get('com_groups.migrated.attributes'))
+        {
+            // Fax was added as an attribute type by someone who didn't understand the difference between attributes and types.
+            //$atMap = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 12 => 7];
+            //$aMap  = self::attributes($atMap);
+            //$session->set('com_groups.migrated.attributes', true);
+        }
+    }
 
-		if (!$session->get('com_groups.migrated.groups'))
-		{
-			self::groups();
-			$session->set('com_groups.migrate.groups', true);
-		}
+    /**
+     * Migrates the profile associations table.
+     *
+     * @param array $assocMap
+     *
+     * @return void
+     */
+    private static function profileAssociations(array $assocMap)
+    {
+        $db = Application::getDB();
 
-		if (!$session->get('com_groups.migrated.roles'))
-		{
-			$rMap  = self::roles();
-			$raMap = self::roleAssociations($rMap);
-			$session->set('com_groups.migrate.roles', true);
-		}
+        $query = $db->getQuery(true);
+        $query->select('*')->from($db->quoteName('#__thm_groups_profile_associations'));
+        $db->setQuery($query);
 
-		if (!$session->get('com_groups.migrated.attributes'))
-		{
-			// Fax was added as an attribute type by someone who didn't understand the difference between attributes and types.
-			//$atMap = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 12 => 7];
-			//$aMap  = self::attributes($atMap);
-			//$session->set('com_groups.migrated.attributes', true);
-		}
-	}
+        if ($oldAssocs = $db->loadObjectList())
+        {
+            foreach ($oldAssocs as $oldAssoc)
+            {
+                $assoc = ['assocID' => $oldAssoc->role_associationID, 'profileID' => $oldAssoc->profileID];
+                $table = new Tables\ProfileAssociations($db);
 
-	/**
-	 * Migrates the role associations table.
-	 *
-	 * @param   array  $rMap  an array mapping the existing roles table to the new one
-	 *
-	 * @return array an array mapping the existing role associations table to the new one
-	 */
-	private static function roleAssociations(array $rMap): array
-	{
-		$db = Application::getDB();
+                if (!$table->load($assoc))
+                {
+                    $table->save($assoc);
+                }
+            }
+        }
 
-		$query  = $db->getQuery(true);
-		$thmRAs = $db->quoteName('#__thm_groups_role_associations');
-		$query->select('*')->from($thmRAs);
-		$db->setQuery($query);
+        $uQuery = $db->getQuery(true);
+        $uQuery->select('DISTINCT ' . $db->quoteName('user_id'))
+            ->from($db->quoteName('#__user_usergroup_map'))
+            ->where($db->quoteName('group_id') . ' = :groupID')
+            ->bind(':groupID', $groupID, ParameterType::INTEGER);
 
-		$map = [];
+        foreach (Groups::getIDs() as $groupID)
+        {
+            if (in_array($groupID, Groups::DEFAULT))
+            {
+                continue;
+            }
 
-		foreach ($db->loadObjectList() as $assoc)
-		{
-			$table = new Tables\RoleAssociations($db);
-			$data  = ['groupID' => $assoc->groupID, 'roleID' => $rMap[$assoc->roleID]];
+            $db->setQuery($uQuery);
 
-			if ($table->load($data))
-			{
-				$map[$assoc->id] = $table->id;
-				continue;
-			}
+            if (!$userIDs = $db->loadColumn())
+            {
+                continue;
+            }
 
-			$table->save($data);
-			$map[$assoc->id] = $table->id;
-		}
+            $rAssocTable = new Tables\RoleAssociations($db);
 
-		return $map;
-	}
+            if (!$assocID = $rAssocTable->getAssocID($groupID, Roles::MEMBER))
+            {
+                foreach ($userIDs as $profileID)
+                {
+                    $pAssoc      = ['assocID' => $assocID, 'profileID' => $profileID];
+                    $pAssocTable = new Tables\ProfileAssociations($db);
 
-	/**
-	 * Creates any role entries not included in the standard installation.+
-	 *
-	 */
-	private static function roles(): array
-	{
-		$db = Application::getDB();
+                    if (!$pAssocTable->load($pAssoc))
+                    {
+                        $pAssocTable->save($pAssoc);
+                    }
+                }
+            }
+            else
+            {
+                $group = new Tables\Groups($db);
+                $name  = $group->getName($groupID);
+                Application::message("Group \"$name\" does not have a member association.", 'error');
+            }
+        }
+    }
 
-		// Get the old
-		$query    = $db->getQuery(true);
-		$thmRoles = $db->quoteName('#__thm_groups_roles');
-		$query->select('*')->from($thmRoles);
-		$db->setQuery($query);
-		$thmRoles = $db->loadObjectList();
+    /**
+     * Migrates the profiles table.
+     */
+    private static function profiles()
+    {
+        $db = Application::getDB();
 
-		$id     = $db->quoteName('id');
-		$nameDE = $db->quoteName('name_de');
-		$roles  = $db->quoteName('#__groups_roles');
+        $query = $db->getQuery(true);
+        $query->select('*')->from($db->quoteName('#__thm_groups_profiles'));
+        $db->setQuery($query);
 
-		// Create a prepared statement to find roles based on their name.
-		$query = $db->getQuery(true);
-		$query->select($id)->from($roles)->where("$nameDE LIKE :thmName");
+        // No existing data
+        if (!$profiles = $db->loadObjectList('id'))
+        {
+            return;
+        }
 
-		$thmOrdering = [];
-		$map         = [];
+        $alias          = null;
+        $id             = 0;
+        $canEdit        = false;
+        $contentEnabled = false;
+        $published      = false;
 
-		foreach ($thmRoles as $thmRole)
-		{
-			$thmID = $thmRole->id;
+        $query = $db->getQuery(true);
+        $query->insert($db->quoteName('#__groups_profiles'))
+            ->columns([
+                $db->quoteName('alias'),
+                $db->quoteName('id'),
+                $db->quoteName('canEdit'),
+                $db->quoteName('contentEnabled'),
+                $db->quoteName('published')
+            ])
+            ->values(":alias, :id, :canEdit, :contentEnabled, :published")
+            ->bind(':alias', $alias)
+            ->bind(':id', $id, ParameterType::INTEGER)
+            ->bind(':canEdit', $canEdit, ParameterType::BOOLEAN)
+            ->bind(':contentEnabled', $contentEnabled, ParameterType::BOOLEAN)
+            ->bind(':published', $published, ParameterType::BOOLEAN);
 
-			$thmOrdering[$thmRole->ordering] = $thmID;
+        foreach ($profiles as $profileID => $profile)
+        {
+            $alias          = $profile->alias ?? null;
+            $id             = $profileID;
+            $canEdit        = $profile->canEdit ?? false;
+            $contentEnabled = $profile->contentEnabled ?? false;
+            $published      = $profile->published ?? false;
 
-			//name
-			$table   = new Tables\Roles($db);
-			$thmName = $thmRole->name;
+            $table = new Tables\Profiles($db);
 
-			// Exact match 50% of THM roles
-			if ($table->load(['name_de' => $thmName]))
-			{
-				$map[$thmID] = $table->id;
-				continue;
-			}
+            if ($table->load($profileID))
+            {
+                $table->alias          = $alias;
+                $table->canEdit        = $canEdit;
+                $table->contentEnabled = $contentEnabled;
+                $table->published      = $published;
 
-			// Two known changes that wouldn't work with like.
-			if ($thmName === 'Koordinatorin')
-			{
-				$map[$thmID] = 9;
-				continue;
-			}
+                $table->store(true);
+                continue;
+            }
 
-			if ($thmName === 'ProfessorInnen')
-			{
-				$map[$thmID] = 10;
-				continue;
-			}
+            $db->setQuery($query);
+            $db->execute();
+        }
+    }
 
-			//  German gender changes (+:in/:innen)
-			$name = trim($thmName) . '%';
-			$query->bind(':thmName', $name);
-			$db->setQuery($query);
+    /**
+     * Migrates the role associations table.
+     *
+     * @param array $rMap an array mapping the existing roles table to the new one
+     *
+     * @return array an array mapping the existing role associations table to the new one
+     */
+    private static function roleAssociations(array $rMap): array
+    {
+        $db = Application::getDB();
 
-			if ($groupsID = $db->loadResult())
-			{
-				$map[$thmID] = $groupsID;
-				continue;
-			}
+        $query = $db->getQuery(true);
+        $query->select('*')->from($db->quoteName('#__thm_groups_role_associations'));
+        $db->setQuery($query);
 
-			// Non-standard/additional roles
-			$migrant = [
-				'name_de'  => $thmName,
-				'name_en'  => $thmName,
-				'names_de' => $thmName,
-				'names_en' => $thmName,
+        $map = [];
 
-				// Ordering has no default value, will be set correctly in the next portion of the function.
-				'ordering' => 0
-			];
+        // rMap has to be filled for this to return results
+        if ($assocs = $db->loadObjectList())
+        {
+            foreach ($assocs as $assoc)
+            {
+                $table = new Tables\RoleAssociations($db);
+                $data  = ['groupID' => $assoc->groupID, 'roleID' => $rMap[$assoc->roleID]];
 
-			$table->save($migrant);
-			$map[$thmID] = $table->id;
-		}
+                if ($table->load($data))
+                {
+                    $map[$assoc->id] = $table->id;
+                    continue;
+                }
 
-		$roleIDs  = array_unique(array_values($map));
-		$ordering = 1;
-		ksort($thmOrdering);
-		$thmOrdering = array_flip($thmOrdering);
+                $table->save($data);
+                $map[$assoc->id] = $table->id;
+            }
+        }
+        // no existing data
+        else
+        {
+            $groupIDs = Groups::getIDs();
 
-		foreach (array_keys($thmOrdering) as $thmID)
-		{
-			$roleID = $map[$thmID];
+            foreach ($groupIDs as $groupID)
+            {
+                if (in_array($groupID, Groups::DEFAULT))
+                {
+                    continue;
+                }
 
-			if (!$position = array_search($roleID, $roleIDs))
-			{
-				continue;
-			}
+                $table = new Tables\RoleAssociations($db);
+                $assoc = ['groupID' => $groupID, 'roleID' => Roles::MEMBER];
 
-			$table = new Tables\Roles($db);
-			$table->load($roleID);
-			$table->ordering = $ordering;
-			$table->store();
+                if ($table->load($assoc))
+                {
+                    continue;
+                }
 
-			$ordering++;
-			unset($roleIDs[$position]);
-		}
+                $table->save($assoc);
+            }
+        }
 
-		return $map;
-	}
+        return $map;
+    }
+
+    /**
+     * Creates any role entries not included in the standard installation.+
+     *
+     */
+    private static function roles(): array
+    {
+        $db  = Application::getDB();
+        $map = [];
+
+        $query = $db->getQuery(true);
+        $query->select('*')->from($db->quoteName('#__thm_groups_roles'));
+        $db->setQuery($query);
+
+        // No existing data
+        if (!$oldRoles = $db->loadObjectList())
+        {
+            return $map;
+        }
+
+        $nameDE = $db->quoteName('name_de');
+
+        // Create a prepared statement to find roles based on their name.
+        $query = $db->getQuery(true);
+        $query->select($db->quoteName('id'))
+            ->from($db->quoteName('#__groups_roles'))
+            ->where("$nameDE LIKE :thmName");
+
+        $oldOrdering = [];
+
+        foreach ($oldRoles as $oldRole)
+        {
+            $oldID = $oldRole->id;
+
+            $oldOrdering[$oldRole->ordering] = $oldID;
+
+            //name
+            $table   = new Tables\Roles($db);
+            $thmName = $oldRole->name;
+
+            // Exact match 50% of THM roles
+            if ($table->load(['name_de' => $thmName]))
+            {
+                $map[$oldID] = $table->id;
+                continue;
+            }
+
+            // Two known changes that wouldn't work with like.
+            if ($thmName === 'Koordinatorin')
+            {
+                $map[$oldID] = 9;
+                continue;
+            }
+
+            if ($thmName === 'ProfessorInnen')
+            {
+                $map[$oldID] = 10;
+                continue;
+            }
+
+            //  German gender changes (+:in/:innen)
+            $name = trim($thmName) . '%';
+            $query->bind(':thmName', $name);
+            $db->setQuery($query);
+
+            if ($groupsID = $db->loadResult())
+            {
+                $map[$oldID] = $groupsID;
+                continue;
+            }
+
+            // Non-standard/additional roles
+            $migrant = [
+                'name_de' => $thmName,
+                'name_en' => $thmName,
+                'names_de' => $thmName,
+                'names_en' => $thmName,
+
+                // Ordering has no default value, will be set correctly in the next portion of the function.
+                'ordering' => 0
+            ];
+
+            $table->save($migrant);
+            $map[$oldID] = $table->id;
+        }
+
+        $roleIDs  = array_unique(array_values($map));
+        $ordering = 1;
+        ksort($oldOrdering);
+        $oldOrdering = array_flip($oldOrdering);
+
+        foreach (array_keys($oldOrdering) as $oldID)
+        {
+            $roleID = $map[$oldID];
+
+            if (!$position = array_search($roleID, $roleIDs))
+            {
+                continue;
+            }
+
+            $table = new Tables\Roles($db);
+            $table->load($roleID);
+            $table->ordering = $ordering;
+            $table->store();
+
+            $ordering++;
+            unset($roleIDs[$position]);
+        }
+
+        return $map;
+    }
 }

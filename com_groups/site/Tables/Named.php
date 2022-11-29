@@ -10,7 +10,6 @@
 
 namespace THM\Groups\Tables;
 
-use Joomla\CMS\Table\Table;
 use THM\Groups\Adapters\Application;
 
 trait Named
@@ -36,15 +35,18 @@ trait Named
      */
     public function getName(int $id): string
     {
-        if (!$id) {
+        if (!$id)
+        {
             return '';
         }
 
-        if (!$this->load($id)) {
+        if (!$this->load($id))
+        {
             return '';
         }
 
-        if (Application::getTag() === 'en') {
+        if (Application::getTag() === 'en')
+        {
             return $this->name_en;
         }
 
