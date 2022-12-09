@@ -16,73 +16,69 @@ use THM\Groups\Tables\Types as Table;
 
 class Types implements Selectable
 {
-	public const DATE = 5, EMAIL = 6, HTML = 2, IMAGE = 4, NAME = 8, NAME_SUPPLEMENT = 9, TELEPHONE_EU = 7, TEXT = 1, URL = 3;
+    public const DATE = 8, EMAIL = 3, HTML= 7, IMAGE = 5, NAME = 2, NAME_SUPPLEMENT = 4, TELEPHONE = 6, TEXT = 1;
 
-	// IDs for quick range validation
-	public const PROTECTED_IDS = [
-		self::DATE,
-		self::EMAIL,
-		self::HTML,
-		self::IMAGE,
-		self::NAME,
-		self::NAME_SUPPLEMENT,
-		self::TELEPHONE_EU,
-		self::TEXT,
-		self::URL,
-	];
+    /**
+     * URL
+     * BUTTON
+     * ROOM
+     * LIST
+     * URL LIST
+     * NESTED LIST
+     */
 
-	/**
-	 * @inheritDoc
-	 */
-	public static function getAll(): array
-	{
-		$db    = Application::getDB();
-		$query = $db->getQuery(true);
-		$id    = 'DISTINCT ' . $db->quoteName('id');
-		$types = $db->quoteName('#__groups_types');
-		$query->select($id)->from($types);
-		$db->setQuery($query);
+    /**
+     * @inheritDoc
+     */
+    public static function getAll(): array
+    {
+        $db    = Application::getDB();
+        $query = $db->getQuery(true);
+        $id    = 'DISTINCT ' . $db->quoteName('id');
+        $types = $db->quoteName('#__groups_types');
+        $query->select($id)->from($types);
+        $db->setQuery($query);
 
-		$return = [];
+        $return = [];
 
-		if (!$typeIDs = $db->loadColumn())
-		{
-			return $return;
-		}
+        if (!$typeIDs = $db->loadColumn())
+        {
+            return $return;
+        }
 
-		foreach ($typeIDs as $typeID)
-		{
-			$type = new Table($db);
-			$type->load($typeID);
+        foreach ($typeIDs as $typeID)
+        {
+            $type = new Table($db);
+            $type->load($typeID);
 
-			$input = Inputs::INPUTS[$type->inputID];
-			$input = "THM\Groups\Inputs\\$input";
+            $input = Inputs::INPUTS[$type->inputID];
+            $input = "THM\Groups\Inputs\\$input";
 
-			/** @var Input $input */
-			$return[] = new $input($type);
-		}
+            /** @var Input $input */
+            $return[] = new $input($type);
+        }
 
-		return $return;
-	}
+        return $return;
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public static function getOptions(): array
-	{
-		$options = [];
+    /**
+     * @inheritDoc
+     */
+    public static function getOptions(): array
+    {
+        $options = [];
 
-		/** @var  Input $field */
-		foreach (self::getAll() as $input)
-		{
-			$options[$input->getName()] = (object) [
-				'text'  => $input->getName(),
-				'value' => $input->id
-			];
-		}
+        /** @var  Input $field */
+        foreach (self::getAll() as $input)
+        {
+            $options[$input->getName()] = (object)[
+                'text' => $input->getName(),
+                'value' => $input->id
+            ];
+        }
 
-		ksort($options);
+        ksort($options);
 
-		return $options;
-	}
+        return $options;
+    }
 }

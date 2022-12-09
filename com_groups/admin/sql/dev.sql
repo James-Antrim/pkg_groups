@@ -21,7 +21,9 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_attributes`
     `context`       TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group',
     `required`      TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     `viewLevelID`   INT(10) UNSIGNED             DEFAULT 1,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE (`label_de`),
+    UNIQUE (`label_en`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
@@ -122,49 +124,35 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_types`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`,
-                                       `required`, `viewLevelID`)
-VALUES (1, 'Namen', 'Names', '', 8, '{"hint":"Mustermann"}', 0, 1, 1),
-       (2, 'Vornamen', 'First Names', '', 8, '{"hint":"Maxine"}', 1, 0, 1),
-       (3, 'E-Mail', 'E-Mail', 'mail', 6, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 1, 1),
-       (4, 'Profilbild', 'Profile Picture', '', 4, '{}', 1, 0, 1),
-       (5, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 9, '{"hint":"Prof. Dr."}', 1, 0, 1),
-       (6, 'Namenszusatz (nach)', 'Supplement (Post)', '', 9, '{"hint":"M.Sc."}', 1, 0, 1),
-       (7, 'Telefon', 'Telephone', 'phone', 7, '{}', 0, 0, 1),
-       (8, 'Fax', 'Fax', 'print', 7, '{}', 0, 0, 1),
-       (9, 'Homepage', 'Homepage', 'new-tab', 3, '{"hint":"www.thm.de/fb/maxine-mustermann"}', 0, 0, 1),
-       (10, 'Anschrift', 'Address', 'location', 2, '{"buttons": 0}', 0, 0, 1),
-       (11, 'Büro', 'Office', 'home', 10, '{}', 0, 0, 1),
-       (12, 'Raum', 'Room', 'home', 10, '{}', 0, 0, 1),
-       (13, 'Sprechstunden', 'Consultation Hours', 'comment', 2, '{"buttons": 0}', 0, 0, 1),
-       (14, 'Weitere  Informationen', 'Further Information', 'info', 2, '{"buttons": 0}', 0, 0, 1),
-       (15, 'Twitter', 'Twitter', 'b,twitter', 13, '{}', 0, 0, 1),
-       (16, 'XING', 'XING', 'b,xing', 13, '{}', 0, 0, 1),
-       (17, 'LinkedIn', 'LinkedIn', 'b,linkedin', 13, '{}', 0, 0, 1);
+INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `required`, `viewLevelID`)
+VALUES (1, 'Nachnamen / Namen', 'Names / Surnames', '', 2, '{"hint":"Mustermann"}', 0, 1, 1),
+       (2, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1, 1),
+       (3, 'Vornamen', 'First Names', '', 2, '{"hint":"Maxine"}', 1, 0, 1),
+       (4, 'Namenszusatz (nach)', 'Supplement (Post)', '', 4, '{"hint":"M.Sc."}', 1, 0, 1),
+       (5, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 4, '{"hint":"Prof. Dr."}', 1, 0, 1),
+       (6, 'Profilbild', 'Profile Picture', '', 5, '{}', 1, 0, 1),
+       (7, 'Telefon', 'Telephone', 'phone', 6, '{}', 0, 0, 1),
+       (8, 'weiteres Telefon', 'Additional Telephone', 'phone', 6, '{}', 0, 0, 1),
+       (9, 'Fax', 'Fax', 'print', 6, '{}', 0, 0, 1),
+       (10, 'weiteres Fax', 'Additional Fax', 'print', 6, '{}', 0, 0, 1),
+       (11, 'weitere  E-Mail', 'Additional E-Mail', 'mail', 3, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 0, 1),
+       (12, 'Aktuelles', 'Current Information', 'info', 7, '{"buttons": 0}', 0, 0, 1),
+       (13, 'weitere  Informationen', 'Additional Information', 'info', 7, '{"buttons": 0}', 0, 0, 1),
+       (14, 'zur Person', 'Personal Information', 'user', 7, '{"buttons": 0}', 0, 0, 1);
 
 INSERT INTO `v7ocf_groups_profiles` (`id`)
 SELECT DISTINCT u.id
 FROM `v7ocf_users` AS u;
 
-# Default messages and patterns derive from input classes
 INSERT INTO `v7ocf_groups_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
 VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
-       (2, 'Ausführlicher Text / HTML', 'Descriptive Text / HTML', 2, '{}'),
-       (3, 'Link', 'Link', 3, '{"display":1}'),
-       (4, 'Bild', 'Picture', 4, '{"accept":".bmp,.BMP,.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG"}'),
-       (5, 'Datum', 'Date', 5, '{}'),
-       (6, 'E-Mail Adresse', 'E-Mail Address', 6, '{}'),
-       (7, 'Telefonnummer (EU)', 'Telephone Number (EU)', 7,
-        '{"hint":"+49 (0) 641 309 1234","pattern":"^(\\\\+[\\\\d]+ ?)?( ?((\\\\(0?[\\\\d]*\\\\))|(0?[\\\\d]+(\\/| \\\\/)?)))?(([ \\\\-]|[\\\\d]+)+)$"}'),
-       (8, 'Name', 'Name', 1,
-        '{"message_de":"Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.","message_en":"Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.","pattern":"^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$"}'),
-       (9, 'Namenszusatz', 'Name Supplement', 1,
-        '{"message_de":"Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.","message_en":"The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.","pattern":"^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$"}'),
-       (10, 'Raum', 'Room', 1, '{"hint":"A1.0.01","maxlength":50,"pattern":"([A-Z]{1}[\\d]{1,2})[.| ].*"}'),
-       (11, 'Liste', 'List', 1, '{"maxlength":0,"pattern":"^(([^<>{},]+); ?)*[^<>{},]+$"}'),
-       (12, 'Link-Liste', 'Link List', 1,
-        '{"maxlength":0,"pattern":"^((<a[^>]+>[^<>{},]+)</a>; ?)*<a[^>]+>[^<>{},]+</a>$"}'),
-       (13, 'Verlinkte Icon ', 'Linked Icon', 3, '{"display":2}');
+       (2, 'Name', 'Name', 1, '{"message_de":"Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.","message_en":"Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.","pattern":"^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$"}'),
+       (3, 'E-Mail Adresse', 'E-Mail Address', 6, '{}'),
+       (4, 'Namenszusatz', 'Name Supplement', 1, '{"message_de":"Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.","message_en":"The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.","pattern":"^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$"}'),
+       (5, 'Bild', 'Picture', 4, '{"accept":".bmp,.BMP,.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG"}'),
+       (6, 'Telefonnummer', 'Telephone Number', 7, '{"pattern":"^(\\\\+[\\\\d]+ ?)?( ?((\\\\(0?[\\\\d]*\\\\))|(0?[\\\\d]+(\\/| \\\\/)?)))?(([ \\\\-]|[\\\\d]+)+)$"}'),
+       (7, 'Ausführlicher Text / HTML', 'Descriptive Text / HTML', 2, '{}'),
+       (8, 'Datum', 'Date', 5, '{}');
 
 INSERT INTO `v7ocf_groups_roles` (`id`, `name_de`, `name_en`, `names_de`, `names_en`, `ordering`)
 VALUES (1, 'Mitglied', 'Member', 'Mitglieder', 'Members', 17),
