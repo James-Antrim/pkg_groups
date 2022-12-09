@@ -13,8 +13,10 @@ namespace THM\Groups\Tools;
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Helpers\Attributes;
 use THM\Groups\Helpers\Groups;
 use THM\Groups\Helpers\Roles;
+use THM\Groups\Helpers\Types;
 use THM\Groups\Tables;
 
 /**
@@ -25,40 +27,267 @@ class Migration
     /**
      * Migrates the attributes table.
      *
-     * @param array $atMap an array mapping the existing attribute types to the new ones
-     *
      * @return array an array mapping the existing attributes table to the new one
      */
-    private static function attributes(array $atMap)
+    private static function attributes(): array
     {
-        $db = Application::getDB();
+        $db  = Application::getDB();
+        $map = [];
 
         $query         = $db->getQuery(true);
         $oldAttributes = $db->quoteName('#__thm_groups_attributes');
         $query->select('*')->from($oldAttributes);
         $db->setQuery($query);
-        $old = $db->loadObjectList('label');
 
-        echo "<pre>old: " . print_r($old, true) . "</pre>";
+        // Migration
+        if ($oldAttributes = $db->loadObjectList('label'))
+        {
+            $labelMap = [
+                'Aktuell' => 12,
+                'Email' => 2,
+                'Email2' => 11,
+                'E-Mail 2' => 11,
+                'E-Mail-2' => 11,
+                'Fax' => 9,
+                'Nachname' => 1,
+                'Namenszusatz (nach)' => 4,
+                'Namenszusatz (vor)' => 5,
+                'Telefon' => 7,
+                'Telefon 2' => 8,
+                'Vorname' => 3,
+                'weiteres Fax' => 10,
+                'Weiteres Fax' => 10,
+                'weitere Informationen' => 13,
+                'Weitere Informationen' => 13,
+                'weiteres Telefon' => 8,
+                'Weiteres Telefon' => 8,
+                'Zur Person' => 14
+            ];
 
-        $query         = $db->getQuery(true);
-        $oldAttributes = $db->quoteName('#__groups_attributes');
-        $query->select('*')->from($oldAttributes);
-        $db->setQuery($query);
-        $new = $db->loadObjectList('label_de');
+            foreach ($labelMap as $label => $newAttributeID)
+            {
+                // New standard attribute not found in existing attributes
+                if (!$oldAttribute = $oldAttributes[$label] ?? false)
+                {
+                    continue;
+                }
 
-        $equivalences = [
-            'Name'
-        ];
+                $map[$oldAttribute->id] = $newAttributeID;
 
-        echo "<pre>---------------------------------------------------------------------------------------------</pre>";
-        echo "<pre>---------------------------------------------------------------------------------------------</pre>";
-        echo "<pre>new: " . print_r($new, true) . "</pre>";
-        die;
+                // No need to iterate over these in the dynamic section
+                unset($oldAttributes[$label]);
+
+            }
+
+            // Everything left is dynamic / not yet supported
+            foreach ($oldAttributes as $label => $oldAttribute)
+            {
+                $data         = [];
+                $newAttribute = new Tables\Attributes($db);
+
+                switch ($label)
+                {
+                    case 'E-Mail 3':
+                    case 'E-Mail 4':
+
+                        $data['label_de'] = $label;
+
+                        // Dynamic attribute has already been recreated.
+                        if ($newAttribute->load($data))
+                        {
+                            $map[$oldAttribute->id] = $newAttribute->id;
+                            continue 2;
+                        }
+
+                        $data['label_en']      = $oldAttribute->label;
+                        $data['typeID']        = Types::EMAIL;
+                        $data['configuration'] = '{}';
+
+                        break;
+
+                    case 'Fax_privat':
+                    case 'Telefon_privat':
+
+                        $tmpLabel         = str_replace('_privat', '', $label);
+                        $data['label_de'] = "$tmpLabel (privat)";
+
+                        // Dynamic attribute has already been recreated.
+                        if ($newAttribute->load($data))
+                        {
+                            $map[$oldAttribute->id] = $newAttribute->id;
+                            continue 2;
+                        }
+
+                        $tmpLabel              = $tmpLabel === 'Fax' ? $tmpLabel : 'Telephone';
+                        $data['label_en']      = "$tmpLabel (private)";
+                        $data['typeID']        = Types::TELEPHONE;
+                        $data['configuration'] = '{}';
+
+                        break;
+
+                    case 'Mobil':
+
+                        $data['label_de'] = $label;
+
+                        // Dynamic attribute has already been recreated.
+                        if ($newAttribute->load($data))
+                        {
+                            $map[$oldAttribute->id] = $newAttribute->id;
+                            continue 2;
+                        }
+
+                        $data['label_en']      = 'Cell';
+                        $data['typeID']        = Types::TELEPHONE;
+                        $data['configuration'] = '{}';
+
+                        break;
+
+                    case 'Geburtstag':
+
+                        $data['label_de'] = $oldAttribute->label;
+
+                        // Dynamic attribute has already been recreated.
+                        if ($newAttribute->load($data))
+                        {
+                            $map[$oldAttribute->id] = $newAttribute->id;
+                            continue 2;
+                        }
+
+                        $data['label_en']      = 'Birthday';
+                        $data['typeID']        = Types::DATE;
+                        $data['configuration'] = '{}';
+
+                        break;
+
+                    // Mostly unused MNI cross-reference between supervisor and supervised.
+                    case 'Ansprechpartner':
+
+                        // Formatting aid LSE department.
+                    case 'Leerzeile zwischen Kontakten':
+
+                        // Explicitly ignoring attributes which will not be migrated.
+                        $map[$oldAttribute->id] = 0;
+                        continue 2;
+
+                    // Not yet supported.
+                    default:
+                        continue 2;
+                }
+
+                $data['icon']        = $oldAttribute->icon ?? '';
+                $data['context']     = Attributes::PROFILES_CONTEXT;
+                $data['required']    = $oldAttribute->viewLevelID;
+                $data['viewLevelID'] = $oldAttribute->viewLevelID;
+
+                $newAttribute->save($data);
+                $map[$oldAttribute->id] = $newAttribute->id;
+            }
+        }
+
+        return $map;
+
         /*
-         * ignore config: mode, path, regex (if it holds a constant), required
-         *
+        Round 1-----------------------------------------------------------------------------------------------------------------
+        Label                   attributeID     icon            type/ID             levelID
+        -----                   -----------     ----            -------             -------
+        Aktuell                 12              notification    Types::HTML         1
+        Email                   2               mail            Types::EMAIL        1
+        E-Mail 2                11              mail            Types::EMAIL        1
+        E-Mail-2                11              mail            Types::EMAIL        1
+        Email2                  11              mail            Types::EMAIL        1
+        E-Mail 3                x               envelope        Types::EMAIL        1
+        E-Mail 4                x               envelope        Types::EMAIL        1
+        Fax                     9               print           Types::TELEPHONE    1
+        Fax_privat              x               print           Types::TELEPHONE    x
+        Geburtstag              x               calendar        Types::DATE         x
+        Mobil                   x               phone           Types::TELEPHONE    x
+        Nachname                1               -               Types::NAME         1
+        Namenszusatz (nach)     4               -               Types::SUPPLEMENT   1
+        Namenszusatz (vor)      5               -               Types::SUPPLEMENT   1
+        Telefon                 7               phone           Types::TELEPHONE    1
+        Telefon 2               8               phone           Types::TELEPHONE    1
+        Telefon_privat          x               phone           Types::TELEPHONE    x
+        Vorname                 3               -               Types::NAME         1
+        weiteres Fax            10              print           Types::TELEPHONE    1
+        Weitere Informationen   13              -               Types::HTML         1
+        weiteres Telefon        8               phone           Types::TELEPHONE    1
+        Zur Person              14              user            Types::HTML         1
 
+        --Ignore
+        Ansprechpartner                 not migrated
+        Leerzeile zwischen Kontakten    not migrated
+
+        Links & such------------------------------------------------------------------------------------------------------------
+
+        -Button: url displayed as an icon with optional localized tip
+        -Link: url displayed as text with optional localized text
+        -Room: room name, optional url, optional localized tip
+
+        Label           attributeID     icon        type/ID         levelID     configuration
+        -----           -----------     ----        -------         -------     -------------
+        Büro            x               home        Types::ROOM     1           {"hint":"A10.2.01","regex":"room?"}
+        Homepage        x               new-tab     Types::LINK     1           {"hint":"www.thm.de/fb/maxine-mustermann"}
+        Raum            x               home        Types::ROOM     1           {"hint":"A10.2.01","regex":"room?"}
+        Raum 2          x               home        Types::ROOM     1           {"hint":"A10.2.01","regex":"room?"}
+        Twitter         x               twitter     Types::BUTTON   1           {"hint":"twitter?","regex":"twitter?"}
+        Web             x               new-tab     Types::LINK     1           {"hint":"www.thm.de/fb/maxine-mustermann"}
+        Webseite        x               new-tab     Types::LINK     1           {"hint":"www.thm.de/fb/maxine-mustermann"}
+        XING            x               xing        Types::BUTTON   1           {"hint":"xing?","regex":"xing?"}
+        weiterer Raum   x               home        Types::ROOM     1           {"hint":"A10.2.01","regex":"room?"}
+
+        Images-----------------------------------------------------------------------------------------------------------------
+
+        -localized caption
+        -source with optional url
+        -cropping dimensions
+
+        Label       attributeID     icon    type/ID         levelID     configuration
+        -----       -----------     ----    -------         -------     -------------
+        Bild        6               -       Types::IMAGE    1           {"caption_de":"","caption_en":"","source":"","source_url":""}
+        Profilbild  6               -       Types::IMAGE    1           {"caption_de":"","caption_en":"","source":"","source_url":""}
+
+        --Additional optional localized field group
+        Quelle Bild....source & source_url
+
+        Subforms & such---------------------------------------------------------------------------------------------------------
+        Label           attributeID     icon        type/ID     levelID     comment
+        -----           -----------     ----        -------     -------     -------
+        Anschrift       x               location    x           1           so many options...
+        Sprechstunde    x               comment     x           1           weekdays & times + checkbox for 'by appointment'
+        Sprechstunden   x               comment     x           1           see Sprechstunde
+        Sprechzeiten    x               comment     x           1           see Sprechstunde
+
+        106 2(x/HTML)   Arbeitsgebiete          11{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}22101
+        107 1(Text)     Besondere Funktion      1icon-cog1{"maxlength":"255","hint":"","regex":"simple_text"}17101
+        119 1(Text)     Fachgebiet              1icon-grid-view1{"maxlength":"255","hint":"","regex":"simple_text"}18101
+        108 1(Text)     Fachgebiete             1icon-grid-view1{"maxlength":"255","hint":"","regex":"simple_text"}12101
+        112 2(x/HTML)   Forschungsgebiete       10{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}17101
+        110 2(x/HTML)   Funktionen              1icon-list-21{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}11101
+        102 2(x/HTML)   Lebenslauf              1icon-list1{"buttons":"1","hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}16101
+        111 2(x/HTML)   Weitere Profile         1icon-users1{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}10101
+        109 2(x/HTML)   Weiterführende Links    1icon-new-tab1{}13101
+
+        --- Subform with THM Room Patterned text boxes + optional link field for labs
+        - Migrate Raum 2 / weiterer Raum values to Raum values
+        - Laboratories, Offices, Rooms
+
+        Outliers----------------------------------------------------------------------------------------------------------------
+        Label                   attributeID     icon            type/ID             levelID
+        -----                   -----------     ----            -------             -------
+        --LSE incomplete addresses with no standardization
+        95  2(x/HTML)   Kontakt     1icon-location1{"buttons":"0","hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}7101
+        112 2(x/HTML)   weiterer  Kontakt1icon-location-21{"buttons":"1","hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}14101
+
+        --IEM ???
+        113 2(x/HTML)   Projekte10{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}18101
+        114 2(x/HTML)   Veranstaltungen10{"buttons":"1","hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}16101
+        115 2(x/HTML)   Ohne  Überschrift00{"buttons":"1","hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}20101
+
+        --W mixed bag, but mostly a link to a 'schriftenverzeichnis'
+        101 2(x/HTML)   Publikationen   1icon-stack1{}17101
+
+        --WI ???
+        95  2(x/HTML)       Profil1112101
         */
     }
 
@@ -86,7 +315,6 @@ class Migration
                 continue;
             }
 
-            $id   = $groupID;
             $name = $group->title;
 
             $db->setQuery($query);
@@ -118,18 +346,15 @@ class Migration
             $rMap  = self::roles();
             $raMap = self::roleAssociations($rMap);
             self::profileAssociations($raMap);
-            die;
             $session->set('com_groups.migrate.roles', true);
 
         }
-        die;
 
         if (!$session->get('com_groups.migrated.attributes'))
         {
-            // Fax was added as an attribute type by someone who didn't understand the difference between attributes and types.
-            //$atMap = [1 => 1, 2 => 2, 3 => 3, 4 => 4, 5 => 5, 6 => 6, 7 => 7, 8 => 8, 9 => 9, 12 => 7];
-            //$aMap  = self::attributes($atMap);
-            //$session->set('com_groups.migrated.attributes', true);
+            $aMap = self::attributes();
+            self::profileAttributes($aMap);
+            $session->set('com_groups.migrated.attributes', true);
         }
     }
 
@@ -152,7 +377,10 @@ class Migration
         {
             foreach ($oldAssocs as $oldAssoc)
             {
-                $assoc = ['assocID' => $oldAssoc->role_associationID, 'profileID' => $oldAssoc->profileID];
+                $assoc = [
+                    'assocID' => $assocMap[$oldAssoc->role_associationID],
+                    'profileID' => $oldAssoc->profileID
+                ];
                 $table = new Tables\ProfileAssociations($db);
 
                 if (!$table->load($assoc))
@@ -184,7 +412,7 @@ class Migration
 
             $rAssocTable = new Tables\RoleAssociations($db);
 
-            if (!$assocID = $rAssocTable->getAssocID($groupID, Roles::MEMBER))
+            if ($assocID = $rAssocTable->getAssocID($groupID, Roles::MEMBER))
             {
                 foreach ($userIDs as $profileID)
                 {
@@ -203,6 +431,47 @@ class Migration
                 $name  = $group->getName($groupID);
                 Application::message("Group \"$name\" does not have a member association.", 'error');
             }
+        }
+    }
+
+    /**
+     * Migrates the profile attribute mappings and values to the new table.
+     *
+     * @param array $map
+     *
+     * @return void
+     */
+    private static function profileAttributes(array $map)
+    {
+        $db      = Application::getDB();
+        $oldKeys = array_keys($map);
+
+        $query = $db->getQuery(true);
+        $query->select('*')
+            ->from($db->quoteName('#__thm_groups_profile_attributes'))
+            ->whereIn($db->quoteName('attributeID'), $oldKeys);
+        $db->setQuery($query);
+
+        if (!$pas = $db->loadObjectList())
+        {
+            return;
+        }
+
+        foreach ($pas as $pa)
+        {
+            $data = ['profileID' => $pa->profileID, 'attributeID' => $map[$pa->attributeID]];
+
+            $table = new Tables\ProfileAttributes($db);
+
+            if ($table->load($data))
+            {
+                continue;
+            }
+
+            $data['value']     = $pa->value;
+            $data['published'] = $pa->published;
+
+            $table->save($data);
         }
     }
 
@@ -293,6 +562,12 @@ class Migration
         {
             foreach ($assocs as $assoc)
             {
+                // Mapping to standard groups is no longer valid
+                if (in_array($assoc->groupID, Groups::DEFAULT))
+                {
+                    continue;
+                }
+
                 $table = new Tables\RoleAssociations($db);
                 $data  = ['groupID' => $assoc->groupID, 'roleID' => $rMap[$assoc->roleID]];
 

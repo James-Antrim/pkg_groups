@@ -16,12 +16,21 @@ class Attributes
 
     public const VALID_CONTEXTS = [self::BOTH_CONTEXTS, self::GROUPS_CONTEXT, self::PROFILES_CONTEXT];
 
-    public const EMAIL = 2, FIRST_NAME = 3, NAME = 1;
+    public const EMAIL = 2, FIRST_NAME = 3, IMAGE = 6, NAME = 1, SUPPLEMENT_POST = 4, SUPPLEMENT_PRE = 5;
 
-    // IDs for quick range validation
-    public const PROTECTED_IDS = [
+    // Attributes protected because of their special display in various templates
+    public const PROTECTED = [
         self::EMAIL,
         self::FIRST_NAME,
+        self::IMAGE,
+        self::NAME,
+        self::SUPPLEMENT_POST,
+        self::SUPPLEMENT_PRE
+    ];
+
+    // Attributes required for a valid entry
+    public const REQUIRED = [
+        self::EMAIL,
         self::NAME
     ];
 }

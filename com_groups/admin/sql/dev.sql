@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_attributes`
     `typeID`        INT(11) UNSIGNED    NOT NULL,
     `configuration` TEXT COMMENT 'A JSON string containing the configuration of the attribute.',
     `context`       TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group',
-    `required`      TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     `viewLevelID`   INT(10) UNSIGNED             DEFAULT 1,
     PRIMARY KEY (`id`),
     UNIQUE (`label_de`),
@@ -28,9 +27,6 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_attributes`
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
-
-#`showLabel`   TINYINT(1)   UNSIGNED NOT NULL DEFAULT 1,
-#`showIcon`    TINYINT(1) UNSIGNED   NOT NULL DEFAULT 1,
 
 # no unique keys for groups which may have the same name in different contexts.
 CREATE TABLE IF NOT EXISTS `v7ocf_groups_groups`
@@ -49,7 +45,8 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_profile_associations`
     `id`        INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `assocID`   INT(11) UNSIGNED NOT NULL,
     `profileID` INT(11)          NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `entry` (`assocID`, `profileID`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
@@ -62,7 +59,8 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_profile_attributes`
     `attributeID` INT(11) UNSIGNED    NOT NULL,
     `value`       TEXT,
     `published`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-    PRIMARY KEY (`ID`)
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `entry` (`profileID`, `attributeID`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
@@ -87,7 +85,8 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_role_associations`
     `id`      INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `groupID` INT(11) UNSIGNED NOT NULL,
     `roleID`  INT(11) UNSIGNED NOT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `entry` (`groupID`, `roleID`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
@@ -124,21 +123,21 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_types`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `required`, `viewLevelID`)
-VALUES (1, 'Nachnamen / Namen', 'Names / Surnames', '', 2, '{"hint":"Mustermann"}', 0, 1, 1),
-       (2, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1, 1),
-       (3, 'Vornamen', 'First Names', '', 2, '{"hint":"Maxine"}', 1, 0, 1),
-       (4, 'Namenszusatz (nach)', 'Supplement (Post)', '', 4, '{"hint":"M.Sc."}', 1, 0, 1),
-       (5, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 4, '{"hint":"Prof. Dr."}', 1, 0, 1),
-       (6, 'Profilbild', 'Profile Picture', '', 5, '{}', 1, 0, 1),
-       (7, 'Telefon', 'Telephone', 'phone', 6, '{}', 0, 0, 1),
-       (8, 'weiteres Telefon', 'Additional Telephone', 'phone', 6, '{}', 0, 0, 1),
-       (9, 'Fax', 'Fax', 'print', 6, '{}', 0, 0, 1),
-       (10, 'weiteres Fax', 'Additional Fax', 'print', 6, '{}', 0, 0, 1),
-       (11, 'weitere  E-Mail', 'Additional E-Mail', 'mail', 3, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 0, 1),
-       (12, 'Aktuelles', 'Current Information', 'info', 7, '{"buttons": 0}', 0, 0, 1),
-       (13, 'weitere  Informationen', 'Additional Information', 'info', 7, '{"buttons": 0}', 0, 0, 1),
-       (14, 'zur Person', 'Personal Information', 'user', 7, '{"buttons": 0}', 0, 0, 1);
+INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `viewLevelID`)
+VALUES (1, 'Nachnamen / Namen', 'Names / Surnames', '', 2, '{"hint":"Mustermann"}', 0, 1),
+       (2, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
+       (3, 'Vornamen', 'First Names', '', 2, '{"hint":"Maxine"}', 1, 1),
+       (4, 'Namenszusatz (nach)', 'Supplement (Post)', '', 4, '{"hint":"M.Sc."}', 1, 1),
+       (5, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 4, '{"hint":"Prof. Dr."}', 1, 1),
+       (6, 'Profilbild', 'Profile Picture', '', 5, '{}', 1, 1),
+       (7, 'Telefon', 'Telephone', 'phone', 6, '{}', 0, 1),
+       (8, 'weiteres Telefon', 'Additional Telephone', 'phone', 6, '{}', 0, 1),
+       (9, 'Fax', 'Fax', 'print', 6, '{}', 0, 1),
+       (10, 'weiteres Fax', 'Additional Fax', 'print', 6, '{}', 0, 1),
+       (11, 'weitere  E-Mail', 'Additional E-Mail', 'mail', 3, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 1),
+       (12, 'Aktuelles', 'Current Information', 'info', 7, '{"buttons": 0}', 0, 1),
+       (13, 'weitere  Informationen', 'Additional Information', 'info', 7, '{"buttons": 0}', 0, 1),
+       (14, 'zur Person', 'Personal Information', 'user', 7, '{"buttons": 0}', 0, 1);
 
 INSERT INTO `v7ocf_groups_profiles` (`id`)
 SELECT DISTINCT u.id

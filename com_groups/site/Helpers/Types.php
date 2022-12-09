@@ -16,7 +16,7 @@ use THM\Groups\Tables\Types as Table;
 
 class Types implements Selectable
 {
-    public const DATE = 8, EMAIL = 3, HTML= 7, IMAGE = 5, NAME = 2, NAME_SUPPLEMENT = 4, TELEPHONE = 6, TEXT = 1;
+    public const DATE = 8, EMAIL = 3, HTML = 7, IMAGE = 5, NAME = 2, SUPPLEMENT = 4, TELEPHONE = 6, TEXT = 1;
 
     /**
      * URL
