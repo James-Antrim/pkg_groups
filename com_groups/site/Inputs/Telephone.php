@@ -14,6 +14,7 @@ use THM\Groups\Helpers\Inputs;
 
 class Telephone extends Text
 {
+    public string $hint = '+49 (0) 641 309 1234';
 	public int $id = Inputs::TELEPHONE;
 	public int $maxlength = 100;
 	public string $message_de = 'Die Telefonnummer ist ungültig.';
