@@ -13,7 +13,7 @@ namespace THM\Groups\Helpers;
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
 use THM\Groups\Adapters\Application;
-use THM\Groups\Tables\Groups as GT;
+use THM\Groups\Tables\Groups as Table;
 
 /**
  *  Constants and functions for dealing with groups from an external read context.
@@ -43,7 +43,7 @@ class Groups implements Selectable
 
         foreach ($groups as $groupID => $group)
         {
-            $table = new GT(Application::getDB());
+            $table = new Table();
 
             if ($table->load($groupID) and $name = $table->$nameColumn ?? null)
             {

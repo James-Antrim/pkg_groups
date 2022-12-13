@@ -48,7 +48,7 @@ class Types implements Selectable
 
         foreach ($typeIDs as $typeID)
         {
-            $type = new Table($db);
+            $type = new Table();
             $type->load($typeID);
 
             $input = Inputs::INPUTS[$type->inputID];
