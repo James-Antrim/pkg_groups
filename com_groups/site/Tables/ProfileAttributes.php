@@ -14,6 +14,7 @@ namespace THM\Groups\Tables;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
+use THM\Groups\Adapters\Application;
 
 /**
  * Class representing the profiles attributes table.
@@ -48,8 +49,10 @@ class ProfileAttributes extends Table
     /**
      * @inheritDoc
      */
-    public function __construct(DatabaseInterface $dbo)
+    public function __construct(DatabaseInterface $dbo = null)
     {
+        $dbo = $dbo ?? Application::getDB();
+
         /** @var DatabaseDriver $dbo */
         parent::__construct('#__groups_profile_attributes', 'id', $dbo);
     }

@@ -14,6 +14,7 @@ namespace THM\Groups\Tables;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
+use THM\Groups\Adapters\Application;
 
 /**
  * Class representing the table mapping the group <=> role relationship.
@@ -37,8 +38,10 @@ class RoleAssociations extends Table
     /**
      * @inheritDoc
      */
-    public function __construct(DatabaseInterface $dbo)
+    public function __construct(DatabaseInterface $dbo = null)
     {
+        $dbo = $dbo ?? Application::getDB();
+
         /** @var DatabaseDriver $dbo */
         parent::__construct('#__groups_role_associations', 'id', $dbo);
     }

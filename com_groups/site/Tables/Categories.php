@@ -14,6 +14,7 @@ namespace THM\Groups\Tables;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
+use THM\Groups\Adapters\Application;
 
 /**
  * Class representing the category <=> profile relations.
@@ -23,8 +24,10 @@ class Categories extends Table
     /**
      * @inheritDoc
      */
-    public function __construct(DatabaseInterface $dbo)
+    public function __construct(DatabaseInterface $dbo = null)
     {
+        $dbo = $dbo ?? Application::getDB();
+
         /** @var DatabaseDriver $dbo */
         parent::__construct('#__thm_groups_categories', 'id', $dbo);
     }
