@@ -85,26 +85,26 @@ class Profiles extends ListModel
 
         $query->select([
             $db->quoteName('p') . '.*',
+            $db->quoteName('u') . '.*',
             $db->quoteName('ln.value', 'lastName'),
             $db->quoteName('fn.value', 'firstName')
         ]);
 
-        $profileID     = $db->quoteName('p.id');
-        $profiles      = $db->quoteName('#__groups_profiles', 'p');
-        $fnAttributeID = $db->quoteName('fn.attributeID');
-        $fnCondition   = $db->quoteName('ln.profileID') . " = $profileID";
-        $fnTable       = $db->quoteName('#__groups_profile_attributes', 'fn');
-        $lnAttributeID = $db->quoteName('ln.attributeID');
-        $lnCondition   = $db->quoteName('ln.profileID') . " = $profileID";
-        $lnTable       = $db->quoteName('#__groups_profile_attributes', 'ln');
+        $profileID   = $db->quoteName('p.id');
+        $fnCondition = $db->quoteName('ln.profileID') . " = $profileID";
+        $lnCondition = $db->quoteName('ln.profileID') . " = $profileID";
+        $uCondition = $db->quoteName('u.id') . " = $profileID";
 
-        $query->from($profiles)
-            ->join('inner', $lnTable, $lnCondition)
-            ->join('left', $fnTable, $fnCondition)
-            ->where($fnAttributeID . ' = ' . Helpers\Attributes::FIRST_NAME)
-            ->where($lnAttributeID . ' = ' . Helpers\Attributes::NAME);
+        $query->from($db->quoteName('#__groups_profiles', 'p'))
+            ->join('inner', $db->quoteName('#__users', 'u'), $uCondition)
+            ->join('left', $db->quoteName('#__groups_profile_attributes', 'ln'), $lnCondition)
+            ->join('left', $db->quoteName('#__groups_profile_attributes', 'fn'), $fnCondition)
+            ->where($db->quoteName('fn.attributeID') . ' = ' . Helpers\Attributes::FIRST_NAME)
+            ->where($db->quoteName('ln.attributeID') . ' = ' . Helpers\Attributes::NAME);
 
-        $contextValue = $this->getState('filter.context');
+        // groups: published, edit own, content enabled, role
+        // joomla: status, activation, group, last visit, registration date
+        /*$contextValue = $this->getState('filter.context');
         $positiveInt  = (is_numeric($contextValue) and $contextValue = (int)$contextValue);
 
         if ($positiveInt and in_array($contextValue, Helpers\Attributes::VALID_CONTEXTS))
@@ -133,7 +133,7 @@ class Profiles extends ListModel
             $typeValue = (int)$typeValue;
             $query->where($typeID . ' = :typeID')
                 ->bind(':typeID', $typeValue, ParameterType::INTEGER);
-        }
+        }*/
 
         $this->orderBy($query);
 

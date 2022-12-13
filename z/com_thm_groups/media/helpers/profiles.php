@@ -147,37 +147,6 @@ class THM_GroupsHelperProfiles
 	}
 
 	/**
-	 * Supplements any profile entry with a blank alias Profile aliases are unique so there can only be one.
-	 *
-	 * @return void
-	 * @throws Exception
-	 */
-	private static function correctAlias()
-	{
-		$dbo = JFactory::getDbo();
-
-		$query = $dbo->getQuery(true);
-		$query->select('id')->from('#__thm_groups_profiles')->where("alias = ''");
-		$dbo->setQuery($query);
-
-		try
-		{
-			$incompleteID = $dbo->loadResult();
-		}
-		catch (Exception $exception)
-		{
-			JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-			return;
-		}
-
-		if ($incompleteID)
-		{
-			self::setAlias($incompleteID);
-		}
-	}
-
-	/**
 	 * Corrects missing group associations caused by missing event triggers from batch processing in com_user.
 	 *
 	 * @return void if an exception occurs it is handled as such
@@ -185,8 +154,6 @@ class THM_GroupsHelperProfiles
 	 */
 	public static function correctGroups()
 	{
-		self::correctMap();
-		self::correctAlias();
 		$dbo = JFactory::getDbo();
 
 		// Associations that are in Groups, but not in Joomla
@@ -274,30 +241,6 @@ class THM_GroupsHelperProfiles
 			{
 				self::associateRole($missingAssoc['profileID'], $missingAssoc['assocID']);
 			}
-		}
-	}
-
-	/**
-	 * Removes deprecated entries from user_usergroup_map table.
-	 *
-	 * @return void
-	 * @throws Exception
-	 */
-	private static function correctMap()
-	{
-		$dbo = JFactory::getDbo();
-
-		$query = $dbo->getQuery(true);
-		$query->delete('#__user_usergroup_map')->where('user_id NOT IN (SELECT id FROM #__users)');
-		$dbo->setQuery($query);
-
-		try
-		{
-			$dbo->execute();
-		}
-		catch (Exception $exception)
-		{
-			JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 		}
 	}
 

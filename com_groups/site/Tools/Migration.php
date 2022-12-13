@@ -83,7 +83,7 @@ class Migration
             foreach ($oldAttributes as $label => $oldAttribute)
             {
                 $data         = [];
-                $newAttribute = new Tables\Attributes($db);
+                $newAttribute = new Tables\Attributes();
 
                 switch ($label)
                 {
@@ -307,7 +307,7 @@ class Migration
 
         foreach (UserGroupsHelper::getInstance()->getAll() as $groupID => $group)
         {
-            $table = new Tables\Groups($db);
+            $table = new Tables\Groups();
 
             // Already there
             if ($table->load($groupID))
@@ -347,7 +347,6 @@ class Migration
             $raMap = self::roleAssociations($rMap);
             self::profileAssociations($raMap);
             $session->set('com_groups.migrate.roles', true);
-
         }
 
         if (!$session->get('com_groups.migrated.attributes'))
@@ -381,7 +380,7 @@ class Migration
                     'assocID' => $assocMap[$oldAssoc->role_associationID],
                     'profileID' => $oldAssoc->profileID
                 ];
-                $table = new Tables\ProfileAssociations($db);
+                $table = new Tables\ProfileAssociations(;
 
                 if (!$table->load($assoc))
                 {
@@ -410,14 +409,14 @@ class Migration
                 continue;
             }
 
-            $rAssocTable = new Tables\RoleAssociations($db);
+            $rAssocTable = new Tables\RoleAssociations();
 
             if ($assocID = $rAssocTable->getAssocID($groupID, Roles::MEMBER))
             {
                 foreach ($userIDs as $profileID)
                 {
                     $pAssoc      = ['assocID' => $assocID, 'profileID' => $profileID];
-                    $pAssocTable = new Tables\ProfileAssociations($db);
+                    $pAssocTable = new Tables\ProfileAssociations();
 
                     if (!$pAssocTable->load($pAssoc))
                     {
@@ -427,7 +426,7 @@ class Migration
             }
             else
             {
-                $group = new Tables\Groups($db);
+                $group = new Tables\Groups();
                 $name  = $group->getName($groupID);
                 Application::message("Group \"$name\" does not have a member association.", 'error');
             }
@@ -461,7 +460,7 @@ class Migration
         {
             $data = ['profileID' => $pa->profileID, 'attributeID' => $map[$pa->attributeID]];
 
-            $table = new Tables\ProfileAttributes($db);
+            $table = new Tables\ProfileAttributes();
 
             if ($table->load($data))
             {
@@ -522,7 +521,7 @@ class Migration
             $contentEnabled = $profile->contentEnabled ?? false;
             $published      = $profile->published ?? false;
 
-            $table = new Tables\Profiles($db);
+            $table = new Tables\Profiles();
 
             if ($table->load($profileID))
             {
@@ -568,7 +567,7 @@ class Migration
                     continue;
                 }
 
-                $table = new Tables\RoleAssociations($db);
+                $table = new Tables\RoleAssociations();
                 $data  = ['groupID' => $assoc->groupID, 'roleID' => $rMap[$assoc->roleID]];
 
                 if ($table->load($data))
@@ -593,7 +592,7 @@ class Migration
                     continue;
                 }
 
-                $table = new Tables\RoleAssociations($db);
+                $table = new Tables\RoleAssociations();
                 $assoc = ['groupID' => $groupID, 'roleID' => Roles::MEMBER];
 
                 if ($table->load($assoc))
@@ -644,7 +643,7 @@ class Migration
             $oldOrdering[$oldRole->ordering] = $oldID;
 
             //name
-            $table   = new Tables\Roles($db);
+            $table   = new Tables\Roles();
             $thmName = $oldRole->name;
 
             // Exact match 50% of THM roles
@@ -707,7 +706,7 @@ class Migration
                 continue;
             }
 
-            $table = new Tables\Roles($db);
+            $table = new Tables\Roles();
             $table->load($roleID);
             $table->ordering = $ordering;
             $table->store();
