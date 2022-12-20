@@ -30,6 +30,12 @@ class Attributes extends Table
     public $configuration;
 
     /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group'
+     * @var int
+     */
+    public $context;
+
+    /**
      * VARCHAR(255) NOT NULL DEFAULT ''
      * @var string
      */

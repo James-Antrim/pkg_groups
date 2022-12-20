@@ -380,7 +380,8 @@ class Migration
                     'assocID' => $assocMap[$oldAssoc->role_associationID],
                     'profileID' => $oldAssoc->profileID
                 ];
-                $table = new Tables\ProfileAssociations(;
+
+                $table = new Tables\ProfileAssociations();
 
                 if (!$table->load($assoc))
                 {
