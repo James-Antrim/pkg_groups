@@ -305,6 +305,7 @@ class Migration
             ->bind(':name_de', $name)
             ->bind(':name_en', $name);
 
+        // Make no exception for standard groups here, in order to have comparable output to the users component.
         foreach (UserGroupsHelper::getInstance()->getAll() as $groupID => $group)
         {
             $table = new Tables\Groups();
@@ -368,6 +369,7 @@ class Migration
     {
         $db = Application::getDB();
 
+        // Direct migration from the old table to the new table with the assoc ids updated according to the map.
         $query = $db->getQuery(true);
         $query->select('*')->from($db->quoteName('#__thm_groups_profile_associations'));
         $db->setQuery($query);
@@ -390,21 +392,24 @@ class Migration
             }
         }
 
-        $uQuery = $db->getQuery(true);
-        $uQuery->select('DISTINCT ' . $db->quoteName('user_id'))
+        // Get the users associated with groups in the Joomla user => usergroup map
+        $query = $db->getQuery(true);
+        $query->select('DISTINCT ' . $db->quoteName('user_id'))
             ->from($db->quoteName('#__user_usergroup_map'))
             ->where($db->quoteName('group_id') . ' = :groupID')
             ->bind(':groupID', $groupID, ParameterType::INTEGER);
 
         foreach (Groups::getIDs() as $groupID)
         {
+            // Ignore standard groups which would only be used for site privileges.
             if (in_array($groupID, Groups::DEFAULT))
             {
                 continue;
             }
 
-            $db->setQuery($uQuery);
+            $db->setQuery($query);
 
+            // The group has not directly associated users, nothing to supplement.
             if (!$userIDs = $db->loadColumn())
             {
                 continue;
@@ -412,6 +417,7 @@ class Migration
 
             $rAssocTable = new Tables\RoleAssociations();
 
+            // Get the basic group => member role association entry and supplement the profile as necessary.
             if ($assocID = $rAssocTable->getAssocID($groupID, Roles::MEMBER))
             {
                 foreach ($userIDs as $profileID)
@@ -562,7 +568,7 @@ class Migration
         {
             foreach ($assocs as $assoc)
             {
-                // Mapping to standard groups is no longer valid
+                // Mapping to standard groups is not valid
                 if (in_array($assoc->groupID, Groups::DEFAULT))
                 {
                     continue;

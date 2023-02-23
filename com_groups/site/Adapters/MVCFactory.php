@@ -23,146 +23,162 @@ use THM\Groups\Controllers\Controller;
  */
 class MVCFactory extends Base
 {
-	/**
-	 * Sets the internal event dispatcher on the given object. Parent has private access. :(
-	 *
-	 * @param   object  $object  the object
-	 *
-	 * @return  void
-	 */
-	private function addDispatcher(object $object)
-	{
-		if (!$object instanceof DispatcherAwareInterface)
-		{
-			return;
-		}
+    /**
+     * Maps singular model / view names to their corresponding table names.
+     *
+     * @var string[]
+     */
+    private array $tableMap = [
+        'Attribute' => 'Attributes',
+        'Category' => 'Categories',
+        'Group' => 'Groups',
+        'Profile' => 'Profiles',
+        'Role' => 'Roles',
+        'Template' => 'Templates',
+        'Type' => 'Types'
+    ];
 
-		try
-		{
-			$object->setDispatcher($this->getDispatcher());
-		}
-		catch (Exception $exception)
-		{
-			// Ignore it
-		}
-	}
+    /**
+     * Sets the internal event dispatcher on the given object. Parent has private access. :(
+     *
+     * @param object $object the object
+     *
+     * @return  void
+     */
+    private function addDispatcher(object $object)
+    {
+        if (!$object instanceof DispatcherAwareInterface)
+        {
+            return;
+        }
 
-	/**
-	 * Sets the internal form factory on the given object. Parent has private access. :(
-	 *
-	 * @param   object  $object  the object
-	 *
-	 * @return  void
-	 */
-	private function addFormFactory(object $object)
-	{
-		if (!$object instanceof FormFactoryAwareInterface)
-		{
-			return;
-		}
+        try
+        {
+            $object->setDispatcher($this->getDispatcher());
+        }
+        catch (Exception $exception)
+        {
+            // Ignore it
+        }
+    }
 
-		try
-		{
-			$object->setFormFactory($this->getFormFactory());
-		}
-		catch (Exception $exception)
-		{
-			// Ignore it
-		}
-	}
+    /**
+     * Sets the internal form factory on the given object. Parent has private access. :(
+     *
+     * @param object $object the object
+     *
+     * @return  void
+     */
+    private function addFormFactory(object $object)
+    {
+        if (!$object instanceof FormFactoryAwareInterface)
+        {
+            return;
+        }
 
-	/**
-	 * Method to load and return a controller object.
-	 *
-	 * @param   string                   $name    The name of the controller
-	 * @param   string                   $prefix  The controller prefix
-	 * @param   array                    $config  The configuration array for the controller
-	 * @param   CMSApplicationInterface  $app     The app
-	 * @param   Input                    $input   The input
-	 *
-	 * @return  Controller
-	 */
-	public function createController($name, $prefix, array $config, CMSApplicationInterface $app, Input $input): Controller
-	{
-		$name           = preg_replace('/[^A-Z0-9_]/i', '', $name);
-		$className      = "THM\Groups\Controllers\\$name";
-		$config['name'] = $name;
-		$controller     = new $className($config, $this, $app, $input);
-		$this->addDispatcher($controller);
-		$this->addFormFactory($controller);
+        try
+        {
+            $object->setFormFactory($this->getFormFactory());
+        }
+        catch (Exception $exception)
+        {
+            // Ignore it
+        }
+    }
 
-		return $controller;
-	}
+    /**
+     * Method to load and return a controller object.
+     *
+     * @param string $name The name of the controller
+     * @param string $prefix The controller prefix
+     * @param array $config The configuration array for the controller
+     * @param CMSApplicationInterface $app The app
+     * @param Input $input The input
+     *
+     * @return  Controller
+     */
+    public function createController($name, $prefix, array $config, CMSApplicationInterface $app, Input $input): Controller
+    {
+        $name           = preg_replace('/[^A-Z0-9_]/i', '', $name);
+        $className      = "THM\Groups\Controllers\\$name";
+        $config['name'] = $name;
+        $controller     = new $className($config, $this, $app, $input);
+        $this->addDispatcher($controller);
+        $this->addFormFactory($controller);
 
-	/**
-	 * @inheritDoc
-	 */
-	public function createModel($name, $prefix = '', array $config = [])
-	{
-		$name      = preg_replace('/[^A-Z0-9_]/i', '', $name);
-		$className = "THM\Groups\Models\\$name";
-		$model     = new $className($config, $this);
-		$this->addDispatcher($model);
-		$this->addFormFactory($model);
+        return $controller;
+    }
 
-		return $model;
-	}
+    /**
+     * @inheritDoc
+     */
+    public function createModel($name, $prefix = '', array $config = [])
+    {
+        $name      = preg_replace('/[^A-Z0-9_]/i', '', $name);
+        $className = "THM\Groups\Models\\$name";
+        $model     = new $className($config, $this);
+        $this->addDispatcher($model);
+        $this->addFormFactory($model);
 
-	/**
-	 * @inheritDoc
-	 */
-	public function createView($name, $prefix = '', $type = 'HTML', array $config = [])
-	{
-		$supported = ['HTML', 'JSON', 'VCF'];
-		$type      = strtoupper(preg_replace('/[^A-Z0-9_]/i', '', $type));
+        return $model;
+    }
 
-		if (!in_array($type, $supported))
-		{
-			Application::error(501);
-		}
+    /**
+     * @inheritDoc
+     */
+    public function createView($name, $prefix = '', $type = 'HTML', array $config = [])
+    {
+        $supported = ['HTML', 'JSON', 'VCF'];
+        $type      = strtoupper(preg_replace('/[^A-Z0-9_]/i', '', $type));
 
-		$name      = preg_replace('/[^A-Z0-9_]/i', '', $name);
-		$className = "THM\Groups\Views\\$type\\$name";
-		$view      = new $className($config);
-		$this->addDispatcher($view);
-		$this->addFormFactory($view);
+        if (!in_array($type, $supported))
+        {
+            Application::error(501);
+        }
 
-		return $view;
-	}
+        $name      = preg_replace('/[^A-Z0-9_]/i', '', $name);
+        $className = "THM\Groups\Views\\$type\\$name";
+        $view      = new $className($config);
+        $this->addDispatcher($view);
+        $this->addFormFactory($view);
 
-	/**
-	 * @inheritDoc
-	 */
-	public function createTable($name, $prefix = '', array $config = [])
-	{
-		// Clean the parameters
-		$name = preg_replace('/[^A-Z0-9_]/i', '', $name);
+        return $view;
+    }
 
-		if (!in_array($name, $this->getTableClasses()))
-		{
-			Application::error(503);
-		}
+    /**
+     * @inheritDoc
+     */
+    public function createTable($name, $prefix = '', array $config = [])
+    {
+        // Clean the parameters
+        $name = preg_replace('/[^A-Z0-9_]/i', '', $name);
+        $name = empty($this->tableMap[$name]) ? $name : $this->tableMap[$name];
 
-		$className = "THM\Groups\Tables\\$name";
-		$dbo       = array_key_exists('dbo', $config) ? $config['dbo'] : $this->getDatabase();
+        if (!in_array($name, $this->getTableClasses()))
+        {
+            Application::error(503);
+        }
 
-		return new $className($dbo);
-	}
+        $fqName = "THM\Groups\Tables\\$name";
+        $dbo    = array_key_exists('dbo', $config) ? $config['dbo'] : $this->getDatabase();
 
-	/**
-	 * Checks for the available Table classes.
-	 *
-	 * @return array
-	 */
-	private function getTableClasses(): array
-	{
-		$tables = [];
-		foreach (glob(JPATH_SITE . '/components/com_groups/Tables/*') as $table)
-		{
-			$table    = str_replace(JPATH_SITE . '/components/com_groups/Tables/', '', $table);
-			$tables[] = str_replace('.php', '', $table);
-		}
+        return new $fqName($dbo);
+    }
 
-		return $tables;
-	}
+    /**
+     * Checks for the available Table classes.
+     *
+     * @return array
+     */
+    private function getTableClasses(): array
+    {
+        $tables = [];
+        foreach (glob(JPATH_SITE . '/components/com_groups/Tables/*') as $table)
+        {
+            $table    = str_replace(JPATH_SITE . '/components/com_groups/Tables/', '', $table);
+            $tables[] = str_replace('.php', '', $table);
+        }
+
+        return $tables;
+    }
 }
