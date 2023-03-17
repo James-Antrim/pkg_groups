@@ -24,6 +24,8 @@ use THM\Groups\Tables;
  */
 class Migration
 {
+    private const FORENAMES = 1, SURNAMES = 2;
+
     /**
      * Migrates the attributes table.
      *
@@ -39,29 +41,27 @@ class Migration
         $query->select('*')->from($oldAttributes);
         $db->setQuery($query);
 
-        // Migration
+        // Basic attributes (forenames and surnames have already been migrated to the entry)
         if ($oldAttributes = $db->loadObjectList('label'))
         {
             $labelMap = [
-                'Aktuell' => 12,
-                'Email' => 2,
-                'Email2' => 11,
-                'E-Mail 2' => 11,
-                'E-Mail-2' => 11,
-                'Fax' => 9,
-                'Nachname' => 1,
-                'Namenszusatz (nach)' => 4,
-                'Namenszusatz (vor)' => 5,
-                'Telefon' => 7,
-                'Telefon 2' => 8,
-                'Vorname' => 3,
-                'weiteres Fax' => 10,
-                'Weiteres Fax' => 10,
-                'weitere Informationen' => 13,
-                'Weitere Informationen' => 13,
-                'weiteres Telefon' => 8,
-                'Weiteres Telefon' => 8,
-                'Zur Person' => 14
+                'Aktuell' => 10,
+                'Email' => 1,
+                'Email2' => 9,
+                'E-Mail 2' => 9,
+                'E-Mail-2' => 9,
+                'Fax' => 7,
+                'Namenszusatz (nach)' => 2,
+                'Namenszusatz (vor)' => 3,
+                'Telefon' => 5,
+                'Telefon 2' => 6,
+                'weiteres Fax' => 8,
+                'Weiteres Fax' => 8,
+                'weitere Informationen' => 11,
+                'Weitere Informationen' => 11,
+                'weiteres Telefon' => 6,
+                'Weiteres Telefon' => 6,
+                'Zur Person' => 12
             ];
 
             foreach ($labelMap as $label => $newAttributeID)
@@ -504,8 +504,9 @@ class Migration
         $contentEnabled = false;
         $published      = false;
 
-        $query = $db->getQuery(true);
-        $query->insert($db->quoteName('#__groups_profiles'))
+        // Should not get used as raw entries are created on install.
+        $iQuery = $db->getQuery(true);
+        $iQuery->insert($db->quoteName('#__groups_profiles'))
             ->columns([
                 $db->quoteName('alias'),
                 $db->quoteName('id'),
@@ -520,8 +521,24 @@ class Migration
             ->bind(':contentEnabled', $contentEnabled, ParameterType::BOOLEAN)
             ->bind(':published', $published, ParameterType::BOOLEAN);
 
+        $fnAID  = $db->quoteName('fn.attributeID');
+        $fnPID  = $db->quoteName('fn.profileID');
+        $snAID  = $db->quoteName('sn.attributeID');
+        $snPID  = $db->quoteName('sn.profileID');
+        $sQuery = $db->getQuery(true);
+        $sQuery->select([$db->quoteName('sn.value', 'surnames'), $db->quoteName('fn.value', 'forenames')])
+            ->from($db->quoteName('#__thm_groups_profile_attributes', 'sn'))
+            ->join('left', $db->quoteName('#__thm_groups_profile_attributes', 'fn'), "$fnPID = $snPID")
+            ->where([
+                "$fnAID = " . self::FORENAMES,
+                "$snAID = " . self::SURNAMES,
+                "$snPID = :profileID"
+            ])
+            ->bind(':profileID', $profileID);
+
         foreach ($profiles as $profileID => $profile)
         {
+            // Bound variables
             $alias          = $profile->alias ?? null;
             $id             = $profileID;
             $canEdit        = $profile->canEdit ?? false;
@@ -532,6 +549,14 @@ class Migration
 
             if ($table->load($profileID))
             {
+                $db->setQuery($sQuery);
+
+                if ($names = $db->loadAssoc())
+                {
+                    $table->surnames  = $names['surnames'];
+                    $table->forenames = $names['forenames'];
+                }
+
                 $table->alias          = $alias;
                 $table->canEdit        = $canEdit;
                 $table->contentEnabled = $contentEnabled;
@@ -541,7 +566,7 @@ class Migration
                 continue;
             }
 
-            $db->setQuery($query);
+            $db->setQuery($iQuery);
             $db->execute();
         }
     }

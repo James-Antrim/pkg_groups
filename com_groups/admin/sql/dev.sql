@@ -69,6 +69,8 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_profile_attributes`
 CREATE TABLE IF NOT EXISTS `v7ocf_groups_profiles`
 (
     `id`             INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
+    `surnames`       VARCHAR(255)        NOT NULL,
+    `forenames`      VARCHAR(255)                 DEFAULT null COMMENT 'Default null because this field will be left blank by a certain subset of accounts.',
     `alias`          VARCHAR(255)                 DEFAULT null,
     `canEdit`        TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     `contentEnabled` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
@@ -123,26 +125,27 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_types`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
+# Forenames and surnames are now a part of the profile
 INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `viewLevelID`)
-VALUES (1, 'Nachnamen / Namen', 'Names / Surnames', '', 2, '{"hint":"Mustermann"}', 0, 1),
-       (2, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
-       (3, 'Vornamen', 'First Names', '', 2, '{"hint":"Maxine"}', 1, 1),
-       (4, 'Namenszusatz (nach)', 'Supplement (Post)', '', 4, '{"hint":"M.Sc."}', 1, 1),
-       (5, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 4, '{"hint":"Prof. Dr."}', 1, 1),
-       (6, 'Profilbild', 'Profile Picture', '', 5, '{}', 1, 1),
-       (7, 'Telefon', 'Telephone', 'phone', 6, '{}', 0, 1),
-       (8, 'weiteres Telefon', 'Additional Telephone', 'phone', 6, '{}', 0, 1),
-       (9, 'Fax', 'Fax', 'print', 6, '{}', 0, 1),
-       (10, 'weiteres Fax', 'Additional Fax', 'print', 6, '{}', 0, 1),
-       (11, 'weitere  E-Mail', 'Additional E-Mail', 'mail', 3, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 1),
-       (12, 'Aktuelles', 'Current Information', 'info', 7, '{"buttons": 0}', 0, 1),
-       (13, 'weitere  Informationen', 'Additional Information', 'info', 7, '{"buttons": 0}', 0, 1),
-       (14, 'zur Person', 'Personal Information', 'user', 7, '{"buttons": 0}', 0, 1);
+VALUES (1, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
+       (2, 'Namenszusatz (nach)', 'Supplement (Post)', '', 4, '{"hint":"M.Sc."}', 1, 1),
+       (3, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 4, '{"hint":"Prof. Dr."}', 1, 1),
+       (4, 'Profilbild', 'Profile Picture', '', 5, '{}', 1, 1),
+       (5, 'Telefon', 'Telephone', 'phone', 6, '{}', 0, 1),
+       (6, 'weiteres Telefon', 'Additional Telephone', 'phone', 6, '{}', 0, 1),
+       (7, 'Fax', 'Fax', 'print', 6, '{}', 0, 1),
+       (8, 'weiteres Fax', 'Additional Fax', 'print', 6, '{}', 0, 1),
+       (9, 'weitere  E-Mail', 'Additional E-Mail', 'mail', 3, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 1),
+       (10, 'Aktuelles', 'Current Information', 'info', 7, '{"buttons": 0}', 0, 1),
+       (11, 'weitere  Informationen', 'Additional Information', 'info', 7, '{"buttons": 0}', 0, 1),
+       (12, 'zur Person', 'Personal Information', 'user', 7, '{"buttons": 0}', 0, 1);
 
-INSERT INTO `v7ocf_groups_profiles` (`id`)
-SELECT DISTINCT u.id
+# Surname default = users display name
+INSERT INTO `v7ocf_groups_profiles` (`id`, `surnames`)
+SELECT DISTINCT `u`.`id`, `u`.`name`
 FROM `v7ocf_users` AS u;
 
+# Default messages and patterns derive from input classes
 INSERT INTO `v7ocf_groups_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
 VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
        (2, 'Name', 'Name', 1, '{"message_de":"Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.","message_en":"Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.","pattern":"^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$"}'),
