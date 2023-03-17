@@ -16,162 +16,165 @@ use THM\Groups\Views\HTML\ListView;
 
 class ListItem
 {
-	private const ADMIN = true;
+    private const ADMIN = true;
 
-	/**
-	 * Renders a check all box style list header.
-	 *
-	 * @param   int     $rowNo  the row iteration count
-	 * @param   object  $item   the item being rendered
-	 */
-	private static function check(int $rowNo, object $item)
-	{
-		?>
+    public const DIRECT = 1, NONE = 0, TAB = 2;
+    public const LINK_TYPES = [self::DIRECT, self::NONE, self::TAB];
+
+    /**
+     * Renders a check all box style list header.
+     *
+     * @param int $rowNo the row iteration count
+     * @param object $item the item being rendered
+     */
+    private static function check(int $rowNo, object $item)
+    {
+        ?>
         <td class="text-center">
-			<?php echo HTML::_('grid.id', $rowNo, $item->id, false, 'cid', 'cb', $item->name); ?>
+            <?php echo HTML::_('grid.id', $rowNo, $item->id, false, 'cid', 'cb', $item->name); ?>
         </td>
-		<?php
-	}
+        <?php
+    }
 
-	/**
-	 * Renders a sorting tool.
-	 *
-	 * @param   object  $item     the item being rendered
-	 * @param   bool    $enabled  whether sorting has been enabled
-	 */
-	private static function ordering(object $item, bool $enabled)
-	{
-		$attributes = ['class' => 'sortable-handler'];
+    /**
+     * Renders a sorting tool.
+     *
+     * @param object $item the item being rendered
+     * @param bool $enabled whether sorting has been enabled
+     */
+    private static function ordering(object $item, bool $enabled)
+    {
+        $attributes = ['class' => 'sortable-handler'];
 
-		if (!$item->access)
-		{
-			$attributes['class'] .= ' inactive';
-		}
+        if (!$item->access)
+        {
+            $attributes['class'] .= ' inactive';
+        }
         elseif (!$enabled)
-		{
-			$attributes['class'] .= ' inactive';
-			$attributes['title'] = Text::_('JORDERINGDISABLED');
-		}
+        {
+            $attributes['class'] .= ' inactive';
+            $attributes['title'] = Text::_('JORDERINGDISABLED');
+        }
 
-		$properties = HTML::toProperties($attributes);
-		?>
+        $properties = HTML::toProperties($attributes);
+        ?>
         <td class="text-center d-none d-md-table-cell">
             <span <?php echo $properties ?>>
                 <span class="icon-ellipsis-v"></span>
             </span>
-			<?php if ($item->access and $enabled) : ?>
+            <?php if ($item->access and $enabled) : ?>
                 <!--suppress HtmlFormInputWithoutLabel -->
                 <input type="text" class="width-20 text-area-order hidden" name="order[]" size="5"
                        value="<?php echo $item->ordering; ?>">
-			<?php endif; ?>
+            <?php endif; ?>
         </td>
-		<?php
-	}
+        <?php
+    }
 
-	/**
-	 * Renders a list item.
-	 *
-	 * @param   ListView  $view   the view being rendered
-	 * @param   int       $rowNo  the row number being rendered
-	 * @param   object    $item   the item being rendered
-	 */
-	public static function render(ListView $view, int $rowNo, object $item)
-	{
-		$context     = $view->backend;
-		$state       = $view->get('state');
-		$direction   = $view->escape($state->get('list.direction'));
-		$orderBy     = $view->escape($state->get('list.ordering'));
-		$dragEnabled = ($orderBy == 'ordering' and strtolower($direction) == 'asc');
-		?>
+    /**
+     * Renders a list item.
+     *
+     * @param ListView $view the view being rendered
+     * @param int $rowNo the row number being rendered
+     * @param object $item the item being rendered
+     */
+    public static function render(ListView $view, int $rowNo, object $item)
+    {
+        $context     = $view->backend;
+        $state       = $view->get('state');
+        $direction   = $view->escape($state->get('list.direction'));
+        $orderBy     = $view->escape($state->get('list.ordering'));
+        $dragEnabled = ($orderBy == 'ordering' and strtolower($direction) == 'asc');
+        ?>
         <tr>
-			<?php
+            <?php
 
-			foreach ($view->headers as $column => $header)
-			{
-				$header['properties'] = $header['properties'] ?? [];
-				switch ($header['type'])
-				{
-					case 'check':
-						self::check($rowNo, $item);
-						break;
-					case 'ordering':
-						self::ordering($item, $dragEnabled);
-						break;
-					case 'sort':
-					case 'text':
-						self::text($item, $column, $context);
-						break;
-					case 'value':
-					default:
-						self::text($item, $column, $context, false);
-						break;
-				}
-			}
-			?>
+            foreach ($view->headers as $column => $header)
+            {
+                $linkType = (!empty($header['link']) and in_array($header['link'], self::LINK_TYPES)) ?
+                    $header['link'] : self::NONE;
+
+                $header['properties'] = $header['properties'] ?? [];
+                switch ($header['type'])
+                {
+                    case 'check':
+                        self::check($rowNo, $item);
+                        break;
+                    case 'ordering':
+                        self::ordering($item, $dragEnabled);
+                        break;
+                    case 'sort':
+                    case 'text':
+                    case 'value':
+                    default:
+                        self::text($item, $column, $context, $linkType);
+                        break;
+                }
+            }
+            ?>
         </tr>
-		<?php
-	}
+        <?php
+    }
 
-	/**
-	 * Renders a check all box style list header.
-	 *
-	 * @param   object  $item     the current row item
-	 * @param   string  $column   the current column
-	 * @param   bool    $context  the display context (false: public, true: admin)
-	 * @param   bool    $link     whether to display the column information as a link
-	 * @param   bool    $newTab   whether to open the link in a new tab
-	 */
-	private static function text(object $item, string $column, bool $context, bool $link = true, bool $newTab = false)
-	{
-		$supplement = $column === 'name';
-		$value      = $item->$column ?? '';
+    /**
+     * Renders a check all box style list header.
+     *
+     * @param object $item the current row item
+     * @param string $column the current column
+     * @param bool $context the display context (false: public, true: admin)
+     * @param int $linkType the link type to use for the displayed column value
+     */
+    private static function text(object $item, string $column, bool $context, int $linkType)
+    {
+        $supplement = $column === 'name';
+        $value      = $item->$column ?? '';
 
-		if (is_array($value))
-		{
-			$properties = HTML::toProperties($value['properties']);
-			$value      = $value['value'];
-		}
-		else
-		{
-			$properties = '';
-		}
+        if (is_array($value))
+        {
+            $properties = HTML::toProperties($value['properties']);
+            $value      = $value['value'];
+        }
+        else
+        {
+            $properties = '';
+        }
 
-		$linkOpen  = '';
-		$linkClose = '';
+        $linkOpen  = '';
+        $linkClose = '';
 
-		if ($link)
-		{
-			$editLink = $item->editLink ?? '';
-			$viewLink = $item->viewLink ?? '';
-			if ($url = $context === self::ADMIN ? $editLink : $viewLink)
-			{
-				$lProperties = ['href' => $url];
+        if ($linkType)
+        {
+            $editLink = $item->editLink ?? '';
+            $viewLink = $item->viewLink ?? '';
+            if ($url = $context === self::ADMIN ? $editLink : $viewLink)
+            {
+                $lProperties = ['href' => $url];
 
-				if ($newTab)
-				{
-					$lProperties['target'] = '_blank';
-				}
+                if ($linkType === self::TAB)
+                {
+                    $lProperties['target'] = '_blank';
+                }
 
-				$linkOpen  = '<a ' . HTML::toProperties($lProperties) . '>';
-				$linkClose = '</a>';
-			}
-		}
+                $linkOpen  = '<a ' . HTML::toProperties($lProperties) . '>';
+                $linkClose = '</a>';
+            }
+        }
 
-		?>
+        ?>
         <td <?php echo $properties; ?>>
-			<?php if ($supplement and !empty($item->prefix)): ?>
-				<?php echo $item->prefix; ?>
-			<?php endif; ?>
-			<?php echo $linkOpen; ?>
-			<?php echo $value; ?>
-			<?php echo $linkClose; ?>
-			<?php if ($supplement and !empty($item->icon)): ?>
-				<?php echo $item->icon; ?>
-			<?php endif; ?>
-			<?php if ($supplement and !empty($item->supplement)): ?>
+            <?php if ($supplement and !empty($item->prefix)): ?>
+                <?php echo $item->prefix; ?>
+            <?php endif; ?>
+            <?php echo $linkOpen; ?>
+            <?php echo $value; ?>
+            <?php echo $linkClose; ?>
+            <?php if ($supplement and !empty($item->icon)): ?>
+                <?php echo $item->icon; ?>
+            <?php endif; ?>
+            <?php if ($supplement and !empty($item->supplement)): ?>
                 <br><span class="small"><?php echo $item->supplement; ?></span>
-			<?php endif; ?>
+            <?php endif; ?>
         </td>
-		<?php
-	}
+        <?php
+    }
 }

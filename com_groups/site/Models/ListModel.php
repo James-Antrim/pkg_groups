@@ -17,6 +17,7 @@ use Joomla\CMS\MVC\Model\ListModel as Base;
 use Joomla\Database\QueryInterface;
 use Joomla\Registry\Registry;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\Input;
 
 /**
  * Model class for handling lists of items.
@@ -128,13 +129,35 @@ abstract class ListModel extends Base
 
             $columns = $query->quoteName($columns);
 
+            $direction = strtoupper($query->escape($this->getState('list.direction', 'ASC')));
+
             if (is_array($columns))
             {
-                $columns = implode(',', $columns);
+                $columns = implode(" $direction, ", $columns);
             }
 
-            $direction = strtoupper($query->escape($this->getState('list.direction', 'ASC')));
             $query->order("$columns $direction");
         }
+    }
+
+    /**
+     * Overrides default handling where sort columns and direction were not being properly handled.
+     * @inheritDoc
+     */
+    protected function populateState($ordering = null, $direction = null)
+    {
+        if (!$ordering and !$direction and $fullOrdering = Input::getListItems()->get('fullordering'))
+        {
+            $pattern = '/^(([a-z.]+)(, ?[a-z.]+)*)( (asc|desc))?$/i';
+            if (preg_match_all($pattern, $fullOrdering, $matches))
+            {
+                $ordering = $matches[1][0];
+                $direction = empty($matches[5][0]) ? 'ASC' : strtoupper($matches[5][0]);
+
+                $this->setState('list.fullordering', $fullOrdering);
+            }
+        }
+
+        parent::populateState($ordering, $direction);
     }
 }
