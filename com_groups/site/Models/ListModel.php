@@ -119,11 +119,22 @@ abstract class ListModel extends Base
      */
     protected function orderBy(QueryInterface $query)
     {
-        if ($column = $this->getState('list.ordering'))
+        if ($columns = $this->getState('list.ordering'))
         {
-            $column    = $query->quoteName($query->escape($column));
-            $direction = $query->escape($this->getState('list.direction', 'ASC'));
-            $query->order("$column $direction");
+            if (preg_match('/, */', $columns))
+            {
+                $columns = explode(',', preg_replace('/, */', ',', $columns));
+            }
+
+            $columns = $query->quoteName($columns);
+
+            if (is_array($columns))
+            {
+                $columns = implode(',', $columns);
+            }
+
+            $direction = strtoupper($query->escape($this->getState('list.direction', 'ASC')));
+            $query->order("$columns $direction");
         }
     }
 }
