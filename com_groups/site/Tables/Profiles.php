@@ -28,6 +28,13 @@ class Profiles extends Table
     public $alias;
 
     /**
+     * VARCHAR(255) DEFAULT null
+     * The default is null because this field will be left blank by a certain subset of accounts.
+     * @var null|string
+     */
+    public $forenames;
+
+    /**
      * INT(11) NOT NULL (fk_profiles_userID -> users.id)
      * @var int
      */
@@ -52,6 +59,12 @@ class Profiles extends Table
     public $published;
 
     /**
+     * VARCHAR(255) NOT NULL
+     * @var string
+     */
+    public $surnames;
+
+    /**
      * @inheritDoc
      */
     public function __construct(DatabaseInterface $dbo = null)
@@ -62,5 +75,5 @@ class Profiles extends Table
         parent::__construct('#__groups_profiles', 'id', $dbo);
     }
 
-    // todo overwrite the appropriate function that doesn't create an fk entry on save/store
+    // todo overwrite the appropriate function that doesn't create a fk entry on save/store
 }

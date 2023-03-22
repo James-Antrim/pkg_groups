@@ -24,6 +24,8 @@ use THM\Groups\Tools\Migration;
  */
 class Profiles extends ListModel
 {
+    protected string $defaultOrdering = 'surnames, forenames';
+
     /**
      * @inheritDoc
      */
@@ -34,9 +36,7 @@ class Profiles extends ListModel
         if (empty($config['filter_fields']))
         {
             $config['filter_fields'] = [
-                'assigned',
-                'typeID',
-                'viewLevelID',
+                // TBD
             ];
         }
 
@@ -83,68 +83,43 @@ class Profiles extends ListModel
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
 
+        $nameColumns = [$db->quoteName('p.forenames'), $db->quoteName('p.surnames')];
         $query->select([
             $db->quoteName('p') . '.*',
             $db->quoteName('u') . '.*',
-            $db->quoteName('ln.value', 'lastName'),
-            $db->quoteName('fn.value', 'firstName')
+            $query->concatenate($nameColumns, ' ') . ' AS ' . $db->quoteName('fullName')
         ]);
 
-        $profileID   = $db->quoteName('p.id');
-        $fnCondition = $db->quoteName('ln.profileID') . " = $profileID";
-        $lnCondition = $db->quoteName('ln.profileID') . " = $profileID";
+        $profileID  = $db->quoteName('p.id');
         $uCondition = $db->quoteName('u.id') . " = $profileID";
 
         $query->from($db->quoteName('#__groups_profiles', 'p'))
-            ->join('inner', $db->quoteName('#__users', 'u'), $uCondition)
-            ->join('left', $db->quoteName('#__groups_profile_attributes', 'ln'), $lnCondition)
-            ->join('left', $db->quoteName('#__groups_profile_attributes', 'fn'), $fnCondition)
-            ->where($db->quoteName('fn.attributeID') . ' = ' . Helpers\Attributes::FIRST_NAME)
-            ->where($db->quoteName('ln.attributeID') . ' = ' . Helpers\Attributes::NAME);
+            ->join('inner', $db->quoteName('#__users', 'u'), $uCondition);
 
-        // groups: published, edit own, content enabled, role
-        // joomla: status, activation, group, last visit, registration date
-        /*$contextValue = $this->getState('filter.context');
-        $positiveInt  = (is_numeric($contextValue) and $contextValue = (int)$contextValue);
-
-        if ($positiveInt and in_array($contextValue, Helpers\Attributes::VALID_CONTEXTS))
+        if ($search = $this->getState('filter.search'))
         {
-            if ($contextValue === Helpers\Attributes::PROFILES_CONTEXT)
+            if (is_numeric($search))
             {
-                $query->where($contextID . ' != ' . Helpers\Attributes::GROUPS_CONTEXT);
+                $query->where($db->quoteName('u.id') . ' = :id')
+                    ->bind(':id', $search, ParameterType::INTEGER);
             }
-            elseif ($contextValue === Helpers\Attributes::GROUPS_CONTEXT)
+            else
             {
-                $query->where($contextID . ' != ' . Helpers\Attributes::PROFILES_CONTEXT);
+                $search  = '%' . trim($search) . '%';
+                $wherray = [
+                    $db->quoteName('email') . ' LIKE :email',
+                    $db->quoteName('name') . ' LIKE :name',
+                    $db->quoteName('username') . ' LIKE :username',
+                ];
+                $query->where('(' . implode(' OR ', $wherray) . ')')
+                    ->bind(':email', $search)
+                    ->bind(':name', $search)
+                    ->bind(':username', $search);
             }
         }
-
-        $levelValue = $this->getState('filter.levelID');
-        if (is_numeric($levelValue) and intval($levelValue) > 0)
-        {
-            $levelValue = (int)$levelValue;
-            $query->where($levelID . ' = :levelID')
-                ->bind(':levelID', $levelValue, ParameterType::INTEGER);
-        }
-
-        $typeValue = $this->getState('filter.typeID');
-        if (is_numeric($typeValue) and intval($typeValue) > 0)
-        {
-            $typeValue = (int)$typeValue;
-            $query->where($typeID . ' = :typeID')
-                ->bind(':typeID', $typeValue, ParameterType::INTEGER);
-        }*/
 
         $this->orderBy($query);
 
         return $query;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function populateState($ordering = 'lastName, firstName', $direction = 'asc')
-    {
-        parent::populateState($ordering, $direction);
     }
 }

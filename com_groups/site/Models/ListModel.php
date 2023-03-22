@@ -11,6 +11,7 @@
 namespace THM\Groups\Models;
 
 use Exception;
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel as Base;
@@ -27,6 +28,10 @@ use THM\Groups\Adapters\Input;
 abstract class ListModel extends Base
 {
     use Named;
+
+    protected int $defaultLimit = 50;
+
+    protected string $defaultOrdering;
 
     /**
      * A state object. Overrides the use of the deprecated CMSObject.
@@ -120,7 +125,7 @@ abstract class ListModel extends Base
      */
     protected function orderBy(QueryInterface $query)
     {
-        if ($columns = $this->getState('list.ordering'))
+        if ($columns = $this->state->get('list.ordering'))
         {
             if (preg_match('/, */', $columns))
             {
@@ -141,23 +146,67 @@ abstract class ListModel extends Base
     }
 
     /**
-     * Overrides default handling where sort columns and direction were not being properly handled.
      * @inheritDoc
      */
     protected function populateState($ordering = null, $direction = null)
     {
-        if (!$ordering and !$direction and $fullOrdering = Input::getListItems()->get('fullordering'))
-        {
-            $pattern = '/^(([a-z.]+)(, ?[a-z.]+)*)( (asc|desc))?$/i';
-            if (preg_match_all($pattern, $fullOrdering, $matches))
-            {
-                $ordering = $matches[1][0];
-                $direction = empty($matches[5][0]) ? 'ASC' : strtoupper($matches[5][0]);
+        /** @var CMSApplication $app */
+        $app = Application::getApplication();
+        parent::populateState($ordering, $direction);
 
-                $this->setState('list.fullordering', $fullOrdering);
-            }
+
+        // Receive & set filters
+        $filters = $app->getUserStateFromRequest($this->context . '.filter', 'filter', [], 'array');
+        foreach ($filters as $input => $value)
+        {
+            $this->state->set('filter.' . $input, $value);
         }
 
-        parent::populateState($ordering, $direction);
+        $list = $app->getUserStateFromRequest($this->context . '.list', 'list', [], 'array');
+        foreach ($list as $input => $value)
+        {
+            $this->state->set("list.$input", $value);
+        }
+
+        $direction    = 'ASC';
+        $fullOrdering = "$this->defaultOrdering ASC";
+        $ordering     = $this->defaultOrdering;
+
+        if (!empty($list['fullordering']) and strpos($list['fullordering'], 'null') === false)
+        {
+            $pieces          = explode(' ', $list['fullordering']);
+            $validDirections = ['ASC', 'DESC', ''];
+
+            if (in_array(end($pieces), $validDirections))
+            {
+                $direction = array_pop($pieces);
+            }
+
+            if ($pieces)
+            {
+                $ordering = implode(' ', $pieces);
+            }
+
+            $fullOrdering = "$ordering $direction";
+        }
+
+        $this->state->set('list.fullordering', $fullOrdering);
+        $this->state->set('list.ordering', $ordering);
+        $this->state->set('list.direction', $direction);
+
+        if ($format = Input::getCMD('format') and $format !== 'html')
+        {
+            $limit = 0;
+            $start = 0;
+        }
+        else
+        {
+            $limit = (isset($list['limit']) && is_numeric($list['limit'])) ? $list['limit'] : $this->defaultLimit;
+            $start = $this->getUserStateFromRequest('limitstart', 'limitstart', 0);
+            $start = ($limit != 0 ? (floor($start / $limit) * $limit) : 0);
+        }
+
+        $this->setState('list.limit', $limit);
+        $this->setState('list.start', $start);
     }
 }

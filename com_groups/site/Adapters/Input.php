@@ -11,7 +11,6 @@
 namespace THM\Groups\Adapters;
 
 use Joomla\CMS\Application\CMSApplication;
-use Joomla\CMS\Factory;
 use Joomla\Filter\InputFilter;
 use Joomla\Input\Input as Base;
 use Joomla\Registry\Registry;
@@ -117,7 +116,7 @@ class Input
     }
 
     /**
-     * Retrieves the contoller parameter with the view parameter as fallback.
+     * Retrieves the controller parameter with the view parameter as fallback.
      *
      * @return string
      */
