@@ -15,37 +15,36 @@ use Joomla\CMS\Component\Router\RouterInterface;
 use Joomla\CMS\Component\Router\RouterServiceInterface;
 use Joomla\CMS\Extension\BootableExtensionInterface;
 use Joomla\CMS\Extension\MVCComponent;
+use Joomla\CMS\HTML\HTMLRegistryAwareTrait;
 use Joomla\CMS\Menu\AbstractMenu;
 use Psr\Container\ContainerInterface;
 
 class Component extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface
 {
-	/**
-	 * @inheritDoc
-	 */
-	public function boot(ContainerInterface $container)
-	{
-		// TODO: Implement boot() method.
-	}
+    use HTMLRegistryAwareTrait;
 
-	/**
-	 * @inheritDoc
-	 */
-	public function createRouter(CMSApplicationInterface $application, AbstractMenu $menu): RouterInterface
-	{
-		// TODO: Implement createRouter() method.
-	}
+    /**
+     * @inheritDoc
+     */
+    public function boot(ContainerInterface $container)
+    {
+        // TODO: Implement boot() method.
+    }
 
-	public function setRegistry($get)
-	{
-	}
+    /**
+     * @inheritDoc
+     */
+    public function createRouter(CMSApplicationInterface $application, AbstractMenu $menu): RouterInterface
+    {
+        // TODO: Implement createRouter() method.
+    }
 
-	public function setCategoryFactory($get)
-	{
-	}
+    public function setCategoryFactory($get)
+    {
+    }
 
-	public function setRouterFactory($get)
-	{
-	}
+    public function setRouterFactory($get)
+    {
+    }
 }
 

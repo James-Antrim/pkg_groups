@@ -16,7 +16,8 @@ use Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;
 use Joomla\CMS\Extension\ComponentInterface;
 use Joomla\CMS\Extension\Service;
 
-//use Joomla\CMS\HTML\Registry;
+// Adds default Joomla default implementations, not to be confused with Joomla\Registry\Registry
+use Joomla\CMS\HTML\Registry;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use THM\Groups\Component;
 use Joomla\DI\Container;
@@ -27,30 +28,31 @@ use THM\Groups\Providers;
  * The service provider.
  */
 return new class implements ServiceProviderInterface {
-	/**
-	 * Registers the service provider with a DI container.
-	 *
-	 * @param   Container  $container  The DI container.
-	 *
-	 * @return  void
-	 */
-	public function register(Container $container)
-	{
-		$container->registerServiceProvider(new Providers\Dispatcher());
-		$container->registerServiceProvider(new Providers\MVC());
-//		$container->registerServiceProvider(new Service\Provider\CategoryFactory('\\THM\\Groups'));
-//		$container->registerServiceProvider(new Service\Provider\RouterFactory('\\THM\\Groups'));
-		$container->set(
-			ComponentInterface::class,
-			function (Container $container) {
-				$component = new Component($container->get(ComponentDispatcherFactoryInterface::class));
-				$component->setMVCFactory($container->get(MVCFactoryInterface::class));
-//				$component->setCategoryFactory($container->get(CategoryFactoryInterface::class));
-//				$component->setRouterFactory($container->get(RouterFactoryInterface::class));
-//				$component->setRegistry($container->get(Registry::class));
+    /**
+     * Registers the service provider with a DI container.
+     *
+     * @param Container $container The DI container.
+     *
+     * @return  void
+     */
+    public function register(Container $container)
+    {
+        $container->registerServiceProvider(new Providers\Dispatcher());
+        $container->registerServiceProvider(new Providers\MVC());
+        //$container->registerServiceProvider(new Service\Provider\CategoryFactory('\\THM\\Groups'));
+        //$container->registerServiceProvider(new Service\Provider\RouterFactory('\\THM\\Groups'));
+        $container->set(
+            ComponentInterface::class,
+            function (Container $container)
+            {
+                $component = new Component($container->get(ComponentDispatcherFactoryInterface::class));
+                $component->setMVCFactory($container->get(MVCFactoryInterface::class));
+                //$component->setCategoryFactory($container->get(CategoryFactoryInterface::class));
+                //$component->setRouterFactory($container->get(RouterFactoryInterface::class));
+                $component->setRegistry($container->get(Registry::class));
 
-				return $component;
-			}
-		);
-	}
+                return $component;
+            }
+        );
+    }
 };
