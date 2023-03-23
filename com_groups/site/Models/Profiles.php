@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Models;
 
+use Exception;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
@@ -66,8 +67,10 @@ class Profiles extends ListModel
         foreach ($items as $item)
         {
             // Management access is a prerequisite of accessing this view at all.
-            $item->access   = true;
-            $item->editLink = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
+            $item->access    = true;
+            $item->activated = empty($item->activation);
+            $item->editLink  = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
+            $item->noteCount = $this->getNoteCount($item->id);
         }
 
         return $items;
@@ -87,7 +90,7 @@ class Profiles extends ListModel
         $query->select([
             $db->quoteName('p') . '.*',
             $db->quoteName('u') . '.*',
-            $query->concatenate($nameColumns, ' ') . ' AS ' . $db->quoteName('fullName')
+            $query->concatenate($nameColumns, ' ') . ' AS ' . $db->quoteName('name')
         ]);
 
         $profileID  = $db->quoteName('p.id');
@@ -121,5 +124,39 @@ class Profiles extends ListModel
         $this->orderBy($query);
 
         return $query;
+    }
+
+    /**
+     * Gets the number of notes associated with the profile.
+     *
+     * @param int $profileID the id of the profile
+     *
+     * @return int
+     */
+    private function getNoteCount(int $profileID): int
+    {
+        $db     = $this->getDatabase();
+        $noteID = $db->quoteName('id');
+        $state  = $db->quoteName('state');
+        $userID = $db->quoteName('user_id');
+        $query  = $db->getQuery(true);
+        $query->select("$userID, COUNT($noteID) AS notes")
+            ->from($db->quoteName('#__user_notes'))
+            ->where("$userID = $profileID")
+            ->where("$state >= 0")
+            ->group($userID);
+        $db->setQuery($query);
+
+        // Load the counts into an array indexed on the aro.value field (the user id).
+        try
+        {
+            return (int)$db->loadResult();
+        }
+        catch (Exception $exception)
+        {
+            $this->setError($exception->getMessage());
+
+            return 0;
+        }
     }
 }

@@ -13,7 +13,9 @@ namespace THM\Groups\Views\HTML;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\HTML;
 use THM\Groups\Helpers;
+use THM\Groups\Helpers\Profiles as Helper;
 use THM\Groups\Layouts\ListItem;
 
 /**
@@ -31,11 +33,12 @@ class Profiles extends ListView
             Application::error(403);
         }
 
+        // TBD: Support notes?
         $this->todo = [
+            'main menu',
             'Profiles => Persons',
-            'Add note',
-            'published + filter',
-            'active + filter',
+            'published filter',
+            'active filter',
             'groups + filter',
             'last visit filter ',
             'registered filter',
@@ -50,11 +53,16 @@ class Profiles extends ListView
      */
     protected function completeItems()
     {
-        foreach ($this->items as $item)
+        foreach ($this->items as $rowNo => $item)
         {
-            $item->lastvisitDate = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
-            $item->editLink      = Route::_('index.php?option=com_groups&view=Profile&layout=edit&id=' . $item->id);
-            $item->viewLink      = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
+            $item->activated      = HTML::toggle($rowNo, Helper::activatedStates[$item->activated], 'Profiles');
+            $item->block          = HTML::toggle($rowNo, Helper::blockedStates[$item->block], 'Profiles');
+            $item->canEdit        = HTML::toggle($rowNo, Helper::editingStates[$item->canEdit], 'Profiles');
+            $item->contentEnabled = HTML::toggle($rowNo, Helper::contentStates[$item->contentEnabled], 'Profiles');
+            $item->editLink       = Route::_('index.php?option=com_groups&view=Profile&layout=edit&id=' . $item->id);
+            $item->lastvisitDate  = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
+            $item->published      = HTML::toggle($rowNo, Helper::publishedStates[$item->published], 'Profiles');
+            $item->viewLink       = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
         }
     }
 
@@ -65,24 +73,37 @@ class Profiles extends ListView
     {
         $this->headers = [
             'check' => ['type' => 'check'],
-            'fullName' => [
+            'name' => [
                 'column' => 'surnames, forenames',
                 'link' => ListItem::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title' => Text::_('GROUPS_PROFILE'),
                 'type' => 'sort'
             ],
-            'username' => [
-                'column' => 'username',
+            'published' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_USERNAME'),
-                'type' => 'sort'
+                'title' => Text::_('GROUPS_PUBLISHED'),
+                'type' => 'value'
             ],
-            'email' => [
-                'column' => 'email',
+            'canEdit' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_USER_EMAIL'),
-                'type' => 'text'
+                'title' => Text::_('GROUPS_EDITING'),
+                'type' => 'value'
+            ],
+            'contentEnabled' => [
+                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+                'title' => Text::_('GROUPS_CONTENTS'),
+                'type' => 'value'
+            ],
+            'block' => [
+                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+                'title' => Text::_('GROUPS_ENABLED'),
+                'type' => 'value'
+            ],
+            'activated' => [
+                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+                'title' => Text::_('GROUPS_ACTIVATED'),
+                'type' => 'value'
             ],
             'lastvisitDate' => [
                 'column' => 'lastvisitDate',
@@ -95,14 +116,7 @@ class Profiles extends ListView
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
                 'title' => Text::_('GROUPS_REGISTERED'),
                 'type' => 'sort'
-            ],
-            'id' => [
-                'column' => 'u.id',
-                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_ID'),
-                'type' => 'sort'
             ]
         ];
-
     }
 }

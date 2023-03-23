@@ -11,83 +11,127 @@
 namespace THM\Groups\Adapters;
 
 use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\Utilities\ArrayHelper;
 
 class HTML extends HTMLHelper
 {
-	/**
-	 * Converts an array $property => $value to a string for use in HTML tags.
-	 *
-	 * @param   array  $array  the properties and their values
-	 *
-	 * @return string
-	 */
-	public static function toProperties(array $array): string
-	{
-		foreach ($array as $property => $value)
-		{
-			$array[$property] = "$property=\"$value\"";
-		}
+    /**
+     * Converts an array $property => $value to a string for use in HTML tags.
+     *
+     * @param array $array the properties and their values
+     *
+     * @return string
+     */
+    public static function toProperties(array $array): string
+    {
+        foreach ($array as $property => $value)
+        {
+            $array[$property] = "$property=\"$value\"";
+        }
 
-		return $array ? implode(' ', $array) : '';
-	}
+        return $array ? implode(' ', $array) : '';
+    }
 
-	/**
-	 * Creates an icon with tooltip as appropriate.
-	 *
-	 * @param   string  $class  the icon class(es)
-	 *
-	 * @return string the HTML for the icon to be displayed
-	 */
-	public static function icon(string $class): string
-	{
-		if (strpos($class, ','))
-		{
-			[$subset, $class] = explode(',', $class);
-			$class  = "fa$subset fa-$class";
-		}
-		elseif (strpos($class, 'fa') === false)
-		{
-			$class = "fa fa-$class";
-		}
+    /**
+     * Creates an icon with tooltip as appropriate.
+     *
+     * @param string $class the icon class(es)
+     *
+     * @return string the HTML for the icon to be displayed
+     */
+    public static function icon(string $class): string
+    {
+        if (strpos($class, ','))
+        {
+            [$subset, $class] = explode(',', $class);
+            $class = "fa$subset fa-$class";
+        }
+        elseif (strpos($class, 'fa') === false)
+        {
+            $class = "fa fa-$class";
+        }
 
-		return "<i class=\"$class\" aria-hidden=\"true\"></i>";
-	}
+        return "<i class=\"$class\" aria-hidden=\"true\"></i>";
+    }
 
-	/**
-	 * The content wrapped with a link referencing a tip and the tip.
-	 *
-	 * @param   string  $content  the content referenced by the tip
-	 * @param   string  $tip      the tip to be displayed
-	 * @param   string  $url      the url linked by the tip as applicable
-	 * @param   bool    $newTab   whether the url should open in a new tab
-	 *
-	 * @return string the HTML for the content and tip
-	 */
-	public static function tip(
-		string $content,
-		string $context,
-		string $tip,
-		array $properties = [],
-		string $url = '',
-		bool $newTab = false
-	): string
-	{
-		if (empty($tip) and empty($url))
-		{
-			return $content;
-		}
 
-		$properties['aria-describedby'] = $context;
+    /**
+     * Returns an action on a grid
+     *
+     * @param integer $index the row index
+     * @param array $state the state configuration
+     * @param string $controller the name of the controller class
+     *
+     * @return  string  the HTML for the toggle item
+     */
+    public static function toggle(int $index, array $state, string $controller = ''): string
+    {
+        $ariaID     = "{$state['column']}-$index";
+        $attributes = [
+            'aria-labelledby' => $ariaID,
+            'class' => "tbody-icon"
+        ];
+        $class      = $state['class'];
+        $iconClass  = $class === 'publish' ? 'check' : 'times';
+        $icon       = self::icon($iconClass);
+        $return     = '';
+        $tip        = Text::_($state['tip']);
 
-		if ($url and $newTab)
-		{
-			$properties['target'] = '_blank';
-		}
+        if ($task = $state['task'] and $controller)
+        {
+            $attributes['class']   .= $class === 'publish' ? ' active' : '';
+            $attributes['href']    = 'javascript:void(0);';
+            $attributes['onclick'] = "return Joomla.listItemTask('cb$index','$controller.$task','#adminForm')";
 
-		$url = $url ?: '#';
-		$content = self::link($url, $content, $properties);
-		$tip = "<div role=\"tooltip\" id=\"$context\">" . $tip . '</div>';
+            $return .= '<a ' . ArrayHelper::toString($attributes) . '>' . $icon . '</a>';
+        }
+        else
+        {
+            //$html[] = '<span class="tbody-icon jgrid"';
+            $return .= '<span ' . ArrayHelper::toString($attributes) . '>' . $icon . '</span>';
+        }
 
-		return $content . $tip;
-	}
+        $return .= "<div role=\"tooltip\" id=\"$ariaID\">$tip</div>";
+
+        return $return;
+    }
+
+    /**
+     * The content wrapped with a link referencing a tip and the tip.
+     *
+     * @param string $content the content referenced by the tip
+     * @param string $tip the tip to be displayed
+     * @param string $url the url linked by the tip as applicable
+     * @param bool $newTab whether the url should open in a new tab
+     *
+     * @return string the HTML for the content and tip
+     */
+    public static function tip(
+        string $content,
+        string $context,
+        string $tip,
+        array  $properties = [],
+        string $url = '',
+        bool   $newTab = false
+    ): string
+    {
+        if (empty($tip) and empty($url))
+        {
+            return $content;
+        }
+
+        $properties['aria-describedby'] = $context;
+
+        if ($url and $newTab)
+        {
+            $properties['target'] = '_blank';
+        }
+
+        $url     = $url ?: '#';
+        $content = self::link($url, $content, $properties);
+        $tip     = "<div role=\"tooltip\" id=\"$context\">" . $tip . '</div>';
+
+        return $content . $tip;
+    }
 }
