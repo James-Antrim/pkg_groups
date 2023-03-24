@@ -57,6 +57,87 @@ class Profiles extends ListModel
     }
 
     /**
+     * Gets the groups & roles associated with a given profile id
+     * @param int $itemID
+     *
+     * @return array
+     */
+    private function getAssocs(int $itemID): array
+    {
+        $db     = $this->getDatabase();
+        $groups = [];
+        $query  = $db->getQuery(true);
+        $tag    = Application::getTag();
+
+        $assocID   = $db->quoteName('pa.assocID');
+        $groupID   = $db->quoteName('g.id');
+        $mGroupID  = $db->quoteName('map.group_id');
+        $profileID = $db->quoteName('pa.profileID');
+        $raGroupID = $db->quoteName('ra.groupID');
+        $raID      = $db->quoteName('ra.id');
+        $raRoleID  = $db->quoteName('ra.roleID');
+        $roleID    = $db->quoteName('r.id');
+        $userID    = $db->quoteName('map.user_id');
+
+        $jCondition1 = "$mGroupID = $groupID";
+        $jCondition2 = "$raGroupID = $groupID";
+        $jCondition3 = "$roleID = $raRoleID";
+        $jCondition4 = "$assocID = $raID";
+
+        $wCondition1 = "($profileID = $itemID AND $userID = $itemID)";
+        $wCondition2 = "($profileID = $itemID AND $userID IS NULL)";
+        $wCondition3 = "($profileID IS NULL AND $userID = $itemID)";
+
+        $select = [
+            $db->quoteName('g.id', 'groupID'),
+            $db->quoteName("g.name_$tag", 'group'),
+            $db->quoteName('r.id', 'roleID'),
+            $db->quoteName("r.name_$tag", 'role'),
+            $db->quoteName('pa.profileID', 'profileID'),
+            $db->quoteName('map.user_id', 'userID')
+        ];
+        $query->select($select)
+            ->from($db->quoteName('#__groups_groups', 'g'))
+            ->join('left', $db->quoteName('#__user_usergroup_map', 'map'), $jCondition1)
+            ->join('left', $db->quoteName('#__groups_role_associations', 'ra'), $jCondition2)
+            ->join('left', $db->quoteName('#__groups_roles', 'r'), $jCondition3)
+            ->join('left', $db->quoteName('#__groups_profile_associations', 'pa'), $jCondition4)
+            ->where("($wCondition1 OR $wCondition2 OR $wCondition3)");
+
+        $db->setQuery($query);
+
+        foreach ($db->loadAssocList() as $result)
+        {
+            $group   = $result['group'];
+            $groupID = $result['groupID'];
+            $role    = $result['role'];
+            $roleID  = $result['roleID'];
+
+            if (empty($result['userID']))
+            {
+                // TODO: create map entry
+            }
+
+            if (empty($result['profileID']) and !in_array($groupID, Helpers\Groups::DEFAULT))
+            {
+                // TODO: create profile and role associations as necessary
+            }
+
+            if (empty($groups[$groupID]))
+            {
+                $groups[$groupID] = ['name' => $group, 'roles' => []];
+            }
+
+            if ($roleID and empty($groups[$groupID]['roles'][$roleID]))
+            {
+                $groups[$groupID]['roles'][$roleID] = $role;
+            }
+        }
+
+        return $groups;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getItems()
@@ -69,6 +150,7 @@ class Profiles extends ListModel
             $item->access    = true;
             $item->activated = empty($item->activation);
             $item->editLink  = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
+            $item->groups    = $this->getAssocs($item->id);
         }
 
         return $items;
@@ -139,8 +221,8 @@ class Profiles extends ListModel
                 $query->where("$column != '0'")
                     ->where($query->length($column) . ' > 0');
             }
-
         }
+
         $registered = $this->state->get('filter.registered');
         $visited    = $this->state->get('filter.visited');
 

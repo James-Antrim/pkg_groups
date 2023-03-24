@@ -26,6 +26,25 @@ class Profiles extends ListView
     /**
      * @inheritDoc
      */
+    protected function completeItems()
+    {
+        foreach ($this->items as $rowNo => $item)
+        {
+            $item->activated     = HTML::toggle($rowNo, Helper::activatedStates[$item->activated], 'Profiles');
+            $item->block         = HTML::toggle($rowNo, Helper::blockedStates[$item->block], 'Profiles');
+            $item->content       = HTML::toggle($rowNo, Helper::contentStates[$item->content], 'Profiles');
+            $item->editing       = HTML::toggle($rowNo, Helper::editingStates[$item->editing], 'Profiles');
+            $item->editLink      = Route::_('index.php?option=com_groups&view=Profile&layout=edit&id=' . $item->id);
+            $item->groups        = $this->formatGroups($item->groups);
+            $item->lastvisitDate = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
+            $item->published     = HTML::toggle($rowNo, Helper::publishedStates[$item->published], 'Profiles');
+            $item->viewLink      = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function display($tpl = null)
     {
         if ($this->backend and !Helpers\Can::manage())
@@ -37,7 +56,7 @@ class Profiles extends ListView
         $this->todo = [
             'main menu',
             'Profiles => Persons',
-            'groups + filter',
+            'groups filter',
             'batch stuff',
             'password reset',
             'model functions'
@@ -47,21 +66,39 @@ class Profiles extends ListView
     }
 
     /**
-     * @inheritDoc
+     * Formats the profile associated groups and roles for display.
+     *
+     * @param array $groups the groups associated with the profile
+     *
+     * @return string
      */
-    protected function completeItems()
+    private function formatGroups(array $groups): string
     {
-        foreach ($this->items as $rowNo => $item)
+        if (count($groups) >= 3)
         {
-            $item->activated     = HTML::toggle($rowNo, Helper::activatedStates[$item->activated], 'Profiles');
-            $item->block         = HTML::toggle($rowNo, Helper::blockedStates[$item->block], 'Profiles');
-            $item->content       = HTML::toggle($rowNo, Helper::contentStates[$item->content], 'Profiles');
-            $item->editing       = HTML::toggle($rowNo, Helper::editingStates[$item->editing], 'Profiles');
-            $item->editLink      = Route::_('index.php?option=com_groups&view=Profile&layout=edit&id=' . $item->id);
-            $item->lastvisitDate = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
-            $item->published     = HTML::toggle($rowNo, Helper::publishedStates[$item->published], 'Profiles');
-            $item->viewLink      = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
+            return Text::_('GROUPS_MULTIPLE_GROUPS');
         }
+
+        foreach ($groups as $groupID => $group)
+        {
+            switch (count($group['roles']))
+            {
+                case 0:
+                    $roles = '';
+                    break;
+                case 1:
+                case 2:
+                    $roles = ': ' . implode(' & ', $group['roles']);
+                    break;
+                default:
+                    $roles = ': ' . Text::_('GROUPS_MULTIPLE_ROLES');
+                    break;
+            }
+
+            $groups[$groupID] = $group['name'] . $roles;
+        }
+
+        return implode('<br>', $groups);
     }
 
     /**
@@ -78,6 +115,11 @@ class Profiles extends ListView
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title' => Text::_('GROUPS_PROFILE'),
                 'type' => 'sort'
+            ],
+            'groups' => [
+                'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+                'title' => Text::_('GROUPS_GROUPS'),
+                'type' => 'value'
             ],
             'published' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
