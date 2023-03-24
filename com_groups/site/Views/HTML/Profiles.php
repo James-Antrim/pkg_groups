@@ -37,11 +37,8 @@ class Profiles extends ListView
         $this->todo = [
             'main menu',
             'Profiles => Persons',
-            'published filter',
             'active filter',
             'groups + filter',
-            'last visit filter ',
-            'registered filter',
             'batch stuff'
         ];
 
@@ -55,14 +52,14 @@ class Profiles extends ListView
     {
         foreach ($this->items as $rowNo => $item)
         {
-            $item->activated      = HTML::toggle($rowNo, Helper::activatedStates[$item->activated], 'Profiles');
-            $item->block          = HTML::toggle($rowNo, Helper::blockedStates[$item->block], 'Profiles');
-            $item->canEdit        = HTML::toggle($rowNo, Helper::editingStates[$item->canEdit], 'Profiles');
-            $item->contentEnabled = HTML::toggle($rowNo, Helper::contentStates[$item->contentEnabled], 'Profiles');
-            $item->editLink       = Route::_('index.php?option=com_groups&view=Profile&layout=edit&id=' . $item->id);
-            $item->lastvisitDate  = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
-            $item->published      = HTML::toggle($rowNo, Helper::publishedStates[$item->published], 'Profiles');
-            $item->viewLink       = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
+            $item->activated     = HTML::toggle($rowNo, Helper::activatedStates[$item->activated], 'Profiles');
+            $item->block         = HTML::toggle($rowNo, Helper::blockedStates[$item->block], 'Profiles');
+            $item->content       = HTML::toggle($rowNo, Helper::contentStates[$item->content], 'Profiles');
+            $item->editing       = HTML::toggle($rowNo, Helper::editingStates[$item->editing], 'Profiles');
+            $item->editLink      = Route::_('index.php?option=com_groups&view=Profile&layout=edit&id=' . $item->id);
+            $item->lastvisitDate = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
+            $item->published     = HTML::toggle($rowNo, Helper::publishedStates[$item->published], 'Profiles');
+            $item->viewLink      = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
         }
     }
 
@@ -82,27 +79,27 @@ class Profiles extends ListView
             ],
             'published' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_PUBLISHED'),
+                'title' => Text::_('GROUPS_PROFILE_PUBLISHED'),
                 'type' => 'value'
             ],
-            'canEdit' => [
+            'editing' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
                 'title' => Text::_('GROUPS_EDITING'),
                 'type' => 'value'
             ],
-            'contentEnabled' => [
+            'content' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
                 'title' => Text::_('GROUPS_CONTENTS'),
                 'type' => 'value'
             ],
             'block' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_ENABLED'),
+                'title' => Text::_('GROUPS_USER_ENABLED'),
                 'type' => 'value'
             ],
             'activated' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_ACTIVATED'),
+                'title' => Text::_('GROUPS_USER_ACTIVATED'),
                 'type' => 'value'
             ],
             'lastvisitDate' => [

@@ -60,6 +60,38 @@ abstract class ListModel extends Base
     }
 
     /**
+     * Adds a binary value filter clause for the given $query;
+     *
+     * @param QueryInterface $query the query to modify
+     * @param string $name the attribute whose value to filter against
+     *
+     * @return void modifies the query if a binary value was delivered in the request
+     */
+    protected function binaryFilter(QueryInterface $query, string $name)
+    {
+        $value = $this->state->get($name);
+
+        // State default for get is null and default for request is either an empty string or not being set.
+        if (!is_numeric($value) or (int)$value > 1)
+        {
+            return;
+        }
+
+        $value = (int)$value;
+
+        // Non-binary value: my error if the form allowed it and hacking if it didn't
+        if ($value > 1 or $value < 0)
+        {
+            return;
+        }
+
+        // Typical filter names are in the form 'filter.column'
+        $column = strpos($name, '.') ? substr($name, strpos($name, '.')) : $name;
+        $column = $this->getDatabase()->quoteName($column);
+        $query->where("$column = $value");
+    }
+
+    /**
      * Deletes entries.
      *
      * @return void
@@ -122,6 +154,10 @@ abstract class ListModel extends Base
 
     /**
      * Adds a standard order clause for the given $query;
+     *
+     * @param QueryInterface $query the query to modify
+     *
+     * @return void modifies the query if a binary value was delivered in the request
      */
     protected function orderBy(QueryInterface $query)
     {

@@ -26,13 +26,13 @@ class Profiles
             'class' => 'publish',
             'column' => 'activated',
             'task' => '',
-            'tip' => 'GROUPS_TOGGLE_TIP_ACTIVATED'
+            'tip' => 'GROUPS_TOGGLE_TIP_USER_ACTIVATED'
         ],
         self::PENDING => [
             'class' => 'unpublish',
             'column' => 'activated',
             'task' => 'activate',
-            'tip' => 'GROUPS_TOGGLE_TIP_PENDING'
+            'tip' => 'GROUPS_TOGGLE_TIP_USER_PENDING'
         ]];
 
     // Display semantic is reversed
@@ -41,39 +41,39 @@ class Profiles
             'class' => 'unpublish',
             'column' => 'block',
             'task' => 'unblock',
-            'tip' => 'GROUPS_TOGGLE_TIP_BLOCKED'
+            'tip' => 'GROUPS_TOGGLE_TIP_USER_BLOCKED'
         ],
         self::UNBLOCKED => [
             'class' => 'publish',
             'column' => 'block',
             'task' => 'block',
-            'tip' => 'GROUPS_TOGGLE_TIP_UNBLOCKED'
+            'tip' => 'GROUPS_TOGGLE_TIP_USER_UNBLOCKED'
         ]];
 
     public const contentStates = [
         self::ENABLED => [
             'class' => 'publish',
-            'column' => 'contentEnabled',
+            'column' => 'content',
             'task' => 'disableContent',
-            'tip' => 'GROUPS_TOGGLE_TIP_CONTENT_ENABLED'
+            'tip' => 'GROUPS_TOGGLE_TIP_CONTENTS_ENABLED'
         ],
         self::DISABLED => [
             'class' => 'unpublish',
-            'column' => 'contentEnabled',
+            'column' => 'content',
             'task' => 'allowContent',
-            'tip' => 'GROUPS_TOGGLE_TIP_CONTENT_DISABLED'
+            'tip' => 'GROUPS_TOGGLE_TIP_CONTENTS_DISABLED'
         ]];
 
     public const editingStates = [
         self::ENABLED => [
             'class' => 'publish',
-            'column' => 'canEdit',
+            'column' => 'editing',
             'task' => 'disableEditing',
             'tip' => 'GROUPS_TOGGLE_TIP_EDITING_ENABLED'
         ],
         self::DISABLED => [
             'class' => 'unpublish',
-            'column' => 'canEdit',
+            'column' => 'editing',
             'task' => 'allowEditing',
             'tip' => 'GROUPS_TOGGLE_TIP_EDITING_DISABLED'
         ]];
@@ -83,13 +83,13 @@ class Profiles
             'class' => 'publish',
             'column' => 'published',
             'task' => 'unpublish',
-            'tip' => 'GROUPS_TOGGLE_TIP_PUBLISHED'
+            'tip' => 'GROUPS_TOGGLE_TIP_PROFILE_PUBLISHED'
         ],
         self::UNPUBLISHED => [
             'class' => 'unpublish',
             'column' => 'published',
             'task' => 'publish',
-            'tip' => 'GROUPS_TOGGLE_TIP_UNPUBLISHED'
+            'tip' => 'GROUPS_TOGGLE_TIP_PROFILE_UNPUBLISHED'
         ]];
 
     // Attributes protected because of their special display in various templates

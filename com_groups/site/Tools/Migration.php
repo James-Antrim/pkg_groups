@@ -498,27 +498,27 @@ class Migration
             return;
         }
 
-        $alias          = null;
-        $id             = 0;
-        $canEdit        = false;
-        $contentEnabled = false;
-        $published      = false;
+        $alias     = null;
+        $id        = 0;
+        $editing   = false;
+        $content   = false;
+        $published = false;
 
-        // Should not get used as raw entries are created on install.
+        // Should not get used as raw entries are created on installation.
         $iQuery = $db->getQuery(true);
         $iQuery->insert($db->quoteName('#__groups_profiles'))
             ->columns([
                 $db->quoteName('alias'),
                 $db->quoteName('id'),
-                $db->quoteName('canEdit'),
-                $db->quoteName('contentEnabled'),
+                $db->quoteName('content'),
+                $db->quoteName('editing'),
                 $db->quoteName('published')
             ])
-            ->values(":alias, :id, :canEdit, :contentEnabled, :published")
+            ->values(":alias, :id, :content, :editing, :published")
             ->bind(':alias', $alias)
             ->bind(':id', $id, ParameterType::INTEGER)
-            ->bind(':canEdit', $canEdit, ParameterType::BOOLEAN)
-            ->bind(':contentEnabled', $contentEnabled, ParameterType::BOOLEAN)
+            ->bind(':content', $content, ParameterType::BOOLEAN)
+            ->bind(':editing', $editing, ParameterType::BOOLEAN)
             ->bind(':published', $published, ParameterType::BOOLEAN);
 
         $fnAID  = $db->quoteName('fn.attributeID');
@@ -539,11 +539,11 @@ class Migration
         foreach ($profiles as $profileID => $profile)
         {
             // Bound variables
-            $alias          = $profile->alias ?? null;
-            $id             = $profileID;
-            $canEdit        = $profile->canEdit ?? false;
-            $contentEnabled = $profile->contentEnabled ?? false;
-            $published      = $profile->published ?? false;
+            $alias     = $profile->alias ?? null;
+            $id        = $profileID;
+            $content   = $profile->contentEnabled ?? false;
+            $editing   = $profile->canEdit ?? false;
+            $published = $profile->published ?? false;
 
             $table = new Tables\Profiles();
 
@@ -557,10 +557,10 @@ class Migration
                     $table->forenames = $names['forenames'];
                 }
 
-                $table->alias          = $alias;
-                $table->canEdit        = $canEdit;
-                $table->contentEnabled = $contentEnabled;
-                $table->published      = $published;
+                $table->alias     = $alias;
+                $table->content   = $content;
+                $table->editing   = $editing;
+                $table->published = $published;
 
                 $table->store(true);
                 continue;

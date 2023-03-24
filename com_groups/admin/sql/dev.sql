@@ -68,13 +68,13 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_profile_attributes`
 
 CREATE TABLE IF NOT EXISTS `v7ocf_groups_profiles`
 (
-    `id`             INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
-    `surnames`       VARCHAR(255)        NOT NULL,
-    `forenames`      VARCHAR(255)                 DEFAULT null COMMENT 'Default null because this field will be left blank by a certain subset of accounts.',
-    `alias`          VARCHAR(255)                 DEFAULT null,
-    `canEdit`        TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-    `contentEnabled` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-    `published`      TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `id`        INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
+    `surnames`  VARCHAR(255)        NOT NULL,
+    `forenames` VARCHAR(255)                 DEFAULT null COMMENT 'Default null because this field will be left blank by a certain subset of accounts.',
+    `alias`     VARCHAR(255)                 DEFAULT null,
+    `content`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `editing`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `published` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     UNIQUE (`alias`)
 )

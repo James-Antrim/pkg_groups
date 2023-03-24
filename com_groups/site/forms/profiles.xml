@@ -2,6 +2,32 @@
 <form>
     <fields name="filter">
         <field name="search" type="text" label="GROUPS_SEARCH" hint="GROUPS_SEARCH_TERMS"/>
+        <field name="published" type="list" label="GROUPS_PROFILE_PUBLISHED" onchange="this.form.submit();">
+            <option value="">GROUPS_PROFILE_PUBLISHED_SELECT</option>
+            <option value="1">GROUPS_PROFILE_PUBLISHED</option>
+            <option value="0">GROUPS_PROFILE_UNPUBLISHED</option>
+        </field>
+        <field name="editing" type="list" label="GROUPS_EDITING_SELECT" onchange="this.form.submit();">
+            <option value="">GROUPS_EDITING_SELECT</option>
+            <option value="1">GROUPS_EDITING_ENABLED</option>
+            <option value="0">GROUPS_EDITING_DISABLED</option>
+        </field>
+        <field name="content" type="list" label="GROUPS_CONTENT_SELECT" onchange="this.form.submit();">
+            <option value="">GROUPS_CONTENT_SELECT</option>
+            <option value="1">GROUPS_CONTENT_ENABLED</option>
+            <option value="0">GROUPS_CONTENT_DISABLED</option>
+        </field>
+        <field name="block" type="list" label="GROUPS_BLOCK_SELECT" onchange="this.form.submit();">
+            <option value="">GROUPS_USER_BLOCK_SELECT</option>
+            <option value="0">GROUPS_USER_ENABLED</option>
+            <option value="1">GROUPS_USER_BLOCKED</option>
+        </field>
+        <field name="visited" type="lastvisitdaterange" label="GROUPS_VISITED" onchange="this.form.submit();">
+            <option value="">GROUPS_VISITED_SELECT</option>
+        </field>
+        <field name="registered" type="registrationdaterange" label="GROUPS_REGISTERED" onchange="this.form.submit();">
+            <option value="">GROUPS_REGISTERED_SELECT</option>
+        </field>
     </fields>
     <fields name="list">
         <field name="limit" type="limitbox" class="input-mini" label="JGLOBAL_LIST_LIMIT" onchange="this.form.submit();"/>

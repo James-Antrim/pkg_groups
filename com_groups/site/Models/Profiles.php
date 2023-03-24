@@ -37,7 +37,7 @@ class Profiles extends ListModel
         if (empty($config['filter_fields']))
         {
             $config['filter_fields'] = [
-                // TBD
+                'block', 'content', 'editing', 'published', 'registered', 'visited'
             ];
         }
 
@@ -70,7 +70,6 @@ class Profiles extends ListModel
             $item->access    = true;
             $item->activated = empty($item->activation);
             $item->editLink  = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
-            $item->noteCount = $this->getNoteCount($item->id);
         }
 
         return $items;
@@ -121,42 +120,89 @@ class Profiles extends ListModel
             }
         }
 
+        $this->binaryFilter($query, 'filter.block');
+        $this->binaryFilter($query, 'filter.content');
+        $this->binaryFilter($query, 'filter.editing');
+        $this->binaryFilter($query, 'filter.published');
+
+        $registered = $this->state->get('filter.registered');
+        $visited    = $this->state->get('filter.visited');
+
+        if ($registered or $visited)
+        {
+            $now        = date('\'Y-m-d H:i:s\'');
+            $today      = date('\'Y-m-d 00:00:00\'');
+            $weekAgo    = date('\'Y-m-d 00:00:00\'', strtotime('-1 week'));
+            $monthsAgo1 = date('\'Y-m-d 00:00:00\'', strtotime('-1 month'));
+            $monthsAgo3 = date('\'Y-m-d 00:00:00\'', strtotime('-3 month'));
+            $monthsAgo6 = date('\'Y-m-d 00:00:00\'', strtotime('-6 month'));
+            $yearAgo    = date('\'Y-m-d 00:00:00\'', strtotime('-1 year'));
+
+            if ($registered)
+            {
+                $rColumn = $db->quoteName('registerDate');
+                switch ($registered)
+                {
+                    case 'today':
+                        $query->where("$rColumn BETWEEN $today AND $now");
+                        break;
+                    case 'past_week':
+                        $query->where("$rColumn BETWEEN $weekAgo AND $now");
+                        break;
+                    case 'past_1month':
+                        $query->where("$rColumn BETWEEN $monthsAgo1 AND $now");
+                        break;
+                    case 'past_3month':
+                        $query->where("$rColumn BETWEEN $monthsAgo3 AND $now");
+                        break;
+                    case 'past_6month':
+                        $query->where("$rColumn BETWEEN $monthsAgo6 AND $now");
+                        break;
+                    case 'past_year':
+                        $query->where("$rColumn BETWEEN $yearAgo AND $now");
+                        break;
+                    case 'post_year':
+                        $query->where("$rColumn < $yearAgo");
+                        break;
+                }
+            }
+
+            if ($visited)
+            {
+                $vColumn = $db->quoteName('lastvisitDate');
+                switch ($visited)
+                {
+                    case 'today':
+                        echo 'check?';
+                        $query->where("$vColumn BETWEEN $today AND $now");
+                        break;
+                    case 'past_week':
+                        $query->where("$vColumn BETWEEN $weekAgo AND $now");
+                        break;
+                    case 'past_1month':
+                        $query->where("$vColumn BETWEEN $monthsAgo1 AND $now");
+                        break;
+                    case 'past_3month':
+                        $query->where("$vColumn BETWEEN $monthsAgo3 AND $now");
+                        break;
+                    case 'past_6month':
+                        $query->where("$vColumn BETWEEN $monthsAgo6 AND $now");
+                        break;
+                    case 'past_year':
+                        $query->where("$vColumn BETWEEN $yearAgo AND $now");
+                        break;
+                    case 'post_year':
+                        $query->where("$vColumn < $yearAgo");
+                        break;
+                    case 'never':
+                        $query->where("$vColumn IS NULL");
+                        break;
+                }
+            }
+        }
+
         $this->orderBy($query);
 
         return $query;
-    }
-
-    /**
-     * Gets the number of notes associated with the profile.
-     *
-     * @param int $profileID the id of the profile
-     *
-     * @return int
-     */
-    private function getNoteCount(int $profileID): int
-    {
-        $db     = $this->getDatabase();
-        $noteID = $db->quoteName('id');
-        $state  = $db->quoteName('state');
-        $userID = $db->quoteName('user_id');
-        $query  = $db->getQuery(true);
-        $query->select("$userID, COUNT($noteID) AS notes")
-            ->from($db->quoteName('#__user_notes'))
-            ->where("$userID = $profileID")
-            ->where("$state >= 0")
-            ->group($userID);
-        $db->setQuery($query);
-
-        // Load the counts into an array indexed on the aro.value field (the user id).
-        try
-        {
-            return (int)$db->loadResult();
-        }
-        catch (Exception $exception)
-        {
-            $this->setError($exception->getMessage());
-
-            return 0;
-        }
     }
 }

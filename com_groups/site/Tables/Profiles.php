@@ -28,6 +28,18 @@ class Profiles extends Table
     public $alias;
 
     /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $content;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $editing;
+
+    /**
      * VARCHAR(255) DEFAULT null
      * The default is null because this field will be left blank by a certain subset of accounts.
      * @var null|string
@@ -39,18 +51,6 @@ class Profiles extends Table
      * @var int
      */
     public $id;
-
-    /**
-     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
-     * @var bool
-     */
-    public $canEdit;
-
-    /**
-     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
-     * @var bool
-     */
-    public $contentEnabled;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
