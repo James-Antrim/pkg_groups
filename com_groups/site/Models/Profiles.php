@@ -10,7 +10,6 @@
 
 namespace THM\Groups\Models;
 
-use Exception;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
@@ -37,7 +36,7 @@ class Profiles extends ListModel
         if (empty($config['filter_fields']))
         {
             $config['filter_fields'] = [
-                'block', 'content', 'editing', 'published', 'registered', 'visited'
+                'activation', 'block', 'content', 'editing', 'published', 'registered', 'visited'
             ];
         }
 
@@ -125,6 +124,23 @@ class Profiles extends ListModel
         $this->binaryFilter($query, 'filter.editing');
         $this->binaryFilter($query, 'filter.published');
 
+        $activation = $this->state->get('filter.activation');
+
+        if ($this->isBinary($activation))
+        {
+            $column = $db->quoteName('activation');
+
+            if ((int)$activation)
+            {
+                $query->where("($column = '' OR $column = '0')");
+            }
+            else
+            {
+                $query->where("$column != '0'")
+                    ->where($query->length($column) . ' > 0');
+            }
+
+        }
         $registered = $this->state->get('filter.registered');
         $visited    = $this->state->get('filter.visited');
 

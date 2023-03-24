@@ -22,6 +22,11 @@
             <option value="0">GROUPS_USER_ENABLED</option>
             <option value="1">GROUPS_USER_BLOCKED</option>
         </field>
+        <field name="activation" type="list" label="GROUPS_USER_ACTIVATION_SELECT" onchange="this.form.submit();">
+            <option value="">GROUPS_USER_ACTIVATION_SELECT</option>
+            <option value="1">GROUPS_USER_ACTIVATED</option>
+            <option value="0">GROUPS_USER_PENDING</option>
+        </field>
         <field name="visited" type="lastvisitdaterange" label="GROUPS_VISITED" onchange="this.form.submit();">
             <option value="">GROUPS_VISITED_SELECT</option>
         </field>

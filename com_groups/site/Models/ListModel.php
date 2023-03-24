@@ -72,18 +72,12 @@ abstract class ListModel extends Base
         $value = $this->state->get($name);
 
         // State default for get is null and default for request is either an empty string or not being set.
-        if (!is_numeric($value) or (int)$value > 1)
+        if (!$this->isBinary($value))
         {
             return;
         }
 
         $value = (int)$value;
-
-        // Non-binary value: my error if the form allowed it and hacking if it didn't
-        if ($value > 1 or $value < 0)
-        {
-            return;
-        }
 
         // Typical filter names are in the form 'filter.column'
         $column = strpos($name, '.') ? substr($name, strpos($name, '.')) : $name;
@@ -150,6 +144,25 @@ abstract class ListModel extends Base
         }
 
         return null;
+    }
+
+    /**
+     * Checks whether the given value can safely be interpreted as a binary value.
+     *
+     * @param mixed $value the value to be checked
+     *
+     * @return bool if the value can be interpreted as a binary integer
+     */
+    protected function isBinary($value): bool
+    {
+        if (!is_numeric($value))
+        {
+            return false;
+        }
+
+        $value = (int)$value;
+
+        return !(($value > 1 or $value < 0));
     }
 
     /**

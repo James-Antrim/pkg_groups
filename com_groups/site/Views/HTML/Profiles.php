@@ -37,9 +37,11 @@ class Profiles extends ListView
         $this->todo = [
             'main menu',
             'Profiles => Persons',
-            'active filter',
             'groups + filter',
-            'batch stuff'
+            'batch stuff',
+            'password reset',
+            'model functions',
+            'suppress columns based on filters'
         ];
 
         parent::display($tpl);
@@ -99,7 +101,7 @@ class Profiles extends ListView
             ],
             'activated' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_USER_ACTIVATED'),
+                'title' => Text::_('GROUPS_USER_ACTIVATION'),
                 'type' => 'value'
             ],
             'lastvisitDate' => [
