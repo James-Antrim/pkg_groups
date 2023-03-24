@@ -40,8 +40,7 @@ class Profiles extends ListView
             'groups + filter',
             'batch stuff',
             'password reset',
-            'model functions',
-            'suppress columns based on filters'
+            'model functions'
         ];
 
         parent::display($tpl);
@@ -70,6 +69,7 @@ class Profiles extends ListView
      */
     protected function initializeHeaders()
     {
+        // Columns made 'redundant' by filters are left in to allow for display of in column buttons.
         $this->headers = [
             'check' => ['type' => 'check'],
             'name' => [
