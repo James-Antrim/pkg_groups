@@ -36,7 +36,7 @@ class Profiles extends ListModel
         if (empty($config['filter_fields']))
         {
             $config['filter_fields'] = [
-                'activation', 'block', 'content', 'editing', 'published', 'registered', 'visited'
+                'activation', 'association', 'block', 'content', 'editing', 'published', 'registered', 'visited'
             ];
         }
 
@@ -174,10 +174,64 @@ class Profiles extends ListModel
         ]);
 
         $profileID  = $db->quoteName('p.id');
-        $uCondition = $db->quoteName('u.id') . " = $profileID";
+        $userID     = $db->quoteName('u.id');
+        $uCondition = "$userID = $profileID";
 
         $query->from($db->quoteName('#__groups_profiles', 'p'))
             ->join('inner', $db->quoteName('#__users', 'u'), $uCondition);
+
+        $activation = $this->state->get('filter.activation');
+
+        if ($this->isBinary($activation))
+        {
+            $column = $db->quoteName('activation');
+
+            if ((int)$activation)
+            {
+                $query->where("($column = '' OR $column = '0')");
+            }
+            else
+            {
+                $query->where("$column != '0'")
+                    ->where($query->length($column) . ' > 0');
+            }
+        }
+
+        if ($association = $this->state->get('filter.association'))
+        {
+            list($resource, $id) = explode('-', $association);
+
+            switch ($resource)
+            {
+                case 'assocID':
+                    if (!empty($id) and $id = (int)$id)
+                    {
+                        $paProfileID = $db->quoteName('pa.profileID');
+                        $assocID     = $db->quoteName('pa.assocID');
+
+                        $condition = "$paProfileID = $userID";
+                        $query->join('inner', $db->quoteName('#__groups_profile_associations', 'pa'), $condition)
+                            ->where("$assocID = $id");
+                    }
+                    break;
+                case 'groupID':
+                    if (!empty($id) and $id = (int)$id)
+                    {
+                        $uIDColumn = $db->quoteName('uugm.user_id');
+                        $groupID   = $db->quoteName('uugm.group_id');
+
+                        $condition = "$uIDColumn = $userID";
+                        $query->join('inner', $db->quoteName('#__user_usergroup_map', 'uugm'), $condition)
+                            ->where("$groupID = $id");
+                    }
+                    break;
+            }
+        }
+
+        $this->binaryFilter($query, 'filter.block');
+        $this->binaryFilter($query, 'filter.content');
+        $this->binaryFilter($query, 'filter.editing');
+        $this->binaryFilter($query, 'filter.published');
 
         if ($search = $this->getState('filter.search'))
         {
@@ -198,28 +252,6 @@ class Profiles extends ListModel
                     ->bind(':email', $search)
                     ->bind(':name', $search)
                     ->bind(':username', $search);
-            }
-        }
-
-        $this->binaryFilter($query, 'filter.block');
-        $this->binaryFilter($query, 'filter.content');
-        $this->binaryFilter($query, 'filter.editing');
-        $this->binaryFilter($query, 'filter.published');
-
-        $activation = $this->state->get('filter.activation');
-
-        if ($this->isBinary($activation))
-        {
-            $column = $db->quoteName('activation');
-
-            if ((int)$activation)
-            {
-                $query->where("($column = '' OR $column = '0')");
-            }
-            else
-            {
-                $query->where("$column != '0'")
-                    ->where($query->length($column) . ' > 0');
             }
         }
 

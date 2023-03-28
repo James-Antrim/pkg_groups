@@ -17,53 +17,55 @@ use THM\Groups\Adapters\Application;
  */
 class Roles implements Selectable
 {
-	public const MEMBER = 1;
+    use Named;
 
-	/**
-	 * @inheritDoc
-	 */
-	public static function getAll(): array
-	{
-		$db    = Application::getDB();
-		$query = $db->getQuery(true);
-		$roles = $db->quoteName('#__groups_roles');
-		$query->select('*')->from($roles);
-		$db->setQuery($query);
+    public const MEMBER = 1;
 
-		if (!$roles = $db->loadObjectList('id'))
-		{
-			return [];
-		}
+    /**
+     * @inheritDoc
+     */
+    public static function getAll(): array
+    {
+        $db    = Application::getDB();
+        $query = $db->getQuery(true);
+        $roles = $db->quoteName('#__groups_roles');
+        $query->select('*')->from($roles);
+        $db->setQuery($query);
 
-		foreach ($roles as $roleID => $role)
-		{
-			$role->groups = RoleAssociations::byRoleID($roleID);
-		}
+        if (!$roles = $db->loadObjectList('id'))
+        {
+            return [];
+        }
 
-		return $roles;
-	}
+        foreach ($roles as $roleID => $role)
+        {
+            $role->groups = RoleAssociations::byRoleID($roleID);
+        }
 
-	/**
-	 * @inheritDoc
-	 */
-	public static function getOptions(): array
-	{
-		$namesColumn = 'names_' . Application::getTag();
-		$options     = [];
+        return $roles;
+    }
 
-		foreach (self::getAll() as $roleID => $role)
-		{
-			if (empty($role->groups))
-			{
-				continue;
-			}
+    /**
+     * @inheritDoc
+     */
+    public static function getOptions(): array
+    {
+        $namesColumn = 'names_' . Application::getTag();
+        $options     = [];
 
-			$options[] = (object) [
-				'text'  => $role->$namesColumn,
-				'value' => $roleID
-			];
-		}
+        foreach (self::getAll() as $roleID => $role)
+        {
+            if (empty($role->groups))
+            {
+                continue;
+            }
 
-		return $options;
-	}
+            $options[] = (object)[
+                'text' => $role->$namesColumn,
+                'value' => $roleID
+            ];
+        }
+
+        return $options;
+    }
 }

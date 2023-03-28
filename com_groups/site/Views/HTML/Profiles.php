@@ -56,7 +56,7 @@ class Profiles extends ListView
         $this->todo = [
             'main menu',
             'Profiles => Persons',
-            'groups filter',
+            'role filter',
             'batch stuff',
             'password reset',
             'model functions'
@@ -83,10 +83,11 @@ class Profiles extends ListView
         {
             switch (count($group['roles']))
             {
+                // Irrelevant to the groups component or member role only
                 case 0:
+                case 1:
                     $roles = '';
                     break;
-                case 1:
                 case 2:
                     $roles = ': ' . implode(' & ', $group['roles']);
                     break;

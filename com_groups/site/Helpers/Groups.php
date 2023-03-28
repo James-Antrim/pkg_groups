@@ -20,6 +20,8 @@ use THM\Groups\Tables\Groups as Table;
  */
 class Groups implements Selectable
 {
+    use Named;
+
     public const PUBLIC = 1, REGISTERED = 2, AUTHOR = 3, EDITOR = 4, PUBLISHER = 5, MANAGER = 6, ADMIN = 7, SUPER_ADMIN = 8;
 
     public const DEFAULT = [
@@ -38,14 +40,11 @@ class Groups implements Selectable
      */
     public static function getAll(): array
     {
-        $groups     = self::getUserGroups();
-        $nameColumn = 'name_' . Application::getTag();
+        $groups = self::getUserGroups();
 
         foreach ($groups as $groupID => $group)
         {
-            $table = new Table();
-
-            if ($table->load($groupID) and $name = $table->$nameColumn ?? null)
+            if ($name = self::getName($groupID))
             {
                 $group->title = $name;
             }

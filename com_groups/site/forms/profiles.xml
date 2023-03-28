@@ -2,6 +2,9 @@
 <form>
     <fields name="filter">
         <field name="search" type="text" label="GROUPS_SEARCH" hint="GROUPS_SEARCH_TERMS"/>
+        <field name="association" type="Associations" label="GROUPS_ASSOCIATION_SELECT" onchange="this.form.submit();">
+            <option value="">GROUPS_ASSOCIATION_SELECT</option>
+        </field>
         <field name="published" type="list" label="GROUPS_PROFILE_PUBLISHED" onchange="this.form.submit();">
             <option value="">GROUPS_PROFILE_PUBLISHED_SELECT</option>
             <option value="1">GROUPS_PROFILE_PUBLISHED</option>
