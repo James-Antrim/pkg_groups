@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Models;
 
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
@@ -36,7 +37,15 @@ class Profiles extends ListModel
         if (empty($config['filter_fields']))
         {
             $config['filter_fields'] = [
-                'activation', 'association', 'block', 'content', 'editing', 'published', 'registered', 'visited'
+                'activation',
+                'association',
+                'block',
+                'content',
+                'editing',
+                'published',
+                'registered',
+                'roleID',
+                'visited'
             ];
         }
 
@@ -54,6 +63,23 @@ class Profiles extends ListModel
         }
 
         Application::message(Text::_('GROUPS_503'));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function filterFilterForm(Form $form)
+    {
+        if ($this->state->get('filter.association'))
+        {
+            $form->removeField('roleID', 'filter');
+            unset($this->filter_fields['roleID']);
+        }
+        elseif ($this->state->get('filter.roleID'))
+        {
+            $form->removeField('association', 'filter');
+            unset($this->filter_fields['association']);
+        }
     }
 
     /**
@@ -206,8 +232,8 @@ class Profiles extends ListModel
                 case 'assocID':
                     if (!empty($id) and $id = (int)$id)
                     {
-                        $paProfileID = $db->quoteName('pa.profileID');
                         $assocID     = $db->quoteName('pa.assocID');
+                        $paProfileID = $db->quoteName('pa.profileID');
 
                         $condition = "$paProfileID = $userID";
                         $query->join('inner', $db->quoteName('#__groups_profile_associations', 'pa'), $condition)
@@ -217,8 +243,8 @@ class Profiles extends ListModel
                 case 'groupID':
                     if (!empty($id) and $id = (int)$id)
                     {
-                        $uIDColumn = $db->quoteName('uugm.user_id');
                         $groupID   = $db->quoteName('uugm.group_id');
+                        $uIDColumn = $db->quoteName('uugm.user_id');
 
                         $condition = "$uIDColumn = $userID";
                         $query->join('inner', $db->quoteName('#__user_usergroup_map', 'uugm'), $condition)
@@ -226,6 +252,29 @@ class Profiles extends ListModel
                     }
                     break;
             }
+        }
+        elseif ($id = $this->state->get('filter.roleID') and is_numeric($id) and $id = (int)$id)
+        {
+            if ($id > 0)
+            {
+                $join      = 'inner';
+                $predicate = " = $id";
+            }
+            else
+            {
+                $join      = 'left';
+                $predicate = " IS NULL";
+            }
+
+            $assocID     = $db->quoteName('pa.assocID');
+            $paProfileID = $db->quoteName('pa.profileID');
+            $raID        = $db->quoteName('ra.id');
+
+            $condition1 = "$paProfileID = $userID";
+            $condition2 = "$raID = $assocID";
+            $query->join($join, $db->quoteName('#__groups_profile_associations', 'pa'), $condition1)
+                ->join($join, $db->quoteName('#__groups_role_associations', 'ra'), $condition2)
+                ->where($db->quoteName('ra.id') . $predicate);
         }
 
         $this->binaryFilter($query, 'filter.block');
@@ -334,5 +383,22 @@ class Profiles extends ListModel
         $this->orderBy($query);
 
         return $query;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function populateState($ordering = null, $direction = null)
+    {
+        parent::populateState($ordering, $direction);
+
+        if ($this->state->get('filter.association'))
+        {
+            $this->state->set('filter.roleID', '');
+        }
+        elseif ($this->state->get('filter.roleID'))
+        {
+            $this->state->set('filter.association', '');
+        }
     }
 }

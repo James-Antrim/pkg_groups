@@ -52,14 +52,13 @@ class Profiles extends ListView
             Application::error(403);
         }
 
-        // TBD: Support notes?
         $this->todo = [
             'main menu',
             'Profiles => Persons',
-            'role filter',
             'batch stuff',
             'password reset',
             'model functions'
+            // User notes support is not planned at this time.
         ];
 
         parent::display($tpl);

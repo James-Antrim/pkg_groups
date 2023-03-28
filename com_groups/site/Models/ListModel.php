@@ -93,6 +93,18 @@ abstract class ListModel extends Base
     abstract public function delete();
 
     /**
+     * Filters out form inputs which should not be displayed due to menu settings.
+     *
+     * @param Form $form the form to be filtered
+     *
+     * @return void modifies $form
+     */
+    protected function filterFilterForm(Form $form)
+    {
+        // No implementation is the default implementation.
+    }
+
+    /**
      * @inheritDoc
      * Replacing the deprecated CMSObject with Registry makes the parent no longer function correctly this compensates for that.
      */
@@ -144,6 +156,19 @@ abstract class ListModel extends Base
         }
 
         return null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function loadForm($name, $source = null, $options = [], $clear = false, $xpath = false): Form
+    {
+        if ($form = parent::loadForm($name, $source, $options, $clear, $xpath))
+        {
+            $this->filterFilterForm($form);
+        }
+
+        return $form;
     }
 
     /**
