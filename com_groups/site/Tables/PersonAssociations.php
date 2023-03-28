@@ -17,9 +17,9 @@ use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
 
 /**
- * Class representing the profile <=> group & role relation.
+ * Class representing the person <=> group & role relation.
  */
-class ProfileAssociations extends Table
+class PersonAssociations extends Table
 {
     use Incremented;
 
@@ -30,10 +30,10 @@ class ProfileAssociations extends Table
     public $assocID;
 
     /**
-     * INT(11) NOT NULL (fk_pAssocs_profileID -> groups_profiles.id -> fk: users.id)
+     * INT(11) NOT NULL (fk_pAssocs_personID -> persons.id -> fk: users.id)
      * @var int
      */
-    public $profileID;
+    public $personID;
 
     /**
      * @inheritDoc
@@ -43,6 +43,6 @@ class ProfileAssociations extends Table
         $dbo = $dbo ?? Application::getDB();
 
         /** @var DatabaseDriver $dbo */
-        parent::__construct('#__groups_profile_associations', 'id', $dbo);
+        parent::__construct('#__groups_person_associations', 'id', $dbo);
     }
 }

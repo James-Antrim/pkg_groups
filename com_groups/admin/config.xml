@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <fieldset name="general" label="GROUPS_FEATURES" description="GROUPS_FEATURES_DESC">
-        <field name="profiles" type="list" label="GROUPS_PROFILES" description="GROUPS_PROFILES_DESC">
+        <field name="profiles" type="list" label="GROUPS_PROFILE_MANAGEMENT" description="GROUPS_PROFILE_MANAGEMENT_DESC">
             <option value="0">GROUPS_CENTRALIZED</option>
             <option value="1">GROUPS_DECENTRALIZED</option>
         </field>

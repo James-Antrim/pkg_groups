@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpMissingFieldTypeInspection */
+<?php
 
 /**
  * @package     Groups
@@ -17,7 +17,7 @@ use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
 
 /**
- * Class representing the content <=> profile relations.
+ * Class representing the content <=> person relations.
  */
 class Content extends Table
 {

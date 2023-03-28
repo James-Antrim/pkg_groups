@@ -12,12 +12,12 @@ namespace THM\Groups\Tools;
 
 use Exception;
 use THM\Groups\Adapters\Application;
-use THM\Groups\Helpers\Profiles;
+use THM\Groups\Helpers\Persons;
 
 class Cohesion
 {
     /**
-     * Supplements any profile entry with a blank alias Profile aliases are unique so there can only be one.
+     * Supplements any person entry with a blank alias person aliases are unique so there can only be one.
      *
      * @return void
      */
@@ -28,7 +28,7 @@ class Cohesion
 
         $query = $db->getQuery(true);
         $query->select($db->quoteName('id'))
-            ->from($db->quoteName('#__groups_profiles'))
+            ->from($db->quoteName('#__groups_persons'))
             ->where("$alias = ''");
         $db->setQuery($query);
 
@@ -72,17 +72,17 @@ class Cohesion
     }
 
     /**
-     * Sets the profile alias based on the profile's fore- and surename attributes
+     * Sets the person's alias based on the person's fore- and surnames
      *
-     * @param   int  $profileID  the id of the profile for which the alias is to be set
+     * @param int $personID the id of the person for which the alias is to be set
      *
      * @return bool true on success, otherwise false
      *
      * @throws Exception
      */
-    public static function createAlias(int $profileID)
+    public static function createAlias(int $personID)
     {
-        $names = Profiles::getNames($profileID);
+        $names = Persons::getNames($personID);
 
         if (empty($names))
         {
@@ -95,7 +95,7 @@ class Cohesion
         $alias = THM_GroupsHelperComponent::filterText($alias);
         $alias = str_replace(' ', '-', $alias);
 
-        // Check for an existing alias which matches the base alias for the profile and react. (duplicate names)
+        // Check for an existing alias which matches the base alias for the person and react. (duplicate names)
         $initial = true;
         $number  = 1;
         while (true)
@@ -105,7 +105,7 @@ class Cohesion
             $uniqueQuery->select('id')
                 ->from('#__thm_groups_profiles')
                 ->where("alias = '$tempAlias'")
-                ->where("id != $profileID");
+                ->where("id != $personID");
             $dbo->setQuery($uniqueQuery);
 
             try
@@ -132,7 +132,7 @@ class Cohesion
         }
 
         $updateQuery = $dbo->getQuery(true);
-        $updateQuery->update('#__thm_groups_profiles')->set("alias = '$alias'")->where("id = $profileID");
+        $updateQuery->update('#__thm_groups_profiles')->set("alias = '$alias'")->where("id = $personID");
         $dbo->setQuery($updateQuery);
 
         try
@@ -146,7 +146,7 @@ class Cohesion
             return false;
         }
 
-        return empty($success) ? false : true;
+        return !empty($success);
     }
 
     public static function createBasicAttributes(int $userID)

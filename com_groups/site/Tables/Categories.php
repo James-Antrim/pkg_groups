@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpMissingFieldTypeInspection */
+<?php
 
 /**
  * @package     Groups
@@ -17,7 +17,7 @@ use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
 
 /**
- * Class representing the category <=> profile relations.
+ * Class representing the category <=> person relations.
  */
 class Categories extends Table
 {

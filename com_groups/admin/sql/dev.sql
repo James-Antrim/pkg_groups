@@ -3,9 +3,9 @@ SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS
     `v7ocf_groups_attributes`,
     `v7ocf_groups_groups`,
-    `v7ocf_groups_profile_associations`,
-    `v7ocf_groups_profile_attributes`,
-    `v7ocf_groups_profiles`,
+    `v7ocf_groups_person_associations`,
+    `v7ocf_groups_person_attributes`,
+    `v7ocf_groups_persons`,
     `v7ocf_groups_role_associations`,
     `v7ocf_groups_roles`,
     `v7ocf_groups_types`;
@@ -40,33 +40,33 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_groups`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `v7ocf_groups_profile_associations`
+CREATE TABLE IF NOT EXISTS `v7ocf_groups_person_associations`
 (
-    `id`        INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `assocID`   INT(11) UNSIGNED NOT NULL,
-    `profileID` INT(11)          NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
+    `id`       INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `assocID`  INT(11) UNSIGNED NOT NULL,
+    `personID` INT(11)          NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
     PRIMARY KEY (`ID`),
-    UNIQUE KEY `entry` (`assocID`, `profileID`)
+    UNIQUE KEY `entry` (`assocID`, `personID`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `v7ocf_groups_profile_attributes`
+CREATE TABLE IF NOT EXISTS `v7ocf_groups_person_attributes`
 (
     `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
-    `profileID`   INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
     `attributeID` INT(11) UNSIGNED    NOT NULL,
+    `personID`    INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
     `value`       TEXT,
     `published`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`ID`),
-    UNIQUE KEY `entry` (`profileID`, `attributeID`)
+    UNIQUE KEY `entry` (`attributeID`, `personID`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `v7ocf_groups_profiles`
+CREATE TABLE IF NOT EXISTS `v7ocf_groups_persons`
 (
     `id`        INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
     `surnames`  VARCHAR(255)        NOT NULL,
@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_types`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-# Forenames and surnames are now a part of the profile
+# Forenames and surnames are now a part of the persons table
 INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `viewLevelID`)
 VALUES (1, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
        (2, 'Namenszusatz (nach)', 'Supplement (Post)', '', 4, '{"hint":"M.Sc."}', 1, 1),
@@ -141,7 +141,7 @@ VALUES (1, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
        (12, 'zur Person', 'Personal Information', 'user', 7, '{"buttons": 0}', 0, 1);
 
 # Surname default = users display name
-INSERT INTO `v7ocf_groups_profiles` (`id`, `surnames`)
+INSERT INTO `v7ocf_groups_persons` (`id`, `surnames`)
 SELECT DISTINCT `u`.`id`, `u`.`name`
 FROM `v7ocf_users` AS u;
 
@@ -183,24 +183,24 @@ ALTER TABLE `v7ocf_groups_attributes`
 ALTER TABLE `v7ocf_groups_groups`
     ADD CONSTRAINT `fk_groups_groupID` FOREIGN KEY (`id`) REFERENCES `v7ocf_usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `v7ocf_groups_profile_associations`
+ALTER TABLE `v7ocf_groups_person_associations`
     ADD CONSTRAINT `fk_pAssocs_assocID` FOREIGN KEY (`assocID`) REFERENCES `v7ocf_groups_role_associations` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    ADD CONSTRAINT `fk_pAssocs_profileID` FOREIGN KEY (`profileID`) REFERENCES `v7ocf_groups_profiles` (`id`)
+    ADD CONSTRAINT `fk_pAssocs_personID` FOREIGN KEY (`personID`) REFERENCES `v7ocf_groups_persons` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE;
 
-ALTER TABLE `v7ocf_groups_profile_attributes`
+ALTER TABLE `v7ocf_groups_person_attributes`
     ADD CONSTRAINT `fk_pAttribs_attributeID` FOREIGN KEY (`attributeID`) REFERENCES `v7ocf_groups_attributes` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    ADD CONSTRAINT `fk_pAttribs_profileID` FOREIGN KEY (`profileID`) REFERENCES `v7ocf_groups_profiles` (`id`)
+    ADD CONSTRAINT `fk_pAttribs_personID` FOREIGN KEY (`personID`) REFERENCES `v7ocf_groups_persons` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE;
 
-ALTER TABLE `v7ocf_groups_profiles`
-    ADD CONSTRAINT `fk_profiles_userID` FOREIGN KEY (`id`) REFERENCES `v7ocf_users` (`id`)
+ALTER TABLE `v7ocf_groups_persons`
+    ADD CONSTRAINT `fk_persons_userID` FOREIGN KEY (`id`) REFERENCES `v7ocf_users` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE;
 

@@ -15,13 +15,13 @@ use Joomla\CMS\Router\Route;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\HTML;
 use THM\Groups\Helpers;
-use THM\Groups\Helpers\Profiles as Helper;
+use THM\Groups\Helpers\Persons as Helper;
 use THM\Groups\Layouts\ListItem;
 
 /**
- * View class for displaying available profiles.
+ * View class for displaying available persons.
  */
-class Profiles extends ListView
+class Persons extends ListView
 {
     /**
      * @inheritDoc
@@ -54,7 +54,6 @@ class Profiles extends ListView
 
         $this->todo = [
             'main menu',
-            'Profiles => Persons',
             'batch stuff',
             'password reset',
             'model functions'
@@ -65,9 +64,9 @@ class Profiles extends ListView
     }
 
     /**
-     * Formats the profile associated groups and roles for display.
+     * Formats the person associated groups and roles for display.
      *
-     * @param array $groups the groups associated with the profile
+     * @param array $groups the groups associated with the person
      *
      * @return string
      */

@@ -12,9 +12,9 @@ namespace THM\Groups\Helpers;
 
 class Attributes
 {
-    public const BOTH_CONTEXTS = 0, GROUPS_CONTEXT = 2, PROFILES_CONTEXT = 1;
+    public const BOTH_CONTEXTS = 0, GROUPS_CONTEXT = 2, PERSONS_CONTEXT = 1;
 
-    public const VALID_CONTEXTS = [self::BOTH_CONTEXTS, self::GROUPS_CONTEXT, self::PROFILES_CONTEXT];
+    public const VALID_CONTEXTS = [self::BOTH_CONTEXTS, self::GROUPS_CONTEXT, self::PERSONS_CONTEXT];
 
     public const EMAIL = 2, FIRST_NAME = 3, IMAGE = 6, NAME = 1, SUPPLEMENT_POST = 4, SUPPLEMENT_PRE = 5;
 

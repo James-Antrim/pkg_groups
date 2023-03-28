@@ -23,7 +23,7 @@ use THM\Groups\Tools\Migration;
 /**
  * Model class for aggregating available attribute types data.
  */
-class Profiles extends ListModel
+class Persons extends ListModel
 {
     protected string $defaultOrdering = 'surnames, forenames';
 
@@ -83,7 +83,8 @@ class Profiles extends ListModel
     }
 
     /**
-     * Gets the groups & roles associated with a given profile id
+     * Gets the groups & roles associated with a given person's id
+     *
      * @param int $itemID
      *
      * @return array
@@ -98,7 +99,7 @@ class Profiles extends ListModel
         $assocID   = $db->quoteName('pa.assocID');
         $groupID   = $db->quoteName('g.id');
         $mGroupID  = $db->quoteName('map.group_id');
-        $profileID = $db->quoteName('pa.profileID');
+        $personID  = $db->quoteName('pa.personID');
         $raGroupID = $db->quoteName('ra.groupID');
         $raID      = $db->quoteName('ra.id');
         $raRoleID  = $db->quoteName('ra.roleID');
@@ -110,16 +111,16 @@ class Profiles extends ListModel
         $jCondition3 = "$roleID = $raRoleID";
         $jCondition4 = "$assocID = $raID";
 
-        $wCondition1 = "($profileID = $itemID AND $userID = $itemID)";
-        $wCondition2 = "($profileID = $itemID AND $userID IS NULL)";
-        $wCondition3 = "($profileID IS NULL AND $userID = $itemID)";
+        $wCondition1 = "($personID = $itemID AND $userID = $itemID)";
+        $wCondition2 = "($personID = $itemID AND $userID IS NULL)";
+        $wCondition3 = "($personID IS NULL AND $userID = $itemID)";
 
         $select = [
             $db->quoteName('g.id', 'groupID'),
             $db->quoteName("g.name_$tag", 'group'),
             $db->quoteName('r.id', 'roleID'),
             $db->quoteName("r.name_$tag", 'role'),
-            $db->quoteName('pa.profileID', 'profileID'),
+            $db->quoteName('pa.personID', 'personID'),
             $db->quoteName('map.user_id', 'userID')
         ];
         $query->select($select)
@@ -127,7 +128,7 @@ class Profiles extends ListModel
             ->join('left', $db->quoteName('#__user_usergroup_map', 'map'), $jCondition1)
             ->join('left', $db->quoteName('#__groups_role_associations', 'ra'), $jCondition2)
             ->join('left', $db->quoteName('#__groups_roles', 'r'), $jCondition3)
-            ->join('left', $db->quoteName('#__groups_profile_associations', 'pa'), $jCondition4)
+            ->join('left', $db->quoteName('#__groups_person_associations', 'pa'), $jCondition4)
             ->where("($wCondition1 OR $wCondition2 OR $wCondition3)");
 
         $db->setQuery($query);
@@ -144,9 +145,9 @@ class Profiles extends ListModel
                 // TODO: create map entry
             }
 
-            if (empty($result['profileID']) and !in_array($groupID, Helpers\Groups::DEFAULT))
+            if (empty($result['personID']) and !in_array($groupID, Helpers\Groups::DEFAULT))
             {
-                // TODO: create profile and role associations as necessary
+                // TODO: create person entry and role associations as necessary
             }
 
             if (empty($groups[$groupID]))
@@ -199,11 +200,11 @@ class Profiles extends ListModel
             $query->concatenate($nameColumns, ' ') . ' AS ' . $db->quoteName('name')
         ]);
 
-        $profileID  = $db->quoteName('p.id');
+        $personID   = $db->quoteName('p.id');
         $userID     = $db->quoteName('u.id');
-        $uCondition = "$userID = $profileID";
+        $uCondition = "$userID = $personID";
 
-        $query->from($db->quoteName('#__groups_profiles', 'p'))
+        $query->from($db->quoteName('#__groups_persons', 'p'))
             ->join('inner', $db->quoteName('#__users', 'u'), $uCondition);
 
         $activation = $this->state->get('filter.activation');
@@ -233,10 +234,10 @@ class Profiles extends ListModel
                     if (!empty($id) and $id = (int)$id)
                     {
                         $assocID     = $db->quoteName('pa.assocID');
-                        $paProfileID = $db->quoteName('pa.profileID');
+                        $paProfileID = $db->quoteName('pa.personID');
 
                         $condition = "$paProfileID = $userID";
-                        $query->join('inner', $db->quoteName('#__groups_profile_associations', 'pa'), $condition)
+                        $query->join('inner', $db->quoteName('#__groups_person_associations', 'pa'), $condition)
                             ->where("$assocID = $id");
                     }
                     break;
@@ -267,12 +268,12 @@ class Profiles extends ListModel
             }
 
             $assocID     = $db->quoteName('pa.assocID');
-            $paProfileID = $db->quoteName('pa.profileID');
+            $paProfileID = $db->quoteName('pa.personID');
             $raID        = $db->quoteName('ra.id');
 
             $condition1 = "$paProfileID = $userID";
             $condition2 = "$raID = $assocID";
-            $query->join($join, $db->quoteName('#__groups_profile_associations', 'pa'), $condition1)
+            $query->join($join, $db->quoteName('#__groups_person_associations', 'pa'), $condition1)
                 ->join($join, $db->quoteName('#__groups_role_associations', 'ra'), $condition2)
                 ->where($db->quoteName('ra.id') . $predicate);
         }

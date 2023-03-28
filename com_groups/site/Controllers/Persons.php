@@ -13,7 +13,7 @@ namespace THM\Groups\Controllers;
 /**
  * Controller class for groups.
  */
-class Profiles extends Controller
+class Persons extends Controller
 {
-	//Stuff
+    //Stuff
 }

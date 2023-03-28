@@ -28,33 +28,33 @@ CREATE TABLE IF NOT EXISTS `#__groups_groups`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_profile_associations`
+CREATE TABLE IF NOT EXISTS `#__groups_person_associations`
 (
-    `id`        INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `assocID`   INT(11) UNSIGNED NOT NULL,
-    `profileID` INT(11)          NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
+    `id`       INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `assocID`  INT(11) UNSIGNED NOT NULL,
+    `personID` INT(11)          NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
     PRIMARY KEY (`ID`),
-    UNIQUE KEY `entry` (`assocID`, `profileID`)
+    UNIQUE KEY `entry` (`assocID`, `personID`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_profile_attributes`
+CREATE TABLE IF NOT EXISTS `#__groups_person_attributes`
 (
     `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
-    `profileID`   INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
     `attributeID` INT(11) UNSIGNED    NOT NULL,
+    `personID`    INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
     `value`       TEXT,
     `published`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`ID`),
-    UNIQUE KEY `entry` (`profileID`, `attributeID`)
+    UNIQUE KEY `entry` (`attributeID`, `personID`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_profiles`
+CREATE TABLE IF NOT EXISTS `#__groups_persons`
 (
     `id`        INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
     `surnames`  VARCHAR(255)        NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_types`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-# Forenames and surnames are now a part of the profile
+# Forenames and surnames are now a part of the persons table
 INSERT INTO `#__groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `viewLevelID`)
 VALUES (1, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
        (2, 'Namenszusatz (nach)', 'Supplement (Post)', '', 4, '{"hint":"M.Sc."}', 1, 1),
@@ -129,7 +129,7 @@ VALUES (1, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
        (12, 'zur Person', 'Personal Information', 'user', 7, '{"buttons": 0}', 0, 1);
 
 # Surname default = users display name
-INSERT INTO `#_groups_profiles` (`id`, `surnames`)
+INSERT INTO `#_groups_persons` (`id`, `surnames`)
 SELECT DISTINCT `u`.`id`, `u`.`name`
 FROM `v7ocf_users` AS u;
 
@@ -171,24 +171,24 @@ ALTER TABLE `#__groups_attributes`
 ALTER TABLE `#__groups_groups`
     ADD CONSTRAINT `fk_groups_groupID` FOREIGN KEY (`id`) REFERENCES `#__usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `#__groups_profile_associations`
+ALTER TABLE `#__groups_person_associations`
     ADD CONSTRAINT `fk_pAssocs_assocID` FOREIGN KEY (`assocID`) REFERENCES `#__groups_role_associations` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    ADD CONSTRAINT `fk_pAssocs_profileID` FOREIGN KEY (`profileID`) REFERENCES `#__groups_profiles` (`id`)
+    ADD CONSTRAINT `fk_pAssocs_personID` FOREIGN KEY (`personID`) REFERENCES `#__groups_persons` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE;
 
-ALTER TABLE `#__groups_profile_attributes`
+ALTER TABLE `#__groups_person_attributes`
     ADD CONSTRAINT `fk_pAttribs_attributeID` FOREIGN KEY (`attributeID`) REFERENCES `#__groups_attributes` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    ADD CONSTRAINT `fk_pAttribs_profileID` FOREIGN KEY (`profileID`) REFERENCES `#__groups_profiles` (`id`)
+    ADD CONSTRAINT `fk_pAttribs_personID` FOREIGN KEY (`personID`) REFERENCES `#__groups_persons` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE;
 
-ALTER TABLE `#__groups_profiles`
-    ADD CONSTRAINT `fk_profiles_userID` FOREIGN KEY (`id`) REFERENCES `#__users` (`id`)
+ALTER TABLE `#__groups_persons`
+    ADD CONSTRAINT `fk_persons_userID` FOREIGN KEY (`id`) REFERENCES `#__users` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE;
 

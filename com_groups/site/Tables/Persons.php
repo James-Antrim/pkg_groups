@@ -17,9 +17,9 @@ use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
 
 /**
- * Class representing the profiles table.
+ * Class representing the persons table.
  */
-class Profiles extends Table
+class Persons extends Table
 {
     /**
      * VARCHAR(255) DEFAULT null
@@ -47,7 +47,7 @@ class Profiles extends Table
     public $forenames;
 
     /**
-     * INT(11) NOT NULL (fk_profiles_userID -> users.id)
+     * INT(11) NOT NULL (fk_person_userID -> users.id)
      * @var int
      */
     public $id;
@@ -72,7 +72,7 @@ class Profiles extends Table
         $dbo = $dbo ?? Application::getDB();
 
         /** @var DatabaseDriver $dbo */
-        parent::__construct('#__groups_profiles', 'id', $dbo);
+        parent::__construct('#__groups_persons', 'id', $dbo);
     }
 
     // todo overwrite the appropriate function that doesn't create a fk entry on save/store

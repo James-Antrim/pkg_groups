@@ -15,6 +15,8 @@ use THM\Groups\Adapters\Application;
 
 trait Named
 {
+    use Persistent;
+
     /**
      * Attempts to retrieve the name of the resource.
      *
@@ -70,20 +72,5 @@ trait Named
     public static function getPlural(int $resourceID): string
     {
         return self::getNameAttribute('plural', $resourceID);
-    }
-
-    /**
-     * Returns a table based on the called class.
-     *
-     * @return Table
-     */
-    public static function getTable(): Table
-    {
-        $helperClass = get_called_class();
-        $segments    = explode('\\', $helperClass);
-        $tableClass  = array_pop($segments);
-        $fqn         = "\\THM\\Groups\\Tables\\$tableClass";
-
-        return new $fqn();
     }
 }

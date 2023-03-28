@@ -17,9 +17,9 @@ use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
 
 /**
- * Class representing the profiles attributes table.
+ * Class representing the person attributes table.
  */
-class ProfileAttributes extends Table
+class PersonAttributes extends Table
 {
     use Incremented;
 
@@ -30,10 +30,10 @@ class ProfileAttributes extends Table
     public $attributeID;
 
     /**
-     * INT(11) NOT NULL (fk_pAttribs_profileID -> groups_profiles.id -> fk: users.id)
+     * INT(11) NOT NULL (fk_pAttribs_personID -> persons.id -> fk: users.id)
      * @var int
      */
-    public $profileID;
+    public $personID;
 
     /**
      * @var bool TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
@@ -54,6 +54,6 @@ class ProfileAttributes extends Table
         $dbo = $dbo ?? Application::getDB();
 
         /** @var DatabaseDriver $dbo */
-        parent::__construct('#__groups_profile_attributes', 'id', $dbo);
+        parent::__construct('#__groups_person_attributes', 'id', $dbo);
     }
 }

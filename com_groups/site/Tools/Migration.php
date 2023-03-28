@@ -175,7 +175,7 @@ class Migration
                 }
 
                 $data['icon']        = $oldAttribute->icon ?? '';
-                $data['context']     = Attributes::PROFILES_CONTEXT;
+                $data['context']     = Attributes::PERSONS_CONTEXT;
                 $data['required']    = $oldAttribute->viewLevelID;
                 $data['viewLevelID'] = $oldAttribute->viewLevelID;
 
@@ -250,6 +250,9 @@ class Migration
         Quelle Bild....source & source_url
 
         Subforms & such---------------------------------------------------------------------------------------------------------
+
+        <long button list> = ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore
+
         Label           attributeID     icon        type/ID     levelID     comment
         -----           -----------     ----        -------     -------     -------
         Anschrift       x               location    x           1           so many options...
@@ -257,14 +260,14 @@ class Migration
         Sprechstunden   x               comment     x           1           see Sprechstunde
         Sprechzeiten    x               comment     x           1           see Sprechstunde
 
-        106 2(x/HTML)   Arbeitsgebiete          11{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}22101
+        106 2(x/HTML)   Arbeitsgebiete          11{"buttons":1,"hide":""}22101
         107 1(Text)     Besondere Funktion      1icon-cog1{"maxlength":"255","hint":"","regex":"simple_text"}17101
         119 1(Text)     Fachgebiet              1icon-grid-view1{"maxlength":"255","hint":"","regex":"simple_text"}18101
         108 1(Text)     Fachgebiete             1icon-grid-view1{"maxlength":"255","hint":"","regex":"simple_text"}12101
-        112 2(x/HTML)   Forschungsgebiete       10{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}17101
-        110 2(x/HTML)   Funktionen              1icon-list-21{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}11101
-        102 2(x/HTML)   Lebenslauf              1icon-list1{"buttons":"1","hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}16101
-        111 2(x/HTML)   Weitere Profile         1icon-users1{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}10101
+        112 2(x/HTML)   Forschungsgebiete       10{"buttons":1,"hide":"<long button list>"}17101
+        110 2(x/HTML)   Funktionen              1icon-list-21{"buttons":1,"hide":"<long button list>"}11101
+        102 2(x/HTML)   Lebenslauf              1icon-list1{"buttons":"1","hide":"<long button list>"}16101
+        111 2(x/HTML)   Weitere Profile         1icon-users1{"buttons":1,"hide":"<long button list>"}10101
         109 2(x/HTML)   Weiterführende Links    1icon-new-tab1{}13101
 
         --- Subform with THM Room Patterned text boxes + optional link field for labs
@@ -275,13 +278,13 @@ class Migration
         Label                   attributeID     icon            type/ID             levelID
         -----                   -----------     ----            -------             -------
         --LSE incomplete addresses with no standardization
-        95  2(x/HTML)   Kontakt     1icon-location1{"buttons":"0","hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}7101
-        112 2(x/HTML)   weiterer  Kontakt1icon-location-21{"buttons":"1","hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}14101
+        95  2(x/HTML)   Kontakt     1icon-location1{"buttons":"0","hide":"<long button list>"}7101
+        112 2(x/HTML)   weiterer  Kontakt1icon-location-21{"buttons":"1","hide":"<long button list>"}14101
 
         --IEM ???
-        113 2(x/HTML)   Projekte10{"buttons":1,"hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}18101
-        114 2(x/HTML)   Veranstaltungen10{"buttons":"1","hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}16101
-        115 2(x/HTML)   Ohne  Überschrift00{"buttons":"1","hide":"ebevent,ebregister,thm_groups_profiles,snippets,betterpreview,sliders,thmvcard,thmcontact,widgetkit,module,menu,contact,fields,jresearch_automatic_bibliography_generation,jresearch_automatic_citation,modals,pagebreak,readmore"}20101
+        113 2(x/HTML)   Projekte10{"buttons":1,"hide":"<long button list>"}18101
+        114 2(x/HTML)   Veranstaltungen10{"buttons":"1","hide":"<long button list>"}16101
+        115 2(x/HTML)   Ohne  Überschrift00{"buttons":"1","hide":"<long button list>"}20101
 
         --W mixed bag, but mostly a link to a 'schriftenverzeichnis'
         101 2(x/HTML)   Publikationen   1icon-stack1{}17101
@@ -336,36 +339,36 @@ class Migration
             $session->set('com_groups.migrate.groups', true);
         }
 
-        if (!$session->get('com_groups.migrated.profiles'))
+        if (!$session->get('com_groups.migrated.persons'))
         {
-            self::profiles();
-            $session->set('com_groups.migrate.profiles', true);
+            self::persons();
+            $session->set('com_groups.migrate.persons', true);
         }
 
         if (!$session->get('com_groups.migrated.roles'))
         {
             $rMap  = self::roles();
             $raMap = self::roleAssociations($rMap);
-            self::profileAssociations($raMap);
+            self::personAssociations($raMap);
             $session->set('com_groups.migrate.roles', true);
         }
 
         if (!$session->get('com_groups.migrated.attributes'))
         {
             $aMap = self::attributes();
-            self::profileAttributes($aMap);
+            self::personAttributes($aMap);
             $session->set('com_groups.migrated.attributes', true);
         }
     }
 
     /**
-     * Migrates the profile associations table.
+     * Migrates the person associations table.
      *
      * @param array $assocMap
      *
      * @return void
      */
-    private static function profileAssociations(array $assocMap)
+    private static function personAssociations(array $assocMap)
     {
         $db = Application::getDB();
 
@@ -380,10 +383,10 @@ class Migration
             {
                 $assoc = [
                     'assocID' => $assocMap[$oldAssoc->role_associationID],
-                    'profileID' => $oldAssoc->profileID
+                    'personID' => $oldAssoc->profileID
                 ];
 
-                $table = new Tables\ProfileAssociations();
+                $table = new Tables\PersonAssociations();
 
                 if (!$table->load($assoc))
                 {
@@ -417,13 +420,13 @@ class Migration
 
             $rAssocTable = new Tables\RoleAssociations();
 
-            // Get the basic group => member role association entry and supplement the profile as necessary.
+            // Get the basic group => member role association entry and supplement the person as necessary.
             if ($assocID = $rAssocTable->getAssocID($groupID, Roles::MEMBER))
             {
-                foreach ($userIDs as $profileID)
+                foreach ($userIDs as $personID)
                 {
-                    $pAssoc      = ['assocID' => $assocID, 'profileID' => $profileID];
-                    $pAssocTable = new Tables\ProfileAssociations();
+                    $pAssoc      = ['assocID' => $assocID, 'personID' => $personID];
+                    $pAssocTable = new Tables\PersonAssociations();
 
                     if (!$pAssocTable->load($pAssoc))
                     {
@@ -441,13 +444,13 @@ class Migration
     }
 
     /**
-     * Migrates the profile attribute mappings and values to the new table.
+     * Migrates the person attribute mappings and values to the new table.
      *
      * @param array $map
      *
      * @return void
      */
-    private static function profileAttributes(array $map)
+    private static function personAttributes(array $map)
     {
         $db      = Application::getDB();
         $oldKeys = array_keys($map);
@@ -465,9 +468,9 @@ class Migration
 
         foreach ($pas as $pa)
         {
-            $data = ['profileID' => $pa->profileID, 'attributeID' => $map[$pa->attributeID]];
+            $data = ['attributeID' => $map[$pa->attributeID], 'personID' => $pa->profileID,];
 
-            $table = new Tables\ProfileAttributes();
+            $table = new Tables\PersonAttributes();
 
             if ($table->load($data))
             {
@@ -482,9 +485,9 @@ class Migration
     }
 
     /**
-     * Migrates the profiles table.
+     * Migrates the persons table.
      */
-    private static function profiles()
+    private static function persons()
     {
         $db = Application::getDB();
 
@@ -506,7 +509,7 @@ class Migration
 
         // Should not get used as raw entries are created on installation.
         $iQuery = $db->getQuery(true);
-        $iQuery->insert($db->quoteName('#__groups_profiles'))
+        $iQuery->insert($db->quoteName('#__groups_persons'))
             ->columns([
                 $db->quoteName('alias'),
                 $db->quoteName('id'),
@@ -545,24 +548,24 @@ class Migration
             $editing   = $profile->canEdit ?? false;
             $published = $profile->published ?? false;
 
-            $table = new Tables\Profiles();
+            $person = new Tables\Persons();
 
-            if ($table->load($profileID))
+            if ($person->load($profileID))
             {
                 $db->setQuery($sQuery);
 
                 if ($names = $db->loadAssoc())
                 {
-                    $table->surnames  = $names['surnames'];
-                    $table->forenames = $names['forenames'];
+                    $person->surnames  = $names['surnames'];
+                    $person->forenames = $names['forenames'];
                 }
 
-                $table->alias     = $alias;
-                $table->content   = $content;
-                $table->editing   = $editing;
-                $table->published = $published;
+                $person->alias     = $alias;
+                $person->content   = $content;
+                $person->editing   = $editing;
+                $person->published = $published;
 
-                $table->store(true);
+                $person->store(true);
                 continue;
             }
 

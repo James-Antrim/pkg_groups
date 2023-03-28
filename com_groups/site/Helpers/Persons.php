@@ -10,11 +10,12 @@
 
 namespace THM\Groups\Helpers;
 
-use THM\Groups\Tables\ProfileAttributes;
 use THM\Groups\Tools\Cohesion;
 
-class Profiles
+class Persons
 {
+    use Persistent;
+
     public const ACTIVATED = true, PENDING = false;
     public const ENABLED = 1, DISABLED = 0;
     public const BLOCKED = 1, UNBLOCKED = 0;
@@ -103,52 +104,52 @@ class Profiles
     ];*/
 
     /**
-     * Gets the profile's name.
+     * Gets the person's forenames.
      *
-     * @param int $profileID
-     *
-     * @return string
-     *
-     */
-    public static function getFirstName(int $profileID): string
-    {
-        $name = new ProfileAttributes();
-        $name->load(['attributeID' => Attributes::FIRST_NAME, 'profileID' => $profileID]);
-
-        return $name->value ?? '';
-    }
-
-    /**
-     * Gets the profile's name.
-     *
-     * @param int $profileID
+     * @param int $personID
      *
      * @return string
      *
      */
-    public static function getSurname(int $profileID): string
+    public static function getForenames(int $personID): string
     {
-        $name = new ProfileAttributes();
-        $name->load(['attributeID' => Attributes::NAME, 'profileID' => $profileID]);
+        $person = self::getTable();
+        $person->load($personID);
 
-        return $name->value ?? '';
+        return $person->forenames ?? '';
     }
 
     /**
-     * Gets the name attributes associated with the profile.
+     * Gets the person's surnames.
      *
-     * @param int $profileID the id of the profile
+     * @param int $personID
      *
-     * @return array empty if no surname could be found
+     * @return string
+     *
      */
-    public static function getNames(int $profileID): array
+    public static function getSurnames(int $personID): string
     {
-        if (!$surname = self::getSurname($profileID))
+        $person = self::getTable();
+        $person->load($personID);
+
+        return $person->surnames ?? '';
+    }
+
+    /**
+     * Gets the persons names.
+     *
+     * @param int $personID the id of the person
+     *
+     * @return array empty if no surnames could be found
+     */
+    public static function getNames(int $personID): array
+    {
+        if (!$surnames = self::getSurnames($personID))
         {
-            Cohesion::createBasicAttributes($profileID);
-            $surname = self::getSurname($profileID);
+            Cohesion::createBasicAttributes($personID);
+            $surnames = self::getSurnames($personID);
         }
 
-        return ['surname' => $surname, 'firstName' => self::getFirstName($profileID)];
+        return ['surnames' => $surnames, 'forenames' => self::getForenames($personID)];
     }
 }
