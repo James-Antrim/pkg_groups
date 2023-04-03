@@ -48,11 +48,6 @@ class Attributes extends ListModel
      */
     public function delete()
     {
-        if (!Helpers\Can::manage())
-        {
-            Application::error(403);
-        }
-
         Application::message(Text::_('GROUPS_503'));
     }
 
