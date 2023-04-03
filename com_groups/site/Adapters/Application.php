@@ -17,6 +17,9 @@ use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Language\Language;
 use Joomla\CMS\Session\Session;
+use Joomla\CMS\User\User;
+use Joomla\CMS\User\UserFactory;
+use Joomla\CMS\User\UserFactoryInterface;
 use Joomla\Database\DatabaseDriver;
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
@@ -31,217 +34,237 @@ use Joomla\CMS\Uri\Uri;
  */
 class Application
 {
-	/**
-	 * Checks whether the current context is the administrator context.
-	 *
-	 * @return bool
-	 */
-	public static function backend(): bool
-	{
-		return self::getApplication()->isClient('administrator');
-	}
+    /**
+     * Checks whether the current context is the administrator context.
+     *
+     * @return bool
+     */
+    public static function backend(): bool
+    {
+        return self::getApplication()->isClient('administrator');
+    }
 
-	/**
-	 * Performs a redirect on error.
-	 *
-	 * @param   int  $code  the error code
-	 *
-	 * @return void
-	 */
-	public static function error(int $code)
-	{
-		$current = Uri::getInstance()->toString();
+    /**
+     * Performs a redirect on error.
+     *
+     * @param int $code the error code
+     *
+     * @return void
+     */
+    public static function error(int $code): void
+    {
+        $current = Uri::getInstance()->toString();
 
-		//TODO: Add logging
+        //TODO: Add logging
 
-		if ($code === 401)
-		{
-			$return   = urlencode(base64_encode($current));
-			$url      = Uri::base() . "?option=com_users&view=login&return=$return";
-			$severity = 'notice';
-		}
-		else
-		{
-			switch ($code)
-			{
-				case 400:
-				case 404:
-					$severity = 'notice';
-					break;
-				case 403:
-				case 412:
-					$severity = 'warning';
-					break;
-				case 500:
-				case 501:
-				case 503:
-				default:
-					$severity = 'error';
-					break;
+        if ($code === 401)
+        {
+            $return   = urlencode(base64_encode($current));
+            $url      = Uri::base() . "?option=com_users&view=login&return=$return";
+            $severity = 'notice';
+        }
+        else
+        {
+            $severity = match ($code)
+            {
+                400, 404 => 'notice',
+                403, 412 => 'warning',
+                default => 'error',
+            };
 
-			}
+            if ($severity === 'error')
+            {
+                $exc = new Exception;
+                echo "<pre>" . print_r($exc->getTraceAsString(), true) . "</pre>";
+                die;
+            }
 
-			$referrer = Input::getInput()->server->getString('HTTP_REFERER', Uri::base());
-			$url      = $referrer === $current ? Uri::base() : $referrer;
-		}
+            $referrer = Input::getInput()->server->getString('HTTP_REFERER', Uri::base());
+            $url      = $referrer === $current ? Uri::base() : $referrer;
+        }
 
-		self::message(Text::_("GROUPS_$code"), $severity);
-		self::redirect($url, $code);
-	}
+        self::message(Text::_("GROUPS_$code"), $severity);
+        self::redirect($url, $code);
+    }
 
-	/**
-	 * Surrounds the call to the application with a try catch so that not every function needs to have a throws tag. If
-	 * the application has an error it would have never made it to the component in the first place, so the error would
-	 * not have been thrown in this call regardless.
-	 *
-	 * @return CMSApplicationInterface|null
-	 */
-	public static function getApplication(): ?CMSApplicationInterface
-	{
-		try
-		{
-			return Factory::getApplication();
-		}
-		catch (Exception $exc)
-		{
-			return null;
-		}
-	}
+    /**
+     * Surrounds the call to the application with a try catch so that not every function needs to have a throws tag. If
+     * the application has an error it would have never made it to the component in the first place, so the error would
+     * not have been thrown in this call regardless.
+     *
+     * @return CMSApplicationInterface|null
+     */
+    public static function getApplication(): ?CMSApplicationInterface
+    {
+        try
+        {
+            return Factory::getApplication();
+        }
+        catch (Exception $exception)
+        {
+            echo "<pre>" . print_r($exception->getTraceAsString(), true) . "</pre>";
+            die;
+            //return null;
+        }
+    }
 
-	/**
-	 * Gets the name of an object's class without its namespace.
-	 *
-	 * @param   object|string  $object  the object whose namespace free name is requested or the fq name of the class to be loaded
-	 *
-	 * @return string the name of the class without its namespace
-	 */
-	public static function getClass($object): string
-	{
-		$fqName   = is_string($object) ? $object : get_class($object);
-		$nsParts  = explode('\\', $fqName);
-		$lastItem = array_pop($nsParts);
+    /**
+     * Gets the name of an object's class without its namespace.
+     *
+     * @param object|string $object the object whose namespace free name is requested or the fq name of the class to be loaded
+     *
+     * @return string the name of the class without its namespace
+     */
+    public static function getClass(object|string $object): string
+    {
+        $fqName   = is_string($object) ? $object : get_class($object);
+        $nsParts  = explode('\\', $fqName);
+        $lastItem = array_pop($nsParts);
 
-		return empty($lastItem) ? 'Dashboard' : $lastItem;
-	}
+        return empty($lastItem) ? 'Dashboard' : $lastItem;
+    }
 
-	/**
-	 * Shortcuts container access.
-	 * @return Container
-	 */
-	public static function getContainer(): Container
-	{
-		return Factory::getContainer();
-	}
+    /**
+     * Shortcuts container access.
+     * @return Container
+     */
+    public static function getContainer(): Container
+    {
+        return Factory::getContainer();
+    }
 
-	/**
-	 * Shortcuts container access.
-	 * @return DatabaseDriver
-	 */
-	public static function getDB(): DatabaseDriver
-	{
-		return self::getContainer()->get('DatabaseDriver');
-	}
+    /**
+     * Shortcuts container access.
+     * @return DatabaseDriver
+     */
+    public static function getDB(): DatabaseDriver
+    {
+        return self::getContainer()->get('DatabaseDriver');
+    }
 
-	/**
-	 * Shortcuts document access.
-	 * @return Document
-	 */
-	public static function getDocument(): Document
-	{
-		/** @var WebApplication $app */
-		$app = self::getApplication();
+    /**
+     * Shortcuts document access.
+     * @return Document
+     */
+    public static function getDocument(): Document
+    {
+        /** @var WebApplication $app */
+        $app = self::getApplication();
 
-		return $app->getDocument();
-	}
+        return $app->getDocument();
+    }
 
-	/**
-	 * Method to get the application language object.
-	 *
-	 * @return  Language  The language object
-	 */
-	public static function getLanguage(): Language
-	{
-		return self::getApplication()->getLanguage();
-	}
+    /**
+     * Method to get the application language object.
+     *
+     * @return  Language  The language object
+     */
+    public static function getLanguage(): Language
+    {
+        return self::getApplication()->getLanguage();
+    }
 
-	/**
-	 * Gets the parameter object for the component
-	 *
-	 * @param   string  $component  the component name.
-	 *
-	 * @return  Registry
-	 */
-	public static function getParams(string $component = 'com_groups'): Registry
-	{
-		return ComponentHelper::getParams($component);
-	}
+    /**
+     * Gets the parameter object for the component
+     *
+     * @param string $component the component name.
+     *
+     * @return  Registry
+     */
+    public static function getParams(string $component = 'com_groups'): Registry
+    {
+        return ComponentHelper::getParams($component);
+    }
 
-	/**
-	 * Gets the session from the application container.
-	 *
-	 * @return Session
-	 */
-	public static function getSession(): Session
-	{
-		/** @var Session $session */
-		$session = self::getApplication()->getSession();
-		return $session;
-	}
+    /**
+     * Gets the session from the application container.
+     *
+     * @return Session
+     */
+    public static function getSession(): Session
+    {
+        /** @var Session $session */
+        $session = self::getApplication()->getSession();
+        return $session;
+    }
 
-	/**
-	 * Gets the language portion of the localization tag.
-	 *
-	 * @return string
-	 */
-	public static function getTag(): string
-	{
-		$language = self::getApplication()->getLanguage();
+    /**
+     * Gets the language portion of the localization tag.
+     *
+     * @return string
+     */
+    public static function getTag(): string
+    {
+        $language = self::getApplication()->getLanguage();
 
-		return explode('-', $language->getTag())[0];
-	}
+        return explode('-', $language->getTag())[0];
+    }
 
-	/**
-	 * Masks the Joomla application enqueueMessage function
-	 *
-	 * @param   string  $message  the message to enqueue
-	 * @param   string  $type     how the message is to be presented
-	 *
-	 * @return void
-	 */
-	public static function message(string $message, string $type = 'message')
-	{
-		self::getApplication()->enqueueMessage(Text::_($message), $type);
-	}
+    /**
+     * Gets a user object (specified or current).
+     * @param int|string $userID the user identifier (id or name)
+     *
+     * @return User
+     */
+    public static function getUser(int|string $userID = 0): User
+    {
+        /** @var UserFactory $userFactory */
+        $userFactory = self::getContainer()->get(UserFactoryInterface::class);
 
-	/**
-	 * Checks whether the client device is a mobile phone.
-	 *
-	 * @return bool
-	 */
-	public static function mobile(): bool
-	{
-		/** @var CMSApplication $app */
-		$app     = self::getApplication();
-		$client  = $app->client;
-		$tablets = [$client::IPAD, $client::ANDROIDTABLET];
+        // Get a specific user.
+        if ($userID)
+        {
+            return is_int($userID) ? $userFactory->loadUserById($userID) : $userFactory->loadUserByUsername($userID);
+        }
 
-		return ($client->mobile and !in_array($client->platform, $tablets));
-	}
+        $current = self::getApplication()->getIdentity();
 
-	/**
-	 * Redirect to another URL.
-	 *
-	 * @param   string  $url     The URL to redirect to. Can only be http/https URL
-	 * @param   int     $status  The HTTP 1.1 status code to be provided. 303 is assumed by default.
-	 *
-	 * @return  void
-	 */
-	public static function redirect(string $url = '', int $status = 303)
-	{
-		$url = $url ?: Uri::getInstance()::base();
+        // Enforce type consistency, by overwriting the potential null from getIdentity.
+        return $current ?: $userFactory->loadUserById(0);
+    }
 
-		/** @var CMSApplication $app */
-		$app = self::getApplication();
-		$app->redirect($url, $status);
-	}
+    /**
+     * Masks the Joomla application enqueueMessage function
+     *
+     * @param string $message the message to enqueue
+     * @param string $type how the message is to be presented
+     *
+     * @return void
+     */
+    public static function message(string $message, string $type = 'message'): void
+    {
+        self::getApplication()->enqueueMessage(Text::_($message), $type);
+    }
+
+    /**
+     * Checks whether the client device is a mobile phone.
+     *
+     * @return bool
+     */
+    public static function mobile(): bool
+    {
+        /** @var CMSApplication $app */
+        $app     = self::getApplication();
+        $client  = $app->client;
+        $tablets = [$client::IPAD, $client::ANDROIDTABLET];
+
+        return ($client->mobile and !in_array($client->platform, $tablets));
+    }
+
+    /**
+     * Redirect to another URL.
+     *
+     * @param string $url The URL to redirect to. Can only be http/https URL
+     * @param int $status The HTTP 1.1 status code to be provided. 303 is assumed by default.
+     *
+     * @return  void
+     */
+    public static function redirect(string $url = '', int $status = 303): void
+    {
+        $url = $url ?: Uri::getInstance()::base();
+
+        /** @var CMSApplication $app */
+        $app = self::getApplication();
+        $app->redirect($url, $status);
+    }
 }
