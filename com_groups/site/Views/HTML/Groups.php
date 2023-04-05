@@ -15,7 +15,6 @@ use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\Toolbar;
-use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers;
 use THM\Groups\Helpers\Groups as Helper;
 use THM\Groups\Adapters\HTML;
@@ -81,11 +80,6 @@ class Groups extends ListView
      */
     public function display($tpl = null)
     {
-        if ($this->backend and !Helpers\Can::manage())
-        {
-            Application::error(403);
-        }
-
         $this->todo = [
             'Add batch processing for adding / removing roles.',
             'Add batch processing for view levels.',

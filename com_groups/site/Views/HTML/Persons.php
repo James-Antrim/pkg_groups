@@ -12,9 +12,7 @@ namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\HTML;
-use THM\Groups\Helpers;
 use THM\Groups\Helpers\Persons as Helper;
 use THM\Groups\Layouts\ListItem;
 
@@ -30,14 +28,14 @@ class Persons extends ListView
     {
         foreach ($this->items as $rowNo => $item)
         {
-            $item->activated     = HTML::toggle($rowNo, Helper::activatedStates[$item->activated], 'Profiles');
-            $item->block         = HTML::toggle($rowNo, Helper::blockedStates[$item->block], 'Profiles');
-            $item->content       = HTML::toggle($rowNo, Helper::contentStates[$item->content], 'Profiles');
-            $item->editing       = HTML::toggle($rowNo, Helper::editingStates[$item->editing], 'Profiles');
+            $item->activated     = HTML::toggle($rowNo, Helper::activatedStates[$item->activated], 'Persons');
+            $item->block         = HTML::toggle($rowNo, Helper::blockedStates[$item->block], 'Persons');
+            $item->content       = HTML::toggle($rowNo, Helper::contentStates[$item->content], 'Persons');
+            $item->editing       = HTML::toggle($rowNo, Helper::editingStates[$item->editing], 'Persons');
             $item->editLink      = Route::_('index.php?option=com_groups&view=Profile&layout=edit&id=' . $item->id);
             $item->groups        = $this->formatGroups($item->groups);
             $item->lastvisitDate = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
-            $item->published     = HTML::toggle($rowNo, Helper::publishedStates[$item->published], 'Profiles');
+            $item->published     = HTML::toggle($rowNo, Helper::publishedStates[$item->published], 'Persons');
             $item->viewLink      = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
         }
     }
@@ -47,10 +45,6 @@ class Persons extends ListView
      */
     public function display($tpl = null)
     {
-        if ($this->backend and !Helpers\Can::manage())
-        {
-            Application::error(403);
-        }
 
         $this->todo = [
             'main menu',
@@ -79,20 +73,12 @@ class Persons extends ListView
 
         foreach ($groups as $groupID => $group)
         {
-            switch (count($group['roles']))
+            $roles = match (count($group['roles']))
             {
-                // Irrelevant to the groups component or member role only
-                case 0:
-                case 1:
-                    $roles = '';
-                    break;
-                case 2:
-                    $roles = ': ' . implode(' & ', $group['roles']);
-                    break;
-                default:
-                    $roles = ': ' . Text::_('GROUPS_MULTIPLE_ROLES');
-                    break;
-            }
+                0, 1 => '',
+                2 => ': ' . implode(' & ', $group['roles']),
+                default => ': ' . Text::_('GROUPS_MULTIPLE_ROLES'),
+            };
 
             $groups[$groupID] = $group['name'] . $roles;
         }

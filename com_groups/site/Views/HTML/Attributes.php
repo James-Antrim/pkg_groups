@@ -12,7 +12,6 @@ namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\HTML;
 use THM\Groups\Helpers;
 
@@ -37,19 +36,6 @@ class Attributes extends ListView
     /**
      * @inheritDoc
      */
-    public function display($tpl = null)
-    {
-        if (!Helpers\Can::manage())
-        {
-            Application::error(403);
-        }
-
-        parent::display($tpl);
-    }
-
-    /**
-     * @inheritDoc
-     */
     protected function completeItems()
     {
         foreach ($this->items as $item)
@@ -66,18 +52,12 @@ class Attributes extends ListView
                 $item->icon = null;
             }
 
-            switch ($item->context)
+            $item->context = match ($item->context)
             {
-                case Helpers\Attributes::GROUPS_CONTEXT:
-                    $item->context = Text::_('GROUPS_GROUPS');
-                    break;
-                case Helpers\Attributes::PERSONS_CONTEXT:
-                    $item->context = Text::_('GROUPS_PROFILES');
-                    break;
-                default:
-                    $item->context = Text::_('GROUPS_GROUPS_AND_PROFILES');
-                    break;
-            }
+                Helpers\Attributes::GROUPS_CONTEXT => Text::_('GROUPS_GROUPS'),
+                Helpers\Attributes::PERSONS_CONTEXT => Text::_('GROUPS_PROFILES'),
+                default => Text::_('GROUPS_GROUPS_AND_PROFILES'),
+            };
         }
     }
 

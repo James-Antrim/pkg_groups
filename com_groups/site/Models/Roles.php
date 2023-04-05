@@ -50,7 +50,7 @@ class Roles extends ListModel
      */
     public function delete()
     {
-        if (!Can::manage())
+        if (!Can::administrate())
         {
             Application::error(403);
         }

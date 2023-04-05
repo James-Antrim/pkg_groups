@@ -47,7 +47,7 @@ class HTML extends HTMLHelper
             [$subset, $class] = explode(',', $class);
             $class = "fa$subset fa-$class";
         }
-        elseif (strpos($class, 'fa') === false)
+        elseif (!str_contains($class, 'fa'))
         {
             $class = "fa fa-$class";
         }
@@ -82,7 +82,7 @@ class HTML extends HTMLHelper
         {
             $attributes['class']   .= $class === 'publish' ? ' active' : '';
             $attributes['href']    = 'javascript:void(0);';
-            $attributes['onclick'] = "return Joomla.listItemTask('cb$index','$controller.$task','#adminForm')";
+            $attributes['onclick'] = "return Joomla.listItemTask('cb$index','$controller.$task','adminForm')";
 
             $return .= '<a ' . ArrayHelper::toString($attributes) . '>' . $icon . '</a>';
         }
