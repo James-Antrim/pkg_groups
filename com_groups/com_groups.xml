@@ -28,13 +28,13 @@
     <administration>
         <menu>Groups</menu>
         <submenu>
-            <menu controller="Attributes">GROUPS_ATTRIBUTES</menu>
-            <menu controller="Contents">GROUPS_CONTENTS</menu>
-            <menu controller="Groups">GROUPS_GROUPS</menu>
-            <menu controller="Profiles">GROUPS_PROFILES</menu>
-            <menu controller="Roles">GROUPS_ROLES</menu>
-            <menu controller="Templates">GROUPS_TEMPLATES</menu>
-            <menu controller="Types">GROUPS_TYPES</menu>
+            <menu view="Groups">GROUPS_GROUPS</menu>
+            <menu view="Persons">GROUPS_PERSONS</menu>
+            <menu view="Contents">GROUPS_CONTENTS</menu>
+            <menu view="Templates">GROUPS_TEMPLATES</menu>
+            <menu view="Roles">GROUPS_ROLES</menu>
+            <menu view="Attributes">GROUPS_ATTRIBUTES</menu>
+            <menu view="Types">GROUPS_TYPES</menu>
         </submenu>
         <files folder="admin">
             <filename>access.xml</filename>

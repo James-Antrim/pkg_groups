@@ -35,6 +35,17 @@ use Joomla\CMS\Uri\Uri;
 class Application
 {
     /**
+     * Predefined Joomla message types without unnecessary prefixing.
+     * @ALERT, @CRITICAL, @EMERGENCY, @ERROR: danger
+     * @DEBUG, @INFO, @NOTICE: info
+     * @WARNING: warning
+     * default: success
+     * @see CMSApplicationInterface
+     */
+    public const ALERT = 'alert', CRITICAL = 'critical', DEBUG = 'debug', EMERGENCY = 'emergency', ERROR = 'error',
+        INFO = 'info', MESSAGE = 'message', NOTICE = 'notice', WARNING = 'warning';
+
+    /**
      * Checks whether the current context is the administrator context.
      *
      * @return bool
@@ -231,7 +242,7 @@ class Application
      *
      * @return void
      */
-    public static function message(string $message, string $type = 'message'): void
+    public static function message(string $message, string $type = self::MESSAGE): void
     {
         self::getApplication()->enqueueMessage(Text::_($message), $type);
     }
