@@ -67,7 +67,7 @@ abstract class ListModel extends Base
      *
      * @return void modifies the query if a binary value was delivered in the request
      */
-    protected function binaryFilter(QueryInterface $query, string $name)
+    protected function binaryFilter(QueryInterface $query, string $name): void
     {
         $value = $this->state->get($name);
 
@@ -90,7 +90,7 @@ abstract class ListModel extends Base
      *
      * @return void
      */
-    abstract public function delete();
+    abstract public function delete(): void;
 
     /**
      * Filters out form inputs which should not be displayed due to menu settings.
@@ -99,7 +99,7 @@ abstract class ListModel extends Base
      *
      * @return void modifies $form
      */
-    protected function filterFilterForm(Form $form)
+    protected function filterFilterForm(Form $form): void
     {
         // No implementation is the default implementation.
     }
@@ -178,7 +178,7 @@ abstract class ListModel extends Base
      *
      * @return bool if the value can be interpreted as a binary integer
      */
-    protected function isBinary($value): bool
+    protected function isBinary(mixed $value): bool
     {
         if (!is_numeric($value))
         {
@@ -197,7 +197,7 @@ abstract class ListModel extends Base
      *
      * @return void modifies the query if a binary value was delivered in the request
      */
-    protected function orderBy(QueryInterface $query)
+    protected function orderBy(QueryInterface $query): void
     {
         if ($columns = $this->state->get('list.ordering'))
         {
@@ -246,7 +246,7 @@ abstract class ListModel extends Base
         $fullOrdering = "$this->defaultOrdering ASC";
         $ordering     = $this->defaultOrdering;
 
-        if (!empty($list['fullordering']) and strpos($list['fullordering'], 'null') === false)
+        if (!empty($list['fullordering']) and !str_contains($list['fullordering'], 'null'))
         {
             $pieces          = explode(' ', $list['fullordering']);
             $validDirections = ['ASC', 'DESC', ''];

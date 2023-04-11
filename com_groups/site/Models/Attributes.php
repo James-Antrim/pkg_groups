@@ -46,7 +46,7 @@ class Attributes extends ListModel
     /**
      * @inheritDoc
      */
-    public function delete()
+    public function delete(): void
     {
         Application::message(Text::_('GROUPS_503'));
     }

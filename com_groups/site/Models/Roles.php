@@ -48,7 +48,7 @@ class Roles extends ListModel
     /**
      * @inheritDoc
      */
-    public function delete()
+    public function delete():void
     {
         if (!Can::administrate())
         {

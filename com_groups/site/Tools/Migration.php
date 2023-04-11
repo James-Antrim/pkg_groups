@@ -297,7 +297,7 @@ class Migration
     /**
      * Migrates the existing store of usergroups to groups.
      */
-    private static function groups()
+    private static function groups(): void
     {
         $db    = Application::getDB();
         $query = $db->getQuery(true);
@@ -329,20 +329,20 @@ class Migration
     /**
      * Migrates exiting data to the new tables.
      */
-    public static function migrate()
+    public static function migrate(): void
     {
         $session = Application::getSession();
 
         if (!$session->get('com_groups.migrated.groups'))
         {
             self::groups();
-            $session->set('com_groups.migrate.groups', true);
+            $session->set('com_groups.migrated.groups', true);
         }
 
         if (!$session->get('com_groups.migrated.persons'))
         {
             self::persons();
-            $session->set('com_groups.migrate.persons', true);
+            $session->set('com_groups.migrated.persons', true);
         }
 
         if (!$session->get('com_groups.migrated.roles'))
@@ -350,7 +350,7 @@ class Migration
             $rMap  = self::roles();
             $raMap = self::roleAssociations($rMap);
             self::personAssociations($raMap);
-            $session->set('com_groups.migrate.roles', true);
+            $session->set('com_groups.migrated.roles', true);
         }
 
         if (!$session->get('com_groups.migrated.attributes'))
@@ -368,7 +368,7 @@ class Migration
      *
      * @return void
      */
-    private static function personAssociations(array $assocMap)
+    private static function personAssociations(array $assocMap): void
     {
         $db = Application::getDB();
 
@@ -450,7 +450,7 @@ class Migration
      *
      * @return void
      */
-    private static function personAttributes(array $map)
+    private static function personAttributes(array $map): void
     {
         $db      = Application::getDB();
         $oldKeys = array_keys($map);
@@ -487,7 +487,7 @@ class Migration
     /**
      * Migrates the persons table.
      */
-    private static function persons()
+    private static function persons(): void
     {
         $db = Application::getDB();
 

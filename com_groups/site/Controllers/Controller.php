@@ -59,4 +59,19 @@ class Controller extends BaseController
 
         return parent::display($cachable, $urlparams);
     }
+
+    /**
+     * Checks against unauthenticated access and returns the id of the current user.
+     *
+     * @return int
+     */
+    protected function getUserID(): int
+    {
+        if (!$userID = Application::getUser()->id)
+        {
+            Application::error(401);
+        }
+
+        return $userID;
+    }
 }

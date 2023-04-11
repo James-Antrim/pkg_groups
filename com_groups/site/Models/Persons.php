@@ -55,7 +55,7 @@ class Persons extends ListModel
     /**
      * @inheritDoc
      */
-    public function delete()
+    public function delete(): void
     {
         Application::message(Text::_('GROUPS_503'));
     }
@@ -63,7 +63,7 @@ class Persons extends ListModel
     /**
      * @inheritDoc
      */
-    public function filterFilterForm(Form $form)
+    public function filterFilterForm(Form $form): void
     {
         if ($this->state->get('filter.association'))
         {
