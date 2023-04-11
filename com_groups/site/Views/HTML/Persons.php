@@ -3,7 +3,7 @@
  * @package     Groups
  * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
- * @copyright   2022 TH Mittelhessen
+ * @copyright   2023 TH Mittelhessen
  * @license     GNU GPL v.3
  * @link        www.thm.de
  */
@@ -45,12 +45,11 @@ class Persons extends ListView
      */
     public function display($tpl = null)
     {
-
         $this->todo = [
-            'main menu',
             'batch stuff',
+            'main menu',
             'password reset',
-            'model functions'
+            'toolbar'
             // User notes support is not planned at this time.
         ];
 

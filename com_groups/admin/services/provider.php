@@ -3,7 +3,7 @@
  * @package     Groups
  * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
- * @copyright   2022 TH Mittelhessen
+ * @copyright   2023 TH Mittelhessen
  * @license     GNU GPL v.3
  * @link        www.thm.de
  */
@@ -35,10 +35,11 @@ return new class implements ServiceProviderInterface {
      *
      * @return  void
      */
-    public function register(Container $container)
+    public function register(Container $container): void
     {
         $container->registerServiceProvider(new Providers\Dispatcher());
         $container->registerServiceProvider(new Providers\MVC());
+        //TODO these items!!
         //$container->registerServiceProvider(new Service\Provider\CategoryFactory('\\THM\\Groups'));
         //$container->registerServiceProvider(new Service\Provider\RouterFactory('\\THM\\Groups'));
         $container->set(

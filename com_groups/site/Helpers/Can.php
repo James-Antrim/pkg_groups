@@ -3,7 +3,7 @@
  * @package     Groups
  * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
- * @copyright   2022 TH Mittelhessen
+ * @copyright   2023 TH Mittelhessen
  * @license     GNU GPL v.3
  * @link        www.thm.de
  */
@@ -48,25 +48,9 @@ class Can
      *
      * @return bool true if the user has 'create' access, otherwise false
      */
-    private static function changeState(): bool
+    public static function changeState(): bool
     {
         return (self::administrate() or ContentHelper::getActions('com_users')->get('core.edit.state'));
-    }
-
-    /**
-     * Checks whether the user has access to change the state of a user.
-     *
-     * @return bool true if the user has 'manage' access, otherwise false
-     */
-    public static function changePersonState(int $id = 0): bool
-    {
-        if (self::changeState())
-        {
-            return true;
-        }
-
-        // People may update their own status attributes.
-        return self::identity($id);
     }
 
     /**
@@ -141,6 +125,27 @@ class Can
     public static function manage(): bool
     {
         return (self::administrate() or ContentHelper::getActions('com_users')->get('core.manage'));
+    }
+
+    /**
+     * Checks whether the user has access to publish users or a specific user.
+     *
+     * @return bool true if the user has 'manage' access, otherwise false
+     */
+    public static function publish(int $id = 0): bool
+    {
+        if (self::changeState())
+        {
+            return true;
+        }
+
+        if (!$id)
+        {
+            return false;
+        }
+
+        // People may update their own status attributes.
+        return self::identity($id);
     }
 
     /**

@@ -3,7 +3,7 @@
  * @package     Groups
  * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
- * @copyright   2022 TH Mittelhessen
+ * @copyright   2023 TH Mittelhessen
  * @license     GNU GPL v.3
  * @link        www.thm.de
  */
@@ -48,7 +48,7 @@ class Roles extends ListModel
     /**
      * @inheritDoc
      */
-    public function delete():void
+    public function delete(): void
     {
         if (!Can::administrate())
         {
@@ -126,7 +126,8 @@ class Roles extends ListModel
 
         if ($deleted)
         {
-            Application::message(Text::sprintf('GROUPS_X_DELETED', $deleted));
+            $message = $deleted === 1 ? Text::sprintf('GROUPS_1_DELETED') : Text::sprintf('GROUPS_X_DELETED', $deleted);
+            Application::message($message);
         }
     }
 

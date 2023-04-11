@@ -3,13 +3,14 @@
  * @package     Groups
  * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
- * @copyright   2022 TH Mittelhessen
+ * @copyright   2023 TH Mittelhessen
  * @license     GNU GPL v.3
  * @link        www.thm.de
  */
 
 namespace THM\Groups\Helpers;
 
+use THM\Groups\Tables\Users;
 use THM\Groups\Tools\Cohesion;
 
 class Persons
@@ -61,7 +62,7 @@ class Persons
         self::DISABLED => [
             'class' => 'unpublish',
             'column' => 'content',
-            'task' => 'allowContent',
+            'task' => 'enableContent',
             'tip' => 'GROUPS_TOGGLE_TIP_CONTENTS_DISABLED'
         ]];
 
@@ -75,7 +76,7 @@ class Persons
         self::DISABLED => [
             'class' => 'unpublish',
             'column' => 'editing',
-            'task' => 'allowEditing',
+            'task' => 'enableEditing',
             'tip' => 'GROUPS_TOGGLE_TIP_EDITING_DISABLED'
         ]];
 
@@ -104,6 +105,34 @@ class Persons
     ];*/
 
     /**
+     * Gets the value of a table state property.
+     * @param int $personID
+     * @param string $property
+     *
+     * @return bool
+     */
+    public static function get(int $personID, string $property): bool
+    {
+        $person = self::getTable();
+        $person->load($personID);
+
+        if (property_exists($person, $property) and is_bool($person->$$property))
+        {
+            return $person->$$property;
+        }
+
+        $user = new Users();
+        $user->load($personID);
+
+        if (property_exists($user, $property) and is_bool($user->$$property))
+        {
+            return $user->$$property;
+        }
+
+        return false;
+    }
+
+    /**
      * Gets the person's forenames.
      *
      * @param int $personID
@@ -113,10 +142,7 @@ class Persons
      */
     public static function getForenames(int $personID): string
     {
-        $person = self::getTable();
-        $person->load($personID);
-
-        return $person->forenames ?? '';
+        return self::get($personID, 'forenames') ?? '';
     }
 
     /**
@@ -129,10 +155,7 @@ class Persons
      */
     public static function getSurnames(int $personID): string
     {
-        $person = self::getTable();
-        $person->load($personID);
-
-        return $person->surnames ?? '';
+        return self::get($personID, 'surnames') ?? '';
     }
 
     /**
