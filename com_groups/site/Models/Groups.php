@@ -25,6 +25,8 @@ use THM\Groups\Tools\Migration;
  */
 class Groups extends ListModel
 {
+    protected string $defaultOrdering = 'ug.lft';
+
     /**
      * @inheritDoc
      */
