@@ -27,7 +27,7 @@ class Groups extends ListView
     /**
      * @inheritDoc
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         $actions = CoreAccess::getActions('com_users');
         $toolbar = Toolbar::getInstance();

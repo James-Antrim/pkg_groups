@@ -23,7 +23,7 @@ class Types extends ListView
     /**
      * @inheritDoc
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         // Manage access is a prerequisite for getting this far
         ToolbarHelper::addNew('Types.add');
