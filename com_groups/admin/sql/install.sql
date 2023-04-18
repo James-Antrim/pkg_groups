@@ -1,3 +1,4 @@
+#region Creation
 CREATE TABLE IF NOT EXISTS `#__groups_attributes`
 (
     `id`            INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
@@ -16,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_attributes`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
+#todo integrate with usergroups?
 # no unique keys for groups which may have the same name in different contexts.
 CREATE TABLE IF NOT EXISTS `#__groups_groups`
 (
@@ -23,18 +25,6 @@ CREATE TABLE IF NOT EXISTS `#__groups_groups`
     `name_de` VARCHAR(100)     NOT NULL,
     `name_en` VARCHAR(100)     NOT NULL,
     PRIMARY KEY (`id`)
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4
-    COLLATE = utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS `#__groups_person_associations`
-(
-    `id`       INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `assocID`  INT(11) UNSIGNED NOT NULL,
-    `personID` INT(11)          NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
-    PRIMARY KEY (`ID`),
-    UNIQUE KEY `entry` (`assocID`, `personID`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
@@ -54,6 +44,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_person_attributes`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
+#todo integrate with users?
 CREATE TABLE IF NOT EXISTS `#__groups_persons`
 (
     `id`        INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
@@ -70,13 +61,22 @@ CREATE TABLE IF NOT EXISTS `#__groups_persons`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
+# modernize the table for ease of reference from the role associations table
+ALTER TABLE `#__user_usergroup_map`
+    DROP CONSTRAINT `PRIMARY`,
+    ADD COLUMN `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    ADD PRIMARY KEY (`id`),
+    MODIFY `group_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Foreign Key to #__usergroups.id' AFTER `id`,
+    MODIFY `user_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Foreign Key to #__users.id' AFTER `group_id`,
+    ADD UNIQUE KEY `entry` (`group_id`, `user_id`);
+
 CREATE TABLE IF NOT EXISTS `#__groups_role_associations`
 (
-    `id`      INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `groupID` INT(11) UNSIGNED NOT NULL,
-    `roleID`  INT(11) UNSIGNED NOT NULL,
+    `id`     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `mapID`  INT(11) UNSIGNED NOT NULL,
+    `roleID` INT(11) UNSIGNED NOT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `entry` (`groupID`, `roleID`)
+    UNIQUE KEY `entry` (`mapID`, `roleID`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
@@ -112,7 +112,9 @@ CREATE TABLE IF NOT EXISTS `#__groups_types`
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
+#endregion
 
+#region Fill
 # Forenames and surnames are now a part of the persons table
 INSERT INTO `#__groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `viewLevelID`)
 VALUES (1, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
@@ -145,39 +147,32 @@ VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
        (8, 'Datum', 'Date', 5, '{}');
 
 INSERT INTO `#__groups_roles` (`id`, `name_de`, `name_en`, `names_de`, `names_en`, `ordering`)
-VALUES (1, 'Mitglied', 'Member', 'Mitglieder', 'Members', 17),
-       (2, 'Dekan', 'Dean', 'Dekane', 'Deans', 1),
-       (3, 'Dekanin', 'Dean', 'Dekaninnen', 'Deans', 2),
-       (4, 'Prodekan', 'Vice Dean', 'Prodekane', 'Vice Deans', 3),
-       (5, 'Prodekanin', 'Vice Dean', 'Prodekaninnen', 'Vice Deans', 4),
-       (6, 'Studiendekan', 'Dean of Studies', 'Studiendekane', 'Deans of Studies', 5),
-       (7, 'Studiendekanin', 'Dean of Studies', 'Studiendekaninnen', 'Deans of Studies', 6),
-       (8, 'Leitung', 'Management', 'Leitung', 'Management', 7),
-       (9, 'Koordinator:in', 'Coordinator', 'Koordinator:innen', 'Coordinators', 8),
-       (10, 'Professor:in', 'Professor', 'Professor:innen', 'Professors', 9),
-       (11, 'Sekretariat', 'Secretariat', 'Sekretariat', 'Secretariat', 10),
-       (12, 'Mitarbeiter:in', 'Staff', 'Mitarbeiter:innen', 'Staff', 11),
-       (13, 'Lehrbeauftragte', 'Lecturer', 'Lehrbeauftragten', 'Lecturers', 12),
-       (14, 'Studentische Mitarbeiter:in', 'Student Staff', 'Studentische Mitarbeiter:innen', 'Student Staff', 13),
-       (15, 'Praktikant:in', 'Intern', 'Praktikant:innen', 'Interns', 14),
-       (16, 'Schülerpraktikant:in', 'Student Intern', 'Schülerpraktikant:innen', 'Student Interns', 15),
-       (17, 'Student:in', 'Student', 'Studenten:innen', 'Student', 16),
-       (18, 'Ehemalige', 'Alumnus', 'Alumni', 'Alumni', 18);
+VALUES (1, 'Dekan', 'Dean', 'Dekane', 'Deans', 1),
+       (2, 'Dekanin', 'Dean', 'Dekaninnen', 'Deans', 2),
+       (3, 'Prodekan', 'Vice Dean', 'Prodekane', 'Vice Deans', 3),
+       (4, 'Prodekanin', 'Vice Dean', 'Prodekaninnen', 'Vice Deans', 4),
+       (5, 'Studiendekan', 'Dean of Studies', 'Studiendekane', 'Deans of Studies', 5),
+       (6, 'Studiendekanin', 'Dean of Studies', 'Studiendekaninnen', 'Deans of Studies', 6),
+       (7, 'Leitung', 'Management', 'Leitung', 'Management', 7),
+       (8, 'Koordinator:in', 'Coordinator', 'Koordinator:innen', 'Coordinators', 8),
+       (9, 'Professor:in', 'Professor', 'Professor:innen', 'Professors', 9),
+       (10, 'Sekretariat', 'Secretariat', 'Sekretariat', 'Secretariat', 10),
+       (11, 'Mitarbeiter:in', 'Staff', 'Mitarbeiter:innen', 'Staff', 11),
+       (12, 'Lehrbeauftragte', 'Lecturer', 'Lehrbeauftragten', 'Lecturers', 12),
+       (13, 'Studentische Mitarbeiter:in', 'Student Staff', 'Studentische Mitarbeiter:innen', 'Student Staff', 13),
+       (14, 'Praktikant:in', 'Intern', 'Praktikant:innen', 'Interns', 14),
+       (15, 'Schülerpraktikant:in', 'Student Intern', 'Schülerpraktikant:innen', 'Student Interns', 15),
+       (16, 'Student:in', 'Student', 'Studenten:innen', 'Student', 16),
+       (17, 'Ehemalige', 'Alumnus', 'Alumni', 'Alumni', 18);
+#endregion
 
+#region Reference
 ALTER TABLE `#__groups_attributes`
     ADD CONSTRAINT `fk_attributes_typeID` FOREIGN KEY (`typeID`) REFERENCES `#__groups_types` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
     ADD CONSTRAINT `fk_attributes_viewLevelID` FOREIGN KEY (`viewLevelID`) REFERENCES `#__viewlevels` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `#__groups_groups`
     ADD CONSTRAINT `fk_groups_groupID` FOREIGN KEY (`id`) REFERENCES `#__usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `#__groups_person_associations`
-    ADD CONSTRAINT `fk_pAssocs_assocID` FOREIGN KEY (`assocID`) REFERENCES `#__groups_role_associations` (`id`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE,
-    ADD CONSTRAINT `fk_pAssocs_personID` FOREIGN KEY (`personID`) REFERENCES `#__groups_persons` (`id`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE;
 
 ALTER TABLE `#__groups_person_attributes`
     ADD CONSTRAINT `fk_pAttribs_attributeID` FOREIGN KEY (`attributeID`) REFERENCES `#__groups_attributes` (`id`)
@@ -195,3 +190,4 @@ ALTER TABLE `#__groups_persons`
 ALTER TABLE `#__groups_role_associations`
     ADD CONSTRAINT `fk_rAssocs_roleID` FOREIGN KEY (`roleID`) REFERENCES `#__groups_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     ADD CONSTRAINT `fk_rAssocs_groupID` FOREIGN KEY (`groupID`) REFERENCES `#__groups_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+#endregion
