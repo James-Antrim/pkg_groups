@@ -82,14 +82,15 @@ abstract class ListModel extends Base
         }
 
         $total = 0;
+        $value = (int)$value;
 
         foreach ($selectedIDs as $selectedID)
         {
             $table = new $fqName();
 
-            if ($table->load($selectedID))
+            if ($table->load($selectedID) and $table->$column !== $value)
             {
-                $table->$column = $value ? 1 : 0;
+                $table->$column = $value;
 
                 if ($table->store())
                 {
