@@ -137,7 +137,6 @@ class Users extends User
      */
     public $authProvider;
 
-
     /**
      * @inheritDoc
      */

@@ -13,7 +13,6 @@ namespace THM\Groups\Models;
 use Exception;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel as Base;
 use Joomla\Database\QueryInterface;
@@ -58,48 +57,6 @@ abstract class ListModel extends Base
             Application::message($exception->getMessage(), 'error');
             Application::redirect('', $exception->getCode());
         }
-    }
-
-
-    /**
-     * Updates a boolean column for multiple entries in a
-     * @param string $name
-     * @param string $column
-     * @param array $selectedIDs
-     * @param bool $value
-     * @return int
-     */
-    public static function updateBool(string $name, string $column, array $selectedIDs, bool $value): int
-    {
-        $fqName = "THM\Groups\Tables\\$name";
-        $table  = new $fqName();
-
-        if (!property_exists($table, $column))
-        {
-            Application::message(Text::_('GROUPS_TABLE_COLUMN_NONEXISTENT'), Application::ERROR);
-
-            return 0;
-        }
-
-        $total = 0;
-        $value = (int)$value;
-
-        foreach ($selectedIDs as $selectedID)
-        {
-            $table = new $fqName();
-
-            if ($table->load($selectedID) and $table->$column !== $value)
-            {
-                $table->$column = $value;
-
-                if ($table->store())
-                {
-                    $total++;
-                }
-            }
-        }
-
-        return $total;
     }
 
     /**
