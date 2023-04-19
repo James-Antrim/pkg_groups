@@ -126,8 +126,7 @@ class ListItem
      */
     private static function text(object $item, string $column, bool $context, int $linkType)
     {
-        $supplement = $column === 'name';
-        $value      = $item->$column ?? '';
+        $value = $item->$column ?? '';
 
         if (is_array($value))
         {
@@ -137,6 +136,17 @@ class ListItem
         else
         {
             $properties = '';
+        }
+
+        if ($main = $column === 'name')
+        {
+            $opener = "<th $properties scope=\"row\">";
+            $closer = "</th>";
+        }
+        else
+        {
+            $opener = "<td $properties>";
+            $closer = "</td>";
         }
 
         $linkOpen  = '';
@@ -160,21 +170,30 @@ class ListItem
             }
         }
 
-        ?>
-        <td <?php echo $properties; ?>>
-            <?php if ($supplement and !empty($item->prefix)): ?>
-                <?php echo $item->prefix; ?>
-            <?php endif; ?>
-            <?php echo $linkOpen; ?>
-            <?php echo $value; ?>
-            <?php echo $linkClose; ?>
-            <?php if ($supplement and !empty($item->icon)): ?>
-                <?php echo $item->icon; ?>
-            <?php endif; ?>
-            <?php if ($supplement and !empty($item->supplement)): ?>
-                <br><span class="small"><?php echo $item->supplement; ?></span>
-            <?php endif; ?>
-        </td>
-        <?php
+        echo $opener;
+
+        if ($main and !empty($item->prefix))
+        {
+            echo $item->prefix;
+        }
+
+        echo $linkOpen . $value . $linkClose;
+
+        if ($main and !empty($item->icon))
+        {
+            echo $item->icon;
+        }
+
+        if ($main and !empty($item->supplement))
+        {
+            echo "<br><span class=\"small\">$item->supplement</span>";
+        }
+
+        if ($main and $item->requireReset === 1)
+        {
+            echo '<span class="badge bg-warning text-dark">' . Text::_('GROUPS_RESET_REQUIRED') . '</span>';
+        }
+
+        echo $closer;
     }
 }

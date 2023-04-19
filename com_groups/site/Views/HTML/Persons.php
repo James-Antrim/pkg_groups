@@ -133,7 +133,6 @@ class Persons extends ListView
         $this->todo = [
             'batch stuff',
             'main menu',
-            'password reset',
             'toolbar'
             // User notes support is not planned at this time.
         ];
