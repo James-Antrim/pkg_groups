@@ -13,7 +13,6 @@ namespace THM\Groups\Helpers;
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
 use THM\Groups\Adapters\Application;
-use THM\Groups\Tables\Groups as Table;
 
 /**
  *  Constants and functions for dealing with groups from an external read context.
@@ -163,23 +162,18 @@ class Groups implements Selectable
         $tag = Application::getTag();
         $db  = Application::getDB();
 
-        $id        = $db->quoteName("r.id");
-        $ra        = $db->quoteName('#__groups_role_associations', 'ra');
-        $raGroupID = $db->quoteName("ra.groupID");
-        $raRoleID  = $db->quoteName("ra.roleID");
-        $name      = $db->quoteName("r.name_$tag", 'name');
-        $nameTag   = $db->quoteName("r.name_$tag");
-        $roles     = $db->quoteName('#__groups_roles', 'r');
+        $roleID     = $db->quoteName("r.id");
+        $condition1 = $db->quoteName("ra.roleID") . " = $roleID";
+        $condition2 = $db->quoteName("m.id") . ' = ' . $db->quoteName("ra.mapID");
 
-        $condition = "$raRoleID = $id";
-        $query     = $db->getQuery(true);
-
-        $query->select([$id, $name])
-            ->from($roles)
-            ->join('inner', $ra, $condition)
-            ->where("$raGroupID = :groupID")
+        $query = $db->getQuery(true)
+            ->select([$roleID, $db->quoteName("r.name_$tag", 'name')])
+            ->from($db->quoteName('#__groups_roles', 'r'))
+            ->join('inner', $db->quoteName('#__groups_role_associations', 'ra'), $condition1)
+            ->join('inner', $db->quoteName('#__user_usergroup_map', 'm'), $condition2)
+            ->where($db->quoteName("m.group_id") . ' = :groupID')
             ->bind(':groupID', $groupID, ParameterType::INTEGER)
-            ->order($nameTag);
+            ->order($db->quoteName("r.name_$tag"));
         $db->setQuery($query);
 
         $results = $db->loadAssocList('id', 'name');

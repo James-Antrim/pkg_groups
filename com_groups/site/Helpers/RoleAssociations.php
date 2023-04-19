@@ -18,41 +18,45 @@ use THM\Groups\Adapters\Application;
  */
 class RoleAssociations
 {
-	/**
-	 * Gets the ids of the associated roles
-	 *
-	 * @param   int  $groupID  the id of the group
-	 *
-	 * @return int[] the associated groups in the form assocID => roleID
-	 */
-	public static function byGroupID(int $groupID): array
-	{
-		$db        = Application::getDB();
-		$query     = $db->getQuery(true);
-		$ras       = $db->quoteName('#__groups_role_associations');
-		$gIDColumn = $db->quoteName('groupID');
-		$query->select('*')->from($ras)->where("$gIDColumn = :groupID")->bind(':groupID', $groupID, ParameterType::INTEGER);
-		$db->setQuery($query);
+    /**
+     * Gets the ids of the associated roles
+     *
+     * @param int $groupID the id of the group
+     *
+     * @return int[] the associated groups in the form assocID => roleID
+     */
+    public static function byGroupID(int $groupID): array
+    {
+        $db        = Application::getDB();
+        $condition = $db->quoteName('m.id') . ' = ' . $db->quoteName('ra.mapID');
 
-		return $db->loadAssocList('id', 'roleID');
-	}
+        $query = $db->getQuery(true);
+        $query->select($db->quoteName('ra') . '.*')
+            ->from($db->quoteName('#__groups_role_associations', 'ra'))
+            ->join('inner', $db->quoteName('#__user_usergroup_map', 'm'), $condition)
+            ->where($db->quoteName('m.group_id') . ' = :groupID')
+            ->bind(':groupID', $groupID, ParameterType::INTEGER);
+        $db->setQuery($query);
 
-	/**
-	 * Gets the ids of the associated groups
-	 *
-	 * @param   int  $roleID  the id of the role
-	 *
-	 * @return int[] the associated groups in the form assocID => groupID
-	 */
-	public static function byRoleID(int $roleID): array
-	{
-		$db        = Application::getDB();
-		$query     = $db->getQuery(true);
-		$ras       = $db->quoteName('#__groups_role_associations');
-		$rIDColumn = $db->quoteName('roleID');
-		$query->select('*')->from($ras)->where("$rIDColumn = :roleID")->bind(':roleID', $roleID, ParameterType::INTEGER);
-		$db->setQuery($query);
+        return $db->loadAssocList('id', 'roleID');
+    }
 
-		return $db->loadAssocList('id', 'groupID');
-	}
+    /**
+     * Gets the ids of the associated groups
+     *
+     * @param int $roleID the id of the role
+     *
+     * @return int[] the associated groups in the form assocID => groupID
+     */
+    public static function byRoleID(int $roleID): array
+    {
+        $db        = Application::getDB();
+        $query     = $db->getQuery(true);
+        $ras       = $db->quoteName('#__groups_role_associations');
+        $rIDColumn = $db->quoteName('roleID');
+        $query->select('*')->from($ras)->where("$rIDColumn = :roleID")->bind(':roleID', $roleID, ParameterType::INTEGER);
+        $db->setQuery($query);
+
+        return $db->loadAssocList('id', 'groupID');
+    }
 }

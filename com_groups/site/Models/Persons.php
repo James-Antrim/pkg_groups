@@ -91,40 +91,26 @@ class Persons extends ListModel
         $query  = $db->getQuery(true);
         $tag    = Application::getTag();
 
-        $assocID   = $db->quoteName('pa.assocID');
-        $groupID   = $db->quoteName('g.id');
-        $mGroupID  = $db->quoteName('map.group_id');
-        $personID  = $db->quoteName('pa.personID');
-        $raGroupID = $db->quoteName('ra.groupID');
-        $raID      = $db->quoteName('ra.id');
-        $raRoleID  = $db->quoteName('ra.roleID');
-        $roleID    = $db->quoteName('r.id');
-        $userID    = $db->quoteName('map.user_id');
-
-        $jCondition1 = "$mGroupID = $groupID";
-        $jCondition2 = "$raGroupID = $groupID";
-        $jCondition3 = "$roleID = $raRoleID";
-        $jCondition4 = "$assocID = $raID";
-
-        $wCondition1 = "($personID = $itemID AND $userID = $itemID)";
-        $wCondition2 = "($personID = $itemID AND $userID IS NULL)";
-        $wCondition3 = "($personID IS NULL AND $userID = $itemID)";
+        $jCondition1 = $db->quoteName('map.group_id') . ' = ' . $db->quoteName('g.id');
+        $jCondition2 = $db->quoteName('ra.mapID') . ' = ' . $db->quoteName('map.id');
+        $jCondition3 = $db->quoteName('r.id') . ' = ' . $db->quoteName('ra.roleID');
+        $jCondition4 = $db->quoteName('p.id') . ' = ' . $db->quoteName('map.user_id');
 
         $select = [
             $db->quoteName('g.id', 'groupID'),
             $db->quoteName("g.name_$tag", 'group'),
             $db->quoteName('r.id', 'roleID'),
             $db->quoteName("r.name_$tag", 'role'),
-            $db->quoteName('pa.personID', 'personID'),
+            $db->quoteName('p.id', 'personID'),
             $db->quoteName('map.user_id', 'userID')
         ];
         $query->select($select)
             ->from($db->quoteName('#__groups_groups', 'g'))
-            ->join('left', $db->quoteName('#__user_usergroup_map', 'map'), $jCondition1)
+            ->join('inner', $db->quoteName('#__user_usergroup_map', 'map'), $jCondition1)
             ->join('left', $db->quoteName('#__groups_role_associations', 'ra'), $jCondition2)
             ->join('left', $db->quoteName('#__groups_roles', 'r'), $jCondition3)
-            ->join('left', $db->quoteName('#__groups_person_associations', 'pa'), $jCondition4)
-            ->where("($wCondition1 OR $wCondition2 OR $wCondition3)");
+            ->join('left', $db->quoteName('#__groups_persons', 'p'), $jCondition4)
+            ->where($db->quoteName('map.user_id') . " = $itemID");
 
         $db->setQuery($query);
 
@@ -134,11 +120,6 @@ class Persons extends ListModel
             $groupID = $result['groupID'];
             $role    = $result['role'];
             $roleID  = $result['roleID'];
-
-            if (empty($result['userID']))
-            {
-                // TODO: create map entry
-            }
 
             if (empty($result['personID']) and !in_array($groupID, Helpers\Groups::DEFAULT))
             {

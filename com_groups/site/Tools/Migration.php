@@ -15,7 +15,6 @@ use Joomla\Database\ParameterType;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Attributes;
 use THM\Groups\Helpers\Groups;
-use THM\Groups\Helpers\Roles;
 use THM\Groups\Helpers\Types;
 use THM\Groups\Tables;
 
@@ -347,9 +346,8 @@ class Migration
 
         if (!$session->get('com_groups.migrated.roles'))
         {
-            $rMap  = self::roles();
-            $raMap = self::roleAssociations($rMap);
-            self::personAssociations($raMap);
+            $rMap = self::roles();
+            self::roleAssociations($rMap);
             $session->set('com_groups.migrated.roles', true);
         }
 
@@ -358,88 +356,6 @@ class Migration
             $aMap = self::attributes();
             self::personAttributes($aMap);
             $session->set('com_groups.migrated.attributes', true);
-        }
-    }
-
-    /**
-     * Migrates the person associations table.
-     *
-     * @param array $assocMap
-     *
-     * @return void
-     */
-    private static function personAssociations(array $assocMap): void
-    {
-        $db = Application::getDB();
-
-        // Direct migration from the old table to the new table with the assoc ids updated according to the map.
-        $query = $db->getQuery(true);
-        $query->select('*')->from($db->quoteName('#__thm_groups_profile_associations'));
-        $db->setQuery($query);
-
-        if ($oldAssocs = $db->loadObjectList())
-        {
-            foreach ($oldAssocs as $oldAssoc)
-            {
-                $assoc = [
-                    'assocID' => $assocMap[$oldAssoc->role_associationID],
-                    'personID' => $oldAssoc->profileID
-                ];
-
-                $table = new Tables\PersonAssociations();
-
-                if (!$table->load($assoc))
-                {
-                    $table->save($assoc);
-                }
-            }
-        }
-
-        // Get the users associated with groups in the Joomla user => usergroup map
-        $query = $db->getQuery(true);
-        $query->select('DISTINCT ' . $db->quoteName('user_id'))
-            ->from($db->quoteName('#__user_usergroup_map'))
-            ->where($db->quoteName('group_id') . ' = :groupID')
-            ->bind(':groupID', $groupID, ParameterType::INTEGER);
-
-        foreach (Groups::getIDs() as $groupID)
-        {
-            // Ignore standard groups which would only be used for site privileges.
-            if (in_array($groupID, Groups::DEFAULT))
-            {
-                continue;
-            }
-
-            $db->setQuery($query);
-
-            // The group has not directly associated users, nothing to supplement.
-            if (!$userIDs = $db->loadColumn())
-            {
-                continue;
-            }
-
-            $rAssocTable = new Tables\RoleAssociations();
-
-            // Get the basic group => member role association entry and supplement the person as necessary.
-            if ($assocID = $rAssocTable->getAssocID($groupID, Roles::MEMBER))
-            {
-                foreach ($userIDs as $personID)
-                {
-                    $pAssoc      = ['assocID' => $assocID, 'personID' => $personID];
-                    $pAssocTable = new Tables\PersonAssociations();
-
-                    if (!$pAssocTable->load($pAssoc))
-                    {
-                        $pAssocTable->save($pAssoc);
-                    }
-                }
-            }
-            else
-            {
-                $group = new Tables\Groups();
-                $name  = $group->getName($groupID);
-                Application::message("Group \"$name\" does not have a member association.", 'error');
-            }
         }
     }
 
@@ -579,17 +495,22 @@ class Migration
      *
      * @param array $rMap an array mapping the existing roles table to the new one
      *
-     * @return array an array mapping the existing role associations table to the new one
+     * @return void
      */
-    private static function roleAssociations(array $rMap): array
+    private static function roleAssociations(array $rMap): void
     {
         $db = Application::getDB();
 
-        $query = $db->getQuery(true);
-        $query->select('*')->from($db->quoteName('#__thm_groups_role_associations'));
-        $db->setQuery($query);
+        $condition1 = $db->quoteName('ra.id') . ' = ' . $db->quoteName('pa.role_associationID');
+        $condition2 = $db->quoteName('r.id') . ' = ' . $db->quoteName('ra.roleID');
 
-        $map = [];
+        $query = $db->getQuery(true);
+        $query->select([$db->quoteName('pa.profileID'), $db->quoteName('ra.groupID'), $db->quoteName('ra.roleID')])
+            ->from($db->quoteName('#__thm_groups_profile_associations', 'pa'))
+            ->join('inner', $db->quoteName('#__thm_groups_role_associations', 'ra'), $condition1)
+            ->join('inner', $db->quoteName('#__thm_groups_roles', 'r'), $condition2)
+            ->where($db->quoteName('r.name') . " != 'Mitglied'");
+        $db->setQuery($query);
 
         // rMap has to be filled for this to return results
         if ($assocs = $db->loadObjectList())
@@ -602,44 +523,31 @@ class Migration
                     continue;
                 }
 
+                // Non-migrated roles (member) are not processed
+                if (empty($rMap[$assoc->roleID]))
+                {
+                    continue;
+                }
+
+                $map  = new Tables\UserUsergroupMap();
+                $data = ['group_id' => $assoc->groupID, 'user_id' => $assoc->profileID];
+
+                if (!$map->load($data) or !$map->id)
+                {
+                    continue;
+                }
+
                 $table = new Tables\RoleAssociations();
-                $data  = ['groupID' => $assoc->groupID, 'roleID' => $rMap[$assoc->roleID]];
+                $data  = ['mapID' => $map->id, 'roleID' => $rMap[$assoc->roleID]];
 
                 if ($table->load($data))
                 {
-                    $map[$assoc->id] = $table->id;
                     continue;
                 }
 
                 $table->save($data);
-                $map[$assoc->id] = $table->id;
             }
         }
-        // no existing data
-        else
-        {
-            $groupIDs = Groups::getIDs();
-
-            foreach ($groupIDs as $groupID)
-            {
-                if (in_array($groupID, Groups::DEFAULT))
-                {
-                    continue;
-                }
-
-                $table = new Tables\RoleAssociations();
-                $assoc = ['groupID' => $groupID, 'roleID' => Roles::MEMBER];
-
-                if ($table->load($assoc))
-                {
-                    continue;
-                }
-
-                $table->save($assoc);
-            }
-        }
-
-        return $map;
     }
 
     /**
@@ -673,13 +581,19 @@ class Migration
 
         foreach ($oldRoles as $oldRole)
         {
-            $oldID = $oldRole->id;
+            $oldID   = $oldRole->id;
+            $thmName = $oldRole->name;
+
+            // Members are now inferred but explicitly referenced
+            if ($thmName === 'Mitglied')
+            {
+                continue;
+            }
 
             $oldOrdering[$oldRole->ordering] = $oldID;
 
-            //name
-            $table   = new Tables\Roles();
-            $thmName = $oldRole->name;
+            // Attempt name resolution
+            $table = new Tables\Roles();
 
             // Exact match 50% of THM roles
             if ($table->load(['name_de' => $thmName]))
@@ -691,13 +605,13 @@ class Migration
             // Two known changes that wouldn't work with like.
             if ($thmName === 'Koordinatorin')
             {
-                $map[$oldID] = 9;
+                $map[$oldID] = 8;
                 continue;
             }
 
             if ($thmName === 'ProfessorInnen')
             {
-                $map[$oldID] = 10;
+                $map[$oldID] = 9;
                 continue;
             }
 
