@@ -161,8 +161,8 @@ class Persons extends ListView
 
         foreach ($groups as $groupID => $group) {
             $roles = match (count($group['roles'])) {
-                0, 1 => '',
-                2 => ': ' . implode(' & ', $group['roles']),
+                0 => '',
+                1, 2 => ': ' . implode(' & ', $group['roles']),
                 default => ': ' . Text::_('GROUPS_MULTIPLE_ROLES'),
             };
 
