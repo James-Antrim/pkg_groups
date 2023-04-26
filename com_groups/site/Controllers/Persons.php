@@ -195,6 +195,8 @@ class Persons extends Controller
         $selected = count($selectedIDs);
         $updated = $this->updateBool('Persons', 'content', $selectedIDs, false);
 
+        // todo add category suppression
+
         $this->farewell($selected, $updated);
     }
 
@@ -231,6 +233,8 @@ class Persons extends Controller
         $selectedIDs = Input::getSelectedIDs();
         $selected = count($selectedIDs);
         $updated = $this->updateBool('Persons', 'content', $selectedIDs, true);
+
+        // todo add category creation
 
         $this->farewell($selected, $updated);
     }
