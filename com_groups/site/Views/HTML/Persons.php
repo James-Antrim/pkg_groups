@@ -91,6 +91,13 @@ class Persons extends ListView
                         ->text('GROUPS_BATCH_PROCESSING')
                         ->listCheck(true);
                 }
+
+                if (Can::delete()) {
+                    $childBar->delete('Persons.delete')
+                        ->message('GROUPS_DELETE_MESSAGE')
+                        ->text('GROUPS_DELETE_USER')
+                        ->listCheck(true);
+                }
             }
 
             /*if ($this->state->get('filter.published') != -2 && $canDo->get('core.edit.state')) {

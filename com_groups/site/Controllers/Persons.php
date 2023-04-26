@@ -17,6 +17,7 @@ use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserHelper;
 use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\{Can, Groups};
+use Joomla\Component\Users\Administrator\Model\UserModel;
 use THM\Groups\Tables\{RoleAssociations, Users, UserUsergroupMap};
 
 /**
@@ -39,10 +40,10 @@ class Persons extends Controller
             Application::error(403);
         }
 
-        $app = Application::getApplication();
+        $app         = Application::getApplication();
         $selectedIDs = Input::getSelectedIDs();
-        $selected = count($selectedIDs);
-        $updated = 0;
+        $selected    = count($selectedIDs);
+        $updated     = 0;
 
         PluginHelper::importPlugin('user');
 
@@ -57,7 +58,7 @@ class Persons extends Controller
                     continue;
                 }
 
-                $users->block = 0;
+                $users->block      = 0;
                 $users->activation = '';
 
                 // Trigger the before save event.
@@ -91,19 +92,19 @@ class Persons extends Controller
             Application::error(403);
         }
 
-        $user = Application::getUser();
+        $user  = Application::getUser();
         $super = $user->get('isRoot');
 
-        $batchItems = Input::getBatchItems();
+        $batchItems  = Input::getBatchItems();
         $selectedIDs = Input::getSelectedIDs();
-        $selected = count($selectedIDs);
+        $selected    = count($selectedIDs);
 
         $actionValue = $batchItems->get('action');
-        $batchMap = false;
-        $groupID = (int)$batchItems->get('groupID');
-        $roleID = 0;
+        $batchMap    = false;
+        $groupID     = (int) $batchItems->get('groupID');
+        $roleID      = 0;
 
-        if (is_numeric($actionValue) and in_array((int)$actionValue, self::ACTIONS) and $groupID) {
+        if (is_numeric($actionValue) and in_array((int) $actionValue, self::ACTIONS) and $groupID) {
             /**
              * Joomla programmed a hard error if a non-super user batch processed a super user at all. I am only going
              * to throw an error if the batch process is to add or remove a group assignment which would add or remove
@@ -114,19 +115,19 @@ class Persons extends Controller
                 $this->farewell($selected);
             }
 
-            $actionValue = (int)$actionValue;
-            $batchMap = true;
-            $roleID = (int)$batchItems->get('roleID');
+            $actionValue = (int) $actionValue;
+            $batchMap    = true;
+            $roleID      = (int) $batchItems->get('roleID');
         }
 
         $resetValue = $batchItems->get('reset');
         $batchReset = false;
-        $resetting = false;
+        $resetting  = false;
 
-        if (is_numeric($resetValue) and in_array((int)$resetValue, self::ACTIONS)) {
-            $resetValue = (int)$resetValue;
+        if (is_numeric($resetValue) and in_array((int) $resetValue, self::ACTIONS)) {
+            $resetValue = (int) $resetValue;
             $batchReset = true;
-            $resetting = $resetValue === self::RESET;
+            $resetting  = $resetValue === self::RESET;
         }
 
         if (!$batchMap and !$batchReset) {
@@ -180,6 +181,61 @@ class Persons extends Controller
     }
 
     /**
+     * Deletes user accounts.
+     * @return void
+     * @see UserModel::delete()
+     */
+    public function delete(): void
+    {
+        if (!Can::delete()) {
+            Application::error(403);
+        }
+
+        /** @var CMSApplication $app */
+        $app         = Application::getApplication();
+        $selectedIDs = Input::getSelectedIDs();
+        $user        = Application::getUser();
+        $super       = $user->get('isRoot');
+
+        $selected = count($selectedIDs);
+        $deleted  = 0;
+
+        PluginHelper::importPlugin('user');
+
+        foreach ($selectedIDs as $selectedID) {
+
+            if ($selectedID === $user->id) {
+                Application::message(Text::_('GROUPS_CANNOT_DELETE_SELF'), Application::ERROR);
+                continue;
+            }
+
+            if (!$super and Access::check($selectedID, 'core.admin')) {
+                Application::message(Text::_('GROUPS_CANNOT_DELETE_SUPER_ADMIN'), Application::WARNING);
+                continue;
+            }
+
+            $users = new Users();
+
+            if ($users->load($selectedID)) {
+                $properties = $users->getProperties();
+
+                $app->triggerEvent('onUserBeforeDelete', [$properties]);
+
+                if (!$users->delete()) {
+                    Application::message($users->getError(), Application::ERROR);
+                    continue;
+                }
+
+                $deleted++;
+
+                $app->triggerEvent('onUserAfterDelete', [$properties, true, '']);
+            }
+        }
+
+        $this->farewell($selected, $deleted, true);
+    }
+
+    /**
      * Disables content management for the selected users.
      * @return void
      * @todo integrate component parameters
@@ -192,8 +248,8 @@ class Persons extends Controller
         }
 
         $selectedIDs = Input::getSelectedIDs();
-        $selected = count($selectedIDs);
-        $updated = $this->updateBool('Persons', 'content', $selectedIDs, false);
+        $selected    = count($selectedIDs);
+        $updated     = $this->updateBool('Persons', 'content', $selectedIDs, false);
 
         // todo add category suppression
 
@@ -212,8 +268,8 @@ class Persons extends Controller
         }
 
         $selectedIDs = Input::getSelectedIDs();
-        $selected = count($selectedIDs);
-        $updated = $this->updateBool('Persons', 'editing', $selectedIDs, false);
+        $selected    = count($selectedIDs);
+        $updated     = $this->updateBool('Persons', 'editing', $selectedIDs, false);
 
         $this->farewell($selected, $updated);
     }
@@ -231,8 +287,8 @@ class Persons extends Controller
         }
 
         $selectedIDs = Input::getSelectedIDs();
-        $selected = count($selectedIDs);
-        $updated = $this->updateBool('Persons', 'content', $selectedIDs, true);
+        $selected    = count($selectedIDs);
+        $updated     = $this->updateBool('Persons', 'content', $selectedIDs, true);
 
         // todo add category creation
 
@@ -251,8 +307,8 @@ class Persons extends Controller
         }
 
         $selectedIDs = Input::getSelectedIDs();
-        $selected = count($selectedIDs);
-        $updated = $this->updateBool('Persons', 'editing', $selectedIDs, true);
+        $selected    = count($selectedIDs);
+        $updated     = $this->updateBool('Persons', 'editing', $selectedIDs, true);
 
         $this->farewell($selected, $updated);
     }
@@ -273,20 +329,23 @@ class Persons extends Controller
     /**
      * An extract for redirecting back to the list view and providing a message for the number of entries updated.
      *
-     * @param int $selected
-     * @param int $updated
-     *
+     * @param int $selected the number of persons selected for processing
+     * @param int $updated the number of persons changed by the calling function
+     * @param bool $delete whether the change affected by the calling function was a deletion
      * @return void
      */
-    private function farewell(int $selected = 0, int $updated = 0): void
+    private function farewell(int $selected = 0, int $updated = 0, bool $delete = false): void
     {
         if ($selected) {
             if ($selected === $updated) {
-                $message = $updated === 1 ? Text::_('GROUPS_1_UPDATED', $updated) : Text::sprintf('GROUPS_X_UPDATED', $updated);
-                $type = Application::MESSAGE;
+                $key     = $updated === 1 ? 'GROUPS_1_' : 'GROUPS_X_';
+                $key     .= $delete === true ? 'DELETED' : 'UPDATED';
+                $message = $updated === 1 ? Text::_($key, $updated) : Text::sprintf($key, $updated);
+                $type    = Application::MESSAGE;
             } else {
-                $message = Text::sprintf('GROUPS_XX_UPDATED', $updated, $selected);
-                $type = Application::WARNING;
+                $message = $delete ?
+                    Text::sprintf('GROUPS_XX_DELETED', $updated, $selected) : Text::sprintf('GROUPS_XX_UPDATED', $updated, $selected);
+                $type    = Application::WARNING;
             }
 
             Application::message($message, $type);
@@ -308,7 +367,7 @@ class Persons extends Controller
     private function map(int $userID, int $action, int $groupID, int $roleID): bool
     {
         $mapData = ['group_id' => $groupID, 'user_id' => $userID];
-        $map = new UserUsergroupMap();
+        $map     = new UserUsergroupMap();
         $map->load($mapData);
 
         if ($action === self::REMOVE) {
@@ -322,7 +381,7 @@ class Persons extends Controller
                 return $map->delete();
             }
 
-            $assoc = new RoleAssociations();
+            $assoc     = new RoleAssociations();
             $assocData = ['mapID' => $map->id, 'roleID' => $roleID];
 
             // Association doesn't exist
@@ -344,7 +403,7 @@ class Persons extends Controller
             return true;
         }
 
-        $assoc = new RoleAssociations();
+        $assoc     = new RoleAssociations();
         $assocData = ['mapID' => $map->id, 'roleID' => $roleID];
 
         return ($assoc->load($assocData) or $assoc->save($assocData));
@@ -370,7 +429,7 @@ class Persons extends Controller
     private function reset(int $userID, bool $value): bool
     {
         $users = new Users();
-        $value = (int)$value;
+        $value = (int) $value;
 
         // The most expedient way to check for redundant execution.
         if (!$users->load($userID) or $users->requireReset === $value) {
@@ -405,13 +464,14 @@ class Persons extends Controller
         }
 
         /** @var CMSApplication $app */
-        $app = Application::getApplication();
-        $block = $value === true;
+        $app         = Application::getApplication();
+        $block       = $value === true;
         $selectedIDs = Input::getSelectedIDs();
-        $user = Application::getUser();
+        $user        = Application::getUser();
+        $super       = $user->get('isRoot');
 
         $selected = count($selectedIDs);
-        $updated = 0;
+        $updated  = 0;
 
         PluginHelper::importPlugin('user');
 
@@ -424,7 +484,7 @@ class Persons extends Controller
                 continue;
             }
 
-            if (!$user->get('isRoot') && Access::check($selectedID, 'core.admin')) {
+            if (!$super and Access::check($selectedID, 'core.admin')) {
                 Application::message(Text::_('GROUPS_CANNOT_BLOCK_SUPER_ADMIN'), Application::WARNING);
                 continue;
             }
@@ -439,7 +499,7 @@ class Persons extends Controller
                     continue;
                 }
 
-                $users->block = (int)$value;
+                $users->block = (int) $value;
 
                 // If unblocking, also change password reset count to zero to unblock reset
                 if (!$block) {
@@ -499,7 +559,7 @@ class Persons extends Controller
         }
 
         $selected = count($selectedIDs);
-        $updated = $this->updateBool('Persons', 'published', $selectedIDs, $value);
+        $updated  = $this->updateBool('Persons', 'published', $selectedIDs, $value);
 
         $this->farewell($selected, $updated);
     }
