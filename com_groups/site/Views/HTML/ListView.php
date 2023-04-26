@@ -14,8 +14,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\MVC\View\ListView as Base;
 use Joomla\CMS\Uri\Uri;
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\HTML;
+use THM\Groups\Adapters\{Application, HTML};
 use THM\Groups\Helpers\Can;
 use THM\Groups\Views\Named;
 
@@ -28,8 +27,8 @@ abstract class ListView extends Base
 {
     use Configured, Named;
 
+    public bool $allowBatch = false;
     public bool $backend;
-    public array $batch;
     public array $headers = [];
     public bool $mobile;
     public array $todo = [];
@@ -63,8 +62,7 @@ abstract class ListView extends Base
 
         ToolbarHelper::title(Text::_($titleKey), '');
 
-        if (Can::administrate())
-        {
+        if (Can::administrate()) {
             ToolbarHelper::preferences('com_groups');
             //ToolbarHelper::divider();
         }
@@ -75,11 +73,10 @@ abstract class ListView extends Base
     /**
      * @inheritDoc
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         // Check for errors.
-        if (count($errors = $this->get('Errors')))
-        {
+        if (count($errors = $this->get('Errors'))) {
             Application::message(implode("\n", $errors), 'error');
             Application::redirect('', 500);
         }
@@ -95,19 +92,15 @@ abstract class ListView extends Base
      */
     protected function filtered(): bool
     {
-        if ($filters = (array)$this->state->get('filter'))
-        {
+        if ($filters = (array) $this->state->get('filter')) {
             // Search for filter value which has been set
-            foreach ($filters as $filter)
-            {
-                if ($filter)
-                {
+            foreach ($filters as $filter) {
+                if ($filter) {
                     return true;
                 }
 
                 // Positive empty values
-                if ($filter === 0 or $filter === '0')
-                {
+                if ($filter === 0 or $filter === '0') {
                     return true;
                 }
             }
@@ -124,7 +117,7 @@ abstract class ListView extends Base
     /**
      * @inheritDoc
      */
-    protected function initializeView()
+    protected function initializeView(): void
     {
         // TODO: check submenu viability
 

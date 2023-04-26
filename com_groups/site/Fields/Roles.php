@@ -18,18 +18,19 @@ use THM\Groups\Helpers\Roles as Helper;
  */
 class Roles extends ListField
 {
-	protected $type = 'Roles';
+    protected $type = 'Roles';
 
-	/**
-	 * Method to get the group options.
-	 *
-	 * @return  array  the group option objects
-	 */
-	protected function getOptions(): array
-	{
-		$defaultOptions = parent::getOptions();
-		$options        = Helper::getOptions();
+    /**
+     * Method to get the group options.
+     *
+     * @return  array  the group option objects
+     */
+    protected function getOptions(): array
+    {
+        $defaultOptions = parent::getOptions();
+        $associated     = (bool) $this->getAttribute('associated', true);
+        $options        = Helper::getOptions($associated);
 
-		return array_merge($defaultOptions, $options);
-	}
+        return array_merge($defaultOptions, $options);
+    }
 }

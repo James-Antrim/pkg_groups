@@ -126,7 +126,7 @@ class Users extends User
     /**
      * TINYINT(4) DEFAULT 0
      * Require user to reset password on next login
-     * @var bool
+     * @var int
      */
     public $requireReset;
 

@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Helpers;
 
+use Joomla\CMS\Language\Text;
 use THM\Groups\Adapters\Application;
 
 /**
@@ -26,19 +27,18 @@ class Roles implements Selectable
      */
     public static function getAll(): array
     {
-        $db    = Application::getDB();
-        $query = $db->getQuery(true);
-        $roles = $db->quoteName('#__groups_roles');
-        $query->select('*')->from($roles);
+        $db          = Application::getDB();
+        $query       = $db->getQuery(true);
+        $namesColumn = $db->quoteName('names_' . Application::getTag());
+        $roles       = $db->quoteName('#__groups_roles');
+        $query->select('*')->from($roles)->order($namesColumn);
         $db->setQuery($query);
 
-        if (!$roles = $db->loadObjectList('id'))
-        {
+        if (!$roles = $db->loadObjectList('id')) {
             return [];
         }
 
-        foreach ($roles as $roleID => $role)
-        {
+        foreach ($roles as $roleID => $role) {
             $role->groups = RoleAssociations::byRoleID($roleID);
         }
 
@@ -47,20 +47,23 @@ class Roles implements Selectable
 
     /**
      * @inheritDoc
+     * @param bool $bound whether the role must already be associated
      */
-    public static function getOptions(): array
+    public static function getOptions(bool $associated = true): array
     {
         $namesColumn = 'names_' . Application::getTag();
         $options     = [];
+        $options[]   = (object) [
+            'text' => Text::_('GROUPS_NONE_MEMBER'),
+            'value' => ''
+        ];
 
-        foreach (self::getAll() as $roleID => $role)
-        {
-            if (empty($role->groups))
-            {
+        foreach (self::getAll() as $roleID => $role) {
+            if ($associated and empty($role->groups)) {
                 continue;
             }
 
-            $options[] = (object)[
+            $options[] = (object) [
                 'text' => $role->$namesColumn,
                 'value' => $roleID
             ];

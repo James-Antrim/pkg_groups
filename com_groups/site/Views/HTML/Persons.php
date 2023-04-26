@@ -15,8 +15,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\Button\DropdownButton;
 use Joomla\CMS\Toolbar\Toolbar;
 use THM\Groups\Adapters\HTML;
-use THM\Groups\Helpers\Can;
-use THM\Groups\Helpers\Persons as Helper;
+use THM\Groups\Helpers\{Can, Persons as Helper};
 use THM\Groups\Layouts\ListItem;
 
 /**
@@ -24,6 +23,9 @@ use THM\Groups\Layouts\ListItem;
  */
 class Persons extends ListView
 {
+    /**
+     * @inheritDoc
+     */
     protected function addToolbar(): void
     {
         // Get the toolbar object instance
@@ -34,8 +36,7 @@ class Persons extends ListView
             $toolbar->addNew('Person.add');
         }*/
 
-        if (Can::administrate() or Can::changeState())
-        {
+        if (Can::administrate() or Can::changeState()) {
             /** @var DropdownButton $dropdown */
             $dropdown = $toolbar->dropdownButton('status-group')
                 ->text('JTOOLBAR_CHANGE_STATUS')
@@ -46,8 +47,7 @@ class Persons extends ListView
 
             $childBar = $dropdown->getChildToolbar();
 
-            if (Can::changeState())
-            {
+            if (Can::changeState()) {
                 $childBar->standardButton('publish', 'GROUPS_PUBLISH_PROFILE')
                     ->icon('fa fa-eye')
                     ->task('Persons.publish')
@@ -84,6 +84,13 @@ class Persons extends ListView
                     ->icon('fa fa-check-square')
                     ->task('Persons.activate')
                     ->listCheck(true);
+
+                if (Can::batchProcess()) {
+                    $childBar->popupButton('batch')
+                        ->selector('collapseModal')
+                        ->text('GROUPS_BATCH_PROCESSING')
+                        ->listCheck(true);
+                }
             }
 
             /*if ($this->state->get('filter.published') != -2 && $canDo->get('core.edit.state')) {
@@ -109,10 +116,9 @@ class Persons extends ListView
     /**
      * @inheritDoc
      */
-    protected function completeItems()
+    protected function completeItems(): void
     {
-        foreach ($this->items as $rowNo => $item)
-        {
+        foreach ($this->items as $rowNo => $item) {
             $item->activated     = HTML::toggle($rowNo, Helper::activatedStates[$item->activated], 'Persons');
             $item->block         = HTML::toggle($rowNo, Helper::blockedStates[$item->block], 'Persons');
             $item->content       = HTML::toggle($rowNo, Helper::contentStates[$item->content], 'Persons');
@@ -128,10 +134,10 @@ class Persons extends ListView
     /**
      * @inheritDoc
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
-        $this->todo = [
-            'batch stuff',
+        $this->allowBatch = Can::batchProcess();
+        $this->todo       = [
             'main menu',
             'toolbar'
             // User notes support is not planned at this time.
@@ -149,15 +155,12 @@ class Persons extends ListView
      */
     private function formatGroups(array $groups): string
     {
-        if (count($groups) >= 3)
-        {
+        if (count($groups) >= 3) {
             return Text::_('GROUPS_MULTIPLE_GROUPS');
         }
 
-        foreach ($groups as $groupID => $group)
-        {
-            $roles = match (count($group['roles']))
-            {
+        foreach ($groups as $groupID => $group) {
+            $roles = match (count($group['roles'])) {
                 0, 1 => '',
                 2 => ': ' . implode(' & ', $group['roles']),
                 default => ': ' . Text::_('GROUPS_MULTIPLE_ROLES'),
@@ -172,7 +175,7 @@ class Persons extends ListView
     /**
      * @inheritDoc
      */
-    protected function initializeHeaders()
+    protected function initializeHeaders(): void
     {
         // Columns made 'redundant' by filters are left in to allow for display of in column buttons.
         $this->headers = [

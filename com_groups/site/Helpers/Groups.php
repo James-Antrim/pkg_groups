@@ -41,10 +41,8 @@ class Groups implements Selectable
     {
         $groups = self::getUserGroups();
 
-        foreach ($groups as $groupID => $group)
-        {
-            if ($name = self::getName($groupID))
-            {
+        foreach ($groups as $groupID => $group) {
+            if ($name = self::getName($groupID)) {
                 $group->title = $name;
             }
 
@@ -63,28 +61,26 @@ class Groups implements Selectable
      */
     public static function getLevels(int $groupID): array
     {
-        $group    = UserGroupsHelper::getInstance()->get($groupID);
+        $group = UserGroupsHelper::getInstance()->get($groupID);
         $groupIDs = $group->path;
 
-        $db     = Application::getDB();
-        $id     = $db->quoteName('id');
-        $rules  = $db->quoteName('rules');
-        $title  = $db->quoteName('title');
+        $db = Application::getDB();
+        $id = $db->quoteName('id');
+        $rules = $db->quoteName('rules');
+        $title = $db->quoteName('title');
         $levels = $db->quoteName('#__viewlevels');
 
-        $query  = $db->getQuery(true);
-        $regex  = $query->concatenate(["'[,\\\\[]'", ':groupID', "'[,\\\\]]'"]);
+        $query = $db->getQuery(true);
+        $regex = $query->concatenate(["'[,\\\\[]'", ':groupID', "'[,\\\\]]'"]);
         $return = [];
         $query->select([$id, $title])->from($levels)->where("$rules REGEXP $regex");
 
-        do
-        {
+        do {
             $groupID = array_pop($groupIDs);
             $query->bind(':groupID', $groupID, ParameterType::INTEGER);
             $db->setQuery($query);
 
-            if ($results = $db->loadAssocList('id', 'title'))
-            {
+            if ($results = $db->loadAssocList('id', 'title')) {
                 $return += $results;
             }
         } while ($groupIDs);
@@ -106,18 +102,12 @@ class Groups implements Selectable
     /**
      * @inheritDoc
      */
-    public static function getOptions(): array
+    public static function getOptions(bool $allowDefault = false): array
     {
         $options = [];
 
-        foreach (self::getAll() as $groupID => $group)
-        {
-            if (empty($group->roles))
-            {
-                continue;
-            }
-
-            $disabled = in_array($groupID, self::DEFAULT) ? 'disabled' : '';
+        foreach (self::getAll() as $groupID => $group) {
+            $disabled = (!$allowDefault and in_array($groupID, self::DEFAULT)) ? 'disabled' : '';
 
             $options[] = (object)[
                 'disable' => $disabled,
@@ -140,11 +130,8 @@ class Groups implements Selectable
     public static function getPrefix(int $level): string
     {
         $prefix = '';
-        if ($level > 1)
-        {
-            $prefix = '<span class="text-muted">';
-            $prefix .= str_repeat('&#8942;&nbsp;&nbsp;&nbsp;', $level - 2);
-            $prefix .= '</span>&ndash;&nbsp;';
+        if ($level > 1) {
+            $prefix .= str_repeat('&#8942;&nbsp;&nbsp;&nbsp;', $level - 2) . '&ndash;&nbsp;';
         }
 
         return $prefix;
@@ -160,9 +147,9 @@ class Groups implements Selectable
     public static function getRoles(int $groupID): array
     {
         $tag = Application::getTag();
-        $db  = Application::getDB();
+        $db = Application::getDB();
 
-        $roleID     = $db->quoteName("r.id");
+        $roleID = $db->quoteName("r.id");
         $condition1 = $db->quoteName("ra.roleID") . " = $roleID";
         $condition2 = $db->quoteName("m.id") . ' = ' . $db->quoteName("ra.mapID");
 

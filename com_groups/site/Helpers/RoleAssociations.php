@@ -34,8 +34,7 @@ class RoleAssociations
         $query->select($db->quoteName('ra') . '.*')
             ->from($db->quoteName('#__groups_role_associations', 'ra'))
             ->join('inner', $db->quoteName('#__user_usergroup_map', 'm'), $condition)
-            ->where($db->quoteName('m.group_id') . ' = :groupID')
-            ->bind(':groupID', $groupID, ParameterType::INTEGER);
+            ->where($db->quoteName('m.group_id') . " = $groupID");
         $db->setQuery($query);
 
         return $db->loadAssocList('id', 'roleID');

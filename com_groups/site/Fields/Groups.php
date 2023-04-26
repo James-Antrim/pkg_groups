@@ -18,18 +18,19 @@ use THM\Groups\Helpers\Groups as Helper;
  */
 class Groups extends ListField
 {
-	protected $type = 'Groups';
+    protected $type = 'Groups';
 
-	/**
-	 * Method to get the group options.
-	 *
-	 * @return  array  the group option objects
-	 */
-	protected function getOptions(): array
-	{
-		$defaultOptions = parent::getOptions();
-		$options        = Helper::getOptions();
+    /**
+     * Method to get the group options.
+     *
+     * @return  array  the group option objects
+     */
+    protected function getOptions(): array
+    {
+        $defaultOptions = parent::getOptions();
+        $allowDefault = (bool)$this->getAttribute('allowDefault');
+        $options = Helper::getOptions($allowDefault);
 
-		return array_merge($defaultOptions, $options);
-	}
+        return array_merge($defaultOptions, $options);
+    }
 }
