@@ -22,23 +22,41 @@ use THM\Groups\Adapters\Application;
 class Users extends User
 {
     /**
-     * INT(11) NOT NULL
-     * Magic property in parent.
-     * @var int
-     */
-    public $id;
-
-    /**
-     * VARCHAR(400) NOT NULL DEFAULT ''
+     * VARCHAR(100) NOT NULL DEFAULT ''
      * @var string
      */
-    public $name;
+    public $activation;
 
     /**
-     * VARCHAR(150) NOT NULL DEFAULT ''
+     * VARCHAR(255) DEFAULT null
      * @var string
      */
-    public $username;
+    public $alias;
+
+    /**
+     * VARCHAR(100) NOT NULL DEFAULT ''
+     * Name of used authentication plugin
+     * @var string
+     */
+    public $authProvider;
+
+    /**
+     * TINYINT(4) NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $block;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $content;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $editing;
 
     /**
      * VARCHAR(100) NOT NULL DEFAULT ''
@@ -48,50 +66,18 @@ class Users extends User
     public $email;
 
     /**
-     * VARCHAR(100) NOT NULL DEFAULT ''
-     * @var string
+     * VARCHAR(255) DEFAULT null
+     * The default is null because this field will be left blank by a certain subset of accounts.
+     * @var null|string
      */
-    public $password;
+    public $forenames;
 
     /**
-     * TINYINT(4) NOT NULL DEFAULT 0
-     * @var bool
-     */
-    public $block;
-
-    /**
-     * TINYINT(4) DEFAULT 0
+     * INT(11) NOT NULL
      * Magic property in parent.
-     * @var bool
+     * @var int
      */
-    public $sendEmail;
-
-    /**
-     * DATETIME NOT NULL
-     * Magic property in parent.
-     * @var string
-     */
-    public $registerDate;
-
-    /**
-     * DATETIME
-     * Magic property in parent.
-     * @var string
-     */
-    public $lastvisitDate;
-
-    /**
-     * VARCHAR(100) NOT NULL DEFAULT ''
-     * @var string
-     */
-    public $activation;
-
-    /**
-     * MEDIUMTEXT NOT NULL
-     * JSON String
-     * @var string
-     */
-    public $params;
+    public $id;
 
     /**
      * DATETIME
@@ -101,19 +87,17 @@ class Users extends User
     public $lastResetTime;
 
     /**
-     * INT(11) NOT NULL DEFAULT 0
-     * Count of password resets since lastResetTime
-     * @var int
-     */
-    public $resetCount;
-
-    /**
-     * VARCHAR(1000) DEFAULT ''
-     * Two-factor authentication encrypted keys
+     * DATETIME
      * Magic property in parent.
      * @var string
      */
-    public $otpKey;
+    public $lastvisitDate;
+
+    /**
+     * VARCHAR(400) NOT NULL DEFAULT ''
+     * @var string
+     */
+    public $name;
 
     /**
      * VARCHAR(1000) DEFAULT ''
@@ -124,6 +108,40 @@ class Users extends User
     public $otep;
 
     /**
+     * VARCHAR(1000) DEFAULT ''
+     * Two-factor authentication encrypted keys
+     * Magic property in parent.
+     * @var string
+     */
+    public $otpKey;
+
+    /**
+     * MEDIUMTEXT NOT NULL
+     * JSON String
+     * @var string
+     */
+    public $params;
+
+    /**
+     * VARCHAR(100) NOT NULL DEFAULT ''
+     * @var string
+     */
+    public $password;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $published;
+
+    /**
+     * DATETIME NOT NULL
+     * Magic property in parent.
+     * @var string
+     */
+    public $registerDate;
+
+    /**
      * TINYINT(4) DEFAULT 0
      * Require user to reset password on next login
      * @var int
@@ -131,11 +149,30 @@ class Users extends User
     public $requireReset;
 
     /**
-     * VARCHAR(100) NOT NULL DEFAULT ''
-     * Name of used authentication plugin
+     * INT(11) NOT NULL DEFAULT 0
+     * Count of password resets since lastResetTime
+     * @var int
+     */
+    public $resetCount;
+
+    /**
+     * TINYINT(4) DEFAULT 0
+     * Magic property in parent.
+     * @var bool
+     */
+    public $sendEmail;
+
+    /**
+     * VARCHAR(255) NOT NULL
      * @var string
      */
-    public $authProvider;
+    public $surnames;
+
+    /**
+     * VARCHAR(150) NOT NULL DEFAULT ''
+     * @var string
+     */
+    public $username;
 
     /**
      * @inheritDoc

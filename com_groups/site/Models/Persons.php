@@ -17,7 +17,6 @@ use Joomla\CMS\Router\Route;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 use THM\Groups\Adapters\Application;
-use THM\Groups\Helpers;
 use THM\Groups\Tools\Migration;
 
 /**
@@ -34,8 +33,7 @@ class Persons extends ListModel
     {
         Migration::migrate();
 
-        if (empty($config['filter_fields']))
-        {
+        if (empty($config['filter_fields'])) {
             $config['filter_fields'] = [
                 'activation',
                 'association',
@@ -65,13 +63,10 @@ class Persons extends ListModel
      */
     public function filterFilterForm(Form $form): void
     {
-        if ($this->state->get('filter.association'))
-        {
+        if ($this->state->get('filter.association')) {
             $form->removeField('roleID', 'filter');
             unset($this->filter_fields['roleID']);
-        }
-        elseif ($this->state->get('filter.roleID'))
-        {
+        } elseif ($this->state->get('filter.roleID')) {
             $form->removeField('association', 'filter');
             unset($this->filter_fields['association']);
         }
@@ -94,14 +89,12 @@ class Persons extends ListModel
         $jCondition1 = $db->quoteName('map.group_id') . ' = ' . $db->quoteName('g.id');
         $jCondition2 = $db->quoteName('ra.mapID') . ' = ' . $db->quoteName('map.id');
         $jCondition3 = $db->quoteName('r.id') . ' = ' . $db->quoteName('ra.roleID');
-        $jCondition4 = $db->quoteName('p.id') . ' = ' . $db->quoteName('map.user_id');
 
         $select = [
             $db->quoteName('g.id', 'groupID'),
             $db->quoteName("g.name_$tag", 'group'),
             $db->quoteName('r.id', 'roleID'),
             $db->quoteName("r.name_$tag", 'role'),
-            $db->quoteName('p.id', 'personID'),
             $db->quoteName('map.user_id', 'userID')
         ];
         $query->select($select)
@@ -109,30 +102,21 @@ class Persons extends ListModel
             ->join('inner', $db->quoteName('#__user_usergroup_map', 'map'), $jCondition1)
             ->join('left', $db->quoteName('#__groups_role_associations', 'ra'), $jCondition2)
             ->join('left', $db->quoteName('#__groups_roles', 'r'), $jCondition3)
-            ->join('left', $db->quoteName('#__groups_persons', 'p'), $jCondition4)
             ->where($db->quoteName('map.user_id') . " = $itemID");
 
         $db->setQuery($query);
 
-        foreach ($db->loadAssocList() as $result)
-        {
+        foreach ($db->loadAssocList() as $result) {
             $group   = $result['group'];
             $groupID = $result['groupID'];
             $role    = $result['role'];
             $roleID  = $result['roleID'];
 
-            if (empty($result['personID']) and !in_array($groupID, Helpers\Groups::DEFAULT))
-            {
-                // TODO: create person entry and role associations as necessary
-            }
-
-            if (empty($groups[$groupID]))
-            {
+            if (empty($groups[$groupID])) {
                 $groups[$groupID] = ['name' => $group, 'roles' => []];
             }
 
-            if ($roleID and empty($groups[$groupID]['roles'][$roleID]))
-            {
+            if ($roleID and empty($groups[$groupID]['roles'][$roleID])) {
                 $groups[$groupID]['roles'][$roleID] = $role;
             }
         }
@@ -147,8 +131,7 @@ class Persons extends ListModel
     {
         $items = parent::getItems();
 
-        foreach ($items as $item)
-        {
+        foreach ($items as $item) {
             // Management access is a prerequisite of accessing this view at all.
             $item->access    = true;
             $item->activated = empty($item->activation);
@@ -169,48 +152,37 @@ class Persons extends ListModel
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
 
-        $nameColumns = [$db->quoteName('p.forenames'), $db->quoteName('p.surnames')];
+        $nameColumns = [$db->quoteName('forenames'), $db->quoteName('surnames')];
         $query->select([
-            $db->quoteName('p') . '.*',
             $db->quoteName('u') . '.*',
             $query->concatenate($nameColumns, ' ') . ' AS ' . $db->quoteName('name')
         ]);
 
-        $personID   = $db->quoteName('p.id');
-        $userID     = $db->quoteName('u.id');
-        $uCondition = "$userID = $personID";
+        $userID = $db->quoteName('u.id');
 
-        $query->from($db->quoteName('#__groups_persons', 'p'))
-            ->join('inner', $db->quoteName('#__users', 'u'), $uCondition);
+        $query->from($db->quoteName('#__users', 'u'));
 
         $activation = $this->state->get('filter.activation');
 
-        if ($this->isBinary($activation))
-        {
+        if ($this->isBinary($activation)) {
             $column = $db->quoteName('activation');
 
-            if ((int)$activation)
-            {
+            if ((int) $activation) {
                 $query->where("($column = '' OR $column = '0')");
-            }
-            else
-            {
+            } else {
                 $query->where("$column != '0'")
                     ->where($query->length($column) . ' > 0');
             }
         }
 
-        if ($association = $this->state->get('filter.association'))
-        {
+        if ($association = $this->state->get('filter.association')) {
             list($resource, $id) = explode('-', $association);
 
-            switch ($resource)
-            {
+            switch ($resource) {
                 case 'assocID':
-                    if (!empty($id) and $id = (int)$id)
-                    {
+                    if (!empty($id) and $id = (int) $id) {
                         $assocID     = $db->quoteName('pa.assocID');
-                        $paProfileID = $db->quoteName('pa.personID');
+                        $paProfileID = $db->quoteName('pa.userID');
 
                         $condition = "$paProfileID = $userID";
                         $query->join('inner', $db->quoteName('#__groups_person_associations', 'pa'), $condition)
@@ -218,8 +190,7 @@ class Persons extends ListModel
                     }
                     break;
                 case 'groupID':
-                    if (!empty($id) and $id = (int)$id)
-                    {
+                    if (!empty($id) and $id = (int) $id) {
                         $groupID   = $db->quoteName('uugm.group_id');
                         $uIDColumn = $db->quoteName('uugm.user_id');
 
@@ -229,27 +200,22 @@ class Persons extends ListModel
                     }
                     break;
             }
-        }
-        elseif ($id = $this->state->get('filter.roleID') and is_numeric($id) and $id = (int)$id)
-        {
-            if ($id > 0)
-            {
+        } elseif ($id = $this->state->get('filter.roleID') and is_numeric($id) and $id = (int) $id) {
+            if ($id > 0) {
                 $join      = 'inner';
                 $predicate = " = $id";
-            }
-            else
-            {
+            } else {
                 $join      = 'left';
                 $predicate = " IS NULL";
             }
 
             $assocID     = $db->quoteName('pa.assocID');
-            $paProfileID = $db->quoteName('pa.personID');
+            $paProfileID = $db->quoteName('pa.userID');
             $raID        = $db->quoteName('ra.id');
 
             $condition1 = "$paProfileID = $userID";
             $condition2 = "$raID = $assocID";
-            $query->join($join, $db->quoteName('#__groups_person_associations', 'pa'), $condition1)
+            $query->join($join, $db->quoteName('#__groups_profile_associations', 'pa'), $condition1)
                 ->join($join, $db->quoteName('#__groups_role_associations', 'ra'), $condition2)
                 ->where($db->quoteName('ra.id') . $predicate);
         }
@@ -259,15 +225,11 @@ class Persons extends ListModel
         $this->binaryFilter($query, 'filter.editing');
         $this->binaryFilter($query, 'filter.published');
 
-        if ($search = $this->getState('filter.search'))
-        {
-            if (is_numeric($search))
-            {
+        if ($search = $this->getState('filter.search')) {
+            if (is_numeric($search)) {
                 $query->where($db->quoteName('u.id') . ' = :id')
                     ->bind(':id', $search, ParameterType::INTEGER);
-            }
-            else
-            {
+            } else {
                 $search  = '%' . trim($search) . '%';
                 $wherray = [
                     $db->quoteName('email') . ' LIKE :email',
@@ -284,8 +246,7 @@ class Persons extends ListModel
         $registered = $this->state->get('filter.registered');
         $visited    = $this->state->get('filter.visited');
 
-        if ($registered or $visited)
-        {
+        if ($registered or $visited) {
             $now        = date('\'Y-m-d H:i:s\'');
             $today      = date('\'Y-m-d 00:00:00\'');
             $weekAgo    = date('\'Y-m-d 00:00:00\'', strtotime('-1 week'));
@@ -294,11 +255,9 @@ class Persons extends ListModel
             $monthsAgo6 = date('\'Y-m-d 00:00:00\'', strtotime('-6 month'));
             $yearAgo    = date('\'Y-m-d 00:00:00\'', strtotime('-1 year'));
 
-            if ($registered)
-            {
+            if ($registered) {
                 $rColumn = $db->quoteName('registerDate');
-                switch ($registered)
-                {
+                switch ($registered) {
                     case 'today':
                         $query->where("$rColumn BETWEEN $today AND $now");
                         break;
@@ -323,11 +282,9 @@ class Persons extends ListModel
                 }
             }
 
-            if ($visited)
-            {
+            if ($visited) {
                 $vColumn = $db->quoteName('lastvisitDate');
-                switch ($visited)
-                {
+                switch ($visited) {
                     case 'today':
                         echo 'check?';
                         $query->where("$vColumn BETWEEN $today AND $now");
@@ -365,16 +322,13 @@ class Persons extends ListModel
     /**
      * @inheritDoc
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         parent::populateState($ordering, $direction);
 
-        if ($this->state->get('filter.association'))
-        {
+        if ($this->state->get('filter.association')) {
             $this->state->set('filter.roleID', '');
-        }
-        elseif ($this->state->get('filter.roleID'))
-        {
+        } elseif ($this->state->get('filter.roleID')) {
             $this->state->set('filter.association', '');
         }
     }

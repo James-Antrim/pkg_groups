@@ -34,41 +34,15 @@ CREATE TABLE IF NOT EXISTS `#__groups_person_attributes`
 (
     `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `attributeID` INT(11) UNSIGNED    NOT NULL,
-    `personID`    INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
+    `userID`      INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
     `value`       TEXT,
     `published`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`ID`),
-    UNIQUE KEY `entry` (`attributeID`, `personID`)
+    UNIQUE KEY `entry` (`attributeID`, `userID`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
-
-#todo integrate with users?
-CREATE TABLE IF NOT EXISTS `#__groups_persons`
-(
-    `id`        INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
-    `surnames`  VARCHAR(255)        NOT NULL,
-    `forenames` VARCHAR(255)                 DEFAULT null COMMENT 'Default null because this field will be left blank by a certain subset of accounts.',
-    `alias`     VARCHAR(255)                 DEFAULT null,
-    `content`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-    `editing`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-    `published` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-    PRIMARY KEY (`id`),
-    UNIQUE (`alias`)
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4
-    COLLATE = utf8mb4_unicode_ci;
-
-# modernize the table for ease of reference from the role associations table
-ALTER TABLE `#__user_usergroup_map`
-    DROP CONSTRAINT `PRIMARY`,
-    ADD COLUMN `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    ADD PRIMARY KEY (`id`),
-    MODIFY `group_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Foreign Key to #__usergroups.id' AFTER `id`,
-    MODIFY `user_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Foreign Key to #__users.id' AFTER `group_id`,
-    ADD UNIQUE KEY `entry` (`group_id`, `user_id`);
 
 CREATE TABLE IF NOT EXISTS `#__groups_role_associations`
 (
@@ -112,11 +86,31 @@ CREATE TABLE IF NOT EXISTS `#__groups_types`
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
+
+# modernize the table for ease of reference from the role associations table
+ALTER TABLE `#__user_usergroup_map`
+    DROP CONSTRAINT `PRIMARY`,
+    ADD COLUMN `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    ADD PRIMARY KEY (`id`),
+    MODIFY `group_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '~Foreign Key to #__usergroups.id' AFTER `id`,
+    MODIFY `user_id` INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT '~Foreign Key to #__users.id' AFTER `group_id`,
+    ADD UNIQUE KEY `entry` (`group_id`, `user_id`);
+
+# add necessary columns to users
+ALTER TABLE `#__users`
+    ADD COLUMN `surnames`  VARCHAR(255) DEFAULT NULL AFTER `email`,
+    ADD COLUMN `forenames` VARCHAR(255) DEFAULT NULL AFTER `surnames`,
+    ADD COLUMN `alias`     VARCHAR(255) DEFAULT NULL AFTER `forenames`,
+    ADD COLUMN `content`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `block`,
+    ADD COLUMN `editing`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `content`,
+    ADD COLUMN `published` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `editing`,
+    ADD UNIQUE KEY (`alias`);
 #endregion
 
 #region Fill
-# Forenames and surnames are now a part of the persons table
-INSERT INTO `#__groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `viewLevelID`)
+# Forenames and surnames are now a part of the users table
+INSERT INTO `#__groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`,
+                                    `viewLevelID`)
 VALUES (1, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
        (2, 'Namenszusatz (nach)', 'Supplement (Post)', '', 4, '{"hint":"M.Sc."}', 1, 1),
        (3, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 4, '{"hint":"Prof. Dr."}', 1, 1),
@@ -129,22 +123,6 @@ VALUES (1, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
        (10, 'Aktuelles', 'Current Information', 'info', 7, '{"buttons": 0}', 0, 1),
        (11, 'weitere  Informationen', 'Additional Information', 'info', 7, '{"buttons": 0}', 0, 1),
        (12, 'zur Person', 'Personal Information', 'user', 7, '{"buttons": 0}', 0, 1);
-
-# Surname default = users display name
-INSERT INTO `#_groups_persons` (`id`, `surnames`)
-SELECT DISTINCT `u`.`id`, `u`.`name`
-FROM `v7ocf_users` AS u;
-
-# Default messages and patterns derive from input classes
-INSERT INTO `#__groups_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
-VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
-       (2, 'Name', 'Name', 1, '{"message_de":"Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.","message_en":"Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.","pattern":"^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$"}'),
-       (3, 'E-Mail Adresse', 'E-Mail Address', 6, '{}'),
-       (4, 'Namenszusatz', 'Name Supplement', 1, '{"message_de":"Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.","message_en":"The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.","pattern":"^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$"}'),
-       (5, 'Bild', 'Picture', 4, '{"accept":".bmp,.BMP,.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG"}'),
-       (6, 'Telefonnummer', 'Telephone Number', 7, '{"pattern":"^(\\\\+[\\\\d]+ ?)?( ?((\\\\(0?[\\\\d]*\\\\))|(0?[\\\\d]+(\\/| \\\\/)?)))?(([ \\\\-]|[\\\\d]+)+)$"}'),
-       (7, 'Ausführlicher Text / HTML', 'Descriptive Text / HTML', 2, '{}'),
-       (8, 'Datum', 'Date', 5, '{}');
 
 INSERT INTO `#__groups_roles` (`id`, `name_de`, `name_en`, `names_de`, `names_en`, `ordering`)
 VALUES (1, 'Dekan', 'Dean', 'Dekane', 'Deans', 1),
@@ -164,6 +142,20 @@ VALUES (1, 'Dekan', 'Dean', 'Dekane', 'Deans', 1),
        (15, 'Schülerpraktikant:in', 'Student Intern', 'Schülerpraktikant:innen', 'Student Interns', 15),
        (16, 'Student:in', 'Student', 'Studenten:innen', 'Student', 16),
        (17, 'Ehemalige', 'Alumnus', 'Alumni', 'Alumni', 18);
+
+# Default messages and patterns derive from input classes
+INSERT INTO `#__groups_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
+VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
+       (2, 'Name', 'Name', 1,
+        '{"message_de":"Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.","message_en":"Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.","pattern":"^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$"}'),
+       (3, 'E-Mail Adresse', 'E-Mail Address', 6, '{}'),
+       (4, 'Namenszusatz', 'Name Supplement', 1,
+        '{"message_de":"Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.","message_en":"The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.","pattern":"^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$"}'),
+       (5, 'Bild', 'Picture', 4, '{"accept":".bmp,.BMP,.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG"}'),
+       (6, 'Telefonnummer', 'Telephone Number', 7,
+        '{"pattern":"^(\\\\+[\\\\d]+ ?)?( ?((\\\\(0?[\\\\d]*\\\\))|(0?[\\\\d]+(\\/| \\\\/)?)))?(([ \\\\-]|[\\\\d]+)+)$"}'),
+       (7, 'Ausführlicher Text / HTML', 'Descriptive Text / HTML', 2, '{}'),
+       (8, 'Datum', 'Date', 5, '{}');
 #endregion
 
 #region Reference
@@ -174,16 +166,11 @@ ALTER TABLE `#__groups_attributes`
 ALTER TABLE `#__groups_groups`
     ADD CONSTRAINT `fk_groups_groupID` FOREIGN KEY (`id`) REFERENCES `#__usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `#__groups_person_attributes`
+ALTER TABLE `#__groups_profile_attributes`
     ADD CONSTRAINT `fk_pAttribs_attributeID` FOREIGN KEY (`attributeID`) REFERENCES `#__groups_attributes` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    ADD CONSTRAINT `fk_pAttribs_personID` FOREIGN KEY (`personID`) REFERENCES `#__groups_persons` (`id`)
-        ON UPDATE CASCADE
-        ON DELETE CASCADE;
-
-ALTER TABLE `#__groups_persons`
-    ADD CONSTRAINT `fk_persons_userID` FOREIGN KEY (`id`) REFERENCES `#__users` (`id`)
+    ADD CONSTRAINT `fk_pAttribs_userID` FOREIGN KEY (`userID`) REFERENCES `#__users` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE;
 

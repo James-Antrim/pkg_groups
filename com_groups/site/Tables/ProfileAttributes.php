@@ -19,7 +19,7 @@ use THM\Groups\Adapters\Application;
 /**
  * Class representing the person attributes table.
  */
-class PersonAttributes extends Table
+class ProfileAttributes extends Table
 {
     use Incremented;
 
@@ -30,15 +30,15 @@ class PersonAttributes extends Table
     public $attributeID;
 
     /**
-     * INT(11) NOT NULL (fk_pAttribs_personID -> persons.id -> fk: users.id)
-     * @var int
-     */
-    public $personID;
-
-    /**
      * @var bool TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      */
     public $published;
+
+    /**
+     * INT(11) NOT NULL (fk_pAttribs_personID -> persons.id -> fk: users.id)
+     * @var int
+     */
+    public $userID;
 
     /**
      * TEXT
@@ -54,6 +54,6 @@ class PersonAttributes extends Table
         $dbo = $dbo ?? Application::getDB();
 
         /** @var DatabaseDriver $dbo */
-        parent::__construct('#__groups_person_attributes', 'id', $dbo);
+        parent::__construct('#__groups_profile_attributes', 'id', $dbo);
     }
 }

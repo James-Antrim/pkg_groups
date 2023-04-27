@@ -41,8 +41,7 @@ class Migration
         $db->setQuery($query);
 
         // Basic attributes (forenames and surnames have already been migrated to the entry)
-        if ($oldAttributes = $db->loadObjectList('label'))
-        {
+        if ($oldAttributes = $db->loadObjectList('label')) {
             $labelMap = [
                 'Aktuell' => 10,
                 'Email' => 1,
@@ -63,11 +62,9 @@ class Migration
                 'Zur Person' => 12
             ];
 
-            foreach ($labelMap as $label => $newAttributeID)
-            {
+            foreach ($labelMap as $label => $newAttributeID) {
                 // New standard attribute not found in existing attributes
-                if (!$oldAttribute = $oldAttributes[$label] ?? false)
-                {
+                if (!$oldAttribute = $oldAttributes[$label] ?? false) {
                     continue;
                 }
 
@@ -79,21 +76,18 @@ class Migration
             }
 
             // Everything left is dynamic / not yet supported
-            foreach ($oldAttributes as $label => $oldAttribute)
-            {
+            foreach ($oldAttributes as $label => $oldAttribute) {
                 $data         = [];
                 $newAttribute = new Tables\Attributes();
 
-                switch ($label)
-                {
+                switch ($label) {
                     case 'E-Mail 3':
                     case 'E-Mail 4':
 
                         $data['label_de'] = $label;
 
                         // Dynamic attribute has already been recreated.
-                        if ($newAttribute->load($data))
-                        {
+                        if ($newAttribute->load($data)) {
                             $map[$oldAttribute->id] = $newAttribute->id;
                             continue 2;
                         }
@@ -111,8 +105,7 @@ class Migration
                         $data['label_de'] = "$tmpLabel (privat)";
 
                         // Dynamic attribute has already been recreated.
-                        if ($newAttribute->load($data))
-                        {
+                        if ($newAttribute->load($data)) {
                             $map[$oldAttribute->id] = $newAttribute->id;
                             continue 2;
                         }
@@ -129,8 +122,7 @@ class Migration
                         $data['label_de'] = $label;
 
                         // Dynamic attribute has already been recreated.
-                        if ($newAttribute->load($data))
-                        {
+                        if ($newAttribute->load($data)) {
                             $map[$oldAttribute->id] = $newAttribute->id;
                             continue 2;
                         }
@@ -146,8 +138,7 @@ class Migration
                         $data['label_de'] = $oldAttribute->label;
 
                         // Dynamic attribute has already been recreated.
-                        if ($newAttribute->load($data))
-                        {
+                        if ($newAttribute->load($data)) {
                             $map[$oldAttribute->id] = $newAttribute->id;
                             continue 2;
                         }
@@ -308,13 +299,11 @@ class Migration
             ->bind(':name_en', $name);
 
         // Make no exception for standard groups here, in order to have comparable output to the users component.
-        foreach (UserGroupsHelper::getInstance()->getAll() as $groupID => $group)
-        {
+        foreach (UserGroupsHelper::getInstance()->getAll() as $groupID => $group) {
             $table = new Tables\Groups();
 
             // Already there
-            if ($table->load($groupID))
-            {
+            if ($table->load($groupID)) {
                 continue;
             }
 
@@ -332,27 +321,23 @@ class Migration
     {
         $session = Application::getSession();
 
-        if (!$session->get('com_groups.migrated.groups'))
-        {
+        if (!$session->get('com_groups.migrated.groups')) {
             self::groups();
             $session->set('com_groups.migrated.groups', true);
         }
 
-        if (!$session->get('com_groups.migrated.persons'))
-        {
-            self::persons();
-            $session->set('com_groups.migrated.persons', true);
+        if (!$session->get('com_groups.migrated.profiles')) {
+            self::profiles();
+            $session->set('com_groups.migrated.profiles', true);
         }
 
-        if (!$session->get('com_groups.migrated.roles'))
-        {
+        if (!$session->get('com_groups.migrated.roles')) {
             $rMap = self::roles();
             self::roleAssociations($rMap);
             $session->set('com_groups.migrated.roles', true);
         }
 
-        if (!$session->get('com_groups.migrated.attributes'))
-        {
+        if (!$session->get('com_groups.migrated.attributes')) {
             $aMap = self::attributes();
             self::personAttributes($aMap);
             $session->set('com_groups.migrated.attributes', true);
@@ -377,19 +362,16 @@ class Migration
             ->whereIn($db->quoteName('attributeID'), $oldKeys);
         $db->setQuery($query);
 
-        if (!$pas = $db->loadObjectList())
-        {
+        if (!$pas = $db->loadObjectList()) {
             return;
         }
 
-        foreach ($pas as $pa)
-        {
-            $data = ['attributeID' => $map[$pa->attributeID], 'personID' => $pa->profileID,];
+        foreach ($pas as $pa) {
+            $data = ['attributeID' => $map[$pa->attributeID], 'userID' => $pa->profileID,];
 
-            $table = new Tables\PersonAttributes();
+            $table = new Tables\ProfileAttributes();
 
-            if ($table->load($data))
-            {
+            if ($table->load($data)) {
                 continue;
             }
 
@@ -403,7 +385,7 @@ class Migration
     /**
      * Migrates the persons table.
      */
-    private static function persons(): void
+    private static function profiles(): void
     {
         $db = Application::getDB();
 
@@ -412,33 +394,9 @@ class Migration
         $db->setQuery($query);
 
         // No existing data
-        if (!$profiles = $db->loadObjectList('id'))
-        {
+        if (!$profiles = $db->loadObjectList('id')) {
             return;
         }
-
-        $alias     = null;
-        $id        = 0;
-        $editing   = false;
-        $content   = false;
-        $published = false;
-
-        // Should not get used as raw entries are created on installation.
-        $iQuery = $db->getQuery(true);
-        $iQuery->insert($db->quoteName('#__groups_persons'))
-            ->columns([
-                $db->quoteName('alias'),
-                $db->quoteName('id'),
-                $db->quoteName('content'),
-                $db->quoteName('editing'),
-                $db->quoteName('published')
-            ])
-            ->values(":alias, :id, :content, :editing, :published")
-            ->bind(':alias', $alias)
-            ->bind(':id', $id, ParameterType::INTEGER)
-            ->bind(':content', $content, ParameterType::BOOLEAN)
-            ->bind(':editing', $editing, ParameterType::BOOLEAN)
-            ->bind(':published', $published, ParameterType::BOOLEAN);
 
         $fnAID  = $db->quoteName('fn.attributeID');
         $fnPID  = $db->quoteName('fn.profileID');
@@ -455,38 +413,25 @@ class Migration
             ])
             ->bind(':profileID', $profileID);
 
-        foreach ($profiles as $profileID => $profile)
-        {
-            // Bound variables
-            $alias     = $profile->alias ?? null;
-            $id        = $profileID;
-            $content   = $profile->contentEnabled ?? false;
-            $editing   = $profile->canEdit ?? false;
-            $published = $profile->published ?? false;
+        foreach ($profiles as $profileID => $profile) {
+            $user = new Tables\Users();
 
-            $person = new Tables\Persons();
-
-            if ($person->load($profileID))
-            {
-                $db->setQuery($sQuery);
-
-                if ($names = $db->loadAssoc())
-                {
-                    $person->surnames  = $names['surnames'];
-                    $person->forenames = $names['forenames'];
-                }
-
-                $person->alias     = $alias;
-                $person->content   = $content;
-                $person->editing   = $editing;
-                $person->published = $published;
-
-                $person->store(true);
+            if (!$user->load($profileID)) {
                 continue;
             }
 
-            $db->setQuery($iQuery);
-            $db->execute();
+            $user->alias     = $profile->alias ?? null;
+            $user->content   = $profile->contentEnabled ?? false;
+            $user->editing   = $profile->canEdit ?? false;
+            $user->published = $profile->published ?? false;
+
+            $db->setQuery($sQuery);
+            if ($names = $db->loadAssoc()) {
+                $user->surnames  = $names['surnames'];
+                $user->forenames = $names['forenames'];
+            }
+
+            $user->store();
         }
     }
 
@@ -513,35 +458,29 @@ class Migration
         $db->setQuery($query);
 
         // rMap has to be filled for this to return results
-        if ($assocs = $db->loadObjectList())
-        {
-            foreach ($assocs as $assoc)
-            {
+        if ($assocs = $db->loadObjectList()) {
+            foreach ($assocs as $assoc) {
                 // Mapping to standard groups is not valid
-                if (in_array($assoc->groupID, Groups::DEFAULT))
-                {
+                if (in_array($assoc->groupID, Groups::DEFAULT)) {
                     continue;
                 }
 
                 // Non-migrated roles (member) are not processed
-                if (empty($rMap[$assoc->roleID]))
-                {
+                if (empty($rMap[$assoc->roleID])) {
                     continue;
                 }
 
                 $map  = new Tables\UserUsergroupMap();
                 $data = ['group_id' => $assoc->groupID, 'user_id' => $assoc->profileID];
 
-                if (!$map->load($data) or !$map->id)
-                {
+                if (!$map->load($data) or !$map->id) {
                     continue;
                 }
 
                 $table = new Tables\RoleAssociations();
                 $data  = ['mapID' => $map->id, 'roleID' => $rMap[$assoc->roleID]];
 
-                if ($table->load($data))
-                {
+                if ($table->load($data)) {
                     continue;
                 }
 
@@ -564,8 +503,7 @@ class Migration
         $db->setQuery($query);
 
         // No existing data
-        if (!$oldRoles = $db->loadObjectList())
-        {
+        if (!$oldRoles = $db->loadObjectList()) {
             return $map;
         }
 
@@ -579,14 +517,12 @@ class Migration
 
         $oldOrdering = [];
 
-        foreach ($oldRoles as $oldRole)
-        {
+        foreach ($oldRoles as $oldRole) {
             $oldID   = $oldRole->id;
             $thmName = $oldRole->name;
 
             // Members are now inferred but explicitly referenced
-            if ($thmName === 'Mitglied')
-            {
+            if ($thmName === 'Mitglied') {
                 continue;
             }
 
@@ -596,21 +532,18 @@ class Migration
             $table = new Tables\Roles();
 
             // Exact match 50% of THM roles
-            if ($table->load(['name_de' => $thmName]))
-            {
+            if ($table->load(['name_de' => $thmName])) {
                 $map[$oldID] = $table->id;
                 continue;
             }
 
             // Two known changes that wouldn't work with like.
-            if ($thmName === 'Koordinatorin')
-            {
+            if ($thmName === 'Koordinatorin') {
                 $map[$oldID] = 8;
                 continue;
             }
 
-            if ($thmName === 'ProfessorInnen')
-            {
+            if ($thmName === 'ProfessorInnen') {
                 $map[$oldID] = 9;
                 continue;
             }
@@ -620,8 +553,7 @@ class Migration
             $query->bind(':thmName', $name);
             $db->setQuery($query);
 
-            if ($groupsID = $db->loadResult())
-            {
+            if ($groupsID = $db->loadResult()) {
                 $map[$oldID] = $groupsID;
                 continue;
             }
@@ -646,12 +578,10 @@ class Migration
         ksort($oldOrdering);
         $oldOrdering = array_flip($oldOrdering);
 
-        foreach (array_keys($oldOrdering) as $oldID)
-        {
+        foreach (array_keys($oldOrdering) as $oldID) {
             $roleID = $map[$oldID];
 
-            if (!$position = array_search($roleID, $roleIDs))
-            {
+            if (!$position = array_search($roleID, $roleIDs)) {
                 continue;
             }
 
