@@ -1,0 +1,48 @@
+<updates>
+    <update>
+        <name>Groups Component</name>
+        <description>This component integrates the features of the contact and users components to present information
+            related to the persons of an organization.
+        </description>
+        <maintainer>James Antrim</maintainer>
+        <maintainerurl>https://www.thm.de/organizer</maintainerurl>
+        <version>4.0.1</version>
+        <infourl title="THM Homepage">https://www.thm.de/site</infourl>
+        <tags>
+            <tag>stable</tag>
+        </tags>
+        <targetplatform name="joomla" version="4.[0123456789]"/>
+        <php_minimum>8.1</php_minimum>
+        <element>com_groups</element>
+        <type>component</type>
+        <downloads>
+            <downloadurl type="full" format="zip">
+                https://github.com/James-Antrim/pkg_groups/raw/main/updates/com_groups.zip
+            </downloadurl>
+        </downloads>
+    </update>
+    <update>
+        <name>Groups Component - User Plugin</name>
+        <description>This plugin performs functions on several user related events synchronizing data with the Groups
+            Component.
+        </description>
+        <maintainer>James Antrim</maintainer>
+        <maintainerurl>https://www.thm.de/organizer</maintainerurl>
+        <version>4.0.1</version>
+        <infourl title="THM Homepage">https://www.thm.de/site</infourl>
+        <tags>
+            <tag>stable</tag>
+        </tags>
+        <targetplatform name="joomla" version="4.[0123456789]"/>
+        <php_minimum>8.1</php_minimum>
+        <element>plg_groups_user</element>
+        <type>plugin</type>
+        <folder>user</folder>
+        <client>site</client>
+        <downloads>
+            <downloadurl type="full" format="zip">
+                https://github.com/James-Antrim/plg_mapped_ldap/raw/main/updates/plg_groups_user.zip
+            </downloadurl>
+        </downloads>
+    </update>
+</updates>

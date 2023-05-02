@@ -28,8 +28,8 @@ class Users extends User
     public $activation;
 
     /**
-     * VARCHAR(255) DEFAULT null
-     * @var string
+     * VARCHAR(255) DEFAULT NULL
+     * @var null|string
      */
     public $alias;
 
@@ -169,8 +169,8 @@ class Users extends User
     public $sendEmail;
 
     /**
-     * VARCHAR(255) NOT NULL
-     * @var string
+     * VARCHAR(255) DEFAULT NULL
+     * @var null|string
      */
     public $surnames;
 

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="plugin" group="user" method="upgrade">
+    <name>plg_user_groups</name>
+    <author>James Antrim</author>
+    <authorEmail>james.antrim@nm.thm.de</authorEmail>
+    <authorUrl>www.thm.de</authorUrl>
+    <creationDate>April 2023</creationDate>
+    <copyright>TH Mittelhessen 2023</copyright>
+    <licence>GNU GPL v.3</licence>
+    <version>4.0.1</version>
+    <description>PLG_USER_GROUPS_XML_DESC</description>
+    <files>
+        <filename plugin="groups">groups.php</filename>
+    </files>
+    <languages>
+        <language tag="de-DE">de-DE/de-DE.plg_user_groups.sys.ini</language>
+        <language tag="en-GB">en-GB/en-GB.plg_user_groups.sys.ini</language>
+    </languages>
+    <updateservers>
+        <server type="extension" name="Groups User Plugin Update Site" priority="1">
+            https://github.com/James-Antrim/pkg_groups/raw/main/update.xml
+        </server>
+    </updateservers>
+</extension>

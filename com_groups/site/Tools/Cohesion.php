@@ -10,147 +10,52 @@
 
 namespace THM\Groups\Tools;
 
-use Exception;
-use THM\Groups\Adapters\Application;
-use THM\Groups\Helpers\Persons;
-
 class Cohesion
 {
     /**
-     * Supplements any person entry with a blank alias person aliases are unique so there can only be one.
+     * Parses the user account name to try and derive fore- and surnames from it.
      *
-     * @return void
+     * @param string $accountName the name column of the users table entry
+     *
+     * @return array [surnames, forenames]
      */
-    private static function correctAliases()
+    public static function parseNames(string $accountName): array
     {
-        $db    = Application::getDB();
-        $alias = $db->quoteName('alias');
+        // Replace non-alphabetical characters
+        $name = preg_replace('/[^A-ZÀ-ÖØ-Þa-zß-ÿ\p{N}_.\-\']/', ' ', $accountName);
 
-        $query = $db->getQuery(true);
-        $query->select($db->quoteName('id'))
-            ->from($db->quoteName('#__groups_persons'))
-            ->where("$alias = ''");
-        $db->setQuery($query);
+        // Replace superfluous whitespace
+        $name = preg_replace('/ +/', ' ', $name);
+        $name = trim($name);
 
-        if (!$incompleteIDs = $db->loadColumn())
-        {
-            return;
+        $fragments = array_filter(explode(" ", $name));
+
+        $surnames = array_pop($fragments);
+
+        // Resolve any supplemental prefix to the surnames
+        $prefix = '';
+
+        // The next fragment consists solely of lower case letters indicating a preposition
+        while (preg_match('/^[a-zß-ÿ]+$/', end($fragments))) {
+            $prefix = array_pop($fragments);
+
+            // Prepend positive results
+            $surnames = "$prefix $surnames";
         }
 
-        foreach ($incompleteIDs as $incompleteID)
-        {
-            self::createAlias($incompleteID);
-        }
-    }
+        // These prepositions indicate that the previous fragments were a locality and a further surname exists
+        if (in_array($prefix, ['zu', 'zum'])) {
+            $surnames = array_pop($fragments) . " $surnames";
 
-    /**
-     * Removes non-existent users from the user <-> usergroup map.
-     *
-     * @return void
-     */
-    private static function correctMap()
-    {
-        $db = Application::getDB();
-
-        $mapID  = $db->quoteName('user_id');
-        $userID = $db->quoteName('id');
-        $users  = $db->quoteName('#__users');
-
-        $query = $db->getQuery(true);
-        $query->delete($db->quoteName('#__user_usergroup_map'))
-            ->where("$mapID NOT IN (SELECT $userID FROM $users)");
-        $db->setQuery($query);
-
-        try
-        {
-            $db->execute();
-        }
-        catch (Exception $exception)
-        {
-            Application::message($exception->getMessage(), 'error');
-        }
-    }
-
-    /**
-     * Sets the person's alias based on the person's fore- and surnames
-     *
-     * @param int $personID the id of the person for which the alias is to be set
-     *
-     * @return bool true on success, otherwise false
-     *
-     * @throws Exception
-     */
-    public static function createAlias(int $personID)
-    {
-        $names = Persons::getNames($personID);
-
-        if (empty($names))
-        {
-            return false;
-        }
-
-        $alias = empty($names['forename']) ? $names['surname'] : "{$names['forename']}-{$names['surname']}";
-        $alias = THM_GroupsHelperComponent::trim($alias);
-        $alias = THM_GroupsHelperComponent::transliterate($alias);
-        $alias = THM_GroupsHelperComponent::filterText($alias);
-        $alias = str_replace(' ', '-', $alias);
-
-        // Check for an existing alias which matches the base alias for the person and react. (duplicate names)
-        $initial = true;
-        $number  = 1;
-        while (true)
-        {
-            $tempAlias   = $initial ? $alias : "$alias-$number";
-            $uniqueQuery = $dbo->getQuery(true);
-            $uniqueQuery->select('id')
-                ->from('#__thm_groups_profiles')
-                ->where("alias = '$tempAlias'")
-                ->where("id != $personID");
-            $dbo->setQuery($uniqueQuery);
-
-            try
-            {
-                $existingID = $dbo->loadAssoc();
-            }
-            catch (Exception $exception)
-            {
-                JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-                return false;
-            }
-
-            if (empty($existingID))
-            {
-                $alias = $tempAlias;
-                break;
-            }
-            else
-            {
-                $initial = false;
-                $number++;
+            // Check for further prepositions
+            while (preg_match('/^[a-zß-ÿ]+$/', end($fragments))) {
+                $surnames = array_pop($fragments) . " $surnames";
             }
         }
 
-        $updateQuery = $dbo->getQuery(true);
-        $updateQuery->update('#__thm_groups_profiles')->set("alias = '$alias'")->where("id = $personID");
-        $dbo->setQuery($updateQuery);
+        // Anything left is evaluated as collection of forenames
+        $forenames = $fragments ? implode(" ", $fragments) : '';
 
-        try
-        {
-            $success = $dbo->execute();
-        }
-        catch (Exception $exception)
-        {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        return !empty($success);
-    }
-
-    public static function createBasicAttributes(int $userID)
-    {
-
+        return [$surnames, $forenames];
     }
 }

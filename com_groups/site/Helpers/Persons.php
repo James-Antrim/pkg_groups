@@ -11,7 +11,6 @@
 namespace THM\Groups\Helpers;
 
 use THM\Groups\Tables\Users;
-use THM\Groups\Tools\Cohesion;
 
 class Persons
 {
@@ -116,63 +115,17 @@ class Persons
         $person = self::getTable();
         $person->load($personID);
 
-        if (property_exists($person, $property) and is_bool($person->$$property))
-        {
+        if (property_exists($person, $property) and is_bool($person->$$property)) {
             return $person->$$property;
         }
 
         $user = new Users();
         $user->load($personID);
 
-        if (property_exists($user, $property) and is_bool($user->$$property))
-        {
+        if (property_exists($user, $property) and is_bool($user->$$property)) {
             return $user->$$property;
         }
 
         return false;
-    }
-
-    /**
-     * Gets the person's forenames.
-     *
-     * @param int $personID
-     *
-     * @return string
-     *
-     */
-    public static function getForenames(int $personID): string
-    {
-        return self::get($personID, 'forenames') ?? '';
-    }
-
-    /**
-     * Gets the person's surnames.
-     *
-     * @param int $personID
-     *
-     * @return string
-     *
-     */
-    public static function getSurnames(int $personID): string
-    {
-        return self::get($personID, 'surnames') ?? '';
-    }
-
-    /**
-     * Gets the persons names.
-     *
-     * @param int $personID the id of the person
-     *
-     * @return array empty if no surnames could be found
-     */
-    public static function getNames(int $personID): array
-    {
-        if (!$surnames = self::getSurnames($personID))
-        {
-            Cohesion::createBasicAttributes($personID);
-            $surnames = self::getSurnames($personID);
-        }
-
-        return ['surnames' => $surnames, 'forenames' => self::getForenames($personID)];
     }
 }

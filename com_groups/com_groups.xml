@@ -10,7 +10,7 @@
     <license>GNU/GPL Version 3</license>
     <version>1.0.0</version>
     <namespace path="src">THM\Groups</namespace>
-    <!-- <install>
+    <install>
         <sql>
             <file driver="mysql" charset="utf8">sql/install.sql</file>
         </sql>
@@ -24,7 +24,7 @@
         <schemas>
             <schemapath type="mysql">sql/updates/</schemapath>
         </schemas>
-    </update> not set up yet-->
+    </update>
     <administration>
         <menu>Groups</menu>
         <submenu>
@@ -41,6 +41,7 @@
             <filename>config.xml</filename>
             <folder>language</folder>
             <folder>services</folder>
+            <folder>sql</folder>
         </files>
     </administration>
     <files folder="site">
@@ -55,12 +56,14 @@
         <folder>Models</folder>
         <folder>Providers</folder>
         <folder>Tables</folder>
-        <folder>Tools</folder>
         <folder>templates</folder>
+        <folder>Tools</folder>
         <folder>Views</folder>
         <filename>Component.php</filename>
     </files>
-    <!--<updateservers>
-        <server type="extension" priority="1" name="Groups Component Update Site"></server>
-    </updateservers> not set up now-->
+    <updateservers>
+        <server type="extension" name="Groups Component Update Site" priority="1">
+            https://github.com/James-Antrim/pkg_groups/raw/main/update.xml
+        </server>
+    </updateservers>
 </extension>
