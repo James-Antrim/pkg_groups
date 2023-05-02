@@ -398,12 +398,12 @@ class Migration
             return;
         }
 
-        $fnAID  = $db->quoteName('fn.attributeID');
-        $fnPID  = $db->quoteName('fn.profileID');
-        $snAID  = $db->quoteName('sn.attributeID');
-        $snPID  = $db->quoteName('sn.profileID');
-        $sQuery = $db->getQuery(true);
-        $sQuery->select([$db->quoteName('sn.value', 'surnames'), $db->quoteName('fn.value', 'forenames')])
+        $fnAID = $db->quoteName('fn.attributeID');
+        $fnPID = $db->quoteName('fn.profileID');
+        $snAID = $db->quoteName('sn.attributeID');
+        $snPID = $db->quoteName('sn.profileID');
+        $query = $db->getQuery(true);
+        $query->select([$db->quoteName('sn.value', 'surnames'), $db->quoteName('fn.value', 'forenames')])
             ->from($db->quoteName('#__thm_groups_profile_attributes', 'sn'))
             ->join('left', $db->quoteName('#__thm_groups_profile_attributes', 'fn'), "$fnPID = $snPID")
             ->where([
@@ -425,7 +425,7 @@ class Migration
             $user->editing   = $profile->canEdit ?? false;
             $user->published = $profile->published ?? false;
 
-            $db->setQuery($sQuery);
+            $db->setQuery($query);
             if ($names = $db->loadAssoc()) {
                 $user->surnames  = $names['surnames'];
                 $user->forenames = $names['forenames'];
@@ -433,6 +433,14 @@ class Migration
 
             $user->store();
         }
+
+        // Assume profiles without surnames and forenames are functional accounts and flag them as such
+        $query = $db->getQuery(true);
+        $query->update($db->quoteName('#__users'))
+            ->set($db->quoteName('functional') . " = 1")
+            ->where($db->quoteName('surnames') . " = ''");
+        $db->setQuery($query);
+        $db->execute();
     }
 
     /**
