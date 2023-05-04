@@ -1,6 +1,8 @@
 SET foreign_key_checks = 0;
 
 #region Reset
+
+#IF EXISTS in case a reset was performed separately to make a clean backup
 DROP TABLE IF EXISTS
     `v7ocf_groups_attributes`,
     `v7ocf_groups_groups`,
@@ -10,18 +12,19 @@ DROP TABLE IF EXISTS
     `v7ocf_groups_types`;
 
 ALTER TABLE `v7ocf_users`
-    DROP COLUMN `alias`,
-    DROP COLUMN `content`,
-    DROP COLUMN `editing`,
-    DROP COLUMN `functional`,
-    DROP COLUMN `forenames`,
-    DROP COLUMN `published`,
-    DROP COLUMN `surnames`;
+    DROP COLUMN IF EXISTS `alias`,
+    DROP COLUMN IF EXISTS `content`,
+    DROP COLUMN IF EXISTS `editing`,
+    DROP COLUMN IF EXISTS `functional`,
+    DROP COLUMN IF EXISTS `forenames`,
+    DROP COLUMN IF EXISTS `published`,
+    DROP COLUMN IF EXISTS `surnames`;
 
+# even if the primary is in its original state this statement should not cause any issues
 ALTER TABLE `v7ocf_user_usergroup_map`
     DROP CONSTRAINT `PRIMARY`,
-    DROP COLUMN `id`,
-    DROP CONSTRAINT `entry`,
+    DROP COLUMN IF EXISTS `id`,
+    DROP CONSTRAINT IF EXISTS `entry`,
     ADD PRIMARY KEY (`user_id`, `group_id`);
 #endregion
 
@@ -137,8 +140,7 @@ ALTER TABLE `v7ocf_users`
 
 #region Fill
 # Forenames and surnames are now a part of the users table
-INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`,
-                                       `viewLevelID`)
+INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `viewLevelID`)
 VALUES (1, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
        (2, 'Namenszusatz (nach)', 'Supplement (Post)', '', 4, '{"hint":"M.Sc."}', 1, 1),
        (3, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 4, '{"hint":"Prof. Dr."}', 1, 1),
@@ -174,14 +176,11 @@ VALUES (1, 'Dekan', 'Dean', 'Dekane', 'Deans', 1),
 # Default messages and patterns derive from input classes
 INSERT INTO `v7ocf_groups_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
 VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
-       (2, 'Name', 'Name', 1,
-        '{"message_de":"Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.","message_en":"Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.","pattern":"^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$"}'),
+       (2, 'Name', 'Name', 1, '{"message_de":"Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.","message_en":"Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.","pattern":"^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$"}'),
        (3, 'E-Mail Adresse', 'E-Mail Address', 6, '{}'),
-       (4, 'Namenszusatz', 'Name Supplement', 1,
-        '{"message_de":"Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.","message_en":"The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.","pattern":"^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$"}'),
+       (4, 'Namenszusatz', 'Name Supplement', 1, '{"message_de":"Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.","message_en":"The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.","pattern":"^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$"}'),
        (5, 'Bild', 'Picture', 4, '{"accept":".bmp,.BMP,.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG"}'),
-       (6, 'Telefonnummer', 'Telephone Number', 7,
-        '{"pattern":"^(\\\\+[\\\\d]+ ?)?( ?((\\\\(0?[\\\\d]*\\\\))|(0?[\\\\d]+(\\/| \\\\/)?)))?(([ \\\\-]|[\\\\d]+)+)$"}'),
+       (6, 'Telefonnummer', 'Telephone Number', 7, '{"pattern":"^(\\\\+[\\\\d]+ ?)?( ?((\\\\(0?[\\\\d]*\\\\))|(0?[\\\\d]+(\\/| \\\\/)?)))?(([ \\\\-]|[\\\\d]+)+)$"}'),
        (7, 'Ausführlicher Text / HTML', 'Descriptive Text / HTML', 2, '{}'),
        (8, 'Datum', 'Date', 5, '{}');
 #endregion

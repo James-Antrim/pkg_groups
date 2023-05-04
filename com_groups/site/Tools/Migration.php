@@ -438,7 +438,7 @@ class Migration
         $query = $db->getQuery(true);
         $query->update($db->quoteName('#__users'))
             ->set($db->quoteName('functional') . " = 1")
-            ->where($db->quoteName('surnames') . " = ''");
+            ->where($db->quoteName('surnames') . " IS NULL");
         $db->setQuery($query);
         $db->execute();
     }

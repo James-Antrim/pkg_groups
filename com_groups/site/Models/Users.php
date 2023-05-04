@@ -22,7 +22,7 @@ use THM\Groups\Tools\Migration;
 /**
  * Model class for aggregating available attribute types data.
  */
-class Persons extends ListModel
+class Users extends ListModel
 {
     protected string $defaultOrdering = 'surnames, forenames';
 
@@ -40,6 +40,7 @@ class Persons extends ListModel
                 'block',
                 'content',
                 'editing',
+                'functional',
                 'published',
                 'registered',
                 'roleID',
@@ -152,10 +153,9 @@ class Persons extends ListModel
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
 
-        $nameColumns = [$db->quoteName('forenames'), $db->quoteName('surnames')];
         $query->select([
             $db->quoteName('u') . '.*',
-            $query->concatenate($nameColumns, ' ') . ' AS ' . $db->quoteName('name')
+            'COALESCE(' . $db->quoteName('surnames') . ', ' . $db->quoteName('name') . ') AS ' . $db->quoteName('surnames')
         ]);
 
         $userID = $db->quoteName('u.id');
@@ -223,6 +223,7 @@ class Persons extends ListModel
         $this->binaryFilter($query, 'filter.block');
         $this->binaryFilter($query, 'filter.content');
         $this->binaryFilter($query, 'filter.editing');
+        $this->binaryFilter($query, 'filter.functional');
         $this->binaryFilter($query, 'filter.published');
 
         if ($search = $this->getState('filter.search')) {

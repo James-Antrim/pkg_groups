@@ -70,7 +70,9 @@ class PlgUserGroups extends CMSPlugin
 
         // Future-proofing the cohesion between truly empty names and the functional flag.
         if ($user->functional === self::NO and $user->forenames === '' and $user->surnames === '') {
+            $user->forenames  = null;
             $user->functional = self::YES;
+            $user->surnames   = null;
             $updated          = true;
         }
 

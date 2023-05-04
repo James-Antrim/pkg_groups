@@ -15,13 +15,13 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\Button\DropdownButton;
 use Joomla\CMS\Toolbar\Toolbar;
 use THM\Groups\Adapters\HTML;
-use THM\Groups\Helpers\{Can, Persons as Helper};
+use THM\Groups\Helpers\{Can, Users as Helper};
 use THM\Groups\Layouts\ListItem;
 
 /**
  * View class for displaying available persons.
  */
-class Persons extends ListView
+class Users extends ListView
 {
     /**
      * @inheritDoc
@@ -50,39 +50,39 @@ class Persons extends ListView
             if (Can::changeState()) {
                 $childBar->standardButton('publish', 'GROUPS_PUBLISH_PROFILE')
                     ->icon('fa fa-eye')
-                    ->task('Persons.publish')
+                    ->task('Users.publish')
                     ->listCheck(true);
                 $childBar->standardButton('unblock', 'GROUPS_UNPUBLISH_PROFILE')
                     ->icon('fa fa-eye-slash')
-                    ->task('Persons.unpublish')
+                    ->task('Users.unpublish')
                     ->listCheck(true);
                 $childBar->standardButton('enableEditing', 'GROUPS_ENABLE_EDITING')
                     ->icon('fa fa-edit')
-                    ->task('Persons.enableEditing')
+                    ->task('Users.enableEditing')
                     ->listCheck(true);
                 $childBar->standardButton('disableEditing', 'GROUPS_DISABLE_EDITING')
                     ->icon('fa fa-minus-circle')
-                    ->task('Persons.disableEditing')
+                    ->task('Users.disableEditing')
                     ->listCheck(true);
                 $childBar->standardButton('enableContent', 'GROUPS_ENABLE_CONTENT')
                     ->icon('fa fa-folder-open')
-                    ->task('Persons.enableContent')
+                    ->task('Users.enableContent')
                     ->listCheck(true);
                 $childBar->standardButton('disableContent', 'GROUPS_DISABLE_CONTENT')
                     ->icon('fa fa-folder')
-                    ->task('Persons.disableContent')
+                    ->task('Users.disableContent')
                     ->listCheck(true);
                 $childBar->standardButton('unblock', 'GROUPS_UNBLOCK_USER')
                     ->icon('fa fa-door-open')
-                    ->task('Persons.block')
+                    ->task('Users.block')
                     ->listCheck(true);
                 $childBar->standardButton('block', 'GROUPS_BLOCK_USER')
                     ->icon('fa fa-door-closed')
-                    ->task('Persons.block')
+                    ->task('Users.block')
                     ->listCheck(true);
                 $childBar->standardButton('activate', 'GROUPS_ACTIVATE_USER')
                     ->icon('fa fa-check-square')
-                    ->task('Persons.activate')
+                    ->task('Users.activate')
                     ->listCheck(true);
 
                 if (Can::batchProcess()) {
@@ -93,7 +93,7 @@ class Persons extends ListView
                 }
 
                 if (Can::delete()) {
-                    $childBar->delete('Persons.delete')
+                    $childBar->delete('Users.delete')
                         ->message('GROUPS_DELETE_MESSAGE')
                         ->text('GROUPS_DELETE_USER')
                         ->listCheck(true);
@@ -133,6 +133,7 @@ class Persons extends ListView
             $item->editLink      = Route::_('index.php?option=com_groups&view=Profile&layout=edit&id=' . $item->id);
             $item->groups        = $this->formatGroups($item->groups);
             $item->lastvisitDate = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
+            $item->name          = $item->forenames ? "$item->forenames $item->surnames" : $item->surnames;
             $item->published     = HTML::toggle($rowNo, Helper::publishedStates[$item->published], 'Persons');
             $item->viewLink      = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
         }

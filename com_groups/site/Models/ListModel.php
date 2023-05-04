@@ -48,12 +48,9 @@ abstract class ListModel extends Base
     {
         $this->state = new Registry();
 
-        try
-        {
+        try {
             parent::__construct($config, $factory);
-        }
-        catch (Exception $exception)
-        {
+        } catch (Exception $exception) {
             Application::message($exception->getMessage(), 'error');
             Application::redirect('', $exception->getCode());
         }
@@ -72,15 +69,14 @@ abstract class ListModel extends Base
         $value = $this->state->get($name);
 
         // State default for get is null and default for request is either an empty string or not being set.
-        if (!$this->isBinary($value))
-        {
+        if (!$this->isBinary($value)) {
             return;
         }
 
-        $value = (int)$value;
+        $value = (int) $value;
 
         // Typical filter names are in the form 'filter.column'
-        $column = strpos($name, '.') ? substr($name, strpos($name, '.')) : $name;
+        $column = strpos($name, '.') ? substr($name, strpos($name, '.') + 1) : $name;
         $column = $this->getDatabase()->quoteName($column);
         $query->where("$column = $value");
     }
@@ -112,15 +108,12 @@ abstract class ListModel extends Base
     {
         $activeFilters = [];
 
-        if (!empty($this->filter_fields))
-        {
-            foreach ($this->filter_fields as $filter)
-            {
+        if (!empty($this->filter_fields)) {
+            foreach ($this->filter_fields as $filter) {
                 $filterName = 'filter.' . $filter;
                 $value      = $this->state->get($filterName);
 
-                if ($value or is_numeric($value))
-                {
+                if ($value or is_numeric($value)) {
                     $activeFilters[$filter] = $value;
                 }
             }
@@ -145,12 +138,9 @@ abstract class ListModel extends Base
         $context = $this->context . '.filter';
         $options = ['control' => '', 'load_data' => $loadData];
 
-        try
-        {
+        try {
             return $this->loadForm($context, $this->filterFormName, $options);
-        }
-        catch (Exception $exception)
-        {
+        } catch (Exception $exception) {
             Application::message($exception->getMessage(), 'error');
             Application::redirect('', $exception->getCode());
         }
@@ -163,8 +153,7 @@ abstract class ListModel extends Base
      */
     protected function loadForm($name, $source = null, $options = [], $clear = false, $xpath = false): Form
     {
-        if ($form = parent::loadForm($name, $source, $options, $clear, $xpath))
-        {
+        if ($form = parent::loadForm($name, $source, $options, $clear, $xpath)) {
             $this->filterFilterForm($form);
         }
 
@@ -180,12 +169,11 @@ abstract class ListModel extends Base
      */
     protected function isBinary(mixed $value): bool
     {
-        if (!is_numeric($value))
-        {
+        if (!is_numeric($value)) {
             return false;
         }
 
-        $value = (int)$value;
+        $value = (int) $value;
 
         return !(($value > 1 or $value < 0));
     }
@@ -199,10 +187,8 @@ abstract class ListModel extends Base
      */
     protected function orderBy(QueryInterface $query): void
     {
-        if ($columns = $this->state->get('list.ordering'))
-        {
-            if (preg_match('/, */', $columns))
-            {
+        if ($columns = $this->state->get('list.ordering')) {
+            if (preg_match('/, */', $columns)) {
                 $columns = explode(',', preg_replace('/, */', ',', $columns));
             }
 
@@ -210,8 +196,7 @@ abstract class ListModel extends Base
 
             $direction = strtoupper($query->escape($this->getState('list.direction', 'ASC')));
 
-            if (is_array($columns))
-            {
+            if (is_array($columns)) {
                 $columns = implode(" $direction, ", $columns);
             }
 
@@ -222,7 +207,7 @@ abstract class ListModel extends Base
     /**
      * @inheritDoc
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         /** @var CMSApplication $app */
         $app = Application::getApplication();
@@ -231,14 +216,12 @@ abstract class ListModel extends Base
 
         // Receive & set filters
         $filters = $app->getUserStateFromRequest($this->context . '.filter', 'filter', [], 'array');
-        foreach ($filters as $input => $value)
-        {
+        foreach ($filters as $input => $value) {
             $this->state->set('filter.' . $input, $value);
         }
 
         $list = $app->getUserStateFromRequest($this->context . '.list', 'list', [], 'array');
-        foreach ($list as $input => $value)
-        {
+        foreach ($list as $input => $value) {
             $this->state->set("list.$input", $value);
         }
 
@@ -246,18 +229,15 @@ abstract class ListModel extends Base
         $fullOrdering = "$this->defaultOrdering ASC";
         $ordering     = $this->defaultOrdering;
 
-        if (!empty($list['fullordering']) and !str_contains($list['fullordering'], 'null'))
-        {
+        if (!empty($list['fullordering']) and !str_contains($list['fullordering'], 'null')) {
             $pieces          = explode(' ', $list['fullordering']);
             $validDirections = ['ASC', 'DESC', ''];
 
-            if (in_array(end($pieces), $validDirections))
-            {
+            if (in_array(end($pieces), $validDirections)) {
                 $direction = array_pop($pieces);
             }
 
-            if ($pieces)
-            {
+            if ($pieces) {
                 $ordering = implode(' ', $pieces);
             }
 
@@ -268,13 +248,10 @@ abstract class ListModel extends Base
         $this->state->set('list.ordering', $ordering);
         $this->state->set('list.direction', $direction);
 
-        if ($format = Input::getCMD('format') and $format !== 'html')
-        {
+        if ($format = Input::getCMD('format') and $format !== 'html') {
             $limit = 0;
             $start = 0;
-        }
-        else
-        {
+        } else {
             $limit = (isset($list['limit']) && is_numeric($list['limit'])) ? $list['limit'] : $this->defaultLimit;
             $start = $this->getUserStateFromRequest('limitstart', 'limitstart', 0);
             $start = ($limit != 0 ? (floor($start / $limit) * $limit) : 0);

@@ -18,12 +18,12 @@ use Joomla\CMS\User\UserHelper;
 use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\{Can, Groups};
 use Joomla\Component\Users\Administrator\Model\UserModel;
-use THM\Groups\Tables\{RoleAssociations, Users, UserUsergroupMap};
+use THM\Groups\Tables\{RoleAssociations, Users as UT, UserUsergroupMap as UUGM};
 
 /**
  * Controller class for groups.
  */
-class Persons extends Controller
+class Users extends Controller
 {
     private const ADD = 1, RESET = 1, REMOVE = 0, STOP = 0;
 
@@ -49,7 +49,7 @@ class Persons extends Controller
 
         // Access checks.
         foreach ($selectedIDs as $selectedID) {
-            $users = new Users();
+            $users = new UT();
 
             if ($users->load($selectedID)) {
                 $current = $users->getProperties();
@@ -106,7 +106,7 @@ class Persons extends Controller
 
         if (is_numeric($actionValue) and in_array((int) $actionValue, self::ACTIONS) and $groupID) {
             /**
-             * Joomla programmed a hard error if a non-super user batch processed a super user at all. I am only going
+             * Joomla programmed a hard error if a non-super user batch processed a superuser at all. I am only going
              * to throw an error if the batch process is to add or remove a group assignment which would add or remove
              * super authorization.
              */
@@ -214,7 +214,7 @@ class Persons extends Controller
                 continue;
             }
 
-            $users = new Users();
+            $users = new UT();
 
             if ($users->load($selectedID)) {
                 $properties = $users->getProperties();
@@ -249,7 +249,7 @@ class Persons extends Controller
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('Persons', 'content', $selectedIDs, false);
+        $updated     = $this->updateBool('Users', 'content', $selectedIDs, false);
 
         // todo add category suppression
 
@@ -269,7 +269,7 @@ class Persons extends Controller
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('Persons', 'editing', $selectedIDs, false);
+        $updated     = $this->updateBool('Users', 'editing', $selectedIDs, false);
 
         $this->farewell($selected, $updated);
     }
@@ -288,7 +288,7 @@ class Persons extends Controller
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('Persons', 'content', $selectedIDs, true);
+        $updated     = $this->updateBool('Users', 'content', $selectedIDs, true);
 
         // todo add category creation
 
@@ -308,13 +308,13 @@ class Persons extends Controller
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('Persons', 'editing', $selectedIDs, true);
+        $updated     = $this->updateBool('Users', 'editing', $selectedIDs, true);
 
         $this->farewell($selected, $updated);
     }
 
     /**
-     * Filters selected persons for the current user.
+     * Filters selected accounts for the current user.
      * @param array $selectedIDs
      *
      * @return array
@@ -329,8 +329,8 @@ class Persons extends Controller
     /**
      * An extract for redirecting back to the list view and providing a message for the number of entries updated.
      *
-     * @param int $selected the number of persons selected for processing
-     * @param int $updated the number of persons changed by the calling function
+     * @param int $selected the number of accounts selected for processing
+     * @param int $updated the number of accounts changed by the calling function
      * @param bool $delete whether the change affected by the calling function was a deletion
      * @return void
      */
@@ -351,7 +351,7 @@ class Persons extends Controller
             Application::message($message, $type);
         }
 
-        $this->setRedirect('index.php?option=com_groups&view=Persons');
+        $this->setRedirect('index.php?option=com_groups&view=Users');
     }
 
     /**
@@ -367,7 +367,7 @@ class Persons extends Controller
     private function map(int $userID, int $action, int $groupID, int $roleID): bool
     {
         $mapData = ['group_id' => $groupID, 'user_id' => $userID];
-        $map     = new UserUsergroupMap();
+        $map     = new UUGM();
         $map->load($mapData);
 
         if ($action === self::REMOVE) {
@@ -410,7 +410,7 @@ class Persons extends Controller
     }
 
     /**
-     * Publishes the selected persons' profiles.
+     * Publishes the selected accounts' profiles.
      * @return void
      */
     public function publish(): void
@@ -428,7 +428,7 @@ class Persons extends Controller
      */
     private function reset(int $userID, bool $value): bool
     {
-        $users = new Users();
+        $users = new UT();
         $value = (int) $value;
 
         // The most expedient way to check for redundant execution.
@@ -489,7 +489,7 @@ class Persons extends Controller
                 continue;
             }
 
-            $users = new Users();
+            $users = new UT();
 
             if ($users->load($selectedID)) {
                 $current = $users->getProperties();
@@ -559,7 +559,7 @@ class Persons extends Controller
         }
 
         $selected = count($selectedIDs);
-        $updated  = $this->updateBool('Persons', 'published', $selectedIDs, $value);
+        $updated  = $this->updateBool('Users', 'published', $selectedIDs, $value);
 
         $this->farewell($selected, $updated);
     }
@@ -574,7 +574,7 @@ class Persons extends Controller
     }
 
     /**
-     * Unpublishes the selected persons' profiles.
+     * Unpublishes the selected accounts' profiles.
      * @return void
      */
     public function unpublish(): void
