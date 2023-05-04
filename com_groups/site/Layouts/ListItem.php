@@ -27,7 +27,7 @@ class ListItem
      * @param int $rowNo the row iteration count
      * @param object $item the item being rendered
      */
-    private static function check(int $rowNo, object $item)
+    private static function check(int $rowNo, object $item): void
     {
         ?>
         <td class="text-center">
@@ -42,16 +42,13 @@ class ListItem
      * @param object $item the item being rendered
      * @param bool $enabled whether sorting has been enabled
      */
-    private static function ordering(object $item, bool $enabled)
+    private static function ordering(object $item, bool $enabled): void
     {
         $attributes = ['class' => 'sortable-handler'];
 
-        if (!$item->access)
-        {
+        if (!$item->access) {
             $attributes['class'] .= ' inactive';
-        }
-        elseif (!$enabled)
-        {
+        } elseif (!$enabled) {
             $attributes['class'] .= ' inactive';
             $attributes['title'] = Text::_('JORDERINGDISABLED');
         }
@@ -78,7 +75,7 @@ class ListItem
      * @param int $rowNo the row number being rendered
      * @param object $item the item being rendered
      */
-    public static function render(ListView $view, int $rowNo, object $item)
+    public static function render(ListView $view, int $rowNo, object $item): void
     {
         $context     = $view->backend;
         $state       = $view->get('state');
@@ -89,14 +86,12 @@ class ListItem
         <tr>
             <?php
 
-            foreach ($view->headers as $column => $header)
-            {
+            foreach ($view->headers as $column => $header) {
                 $linkType = (!empty($header['link']) and in_array($header['link'], self::LINK_TYPES)) ?
                     $header['link'] : self::NONE;
 
                 $header['properties'] = $header['properties'] ?? [];
-                switch ($header['type'])
-                {
+                switch ($header['type']) {
                     case 'check':
                         self::check($rowNo, $item);
                         break;
@@ -124,27 +119,21 @@ class ListItem
      * @param bool $context the display context (false: public, true: admin)
      * @param int $linkType the link type to use for the displayed column value
      */
-    private static function text(object $item, string $column, bool $context, int $linkType)
+    private static function text(object $item, string $column, bool $context, int $linkType): void
     {
         $value = $item->$column ?? '';
 
-        if (is_array($value))
-        {
+        if (is_array($value)) {
             $properties = HTML::toProperties($value['properties']);
             $value      = $value['value'];
-        }
-        else
-        {
+        } else {
             $properties = '';
         }
 
-        if ($main = $column === 'name')
-        {
+        if ($main = $column === 'name') {
             $opener = "<th $properties scope=\"row\">";
             $closer = "</th>";
-        }
-        else
-        {
+        } else {
             $opener = "<td $properties>";
             $closer = "</td>";
         }
@@ -152,16 +141,13 @@ class ListItem
         $linkOpen  = '';
         $linkClose = '';
 
-        if ($linkType)
-        {
+        if ($linkType) {
             $editLink = $item->editLink ?? '';
             $viewLink = $item->viewLink ?? '';
-            if ($url = $context === self::ADMIN ? $editLink : $viewLink)
-            {
+            if ($url = $context === self::ADMIN ? $editLink : $viewLink) {
                 $lProperties = ['href' => $url];
 
-                if ($linkType === self::TAB)
-                {
+                if ($linkType === self::TAB) {
                     $lProperties['target'] = '_blank';
                 }
 
@@ -172,25 +158,21 @@ class ListItem
 
         echo $opener;
 
-        if ($main and !empty($item->prefix))
-        {
+        if ($main and !empty($item->prefix)) {
             echo $item->prefix;
         }
 
         echo $linkOpen . $value . $linkClose;
 
-        if ($main and !empty($item->icon))
-        {
+        if ($main and !empty($item->icon)) {
             echo $item->icon;
         }
 
-        if ($main and !empty($item->supplement))
-        {
+        if ($main and !empty($item->supplement)) {
             echo "<br><span class=\"small\">$item->supplement</span>";
         }
 
-        if ($main and $item->requireReset === 1)
-        {
+        if ($main and isset($item->requireReset) and $item->requireReset === 1) {
             echo '<span class="badge bg-warning text-dark">' . Text::_('GROUPS_RESET_REQUIRED') . '</span>';
         }
 

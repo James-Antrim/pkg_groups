@@ -16,7 +16,6 @@ use Joomla\CMS\Router\Route;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 use THM\Groups\Adapters\Application;
-use THM\Groups\Helpers\Can;
 use THM\Groups\Helpers\Inputs;
 use THM\Groups\Inputs\Input;
 use THM\Groups\Tools\Migration;
@@ -26,6 +25,8 @@ use THM\Groups\Tools\Migration;
  */
 class Types extends ListModel
 {
+    protected string $defaultOrdering = 'name';
+
     /**
      * @inheritDoc
      */
@@ -33,8 +34,7 @@ class Types extends ListModel
     {
         Migration::migrate();
 
-        if (empty($config['filter_fields']))
-        {
+        if (empty($config['filter_fields'])) {
             $config['filter_fields'] = [
                 'assigned',
                 'inputID',
@@ -59,8 +59,7 @@ class Types extends ListModel
     {
         $items = parent::getItems();
 
-        foreach ($items as $item)
-        {
+        foreach ($items as $item) {
             // Management access is a prerequisite of accessing this view at all.
             $item->access   = true;
             $item->editLink = Route::_('index.php?option=com_groups&view=Type&id=' . $item->id);
@@ -96,9 +95,8 @@ class Types extends ListModel
 
         $iIDColumn = $db->quoteName('t.inputID');
         $inputID   = $this->getState('filter.inputID');
-        if (is_numeric($inputID) and intval($inputID) > 0)
-        {
-            $inputID = (int)$inputID;
+        if (is_numeric($inputID) and intval($inputID) > 0) {
+            $inputID = (int) $inputID;
             $query->where($iIDColumn . ' = :inputID')
                 ->bind(':inputID', $inputID, ParameterType::INTEGER);
         }
@@ -111,7 +109,7 @@ class Types extends ListModel
     /**
      * @inheritDoc
      */
-    protected function populateState($ordering = 'name', $direction = 'asc')
+    protected function populateState($ordering = null, $direction = null): void
     {
         parent::populateState($ordering, $direction);
     }

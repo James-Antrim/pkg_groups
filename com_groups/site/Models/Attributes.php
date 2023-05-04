@@ -24,6 +24,8 @@ use THM\Groups\Tools\Migration;
  */
 class Attributes extends ListModel
 {
+    protected string $defaultOrdering = 'name';
+
     /**
      * @inheritDoc
      */
@@ -31,8 +33,7 @@ class Attributes extends ListModel
     {
         Migration::migrate();
 
-        if (empty($config['filter_fields']))
-        {
+        if (empty($config['filter_fields'])) {
             $config['filter_fields'] = [
                 'assigned',
                 'typeID',
@@ -58,8 +59,7 @@ class Attributes extends ListModel
     {
         $items = parent::getItems();
 
-        foreach ($items as $item)
-        {
+        foreach ($items as $item) {
             // Management access is a prerequisite of accessing this view at all.
             $item->access   = true;
             $item->editLink = Route::_('index.php?option=com_groups&view=Attribute&id=' . $item->id);
@@ -98,32 +98,26 @@ class Attributes extends ListModel
         $query->from($attributes)->join('inner', $levels, $lCondition)->join('inner', $types, $tCondition);
 
         $contextValue = $this->getState('filter.context');
-        $positiveInt  = (is_numeric($contextValue) and $contextValue = (int)$contextValue);
+        $positiveInt  = (is_numeric($contextValue) and $contextValue = (int) $contextValue);
 
-        if ($positiveInt and in_array($contextValue, Helpers\Attributes::VALID_CONTEXTS))
-        {
-            if ($contextValue === Helpers\Attributes::PERSONS_CONTEXT)
-            {
+        if ($positiveInt and in_array($contextValue, Helpers\Attributes::VALID_CONTEXTS)) {
+            if ($contextValue === Helpers\Attributes::PERSONS_CONTEXT) {
                 $query->where($contextID . ' != ' . Helpers\Attributes::GROUPS_CONTEXT);
-            }
-            elseif ($contextValue === Helpers\Attributes::GROUPS_CONTEXT)
-            {
+            } elseif ($contextValue === Helpers\Attributes::GROUPS_CONTEXT) {
                 $query->where($contextID . ' != ' . Helpers\Attributes::PERSONS_CONTEXT);
             }
         }
 
         $levelValue = $this->getState('filter.levelID');
-        if (is_numeric($levelValue) and intval($levelValue) > 0)
-        {
-            $levelValue = (int)$levelValue;
+        if (is_numeric($levelValue) and intval($levelValue) > 0) {
+            $levelValue = (int) $levelValue;
             $query->where($levelID . ' = :levelID')
                 ->bind(':levelID', $levelValue, ParameterType::INTEGER);
         }
 
         $typeValue = $this->getState('filter.typeID');
-        if (is_numeric($typeValue) and intval($typeValue) > 0)
-        {
-            $typeValue = (int)$typeValue;
+        if (is_numeric($typeValue) and intval($typeValue) > 0) {
+            $typeValue = (int) $typeValue;
             $query->where($typeID . ' = :typeID')
                 ->bind(':typeID', $typeValue, ParameterType::INTEGER);
         }
@@ -136,7 +130,7 @@ class Attributes extends ListModel
     /**
      * @inheritDoc
      */
-    protected function populateState($ordering = 'name', $direction = 'asc')
+    protected function populateState($ordering = null, $direction = null): void
     {
         parent::populateState($ordering, $direction);
     }

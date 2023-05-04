@@ -126,15 +126,15 @@ class Users extends ListView
     protected function completeItems(): void
     {
         foreach ($this->items as $rowNo => $item) {
-            $item->activated     = HTML::toggle($rowNo, Helper::activatedStates[$item->activated], 'Persons');
-            $item->block         = HTML::toggle($rowNo, Helper::blockedStates[$item->block], 'Persons');
-            $item->content       = HTML::toggle($rowNo, Helper::contentStates[$item->content], 'Persons');
-            $item->editing       = HTML::toggle($rowNo, Helper::editingStates[$item->editing], 'Persons');
-            $item->editLink      = Route::_('index.php?option=com_groups&view=Profile&layout=edit&id=' . $item->id);
+            $item->activated     = HTML::toggle($rowNo, Helper::activatedStates[$item->activated], 'Users');
+            $item->block         = HTML::toggle($rowNo, Helper::blockedStates[$item->block], 'Users');
+            $item->content       = HTML::toggle($rowNo, Helper::contentStates[$item->content], 'Users');
+            $item->editing       = HTML::toggle($rowNo, Helper::editingStates[$item->editing], 'Users');
+            $item->editLink      = Route::_('index.php?option=com_groups&view=User&id=' . $item->id);
             $item->groups        = $this->formatGroups($item->groups);
             $item->lastvisitDate = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
             $item->name          = $item->forenames ? "$item->forenames $item->surnames" : $item->surnames;
-            $item->published     = HTML::toggle($rowNo, Helper::publishedStates[$item->published], 'Persons');
+            $item->published     = HTML::toggle($rowNo, Helper::publishedStates[$item->published], 'Users');
             $item->viewLink      = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
         }
     }
