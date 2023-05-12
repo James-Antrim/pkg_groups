@@ -54,7 +54,7 @@ abstract class THM_GroupsViewEdit extends JViewLegacy
     {
         JHtml::_('bootstrap.tooltip');
         JHtml::_('behavior.framework', true);
-        JHtml::_('behavior.formvalidation');
+        JHtml::_('behavior.formvalidator');
         JHtml::_('formbehavior.chosen', 'select');
 
         JHtml::stylesheet('media/com_thm_groups/css/backend.css');
