@@ -29,19 +29,19 @@ class THM_GroupsViewProfile_Edit extends THM_GroupsViewProfile_Edit_View
     public function getToolbar()
     {
         $html = '<div class="frontend-toolbar">';
-        $html .= '<button type="submit" class="btn" ';
+        $html .= '<button type="submit" class="btn validate" ';
         $html .= 'onclick="document.adminForm.task.value=\'profile.apply\';return true;">';
         $html .= '<span class="icon-edit"></span>' . JText::_('COM_THM_GROUPS_APPLY');
         $html .= '</button>';
-        $html .= '<button type="submit" class="btn btn-primary" ';
+        $html .= '<button type="submit" class="btn btn-primary validate" ';
         $html .= 'onclick="document.adminForm.task.value = \'profile.save\';return true;">';
         $html .= '<span class="icon-save"></span>' . JText::_('COM_THM_GROUPS_SAVE');
         $html .= '</button>';
-        $html .= '<button type="submit" class="btn" ';
+        $html .= '<button type="submit" class="btn validate" ';
         $html .= 'onclick="document.adminForm.task.value=\'profile.cancel\';return true;">';
         $html .= '<span class="icon-edit"></span>' . JText::_('COM_THM_GROUPS_CANCEL');
         $html .= '</button>';
-        $html   .= '</div>';
+        $html .= '</div>';
 
         return $html;
     }
