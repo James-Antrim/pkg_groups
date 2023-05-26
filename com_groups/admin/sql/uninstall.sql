@@ -9,8 +9,7 @@ DROP TABLE IF EXISTS
     `#__groups_role_associations`,
     `#__groups_roles`,
     `#__groups_template_attributes`,
-    `#__groups_templates`,
-    `#__groups_types`;
+    `#__groups_templates`;
 
 ALTER TABLE `#__user_usergroup_map`
     DROP CONSTRAINT `PRIMARY`,

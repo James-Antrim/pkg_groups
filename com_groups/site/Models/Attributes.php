@@ -82,7 +82,6 @@ class Attributes extends ListModel
         $query->select([
             $db->quoteName('a') . '.*',
             $db->quoteName("a.label_$tag", 'name'),
-            $db->quoteName("t.name_$tag", 'type'),
             $db->quoteName('vl.title', 'level')
         ]);
 
@@ -91,16 +90,13 @@ class Attributes extends ListModel
         $levelID    = $db->quoteName('vl.id');
         $lCondition = $db->quoteName('a.viewLevelID') . " = $levelID";
         $levels     = $db->quoteName('#__viewlevels', 'vl');
-        $typeID     = $db->quoteName('t.id');
-        $tCondition = $db->quoteName('a.typeID') . " = $typeID";
-        $types      = $db->quoteName('#__groups_types', 't');
 
-        $query->from($attributes)->join('inner', $levels, $lCondition)->join('inner', $types, $tCondition);
+        $query->from($attributes)->join('inner', $levels, $lCondition);
 
         $contextValue = $this->getState('filter.context');
         $positiveInt  = (is_numeric($contextValue) and $contextValue = (int) $contextValue);
 
-        if ($positiveInt and in_array($contextValue, Helpers\Attributes::VALID_CONTEXTS)) {
+        if ($positiveInt and in_array($contextValue, Helpers\Attributes::CONTEXTS)) {
             if ($contextValue === Helpers\Attributes::PERSONS_CONTEXT) {
                 $query->where($contextID . ' != ' . Helpers\Attributes::GROUPS_CONTEXT);
             } elseif ($contextValue === Helpers\Attributes::GROUPS_CONTEXT) {
@@ -118,7 +114,7 @@ class Attributes extends ListModel
         $typeValue = $this->getState('filter.typeID');
         if (is_numeric($typeValue) and intval($typeValue) > 0) {
             $typeValue = (int) $typeValue;
-            $query->where($typeID . ' = :typeID')
+            $query->where($db->quoteName('a.typeID') . ' = :typeID')
                 ->bind(':typeID', $typeValue, ParameterType::INTEGER);
         }
 

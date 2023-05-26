@@ -72,21 +72,6 @@ CREATE TABLE IF NOT EXISTS `#__groups_roles`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_types`
-(
-    `id`            INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
-    `name_de`       VARCHAR(100)        NOT NULL,
-    `name_en`       VARCHAR(100)        NOT NULL,
-    `inputID`       TINYINT(2) UNSIGNED NOT NULL DEFAULT 1 COMMENT 'Resolves via Helpers\\Inputs.',
-    `configuration` TEXT COMMENT 'A JSON string containing the configuration of the attribute type.',
-    PRIMARY KEY (`id`),
-    UNIQUE (`name_de`),
-    UNIQUE (`name_en`)
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4
-    COLLATE = utf8mb4_unicode_ci;
-
 # modernize the table for ease of reference from the role associations table
 ALTER TABLE `#__user_usergroup_map`
     DROP CONSTRAINT `PRIMARY`,
@@ -142,25 +127,10 @@ VALUES (1, 'Dekan', 'Dean', 'Dekane', 'Deans', 1),
        (15, 'Schülerpraktikant:in', 'Student Intern', 'Schülerpraktikant:innen', 'Student Interns', 15),
        (16, 'Student:in', 'Student', 'Studenten:innen', 'Student', 16),
        (17, 'Ehemalige', 'Alumnus', 'Alumni', 'Alumni', 18);
-
-# Default messages and patterns derive from input classes
-INSERT INTO `#__groups_types` (`id`, `name_de`, `name_en`, `inputID`, `configuration`)
-VALUES (1, 'Einfaches Text', 'Simple Text', 1, '{}'),
-       (2, 'Name', 'Name', 1,
-        '{"message_de":"Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.","message_en":"Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.","pattern":"^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$"}'),
-       (3, 'E-Mail Adresse', 'E-Mail Address', 6, '{}'),
-       (4, 'Namenszusatz', 'Name Supplement', 1,
-        '{"message_de":"Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.","message_en":"The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.","pattern":"^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$"}'),
-       (5, 'Bild', 'Picture', 4, '{"accept":".bmp,.BMP,.gif,.GIF,.jpg,.JPG,.jpeg,.JPEG,.png,.PNG"}'),
-       (6, 'Telefonnummer', 'Telephone Number', 7,
-        '{"pattern":"^(\\\\+[\\\\d]+ ?)?( ?((\\\\(0?[\\\\d]*\\\\))|(0?[\\\\d]+(\\/| \\\\/)?)))?(([ \\\\-]|[\\\\d]+)+)$"}'),
-       (7, 'Ausführlicher Text / HTML', 'Descriptive Text / HTML', 2, '{}'),
-       (8, 'Datum', 'Date', 5, '{}');
 #endregion
 
 #region Reference
 ALTER TABLE `#__groups_attributes`
-    ADD CONSTRAINT `fk_attributes_typeID` FOREIGN KEY (`typeID`) REFERENCES `#__groups_types` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
     ADD CONSTRAINT `fk_attributes_viewLevelID` FOREIGN KEY (`viewLevelID`) REFERENCES `#__viewlevels` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `#__groups_groups`

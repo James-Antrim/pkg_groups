@@ -34,7 +34,6 @@
             <menu view="Templates">GROUPS_TEMPLATES</menu>
             <menu view="Roles">GROUPS_ROLES</menu>
             <menu view="Attributes">GROUPS_ATTRIBUTES</menu>
-            <menu view="Types">GROUPS_TYPES</menu>
         </submenu>
         <files folder="admin">
             <filename>access.xml</filename>

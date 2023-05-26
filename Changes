@@ -1,0 +1,8 @@
+Changes to the profile's first and last names as well as their email addresses are kept in the groups context and will not update the user account.
+All existing profile attribute labels are localized by default.
+
+User and profile management have been put together in the new more powerful 'User Accounts' view.
+
+New form based input types:
+- Address
+- Link - Two text and one url fields which allow for the display of linked localized texts.

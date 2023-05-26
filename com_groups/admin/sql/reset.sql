@@ -5,8 +5,7 @@ DROP TABLE IF EXISTS
     `v7ocf_groups_groups`,
     `v7ocf_groups_profile_attributes`,
     `v7ocf_groups_role_associations`,
-    `v7ocf_groups_roles`,
-    `v7ocf_groups_types`;
+    `v7ocf_groups_roles`;
 
 ALTER TABLE `v7ocf_users`
     DROP COLUMN `alias`,
