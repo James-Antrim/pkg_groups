@@ -10,13 +10,147 @@
 
 namespace THM\Groups\Helpers;
 
-use THM\Groups\Adapters\Application;
-use THM\Groups\Inputs\Input;
-use THM\Groups\Tables\Types as Table;
+use THM\Groups\Adapters\Text;
 
 class Types implements Selectable
 {
-    public const DATE = 8, EMAIL = 3, HTML = 7, IMAGE = 5, NAME = 2, SUPPLEMENT = 4, TELEPHONE = 6, TEXT = 1;
+    /**
+     * Types determines the data management of attribute values.
+     */
+    public const
+        ADDRESS = 1,
+        BUTTON = 2,
+        DATE = 3,
+        EMAIL = 4,
+        HOURS = 5,
+        HTML = 6,
+        IMAGE = 7,
+        LINK = 8,
+        LINK_LIST = 9,
+        PHONE = 10,
+        SUPPLEMENT = 11;
+
+    public const TYPES = [
+        self::ADDRESS => [
+            'fields' => [
+                //SF: 1, 2, ZIP, CITY & placement check (before or after)
+                'value' => 'Address'
+            ],
+            'icon' => 'location',
+            'input' => 'GROUPS_FORM_TEMPLATE',
+            'name' => 'GROUPS_ADDRESS'
+        ],
+        self::BUTTON => [
+            'fields' => [
+                'text_de' => 'Text',
+                'text_en' => 'Text',
+                'value' => 'URL'
+            ],
+            'icon' => '',
+            'input' => 'GROUPS_FORM_TEMPLATE',
+            'name' => 'GROUPS_MEDIA_BUTTON'
+        ],
+        self::DATE => [
+            'fields' => [
+                'value' => 'Date'
+            ],
+            'icon' => 'calendar',
+            'input' => 'GROUPS_DATE_FIELD',
+            'name' => 'GROUPS_DATE'
+        ],
+        self::EMAIL => [
+            'fields' => [
+                'value' => 'EMail'
+            ],
+            'hint' => 'maxine.mustermann@fb.thm.de',
+            'icon' => 'envelope',
+            'input' => 'GROUPS_EMAIL_FIELD',
+            'name' => 'GROUPS_EMAIL'
+        ],
+        self::HOURS => [
+            'fields' => [
+                //SF: weekdays, times + checkbox for by appointment
+                'value' => 'Hours'
+            ],
+            'icon' => 'comment',
+            'input' => 'GROUPS_FORM_TEMPLATE',
+            'name' => 'GROUPS_HOURS_TYPE'
+        ],
+        self::HTML => [
+            'buttons' => 0,
+            'fields' => [
+                'buttons' => 'Toggle',
+                //showon yes
+                'hide' => 'ButtonSelect',
+                'value' => 'Editor'
+            ],
+            'icon' => '',
+            'input' => 'GROUPS_EDITOR_FIELD',
+            'name' => 'GROUPS_HTML_TYPE'
+        ],
+        self::IMAGE => [
+            'fields' => [
+                'source_de' => 'Text',
+                'source_en' => 'Text',
+                'source_url' => 'URL',
+                'value' => 'Image'
+            ],
+            'icon' => '',
+            'input' => 'GROUPS_IMAGE_FIELD',
+            'name' => 'GROUPS_IMAGE'
+        ],
+        self::LINK => [
+            'fields' => [
+                'text_de' => 'Text',
+                'text_en' => 'Text',
+                'value' => 'URL'
+            ],
+            'icon' => '',
+            'input' => 'GROUPS_FORM_TEMPLATE',
+            'name' => 'GROUPS_LINK'
+        ],
+        self::LINK_LIST => [
+            'fields' => [
+                //SF: Linked Text
+                'value' => 'LinkedList'
+            ],
+            'icon' => '',
+            'input' => 'GROUPS_LIST_FORM',
+            'name' => 'GROUPS_LIST'
+        ],
+        self::PHONE => [
+            'fields' => [
+                'value' => 'Phone'
+            ],
+            'icon' => 'phone',
+            'input' => 'GROUPS_PHONE_FIELD',
+            'name' => 'GROUPS_PHONE_NUMBER',
+            //"+49  (0)  641  309  1234"
+            'hint' => 'TODO'
+        ],
+        self::SUPPLEMENT => [
+            'fields' => [
+                'value' => 'Text'
+            ],
+            'icon' => '',
+            'hint' => '',
+            'input' => 'GROUPS_TEXT_FIELD',
+            'name' => 'GROUPS_SUPPLEMENT',
+
+            /**
+             * DE: Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.
+             * EN: The name supplement / title is invalid. Name supplements may only consist of letters, spaces, commas, periods, round braces, minus signs and &dagger;.
+             */
+
+            'message' => 'GROUPS_SUPPLEMENT_MESSAGE',
+            'pattern' => '^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$'
+        ]
+    ];
+
+    //TODO add type conversion for compatible types
+
+    public const INLINE = [self::SUPPLEMENT];
+    public const FULL_WIDTH = [self::HTML];
 
     /**
      * URL
@@ -32,30 +166,17 @@ class Types implements Selectable
      */
     public static function getAll(): array
     {
-        $db    = Application::getDB();
-        $query = $db->getQuery(true);
-        $id    = 'DISTINCT ' . $db->quoteName('id');
-        $types = $db->quoteName('#__groups_types');
-        $query->select($id)->from($types);
-        $db->setQuery($query);
-
         $return = [];
 
-        if (!$typeIDs = $db->loadColumn())
-        {
-            return $return;
-        }
+        foreach (self::TYPES as $typeID => $type) {
 
-        foreach ($typeIDs as $typeID)
-        {
-            $type = new Table();
-            $type->load($typeID);
+            $type = (object) $type;
+            $name = Text::_($type->name);
 
-            $input = Inputs::INPUTS[$type->inputID];
-            $input = "THM\Groups\Inputs\\$input";
+            $type->id   = $typeID;
+            $type->name = $name;
 
-            /** @var Input $input */
-            $return[] = new $input($type);
+            $return[] = $type;
         }
 
         return $return;
@@ -68,12 +189,10 @@ class Types implements Selectable
     {
         $options = [];
 
-        /** @var  Input $field */
-        foreach (self::getAll() as $input)
-        {
-            $options[$input->getName()] = (object)[
-                'text' => $input->getName(),
-                'value' => $input->id
+        foreach (self::getAll() as $type) {
+            $options[$type->name] = (object) [
+                'text' => $type->name,
+                'value' => $type->id
             ];
         }
 

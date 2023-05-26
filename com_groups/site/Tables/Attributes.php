@@ -60,6 +60,18 @@ class Attributes extends Table
     public $required;
 
     /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => No, 1 => Yes'
+     * @var int
+     */
+    public $showIcon;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '0 => No, 1 => Yes'
+     * @var int
+     */
+    public $showLabel;
+
+    /**
      * INT(11) UNSIGNED NOT NULL (fk_attributes_typeID -> groups_types.id)
      * @var int
      */

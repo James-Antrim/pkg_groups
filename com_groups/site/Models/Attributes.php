@@ -10,13 +10,12 @@
 
 namespace THM\Groups\Models;
 
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
-use THM\Groups\Adapters\Application;
-use THM\Groups\Helpers;
+use THM\Groups\Adapters\{Application, Text};
+use THM\Groups\Helpers\{Attributes as Helper, Types};
 use THM\Groups\Tools\Migration;
 
 /**
@@ -63,6 +62,9 @@ class Attributes extends ListModel
             // Management access is a prerequisite of accessing this view at all.
             $item->access   = true;
             $item->editLink = Route::_('index.php?option=com_groups&view=Attribute&id=' . $item->id);
+
+            $type        = Types::TYPES[$item->typeID];
+            $item->input = Text::_($type['input']);
         }
 
         return $items;
@@ -96,11 +98,11 @@ class Attributes extends ListModel
         $contextValue = $this->getState('filter.context');
         $positiveInt  = (is_numeric($contextValue) and $contextValue = (int) $contextValue);
 
-        if ($positiveInt and in_array($contextValue, Helpers\Attributes::CONTEXTS)) {
-            if ($contextValue === Helpers\Attributes::PERSONS_CONTEXT) {
-                $query->where($contextID . ' != ' . Helpers\Attributes::GROUPS_CONTEXT);
-            } elseif ($contextValue === Helpers\Attributes::GROUPS_CONTEXT) {
-                $query->where($contextID . ' != ' . Helpers\Attributes::PERSONS_CONTEXT);
+        if ($positiveInt and in_array($contextValue, Helper::CONTEXTS)) {
+            if ($contextValue === Helper::PERSONS_CONTEXT) {
+                $query->where($contextID . ' != ' . Helper::GROUPS_CONTEXT);
+            } elseif ($contextValue === Helper::GROUPS_CONTEXT) {
+                $query->where($contextID . ' != ' . Helper::PERSONS_CONTEXT);
             }
         }
 

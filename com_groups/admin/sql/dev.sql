@@ -32,7 +32,9 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_attributes`
     `id`            INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `label_de`      VARCHAR(100)        NOT NULL,
     `label_en`      VARCHAR(100)        NOT NULL,
+    `showLabel`     TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '0 => No, 1 => Yes',
     `icon`          VARCHAR(255)        NOT NULL DEFAULT '',
+    `showIcon`      TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => No, 1 => Yes',
     `typeID`        INT(11) UNSIGNED    NOT NULL,
     `configuration` TEXT COMMENT 'A JSON string containing the configuration of the attribute.',
     `context`       TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group',
@@ -121,20 +123,42 @@ ALTER TABLE `v7ocf_users`
 #endregion
 
 #region Fill
+
+SET @address = 1;
+SET @email = 4;
+SET @hours = 5;
+SET @html = 6;
+SET @image = 7;
+SET @link = 8;
+SET @linkList = 9;
+SET @phone = 10;
+SET @supplement = 11;
+
 # Forenames and surnames are now a part of the users table
-INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `icon`, `typeID`, `configuration`, `context`, `viewLevelID`)
-VALUES (1, 'E-Mail', 'E-Mail', 'mail', 3, '{}', 0, 1),
-       (2, 'Namenszusatz (nach)', 'Supplement (Post)', '', 4, '{"hint":"M.Sc."}', 1, 1),
-       (3, 'Namenszusatz (vor)', 'Supplement (Pre)', '', 4, '{"hint":"Prof. Dr."}', 1, 1),
-       (4, 'Profilbild', 'Profile Picture', '', 5, '{}', 1, 1),
-       (5, 'Telefon', 'Telephone', 'phone', 6, '{}', 0, 1),
-       (6, 'weiteres Telefon', 'Additional Telephone', 'phone', 6, '{}', 0, 1),
-       (7, 'Fax', 'Fax', 'print', 6, '{}', 0, 1),
-       (8, 'weiteres Fax', 'Additional Fax', 'print', 6, '{}', 0, 1),
-       (9, 'weitere  E-Mail', 'Additional E-Mail', 'mail', 3, '{"hint":"maxine.mustermann@fb.thm.de"}', 0, 1),
-       (10, 'Aktuelles', 'Current Information', 'info', 7, '{"buttons": 0}', 0, 1),
-       (11, 'weitere  Informationen', 'Additional Information', 'info', 7, '{"buttons": 0}', 0, 1),
-       (12, 'zur Person', 'Personal Information', 'user', 7, '{"buttons": 0}', 0, 1);
+INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `showLabel`, `icon`, `showIcon`, `typeID`, `configuration`, `context`, `viewLevelID`)
+VALUES (1, 'Namenszusatz (nach)', 'Suffix', 0, '', 0, @supplement, '{"hint":"M.Sc."', 1, 1),
+       (2, 'Namenszusatz (vor)', 'Prefix', 0, '', 0, @supplement, '{"hint":"Prof. Dr."}', 1, 1),
+       (3, 'Bild', 'Picture', 0, '', 0, @image, '{}', 1, 1),
+       (4, 'Anschrift', 'Address', 0, 'icon-location', 1, @address, '{}', 0, 1),
+       (5, 'Büro', 'Office', 0, 'fa fa-home', 1, @linkList, '{}', 0, 1),
+       (6, 'E-Mail', 'E-Mail', 0, 'fa fa-envelope', 1, @email, '{}', 0, 1),
+       (7, 'weitere E-Mail', 'Additional E-Mail', 1, 'fa fa-envelope', 0, @email, '{}', 0, 1),
+       (8, 'Fax', 'Fax', 0, 'fa fa-print', 1, @phone, '{}', 0, 1),
+       (9, 'weiteres Fax', 'Additional Fax', 0, 'fa fa-print', 1, @phone, '{}', 0, 1),
+       (10, 'Telefon', 'Telephone', 0, 'fa fa-phone', 1, @phone, '{}', 0, 1),
+       (11, 'weiteres Telefon', 'Additional Telephone', 0, 'fa fa-phone', 1, @phone, '{}', 0, 1),
+       (12, 'Homepage', 'Homepage', 0, 'fa fa-external-link-alt', 1, @link, '{}', 0, 1),
+       (13, 'Aktuelles', 'Current Information', 1, 'fa fa-info', 0, @html, '{}', 0, 1),
+       (14, 'Arbeitsgebiete', 'Areas of Activity', 1, '', 0, @linkList, '{}', 0, 1),
+       (15, 'Fachgebiete', 'Fields', 1, 'fa fa-th-large', 0, @linkList, '{}', 0, 1),
+       (16, 'Forschungsgebiete', 'Areas of Research', 1, '', 0, @linkList, '{}', 0, 1),
+       (17, 'Funktionen', 'Duties', 1, 'fa fa-cog', 0, @linkList, '{}', 0, 1),
+       (18, 'Labore', 'Laboratories', 1, '', 0, @linkList, '{}', 0, 1),
+       (19, 'Sprechstunden', 'Consultation Hours', 0, 'fa fa-comment', 1, @hours, '{}', 0, 1),
+       (20, 'Veranstaltungen', 'Classes', 1, '', 0, @linkList, '{}', 0, 1),
+       (21, 'weitere Informationen', 'Additional Information', 1, 'fa fa-info', 0, @html, '{}', 0, 1),
+       (22, 'Weiterführende Links', 'Additional Links', 1, 'fa fa-external-link-alt', 0, @linkList, '{}', 0, 1),
+       (23, 'zur Person', 'Personal Information', 1, 'fa fa-user', 0, @html, '{}', 0, 1);
 
 INSERT INTO `v7ocf_groups_roles` (`id`, `name_de`, `name_en`, `names_de`, `names_en`, `ordering`)
 VALUES (1, 'Dekan', 'Dean', 'Dekane', 'Deans', 1),

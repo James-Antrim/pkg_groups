@@ -25,8 +25,7 @@ class HTML extends HTMLHelper
      */
     public static function toProperties(array $array): string
     {
-        foreach ($array as $property => $value)
-        {
+        foreach ($array as $property => $value) {
             $array[$property] = "$property=\"$value\"";
         }
 
@@ -42,16 +41,6 @@ class HTML extends HTMLHelper
      */
     public static function icon(string $class): string
     {
-        if (strpos($class, ','))
-        {
-            [$subset, $class] = explode(',', $class);
-            $class = "fa$subset fa-$class";
-        }
-        elseif (!str_contains($class, 'fa'))
-        {
-            $class = "fa fa-$class";
-        }
-
         return "<i class=\"$class\" aria-hidden=\"true\"></i>";
     }
 
@@ -78,16 +67,13 @@ class HTML extends HTMLHelper
         $return     = '';
         $tip        = Text::_($state['tip']);
 
-        if ($task = $state['task'] and $controller)
-        {
+        if ($task = $state['task'] and $controller) {
             $attributes['class']   .= $class === 'publish' ? ' active' : '';
             $attributes['href']    = 'javascript:void(0);';
             $attributes['onclick'] = "return Joomla.listItemTask('cb$index','$controller.$task','adminForm')";
 
             $return .= '<a ' . ArrayHelper::toString($attributes) . '>' . $icon . '</a>';
-        }
-        else
-        {
+        } else {
             //$html[] = '<span class="tbody-icon jgrid"';
             $return .= '<span ' . ArrayHelper::toString($attributes) . '>' . $icon . '</span>';
         }
@@ -116,15 +102,13 @@ class HTML extends HTMLHelper
         bool   $newTab = false
     ): string
     {
-        if (empty($tip) and empty($url))
-        {
+        if (empty($tip) and empty($url)) {
             return $content;
         }
 
         $properties['aria-describedby'] = $context;
 
-        if ($url and $newTab)
-        {
+        if ($url and $newTab) {
             $properties['target'] = '_blank';
         }
 

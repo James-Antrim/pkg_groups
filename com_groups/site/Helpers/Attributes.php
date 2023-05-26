@@ -14,23 +14,29 @@ class Attributes
 {
     public const BOTH_CONTEXTS = 0, GROUPS_CONTEXT = 2, PERSONS_CONTEXT = 1;
 
-    public const VALID_CONTEXTS = [self::BOTH_CONTEXTS, self::GROUPS_CONTEXT, self::PERSONS_CONTEXT];
+    public const CONTEXTS = [self::BOTH_CONTEXTS, self::GROUPS_CONTEXT, self::PERSONS_CONTEXT];
 
-    public const EMAIL = 2, FIRST_NAME = 3, IMAGE = 6, NAME = 1, SUPPLEMENT_POST = 4, SUPPLEMENT_PRE = 5;
+    public const IMAGE = 3, SUPPLEMENT_POST = 1, SUPPLEMENT_PRE = 2;
 
     // Attributes protected because of their special display in various templates
     public const PROTECTED = [
-        self::EMAIL,
-        self::FIRST_NAME,
         self::IMAGE,
-        self::NAME,
         self::SUPPLEMENT_POST,
         self::SUPPLEMENT_PRE
     ];
 
-    // Attributes required for a valid entry
-    public const REQUIRED = [
-        self::EMAIL,
-        self::NAME
-    ];
+    /**
+     * Name attributes
+     * message_de: Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.
+     * message_en: Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.
+     * pattern: ^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$
+     */
+
+    /**
+     * Aktuell,
+     * Weitere Informationen,
+     * Zur Person => HTML (Label & Full width output) => Editor, VL/PUB
+     *
+     * Email
+     */
 }
