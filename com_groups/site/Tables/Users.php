@@ -73,12 +73,6 @@ class Users extends User
     public $forenames;
 
     /**
-     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
-     * @var bool
-     */
-    public $functional;
-
-    /**
      * INT(11) NOT NULL
      * Magic property in parent.
      * @var int

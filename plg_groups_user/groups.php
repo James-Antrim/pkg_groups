@@ -25,7 +25,7 @@ use THM\Groups\Tools\Cohesion;
  */
 class PlgUserGroups extends CMSPlugin
 {
-    private const NO = false, YES = true;
+    private const NO = false;
 
     /**
      * Method fills user related table information.
@@ -56,44 +56,28 @@ class PlgUserGroups extends CMSPlugin
 
             // Since role associations fk the map table there is no longer any need to delete them.
 
-            /**
-             * If the person is no longer associated with a displayable group
-             * - unpublish their profile
-             * - keep any stored attribute values in case the account is later associated with a displayed group
-             */
-            $user->published = self::NO;
-            $user->store();
+            // If the person is no longer associated with a displayable group unpublish their profile.
+            if ($user->published) {
+                $user->published = self::NO;
+                $user->store();
+            }
+
             return;
         }
 
         $updated = false;
 
-        // Future-proofing the cohesion between truly empty names and the functional flag.
-        if ($user->functional === self::NO and $user->forenames === '' and $user->surnames === '') {
-            $user->forenames  = null;
-            $user->functional = self::YES;
-            $user->surnames   = null;
-            $updated          = true;
+        if (empty($user->surnames)) {
+            list($surnames, $forenames) = Cohesion::parseNames($user->name);
+
+            $user->forenames = $forenames;
+            $user->surnames  = $surnames;
+            $updated         = true;
         }
 
-        if ($user->functional) {
-            if (empty($user->alias)) {
-                $user->alias = UH::createAlias($user->id, $user->name);
-                $updated     = true;
-            }
-        } else {
-            if (empty($user->surnames)) {
-                list($surnames, $forenames) = Cohesion::parseNames($user->name);
-
-                $user->forenames = $forenames;
-                $user->surnames  = $surnames;
-                $updated         = true;
-            }
-
-            if (empty($user->alias) or $updated) {
-                $user->alias = UH::createAlias($user->id, "$user->forenames $user->surnames");
-                $updated     = true;
-            }
+        if (empty($user->alias) or $updated) {
+            $user->alias = UH::createAlias($user->id, "$user->forenames $user->surnames");
+            $updated     = true;
         }
 
         if ($updated) {

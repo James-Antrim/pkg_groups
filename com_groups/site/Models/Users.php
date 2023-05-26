@@ -223,8 +223,9 @@ class Users extends ListModel
         $this->binaryFilter($query, 'filter.block');
         $this->binaryFilter($query, 'filter.content');
         $this->binaryFilter($query, 'filter.editing');
-        $this->binaryFilter($query, 'filter.functional');
         $this->binaryFilter($query, 'filter.published');
+
+        //TODO re-add functional filter based exclusively on group assignment
 
         if ($search = $this->getState('filter.search')) {
             if (is_numeric($search)) {

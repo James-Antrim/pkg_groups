@@ -15,7 +15,6 @@ ALTER TABLE `v7ocf_users`
     DROP COLUMN IF EXISTS `alias`,
     DROP COLUMN IF EXISTS `content`,
     DROP COLUMN IF EXISTS `editing`,
-    DROP COLUMN IF EXISTS `functional`,
     DROP COLUMN IF EXISTS `forenames`,
     DROP COLUMN IF EXISTS `published`,
     DROP COLUMN IF EXISTS `surnames`;
@@ -128,13 +127,12 @@ ALTER TABLE `v7ocf_user_usergroup_map`
 
 # add necessary columns to users
 ALTER TABLE `v7ocf_users`
-    ADD COLUMN `surnames`   VARCHAR(255) DEFAULT NULL AFTER `email`,
-    ADD COLUMN `forenames`  VARCHAR(255) DEFAULT NULL AFTER `surnames`,
-    ADD COLUMN `alias`      VARCHAR(255) DEFAULT NULL AFTER `forenames`,
-    ADD COLUMN `content`    TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `block`,
-    ADD COLUMN `editing`    TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `content`,
-    ADD COLUMN `functional` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `editing`,
-    ADD COLUMN `published`  TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `functional`,
+    ADD COLUMN `surnames`  VARCHAR(255) DEFAULT NULL AFTER `email`,
+    ADD COLUMN `forenames` VARCHAR(255) DEFAULT NULL AFTER `surnames`,
+    ADD COLUMN `alias`     VARCHAR(255) DEFAULT NULL AFTER `forenames`,
+    ADD COLUMN `content`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `block`,
+    ADD COLUMN `editing`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `content`,
+    ADD COLUMN `published` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `editing`,
     ADD UNIQUE KEY (`alias`);
 #endregion
 

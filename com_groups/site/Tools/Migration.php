@@ -433,14 +433,6 @@ class Migration
 
             $user->store();
         }
-
-        // Assume profiles without surnames and forenames are functional accounts and flag them as such
-        $query = $db->getQuery(true);
-        $query->update($db->quoteName('#__users'))
-            ->set($db->quoteName('functional') . " = 1")
-            ->where($db->quoteName('surnames') . " IS NULL");
-        $db->setQuery($query);
-        $db->execute();
     }
 
     /**

@@ -22,7 +22,6 @@ ALTER TABLE `#__users`
     DROP COLUMN `alias`,
     DROP COLUMN `content`,
     DROP COLUMN `editing`,
-    DROP COLUMN `functional`,
     DROP COLUMN `forenames`,
     DROP COLUMN `published`,
     DROP COLUMN `surnames`;
