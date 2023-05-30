@@ -31,15 +31,11 @@ class PlgUserGroups extends CMSPlugin
      * Method fills user related table information.
      *
      * @param array $properties the user table properties
-     * @param bool $isNew whether the user account is new to the instance
-     * @param bool $success always true because this is called after a save...
-     * @param string $msg the last db error message, irrelevant since called after a successful save
      *
-     * @return    void
+     * @return void
      * @throws Exception
-     * @noinspection PhpUnusedParameterInspection
      */
-    public function onUserAfterSave(array $properties, bool $isNew, bool $success, string $msg): void
+    public function onUserAfterSave(array $properties): void
     {
         $accountID = $properties['id'];
         $user      = new UT();
