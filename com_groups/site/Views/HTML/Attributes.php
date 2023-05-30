@@ -11,8 +11,8 @@
 namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\{HTML, Text};
+use THM\Groups\Helpers\Attributes as Helper;
 
 /**
  * View class for displaying available attribute types.
@@ -25,9 +25,9 @@ class Attributes extends ListView
     protected function addToolbar(): void
     {
         $this->todo = [
-            'Add toggles for icon / label use and publication.',
-            'Add locked icon for protected ',
-            'Add ordering.'
+            'Add toggle functions for icon / label use and publication.',
+            'Add delete function',
+            'Add edit links'
         ];
 
         // Manage access is a prerequisite for getting this far
@@ -43,17 +43,18 @@ class Attributes extends ListView
      */
     protected function completeItems(): void
     {
-        foreach ($this->items as $item) {
-            $label = 'label_' . Application::getTag();
-            if ($item->showIcon and $item->icon) {
-                $item->label = HTML::icon($item->icon);
-            } elseif ($item->showLabel and $item->$label) {
-                $item->label = $item->$label;
-            } else {
-                $item->label = '';
+        foreach ($this->items as $rowNo => $item) {
+
+            if ($protected = in_array($item->id, Helper::PROTECTED)) {
+                $context    = "groups-attribute-$item->id";
+                $item->name = HTML::icon('fa fa-lock') . " $item->name";
+                $tip        = Text::_('GROUPS_PROTECTED_ATTRIBUTE');
+                $item->name = HTML::tip($item->name, $context, $tip);
             }
 
-            $item->icon = '';
+            $item->icon      = '';
+            $item->showIcon  = HTML::toggle($rowNo, Helper::showIconStates[$item->showIcon], 'Attributes', $protected);
+            $item->showLabel = HTML::toggle($rowNo, Helper::showLabelStates[$item->showLabel], 'Attributes', $protected);
 
             /*$item->context = match ($item->context)
             {
@@ -76,10 +77,15 @@ class Attributes extends ListView
                 'title' => Text::_('GROUPS_ATTRIBUTE'),
                 'type' => 'text'
             ],
-            'label' => [
-                'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_LABEL'),
-                'type' => 'text'
+            'showIcon' => [
+                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+                'title' => Text::_('GROUPS_SHOW_ICON'),
+                'type' => 'value'
+            ],
+            'showLabel' => [
+                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+                'title' => Text::_('GROUPS_SHOW_LABEL'),
+                'type' => 'value'
             ],
             'input' => [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],

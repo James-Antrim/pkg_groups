@@ -25,6 +25,36 @@ class Attributes
         self::SUPPLEMENT_PRE
     ];
 
+    public const SHOWN = 1, HIDDEN = 0;
+
+    public const showIconStates = [
+        self::SHOWN => [
+            'class' => 'publish',
+            'column' => 'showIcon',
+            'task' => 'suppressIcon',
+            'tip' => 'GROUPS_TOGGLE_TIP_SHOWN'
+        ],
+        self::HIDDEN => [
+            'class' => 'unpublish',
+            'column' => 'showIcon',
+            'task' => 'displayIcon',
+            'tip' => 'GROUPS_TOGGLE_TIP_HIDDEN'
+        ]];
+
+    public const showLabelStates = [
+        self::SHOWN => [
+            'class' => 'publish',
+            'column' => 'showLabel',
+            'task' => 'suppressLabel',
+            'tip' => 'GROUPS_TOGGLE_TIP_SHOWN'
+        ],
+        self::HIDDEN => [
+            'class' => 'unpublish',
+            'column' => 'showLabel',
+            'task' => 'displayLabel',
+            'tip' => 'GROUPS_TOGGLE_TIP_HIDDEN'
+        ]];
+
     /**
      * Name attributes
      * message_de: Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.

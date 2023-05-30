@@ -54,27 +54,36 @@ class HTML extends HTMLHelper
      *
      * @return  string  the HTML for the toggle item
      */
-    public static function toggle(int $index, array $state, string $controller = ''): string
+    public static function toggle(int $index, array $state, string $controller = '', bool $protected = false): string
     {
         $ariaID     = "{$state['column']}-$index";
         $attributes = [
             'aria-labelledby' => $ariaID,
             'class' => "tbody-icon"
         ];
-        $class      = $state['class'];
-        $iconClass  = $class === 'publish' ? 'check' : 'times';
-        $icon       = self::icon($iconClass);
-        $return     = '';
-        $tip        = Text::_($state['tip']);
 
-        if ($task = $state['task'] and $controller) {
+        $class  = $state['class'];
+        $return = '';
+
+        if ($protected) {
+            $iconClass = 'fa fa-minus';
+            $task      = '';
+            $tip       = Text::_('GROUPS_TOGGLE_TIP_PROTECTED');
+        } else {
+            $iconClass = $class === 'publish' ? 'fa fa-check' : 'fa fa-times';
+            $task      = $state['task'];
+            $tip       = Text::_($state['tip']);
+        }
+
+        $icon = self::icon($iconClass);
+
+        if ($task and $controller) {
             $attributes['class']   .= $class === 'publish' ? ' active' : '';
             $attributes['href']    = 'javascript:void(0);';
             $attributes['onclick'] = "return Joomla.listItemTask('cb$index','$controller.$task','adminForm')";
 
             $return .= '<a ' . ArrayHelper::toString($attributes) . '>' . $icon . '</a>';
         } else {
-            //$html[] = '<span class="tbody-icon jgrid"';
             $return .= '<span ' . ArrayHelper::toString($attributes) . '>' . $icon . '</span>';
         }
 
