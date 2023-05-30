@@ -24,10 +24,10 @@ class RoleAssociations extends Table
     use Incremented;
 
     /**
-     * INT(11) UNSIGNED NOT NULL (fk: groups.id)
+     * INT(11) UNSIGNED NOT NULL (fk: user_usergroups_map.id)
      * @var int
      */
-    public $groupID;
+    public $mapID;
 
     /**
      * INT(11) UNSIGNED NOT NULL (fk: roles.id)
@@ -49,15 +49,14 @@ class RoleAssociations extends Table
     /**
      * Gets the id of the association for the given group and role ids.
      *
-     * @param int $groupID
+     * @param int $mapID
      * @param int $roleID
      *
      * @return int|null the id if existent, otherwise null
      */
-    public function getAssocID(int $groupID, int $roleID): ?int
+    public function getAssocID(int $mapID, int $roleID): ?int
     {
-        if ($this->load(['groupID' => $groupID, 'roleID' => $roleID]))
-        {
+        if ($this->load(['mapID' => $mapID, 'roleID' => $roleID])) {
             return $this->id;
         }
 

@@ -27,6 +27,8 @@ use THM\Groups\Tools\Migration;
  */
 class Roles extends ListModel
 {
+    protected string $defaultOrdering = 'ordering';
+
     /**
      * @inheritDoc
      */
@@ -34,8 +36,7 @@ class Roles extends ListModel
     {
         Migration::migrate();
 
-        if (empty($config['filter_fields']))
-        {
+        if (empty($config['filter_fields'])) {
             $config['filter_fields'] = [
                 'assigned',
                 'groupID',
@@ -50,14 +51,12 @@ class Roles extends ListModel
      */
     public function delete(): void
     {
-        if (!Can::administrate())
-        {
+        if (!Can::administrate()) {
             Application::error(403);
         }
 
-        if (!$ids = Input::getSelectedIDs())
-        {
-            Application::message(Text::_('JERROR_NO_ITEMS_SELECTED'), 'error');
+        if (!$ids = Input::getSelectedIDs()) {
+            Application::message(Text::_('JERROR_NO_ITEMS_SELECTED'), Application::WARNING);
 
             return;
         }
@@ -68,23 +67,19 @@ class Roles extends ListModel
         $protected = 0;
         $skipped   = 0;
 
-        foreach ($ids as $id)
-        {
+        foreach ($ids as $id) {
             $table = new Table();
 
-            if (!$table->load($id))
-            {
+            if (!$table->load($id)) {
                 Application::error(412);
             }
 
-            if ($table->protected or !$table->delete($id))
-            {
+            if ($table->protected or !$table->delete($id)) {
                 $protected++;
                 continue;
             }
 
-            if (!$table->delete($id))
-            {
+            if (!$table->delete($id)) {
                 $skipped++;
                 continue;
             }
@@ -105,8 +100,7 @@ class Roles extends ListModel
 
         $ordering = 1;
 
-        foreach ($results as $id)
-        {
+        foreach ($results as $id) {
             $table = new Table();
             $table->load($id);
             $table->ordering = $ordering;
@@ -114,18 +108,15 @@ class Roles extends ListModel
             $ordering++;
         }
 
-        if ($skipped)
-        {
-            Application::message(Text::sprintf('GROUPS_X_SKIPPED_NOT_DELETED', $skipped), 'error');
+        if ($skipped) {
+            Application::message(Text::sprintf('GROUPS_X_SKIPPED_NOT_DELETED', $skipped), Application::ERROR);
         }
 
-        if ($protected)
-        {
-            Application::message(Text::sprintf('GROUPS_X_PROTECTED_NOT_DELETED', $protected), 'notice');
+        if ($protected) {
+            Application::message(Text::sprintf('GROUPS_X_PROTECTED_NOT_DELETED', $protected), Application::INFO);
         }
 
-        if ($deleted)
-        {
+        if ($deleted) {
             $message = $deleted === 1 ? Text::sprintf('GROUPS_1_DELETED') : Text::sprintf('GROUPS_X_DELETED', $deleted);
             Application::message($message);
         }
@@ -138,22 +129,16 @@ class Roles extends ListModel
     {
         $items = parent::getItems();
 
-        foreach ($items as $item)
-        {
+        foreach ($items as $item) {
             // Management access is a prerequisite of accessing this view at all.
             $item->access   = true;
             $item->editLink = Route::_('index.php?option=com_groups&view=RoleEdit&id=' . $item->id);
 
-            if ($item->groups === 0)
-            {
+            if ($item->groups === 0) {
                 $item->groups = Text::_('GROUPS_NO_GROUPS');
-            }
-            elseif ($item->groups === 1)
-            {
+            } elseif ($item->groups === 1) {
                 $item->groups = $item->group;
-            }
-            else
-            {
+            } else {
                 //TODO: link to groups view with role filter set to this one
                 $item->groups = $item->group;
             }
@@ -188,32 +173,33 @@ class Roles extends ListModel
             $groups
         ]);
 
-        $assocTable   = $db->quoteName('#__groups_role_associations', 'ra');
-        $assocGroupID = $db->quoteName('ra.groupID');
-        $assocRoleID  = $db->quoteName('ra.roleID');
-        $groupsID     = $db->quoteName('g.id');
-        $groupsTable  = $db->quoteName('#__groups_groups', 'g');
-        $roleID       = $db->quoteName('r.id');
-        $rolesTable   = $db->quoteName('#__groups_roles', 'r');
+        $assocTable  = $db->quoteName('#__groups_role_associations', 'ra');
+        $assocMapID  = $db->quoteName('ra.mapID');
+        $assocRoleID = $db->quoteName('ra.roleID');
+        $groupsID    = $db->quoteName('g.id');
+        $groupsTable = $db->quoteName('#__groups_groups', 'g');
+        $mapGroupID  = $db->quoteName('uugm.group_id');
+        $mapID       = $db->quoteName('uugm.id');
+        $mapTable    = $db->quoteName('#__user_usergroup_map', 'uugm');
+        $roleID      = $db->quoteName('r.id');
+        $rolesTable  = $db->quoteName('#__groups_roles', 'r');
 
         $query->from($rolesTable)->group($roleID);
 
         $groupID = $this->getState('filter.groupID');
-        if (is_numeric($groupID) and intval($groupID) > 0)
-        {
-            $groupID = (int)$groupID;
+        if (is_numeric($groupID) and intval($groupID) > 0) {
+            $groupID = (int) $groupID;
             $query->join('inner', $assocTable, "$assocRoleID = $roleID")
-                ->join('inner', $groupsTable, "$groupsID = $assocGroupID")
+                ->join('inner', $mapTable, "$mapID = $assocMapID")
+                ->join('inner', $groupsTable, "$groupsID = $mapGroupID")
                 ->where($groupsID . ' = :groupID')
                 ->bind(':groupID', $groupID, ParameterType::INTEGER);
-        }
-        else
-        {
+        } else {
             $query->join('left', $assocTable, "$assocRoleID = $roleID")
-                ->join('left', $groupsTable, "$groupsID = $assocGroupID");
+                ->join('left', $mapTable, "$mapID = $assocMapID")
+                ->join('left', $groupsTable, "$groupsID = $mapGroupID");
 
-            if (is_numeric($groupID) and intval($groupID) < 0)
-            {
+            if (is_numeric($groupID) and intval($groupID) < 0) {
                 $query->where($groupsID . ' IS NULL');
             }
         }
@@ -226,7 +212,7 @@ class Roles extends ListModel
     /**
      * @inheritDoc
      */
-    protected function populateState($ordering = 'ordering', $direction = 'asc')
+    protected function populateState($ordering = 'ordering', $direction = 'asc'): void
     {
         parent::populateState($ordering, $direction);
     }
