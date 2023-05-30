@@ -51,10 +51,10 @@ class HTML extends HTMLHelper
      * @param integer $index the row index
      * @param array $state the state configuration
      * @param string $controller the name of the controller class
-     *
+     * @param string $neither text for columns which cannot be toggled
      * @return  string  the HTML for the toggle item
      */
-    public static function toggle(int $index, array $state, string $controller = '', bool $protected = false): string
+    public static function toggle(int $index, array $state, string $controller = '', string $neither = ''): string
     {
         $ariaID     = "{$state['column']}-$index";
         $attributes = [
@@ -65,10 +65,10 @@ class HTML extends HTMLHelper
         $class  = $state['class'];
         $return = '';
 
-        if ($protected) {
+        if ($neither) {
             $iconClass = 'fa fa-minus';
             $task      = '';
-            $tip       = Text::_('GROUPS_TOGGLE_TIP_PROTECTED');
+            $tip       = $neither;
         } else {
             $iconClass = $class === 'publish' ? 'fa fa-check' : 'fa fa-times';
             $task      = $state['task'];

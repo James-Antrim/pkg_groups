@@ -25,8 +25,6 @@ class Attributes extends ListView
     protected function addToolbar(): void
     {
         $this->todo = [
-            'Add toggle functions for icon / label use and publication.',
-            'Add delete function',
             'Add edit links'
         ];
 
@@ -43,9 +41,13 @@ class Attributes extends ListView
      */
     protected function completeItems(): void
     {
+        $unlabeledAttributes = Helper::getUnlabeled();
+        $unlabeledTip        = Text::_('GROUPS_TOGGLE_TIP_UNLABELED');
         foreach ($this->items as $rowNo => $item) {
 
-            if ($protected = in_array($item->id, Helper::PROTECTED)) {
+            $neither = in_array($item->id, $unlabeledAttributes) ? $unlabeledTip : '';
+
+            if (in_array($item->id, Helper::PROTECTED)) {
                 $context    = "groups-attribute-$item->id";
                 $item->name = HTML::icon('fa fa-lock') . " $item->name";
                 $tip        = Text::_('GROUPS_PROTECTED_ATTRIBUTE');
@@ -53,8 +55,8 @@ class Attributes extends ListView
             }
 
             $item->icon      = '';
-            $item->showIcon  = HTML::toggle($rowNo, Helper::showIconStates[$item->showIcon], 'Attributes', $protected);
-            $item->showLabel = HTML::toggle($rowNo, Helper::showLabelStates[$item->showLabel], 'Attributes', $protected);
+            $item->showIcon  = HTML::toggle($rowNo, Helper::showIconStates[$item->showIcon], 'Attributes', $neither);
+            $item->showLabel = HTML::toggle($rowNo, Helper::showLabelStates[$item->showLabel], 'Attributes', $neither);
 
             /*$item->context = match ($item->context)
             {

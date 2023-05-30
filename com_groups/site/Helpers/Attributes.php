@@ -10,6 +10,8 @@
 
 namespace THM\Groups\Helpers;
 
+use THM\Groups\Adapters\Application;
+
 class Attributes
 {
     public const BOTH_CONTEXTS = 0, GROUPS_CONTEXT = 2, PERSONS_CONTEXT = 1;
@@ -20,6 +22,12 @@ class Attributes
 
     // Attributes protected because of their special display in various templates
     public const PROTECTED = [
+        self::SUPPLEMENT_POST,
+        self::SUPPLEMENT_PRE
+    ];
+
+    // Attributes whose labelling is always suppressed
+    public const UNLABELED = [
         self::IMAGE,
         self::SUPPLEMENT_POST,
         self::SUPPLEMENT_PRE
@@ -31,13 +39,13 @@ class Attributes
         self::SHOWN => [
             'class' => 'publish',
             'column' => 'showIcon',
-            'task' => 'suppressIcon',
+            'task' => 'hideIcon',
             'tip' => 'GROUPS_TOGGLE_TIP_SHOWN'
         ],
         self::HIDDEN => [
             'class' => 'unpublish',
             'column' => 'showIcon',
-            'task' => 'displayIcon',
+            'task' => 'showIcon',
             'tip' => 'GROUPS_TOGGLE_TIP_HIDDEN'
         ]];
 
@@ -45,15 +53,33 @@ class Attributes
         self::SHOWN => [
             'class' => 'publish',
             'column' => 'showLabel',
-            'task' => 'suppressLabel',
+            'task' => 'hideLabel',
             'tip' => 'GROUPS_TOGGLE_TIP_SHOWN'
         ],
         self::HIDDEN => [
             'class' => 'unpublish',
             'column' => 'showLabel',
-            'task' => 'displayLabel',
+            'task' => 'showLabel',
             'tip' => 'GROUPS_TOGGLE_TIP_HIDDEN'
         ]];
+
+    /**
+     * Retrieves the ids of attributes which are of unlabeled types.
+     * @return array
+     */
+    public static function getUnlabeled(): array
+    {
+        $unlabeled = [Types::IMAGE, Types::SUPPLEMENT];
+
+        $db    = Application::getDB();
+        $query = $db->getQuery(true);
+        $query->select($db->quoteName('id'))
+            ->from($db->quoteName('#__groups_attributes'))
+            ->whereIn($db->quoteName('typeID'), $unlabeled);
+        $db->setQuery($query);
+
+        return $db->loadColumn();
+    }
 
     /**
      * Name attributes
