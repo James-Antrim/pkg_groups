@@ -24,7 +24,7 @@ class Controller extends BaseController
      * Calls the appropriate model delete function and redirects to the appropriate list. Authorization occurs in the
      * called model.
      */
-    public function delete()
+    public function delete(): void
     {
         // Check for request forgeries
         $this->checkToken();
@@ -59,6 +59,35 @@ class Controller extends BaseController
         }
 
         return parent::display($cachable, $urlparams);
+    }
+
+    /**
+     * An extract for redirecting back to the list view and providing a message for the number of entries updated.
+     *
+     * @param int $selected the number of accounts selected for processing
+     * @param int $updated the number of accounts changed by the calling function
+     * @param bool $delete whether the change affected by the calling function was a deletion
+     * @return void
+     */
+    protected function farewell(int $selected = 0, int $updated = 0, bool $delete = false): void
+    {
+        if ($selected) {
+            if ($selected === $updated) {
+                $key     = $updated === 1 ? 'GROUPS_1_' : 'GROUPS_X_';
+                $key     .= $delete === true ? 'DELETED' : 'UPDATED';
+                $message = $updated === 1 ? Text::_($key, $updated) : Text::sprintf($key, $updated);
+                $type    = Application::MESSAGE;
+            } else {
+                $message = $delete ?
+                    Text::sprintf('GROUPS_XX_DELETED', $updated, $selected) : Text::sprintf('GROUPS_XX_UPDATED', $updated, $selected);
+                $type    = Application::WARNING;
+            }
+
+            Application::message($message, $type);
+        }
+
+        $view = Application::getClass($this);
+        $this->setRedirect("index.php?option=com_groups&view=$view");
     }
 
     /**

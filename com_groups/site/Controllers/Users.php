@@ -327,34 +327,6 @@ class Users extends Controller
     }
 
     /**
-     * An extract for redirecting back to the list view and providing a message for the number of entries updated.
-     *
-     * @param int $selected the number of accounts selected for processing
-     * @param int $updated the number of accounts changed by the calling function
-     * @param bool $delete whether the change affected by the calling function was a deletion
-     * @return void
-     */
-    private function farewell(int $selected = 0, int $updated = 0, bool $delete = false): void
-    {
-        if ($selected) {
-            if ($selected === $updated) {
-                $key     = $updated === 1 ? 'GROUPS_1_' : 'GROUPS_X_';
-                $key     .= $delete === true ? 'DELETED' : 'UPDATED';
-                $message = $updated === 1 ? Text::_($key, $updated) : Text::sprintf($key, $updated);
-                $type    = Application::MESSAGE;
-            } else {
-                $message = $delete ?
-                    Text::sprintf('GROUPS_XX_DELETED', $updated, $selected) : Text::sprintf('GROUPS_XX_UPDATED', $updated, $selected);
-                $type    = Application::WARNING;
-            }
-
-            Application::message($message, $type);
-        }
-
-        $this->setRedirect('index.php?option=com_groups&view=Users');
-    }
-
-    /**
      * Maps / removes mappings of the given user id to the given groups & roles.
      *
      * @param int $userID the id of the user to (dis-) associate
