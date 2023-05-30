@@ -187,6 +187,8 @@ class Users extends Controller
      */
     public function delete(): void
     {
+        $this->checkToken();
+
         if (!Can::delete()) {
             Application::error(403);
         }
@@ -400,6 +402,8 @@ class Users extends Controller
      */
     private function reset(int $userID, bool $value): bool
     {
+        $this->checkToken();
+
         $users = new UT();
         $value = (int) $value;
 
@@ -431,6 +435,8 @@ class Users extends Controller
      */
     private function toggleBlock(bool $value): void
     {
+        $this->checkToken();
+
         if (!Can::changeState()) {
             Application::error(403);
         }
@@ -520,6 +526,8 @@ class Users extends Controller
      */
     private function togglePublished(bool $value): void
     {
+        $this->checkToken();
+
         $selectedIDs = Input::getSelectedIDs();
 
         if (!Can::changeState()) {
