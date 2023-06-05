@@ -14,7 +14,7 @@ use Joomla\CMS\Helper\ContentHelper as CoreAccess;
 use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use Joomla\CMS\Toolbar\Toolbar;
+use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers;
 use THM\Groups\Helpers\Groups as Helper;
 use THM\Groups\Adapters\HTML;
@@ -30,10 +30,9 @@ class Groups extends ListView
     protected function addToolbar(): void
     {
         $actions = CoreAccess::getActions('com_users');
-        $toolbar = Toolbar::getInstance();
+        $toolbar = Application::getToolbar();
 
-        if ($actions->get('core.create'))
-        {
+        if ($actions->get('core.create')) {
             $toolbar->addNew('Group.add');
         }
 
@@ -46,8 +45,7 @@ class Groups extends ListView
 
         $childBar = $dropdown->getChildToolbar();
 
-        if ($actions->get('core.edit'))
-        {
+        if ($actions->get('core.edit')) {
             $button = $childBar->popupButton('roles');
             $button->icon('fa fa-hat-wizard');
             $button->text('GROUPS_BATCH_ROLES');
@@ -55,8 +53,7 @@ class Groups extends ListView
             $button->listCheck(true);
         }
 
-        if ($actions->get('core.edit'))
-        {
+        if ($actions->get('core.edit')) {
             $button = $childBar->popupButton('levels');
             $button->icon('icon-eye');
             $button->text('GROUPS_BATCH_LEVELS');
@@ -64,8 +61,7 @@ class Groups extends ListView
             $button->listCheck(true);
         }
 
-        if ($actions->get('core.delete'))
-        {
+        if ($actions->get('core.delete')) {
             $button = $childBar->delete('users.delete');
             $button->text('GROUPS_REMOVE');
             $button->message('GROUPS_REMOVE_CONFIRM');
@@ -78,7 +74,7 @@ class Groups extends ListView
     /**
      * @inheritDoc
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         $this->todo = [
             'Add batch processing for adding / removing roles.',
@@ -92,44 +88,36 @@ class Groups extends ListView
     /**
      * @inheritDoc
      */
-    protected function completeItems()
+    protected function completeItems(): void
     {
         $ugh = UGH::getInstance();
 
-        foreach ($this->items as $item)
-        {
-            if ($this->filtered())
-            {
+        foreach ($this->items as $item) {
+            if ($this->filtered()) {
                 // The last item is the $item->name
                 array_pop($item->path);
 
-                foreach ($item->path as $key => $parentID)
-                {
+                foreach ($item->path as $key => $parentID) {
                     $item->path[$key] = $ugh->get($parentID)->title;
                 }
                 $item->supplement = implode(' / ', $item->path);
-            }
-            else
-            {
+            } else {
                 $item->prefix = Helper::getPrefix($item->level);
             }
 
-            if (in_array($item->id, Helper::DEFAULT))
-            {
+            if (in_array($item->id, Helper::DEFAULT)) {
                 $context = "groups-group-$item->id";
                 $tip     = Text::_('GROUPS_PROTECTED_GROUP');
 
                 $item->icon = HTML::tip(HTML::icon('lock'), $context, $tip);
             }
 
-            if (!$this->state->get('filter.roleID'))
-            {
+            if (!$this->state->get('filter.roleID')) {
                 $roles = Helper::getRoles($item->id);
                 $count = count($roles);
 
                 //$item->viewLevel = implode(', ', $levels);
-                switch (true)
-                {
+                switch (true) {
                     case $count === 0:
                         $item->role = Text::_('GROUPS_NONE');
                         break;
@@ -149,28 +137,18 @@ class Groups extends ListView
                 }
             }
 
-            if (!$this->state->get('filter.levelID'))
-            {
+            if (!$this->state->get('filter.levelID')) {
                 $levels = Helper::getLevels($item->id);
                 $count  = count($levels);
 
-                switch (true)
-                {
-                    case $count === 0:
-                        $item->viewLevel = Text::_('GROUPS_NONE');
-                        break;
-                    case $count > 2:
-                        $item->viewLevel = Text::_('GROUPS_MULTIPLE');
-                        break;
-                    default:
-                        $item->viewLevel = implode(', ', $levels);
-                        break;
-
-                }
+                $item->viewLevel = match (true) {
+                    $count === 0 => Text::_('GROUPS_NONE'),
+                    $count > 2 => Text::_('GROUPS_MULTIPLE'),
+                    default => implode(', ', $levels),
+                };
             }
 
-            if ($item->enabled or $item->blocked)
-            {
+            if ($item->enabled or $item->blocked) {
                 $link = "?option=com_groups&view=Profiles&filter[groupID]=$item->id&filter[state]=";
 
                 $eLink       = Route::_($link . 1);
@@ -182,9 +160,7 @@ class Groups extends ListView
                 $properties  = ['class' => 'btn btn-danger'];
                 $tip         = Text::_('GROUPS_BLOCKED_USERS');
                 $item->users .= HTML::tip($item->blocked, "blocked-tip->$item->id", $tip, $properties, $bLink);
-            }
-            else
-            {
+            } else {
                 $item->users = '';
             }
 
@@ -200,51 +176,49 @@ class Groups extends ListView
     /**
      * @inheritDoc
      */
-    protected function initializeHeaders()
+    protected function initializeHeaders(): void
     {
         $this->headers = [
             'check' => ['type' => 'check'],
-            'name' => [
+            'name'  => [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_GROUP'),
-                'type' => 'text'
+                'title'      => Text::_('GROUPS_GROUP'),
+                'type'       => 'text'
             ]
         ];
 
-        if (!$this->state->get('filter.roleID'))
-        {
+        if (!$this->state->get('filter.roleID')) {
             $this->headers['role'] = [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_ROLE'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_ROLE'),
+                'type'       => 'value'
             ];
         }
 
-        if (!$this->state->get('filter.levelID'))
-        {
+        if (!$this->state->get('filter.levelID')) {
             $this->headers['viewLevel'] = [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_LEVEL'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_LEVEL'),
+                'type'       => 'value'
             ];
         }
 
         $this->headers['users'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title' => Text::_('GROUPS_USERS'),
-            'type' => 'value'
+            'title'      => Text::_('GROUPS_USERS'),
+            'type'       => 'value'
         ];
 
         $this->headers['id'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title' => Text::_('GROUPS_ID'),
-            'type' => 'value'
+            'title'      => Text::_('GROUPS_ID'),
+            'type'       => 'value'
         ];
 
         $this->headers['rights'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title' => Text::_('GROUPS_RIGHTS'),
-            'type' => 'value'
+            'title'      => Text::_('GROUPS_RIGHTS'),
+            'type'       => 'value'
         ];
     }
 }

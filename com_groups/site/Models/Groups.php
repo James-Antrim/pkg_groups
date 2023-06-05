@@ -17,7 +17,6 @@ use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 use stdClass;
 use THM\Groups\Adapters\Application;
-use THM\Groups\Helpers\Can;
 use THM\Groups\Tools\Migration;
 
 /**
@@ -34,8 +33,7 @@ class Groups extends ListModel
     {
         Migration::migrate();
 
-        if (empty($config['filter_fields']))
-        {
+        if (empty($config['filter_fields'])) {
             $config['filter_fields'] = ['levelID', 'roleID'];
         }
 
@@ -58,8 +56,7 @@ class Groups extends ListModel
         $items    = parent::getItems() ?: [];
         $ugHelper = UGH::getInstance();
 
-        foreach ($items as $item)
-        {
+        foreach ($items as $item) {
             $ugHelper->populateGroupData($item);
             $this->getUserCounts($item);
         }
@@ -101,27 +98,22 @@ class Groups extends ListModel
         $condition = "$pLeft < $gLeft AND $gRight < $pRight";
         $query->join('left', $parent, $condition);
 
-        if ($filterRoleID = (int)$this->getState('filter.roleID'))
-        {
+        if ($filterRoleID = (int) $this->getState('filter.roleID')) {
             $condition = $db->quoteName('ra.groupID') . " = $groupID";
             $ra        = $db->quoteName('#__groups_role_associations', 'ra');
             $roleID    = $db->quoteName('ra.roleID');
 
-            if ($filterRoleID >= 1)
-            {
+            if ($filterRoleID >= 1) {
                 $query->join('inner', $ra, $condition)
                     ->where("$roleID = :roleID")
                     ->bind(':roleID', $filterRoleID, ParameterType::INTEGER);
-            }
-            else
-            {
+            } else {
                 $query->join('left', $ra, $condition)
                     ->where("$roleID IS NULL");
             }
         }
 
-        if ($filterLevelID = (int)$this->getState('filter.levelID'))
-        {
+        if ($filterLevelID = (int) $this->getState('filter.levelID')) {
             $levelID = $db->quoteName('vl.id');
             $levels  = $db->quoteName('#__viewlevels', 'vl');
             $regex1  = $query->concatenate(["'[,\\\\[]'", $groupID, "'[,\\\\]]'"]);
@@ -135,16 +127,12 @@ class Groups extends ListModel
         // Filter the comments over the search string if set.
         $search = $this->getState('filter.search');
 
-        if (!empty($search))
-        {
-            if (stripos($search, 'id:') === 0)
-            {
-                $ids = (int)substr($search, 3);
+        if (!empty($search)) {
+            if (stripos($search, 'id:') === 0) {
+                $ids = (int) substr($search, 3);
                 $query->where($db->quoteName('g.id') . ' = :id');
                 $query->bind(':id', $ids, ParameterType::INTEGER);
-            }
-            else
-            {
+            } else {
                 $nameDE = $db->quoteName('g.name_de');
                 $nameEN = $db->quoteName('g.name_en');
                 $search = '%' . trim($search) . '%';
@@ -163,11 +151,11 @@ class Groups extends ListModel
     /**
      * Adds associated user counts to the group
      *
-     * @param stdClass $group the group to set values for
+     * @param   stdClass  $group  the group to set values for
      *
      * @return void
      */
-    private function getUserCounts(stdClass $group)
+    private function getUserCounts(stdClass $group): void
     {
         $db = $this->getDatabase();
 
@@ -191,16 +179,16 @@ class Groups extends ListModel
             ->bind(':blocked', $blocked, ParameterType::INTEGER);
         $db->setQuery($query);
 
-        $group->enabled = (int)$db->loadResult();
+        $group->enabled = (int) $db->loadResult();
 
         $blocked        = 1;
-        $group->blocked = (int)$db->loadResult();
+        $group->blocked = (int) $db->loadResult();
     }
 
     /**
      * @inheritDoc
      */
-    protected function populateState($ordering = 'ug.lft', $direction = 'asc')
+    protected function populateState($ordering = 'ug.lft', $direction = 'asc'): void
     {
         // Load the parameters.
         $params = Application::getParams('com_users')->merge(Application::getParams());

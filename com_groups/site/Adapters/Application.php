@@ -11,15 +11,13 @@
 namespace THM\Groups\Adapters;
 
 use Exception;
-use Joomla\CMS\Application\CMSApplication;
-use Joomla\CMS\Application\WebApplication;
+use Joomla\CMS\Application\{CMSApplication, WebApplication};
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Language\Language;
 use Joomla\CMS\Session\Session;
-use Joomla\CMS\User\User;
-use Joomla\CMS\User\UserFactory;
-use Joomla\CMS\User\UserFactoryInterface;
+use Joomla\CMS\Toolbar\{Toolbar, ToolbarFactoryInterface};
+use Joomla\CMS\User\{User, UserFactory, UserFactoryInterface};
 use Joomla\Database\DatabaseDriver;
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
@@ -40,10 +38,17 @@ class Application
      * @DEBUG, @INFO, @NOTICE: info
      * @WARNING: warning
      * default: success
-     * @see CMSApplicationInterface
+     * @see    CMSApplicationInterface
      */
     public const ALERT = 'alert', CRITICAL = 'critical', DEBUG = 'debug', EMERGENCY = 'emergency', ERROR = 'error',
         INFO = 'info', MESSAGE = 'message', NOTICE = 'notice', WARNING = 'warning';
+
+    /**
+     * Stores toolbar references.
+     *
+     * @var    Toolbar[]
+     */
+    protected static array $toolbars = [];
 
     /**
      * Checks whether the current context is the administrator context.
@@ -58,7 +63,7 @@ class Application
     /**
      * Performs a redirect on error.
      *
-     * @param int $code the error code
+     * @param   int  $code  the error code
      *
      * @return void
      */
@@ -68,24 +73,19 @@ class Application
 
         //TODO: Add logging
 
-        if ($code === 401)
-        {
+        if ($code === 401) {
             $return   = urlencode(base64_encode($current));
             $url      = Uri::base() . "?option=com_users&view=login&return=$return";
             $severity = 'notice';
-        }
-        else
-        {
-            $severity = match ($code)
-            {
+        } else {
+            $severity = match ($code) {
                 400, 404 => 'notice',
                 403, 412 => 'warning',
                 default => 'error',
             };
 
-            if ($severity === 'error')
-            {
-                $exc = new Exception;
+            if ($severity === 'error') {
+                $exc = new Exception();
                 echo "<pre>" . print_r($exc->getTraceAsString(), true) . "</pre>";
                 die;
             }
@@ -107,12 +107,9 @@ class Application
      */
     public static function getApplication(): ?CMSApplicationInterface
     {
-        try
-        {
+        try {
             return Factory::getApplication();
-        }
-        catch (Exception $exception)
-        {
+        } catch (Exception $exception) {
             echo "<pre>" . print_r($exception->getTraceAsString(), true) . "</pre>";
             die;
             //return null;
@@ -122,7 +119,7 @@ class Application
     /**
      * Gets the name of an object's class without its namespace.
      *
-     * @param object|string $object the object whose namespace free name is requested or the fq name of the class to be loaded
+     * @param   object|string  $object  the object whose namespace free name is requested or the fq name of the class to be loaded
      *
      * @return string the name of the class without its namespace
      */
@@ -178,7 +175,7 @@ class Application
     /**
      * Gets the parameter object for the component
      *
-     * @param string $component the component name.
+     * @param   string  $component  the component name.
      *
      * @return  Registry
      */
@@ -194,9 +191,7 @@ class Application
      */
     public static function getSession(): Session
     {
-        /** @var Session $session */
-        $session = self::getApplication()->getSession();
-        return $session;
+        return self::getApplication()->getSession();
     }
 
     /**
@@ -212,8 +207,32 @@ class Application
     }
 
     /**
+     * Returns a toolbar object, creating it as necessary. Specific toolbars can be accessed over the name parameter.
+     *
+     * @param   string  $name  The name of the toolbar.
+     *
+     * @return  Toolbar  The Toolbar object.
+     */
+    public static function getToolbar(string $name = 'toolbar'): Toolbar
+    {
+        if (empty(self::$toolbars[$name])) {
+            $container = self::getContainer();
+
+            try {
+                $tbFactory             = $container->get(ToolbarFactoryInterface::class);
+                self::$toolbars[$name] = $tbFactory->createToolbar($name);
+            } catch (Exception) {
+                self::error(503);
+            }
+        }
+
+        return self::$toolbars[$name];
+    }
+
+    /**
      * Gets a user object (specified or current).
-     * @param int|string $userID the user identifier (id or name)
+     *
+     * @param   int|string  $userID  the user identifier (id or name)
      *
      * @return User
      */
@@ -223,8 +242,7 @@ class Application
         $userFactory = self::getContainer()->get(UserFactoryInterface::class);
 
         // Get a specific user.
-        if ($userID)
-        {
+        if ($userID) {
             return is_int($userID) ? $userFactory->loadUserById($userID) : $userFactory->loadUserByUsername($userID);
         }
 
@@ -237,8 +255,8 @@ class Application
     /**
      * Masks the Joomla application enqueueMessage function
      *
-     * @param string $message the message to enqueue
-     * @param string $type how the message is to be presented
+     * @param   string  $message  the message to enqueue
+     * @param   string  $type     how the message is to be presented
      *
      * @return void
      */
@@ -265,8 +283,8 @@ class Application
     /**
      * Redirect to another URL.
      *
-     * @param string $url The URL to redirect to. Can only be http/https URL
-     * @param int $status The HTTP 1.1 status code to be provided. 303 is assumed by default.
+     * @param   string  $url     The URL to redirect to. Can only be http/https URL
+     * @param   int     $status  The HTTP 1.1 status code to be provided. 303 is assumed by default.
      *
      * @return  void
      */
