@@ -53,6 +53,12 @@ class Users extends User
     public $content;
 
     /**
+     * INT(11) DEFAULT NULL
+     * @var int
+     */
+    public $converisID;
+
+    /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var bool
      */

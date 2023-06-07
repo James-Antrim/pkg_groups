@@ -85,13 +85,15 @@ ALTER TABLE `#__user_usergroup_map`
 
 # add necessary columns to users
 ALTER TABLE `#__users`
-    ADD COLUMN `surnames`  VARCHAR(255) DEFAULT NULL AFTER `email`,
-    ADD COLUMN `forenames` VARCHAR(255) DEFAULT NULL AFTER `surnames`,
-    ADD COLUMN `alias`     VARCHAR(255) DEFAULT NULL AFTER `forenames`,
-    ADD COLUMN `content`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `block`,
-    ADD COLUMN `editing`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `content`,
-    ADD COLUMN `published` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `editing`,
-    ADD UNIQUE KEY (`alias`);
+    ADD COLUMN `surnames`   VARCHAR(255)     DEFAULT NULL AFTER `email`,
+    ADD COLUMN `forenames`  VARCHAR(255)     DEFAULT NULL AFTER `surnames`,
+    ADD COLUMN `alias`      VARCHAR(255)     DEFAULT NULL AFTER `forenames`,
+    ADD COLUMN `content`    TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `block`,
+    ADD COLUMN `editing`    TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `content`,
+    ADD COLUMN `published`  TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `editing`,
+    ADD COLUMN `converisID` INT(11) UNSIGNED DEFAULT NULL,
+    ADD UNIQUE KEY (`alias`),
+    ADD UNIQUE KEY (`converisID`);
 #endregion
 
 #region Fill
