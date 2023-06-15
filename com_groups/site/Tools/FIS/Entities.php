@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-namespace THM\Groups\Tools;
+namespace THM\Groups\Tools\FIS;
 
 class Entities
 {
@@ -61,7 +61,7 @@ class Entities
         IDEAS = 534,
         INTERRUPTIONS = 2796,
         INVENTION_DISCLOSURES = 1041,
-        JOURNAL = 573,
+        JOURNALS = 573,
         KDSF_FIELDS = 2208354,
         LANGUAGE_COMPETENCES = 2718,
         LANGUAGES = 2523,
@@ -171,6 +171,7 @@ class Entities
          */
         self::CARDS => [
             'all' => 'data/entities/Card',
+            'attributes' => 'fedId,firstName,function,lastName,staffCategory,typeOfCard',
             'entity' => 'Card',
             'name_de' => 'Visitenkarte',
             'name_en' => 'Business Card',
@@ -524,7 +525,7 @@ class Entities
             'plural_en' => 'Invention Disclosures'
         ],
 
-        self::JOURNAL => [
+        self::JOURNALS => [
             'all' => 'data/entities/Journal',
             'entity' => 'Journal',
             'name_de' => 'Fachzeitschrift',
@@ -654,6 +655,7 @@ class Entities
         // [X] FIS Person Entries
         self::PERSONS => [
             'all' => 'data/entities/Person',
+            'attributes' => 'cfFamilyNames,cfFirstNames,fachgebiet,thmLogin,typeOfPerson',
             'entity' => 'Person',
             'name_de' => 'Person',
             'name_en' => 'Person',
@@ -725,6 +727,38 @@ class Entities
         // [X] Publicationen [KDSF:Pu4a]
         self::PUBLICATIONS => [
             'all' => 'data/entities/Publication',
+            'attributes' => [
+                'icRatio',
+                'icTotCites',
+                'icXCR',
+                'investigators',
+                'irCollection',
+                'irHandle',
+                'irHash',
+                'irSubmit',
+                'irSubmittedOn',
+                'isiId',
+                'location',
+                'oai',
+                'orcidId',
+                'originalSource',
+                'pmcId',
+                'Ref_ID',
+                'schnellmeldung',
+                'scopusId',
+                'srcAffiliation',
+                'srcChapter',
+                'srcSchool',
+                'urlExT'
+            ],
+            /*
++ alternativeBookTitle, cfAbstr,cfEndPage,cfFedId,cfISBN,cfISSN,cfIssue
++ cfNameAbbrev,srcPublType,cfResPublDate,cfSeries,cfStartPage,cfSubTitle,cfTitle,cfTotalPages,cfURI,cfVol,chapter,citAPA,
++ citHarvard,commentImport,comments,crossRefId,depositDone,DOI,eISBN,eISSN,flag_audio,flag_image,flag_text,flag_video,howPublished,icACCR,icKcode,icPercentile,
++ icPercentileDouble,ID_PUBL,idsId,journalName,kdsfdocumenttype,openAccess,pagesRange,peerReviewed,performanceType,
++ publicationatthm,publisher,publStatus,publYear,pubmedId,purchaseTHM,sourceOfInfo,srcAddress,srcAuthors,srcBookTitle,
++ srcEditors,srcIsiSubjCat,srcJourName,srcKeywords,srcMonth,srcOrganisation,srcPublDate,srcTitle,srcYear,swepubId
+            */
             'entity' => 'Publication',
             'name_de' => 'Publikation',
             'name_en' => 'Publication',
