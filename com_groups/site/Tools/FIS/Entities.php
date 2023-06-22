@@ -12,7 +12,7 @@ namespace THM\Groups\Tools\FIS;
 
 class Entities
 {
-    // Discovered entities
+    // Discovered entity codes
     public const
         ACADEMIC_SPINOFFS = 1275,
         ACTIVITIES = 2250,
@@ -728,36 +728,71 @@ class Entities
         self::PUBLICATIONS => [
             'all' => 'data/entities/Publication',
             'attributes' => [
-                'icRatio',
-                'icTotCites',
-                'icXCR',
-                'investigators',
-                'irCollection',
-                'irHandle',
-                'irHash',
-                'irSubmit',
-                'irSubmittedOn',
-                'isiId',
-                'location',
-                'oai',
-                'orcidId',
-                'originalSource',
-                'pmcId',
-                'Ref_ID',
-                'schnellmeldung',
-                'scopusId',
-                'srcAffiliation',
-                'srcChapter',
-                'srcSchool',
-                'urlExT'
+                'flag_audio',
+                'flag_image',
+                'flag_text',
+                'flag_video'
             ],
             /*
-+ alternativeBookTitle, cfAbstr,cfEndPage,cfFedId,cfISBN,cfISSN,cfIssue
-+ cfNameAbbrev,srcPublType,cfResPublDate,cfSeries,cfStartPage,cfSubTitle,cfTitle,cfTotalPages,cfURI,cfVol,chapter,citAPA,
-+ citHarvard,commentImport,comments,crossRefId,depositDone,DOI,eISBN,eISSN,flag_audio,flag_image,flag_text,flag_video,howPublished,icACCR,icKcode,icPercentile,
-+ icPercentileDouble,ID_PUBL,idsId,journalName,kdsfdocumenttype,openAccess,pagesRange,peerReviewed,performanceType,
-+ publicationatthm,publisher,publStatus,publYear,pubmedId,purchaseTHM,sourceOfInfo,srcAddress,srcAuthors,srcBookTitle,
-+ srcEditors,srcIsiSubjCat,srcJourName,srcKeywords,srcMonth,srcOrganisation,srcPublDate,srcTitle,srcYear,swepubId
+
+-alternativeBookTitle
+-cfAbstr
+-cfEdition
+-cfEndPage
+-cfFedId
+-cfISBN
+-cfISSN
+-cfIssue
+-cfNameAbbrev
+-cfNum
+-srcPublType
+-cfResPublDate
+-cfSeries
+-cfStartPage
+-cfSubTitle
+-cfTitle
+-cfTotalPages
+-cfURI
+-cfVol
+-chapter
+-citAPA
+-citHarvard
+-comments
+-crossRefId
+-depositDone
+-DOI
+-icACCR
+-icKcode
+-icPercentile
+-icPercentileDouble
+-ID_PUBL
+-idsId
+-journalName
+-kdsfdocumenttype
+-openAccess
+-pagesRange
+-peerReviewed
+-performanceType
+-publicationatthm
+-publisher
+-publStatus
+-publYear
+-pubmedId
+-purchaseTHM
+-sourceOfInfo
+-srcAddress
+-srcAuthors
+-srcBookTitle
+-srcEditors
+-srcIsiSubjCat
+-srcJourName
+-srcKeywords
+-srcMonth
+-srcOrganisation
+-srcPublDate
+-srcTitle
+-srcYear
+-swepubId
             */
             'entity' => 'Publication',
             'name_de' => 'Publikation',

@@ -25,6 +25,10 @@ Empty Values
 -embargo
 -embargoDate
 -euroPubMedId
+-flag_audio
+-flag_image
+-flag_text
+-flag_video
 -graduationType
 -howPublished
 -icArtn
@@ -82,10 +86,6 @@ Not-Empty Values
 -crossRefId
 -depositDone
 -DOI
--flag_audio
--flag_image
--flag_text
--flag_video
 -icACCR
 -icKcode
 -icPercentile
