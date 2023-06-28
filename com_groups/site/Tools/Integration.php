@@ -15,7 +15,7 @@ use stdClass;
 use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\Groups;
 use THM\Groups\Tables\Users;
-use THM\Groups\Tools\FIS\{Associations, Entities};
+use THM\Groups\Tools\FIS\{Cards, Entities, Persons};
 
 class Integration
 {
@@ -28,7 +28,7 @@ class Integration
 
     private const HEADERS = [
         'attributes' => 'Converis-attribute-definition: ALL',
-        //'links' => 'Converis-linkentity-references: true'
+        'links' => 'Converis-linkentity-references: true'
     ];
 
     private const CONFIGURATIONS = [
@@ -65,9 +65,13 @@ class Integration
         self::processPersons($users, $persons);
     }
 
-    private static function getURL()
+    /**
+     * Provides standardized retrieval of the URL configured to communicate with the converis API.
+     * @return string
+     */
+    private static function getURL(): string
     {
-        if (!$url = Input::getParams()->get('fis')) {
+        if (!$url = (string) Input::getParams()->get('fis')) {
             Application::message('Converis credentials have not been configured.', Application::WARNING);
             return '';
         }
@@ -75,6 +79,13 @@ class Integration
         return $url;
     }
 
+    /**
+     * Retrieves a single record from the converis API
+     * @param CurlHandle $curl the curl handle used to communicate with the API
+     * @param string $url the url of the API and any relevant parameters
+     *
+     * @return stdClass|null
+     */
     private static function getRecord(CurlHandle $curl, string $url): null|stdClass
     {
         curl_setopt($curl, CURLOPT_URL, $url);
@@ -86,6 +97,15 @@ class Integration
         return json_decode($record);
     }
 
+    /**
+     * Retrieves multiple records from the converis API.
+     *
+     * @param CurlHandle $curl the curl handle used to communicate with the API
+     * @param string $url the url of the API and any relevant parameters unrelated to pagination
+     * @param bool $break whether the process should stop at a break point or continue
+     *
+     * @return array the JSON decoded records delivered by the API
+     */
     private static function getRecords(CurlHandle $curl, string $url, bool $break = false): array
     {
         $count   = 50;
@@ -106,8 +126,7 @@ class Integration
             curl_setopt($curl, CURLOPT_URL, $url . "count=$count&startRecord=$start");
 
             if ($queries and $queries % 10 === 0) {
-                if ($break)
-                {
+                if ($break) {
                     return $records;
                 }
                 sleep(1);
@@ -120,6 +139,7 @@ class Integration
                 }
                 return $records;
             }
+            echo "<pre>" . print_r($set, true) . "</pre>";
 
             $queries++;
 
@@ -164,25 +184,30 @@ class Integration
             return;
         }
 
-        $entity = Entities::ENTITIES[Entities::PUBLICATIONS];
-        $headers = self::HEADERS;
+        $IDMap      = self::getUsers(true);
+        $attributes = Cards::getAttributes();
+        $cardURL = Persons::QUERIES[Persons::CARDS];
 
-        if (!empty($entity['attributes']))
-        {
-            $attributes = is_array($entity['attributes']) ? implode(',', $entity['attributes']) : $entity['attributes'];
-            $headers['attributes'] = str_replace('ALL', $attributes, $headers['attributes']);
-        }
+        $headers               = self::HEADERS;
+        $headers['attributes'] = str_replace('ALL', $attributes, $headers['attributes']);
 
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
-        //$url = $url . self::CONFIGURATIONS[self::ASSOCIATION_CONFIGURATIONS];
-        $url = $url . $entity['all'];
+        foreach ($IDMap as $converisID) {
+            if ($converisID !== 2483544) continue;
+            $thisURL = $url . sprintf($cardURL, $converisID);
+            $cards = self::getRecords($curl, $thisURL);
+            echo "<pre>" . print_r($cards, true) . "</pre>";
+        }
 
-        $results = self::getRecords($curl, $url, true);
+        //$url = $url . self::CONFIGURATIONS[self::ASSOCIATION_CONFIGURATIONS];
+        //$url = $url . $entity['all'];
+
+        //$results = self::getRecords($curl, $url, true);
 
         /*foreach ($results as $result) {
         }*/
-        echo "<pre>" . print_r(json_encode($results), true) . "</pre>";
+        //echo "<pre>" . print_r(json_encode($results), true) . "</pre>";
         die;
     }
 

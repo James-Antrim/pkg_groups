@@ -10,26 +10,65 @@
 
 namespace THM\Groups\Tools\FIS;
 
-class Persons
+class Persons extends Entities
 {
-    public const CITIZEN = 1, RESIDENT = 2, NATIVE_SPEAKER = 3, SPEAKS = 4;
+    public const
+        CARDS = 3124,
+        ENDED = 4,
+        ENTITY = 'Person',
+        ID = 66,
+        IMPORTED = 2,
+        MANUAL = 3,
+        NAME_DE = 'Person',
+        NAME_EN = 'Person',
+        PLURAL_DE = 'Personen',
+        PLURAL_EN = 'Persons';
 
-    public const FILTERS = [
-        self::CITIZEN => [
-            'filter_de' => 'Staatsbürger',
-            'filter_en' => 'citizen',
-        ],
-        self::RESIDENT => [
-            'filter_de' => 'wohnhaft',
-            'filter_en' => 'resident',
-        ],
-        self::NATIVE_SPEAKER => [
-            'filter_de' => 'Muttersprachler',
-            'filter_en' => 'native speaker',
-        ],
-        self::SPEAKS => [
-            'filter_de' => 'spricht',
-            'filter_en' => 'speaks',
-        ],
+    public const QUERIES = [
+        'ALL' => 'data/entities/Person',
+        'ONE' => 'data/entities/Person/%d',
+        /**
+         * No idea what this means, but smells relevant for now...
+         * [L:Nie]
+         * [Q:ITSUM]
+         * [R:FIS-RV]
+         * [X] Verknüpfung zur Karte
+         * [Z:Darstellung, Verknüpfung, Auswertung von Organisationseinheiten, Statistiken]
+         */
+        self::CARDS => 'data/entities/Card/linked/CARD_by_PERSON/%d',
     ];
+
+    protected const ALL_ATTRIBUTES = [
+        'academicTitle',
+        'cfCityTown',
+        'cfFamilyNames',
+        'cfFedId',
+        'cfFirstNames',
+        'cfGender',
+        'cfPostCode',
+        'cfURI',
+        'email',
+        'fachgebiet',
+        'phone',
+        'reportingName',
+        'salutation',
+        'streetAndNo',
+        'thmLogin',
+        'typeOfCreation',
+        'typeOfPerson',
+        'webmail'
+    ];
+
+    /**
+     * Attributes to verify the person's identity.
+     */
+    protected const SELECTED_ATTRIBUTES = [
+        'fFamilyNames',
+        'cfFirstNames',
+        'fachgebiet',
+        'thmLogin',
+        'typeOfPerson'
+    ];
+
+    protected const STATUSES = [self::ENDED, self::IMPORTED, self::MANUAL];
 }

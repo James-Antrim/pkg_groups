@@ -10,19 +10,17 @@
 
 namespace THM\Groups\Tools\FIS;
 
-class Entities
+use THM\Groups\Adapters\Application;
+
+abstract class Entities
 {
+    protected const ALL_ATTRIBUTES = [], SELECTED_ATTRIBUTES = [];
+
     // Discovered entity codes
     public const
-        ACADEMIC_SPINOFFS = 1275,
-        ACTIVITIES = 2250,
-        ADMISSIONS = 2874,
         AREAS = 1119,
-        ASSESSMENT_UNITS = 612,
-        AWARD = 1470,
         BRANCHES = 2076211,
         CARDS = 1938,
-        CASH_FLOWS = 1236,
         CENTERS = 2016,
         CIPCS = 807,
         CITATIONS = 1704,
@@ -30,7 +28,6 @@ class Entities
         CONTACTS = 2312662,
         CONTINUING_EDUCATION = 1080,
         COOPERATION = 846,
-        COUNTRIES = 2094,
         CURRICULA = 2601,
         DDCS = 261,
         DFG_FIELDS = 1743,
@@ -76,7 +73,7 @@ class Entities
         PAYMENTS = 2055,
         PEER_REVIEWS = 417,
         PERSONNEL_EXCHANGES = 1665,
-        PERSONS = 66,
+        PERSONS = Persons::ID,
         PICTURES = 1002,
         PROFILE_PICTURES = 2289,
         PROGRAMS = 2679,
@@ -104,30 +101,6 @@ class Entities
 
     public const ENTITIES = [
 
-        self::ACADEMIC_SPINOFFS => [
-            'entity' => 'AcademicSpinoff',
-            'name_de' => 'Akademischer Spinoff',
-            'name_en' => 'Academic Spinoff',
-            'plural_de' => 'Akademische Spinoffs',
-            'plural_en' => 'Academic Spinoffs'
-        ],
-
-        self::ACTIVITIES => [
-            'entity' => 'Activity',
-            'name_de' => 'Aktivität',
-            'name_en' => 'Activity',
-            'plural_de' => 'Aktivitäten',
-            'plural_en' => 'CV Activities'
-        ],
-
-        self::ADMISSIONS => [
-            'entity' => 'Admission',
-            'name_de' => 'Annahme als Doktorand',
-            'name_en' => 'Graduate Admission',
-            'plural_de' => 'Annahmen als Doktorand',
-            'plural_en' => 'Graduate Admissions'
-        ],
-
         /**
          * [X] THM research areas
          * @see self::HFD_AREAS
@@ -140,23 +113,6 @@ class Entities
             'plural_en' => 'Research Areas'
         ],
 
-        // Units of Assessment used for the REF submission in the UK.
-        self::ASSESSMENT_UNITS => [
-            'entity' => 'UnitOfAssess',
-            'name_de' => 'Unit of Assessment',
-            'name_en' => 'Unit of Assessment',
-            'plural_de' => 'Units of Assessment',
-            'plural_en' => 'Units of Assessment'
-        ],
-
-        self::AWARD => [
-            'entity' => 'Award',
-            'name_de' => 'Preis',
-            'name_en' => 'Award',
-            'plural_de' => 'Preise',
-            'plural_en' => 'Awards'
-        ],
-
         self::BRANCHES => [
             'entity' => 'Wirtschaftszweige',
             'name_de' => 'Branche',
@@ -165,10 +121,6 @@ class Entities
             'plural_en' => 'Branch'
         ],
 
-        /**
-         * [X] The card describes the relation between a person and an internal organisation. It includes the contact
-         * dates of the person in the organisation.
-         */
         self::CARDS => [
             'all' => 'data/entities/Card',
             'attributes' => 'fedId,firstName,function,lastName,staffCategory,typeOfCard',
@@ -177,14 +129,6 @@ class Entities
             'name_en' => 'Business Card',
             'plural_de' => 'Visitenkarten',
             'plural_en' => 'Business Cards'
-        ],
-
-        self::CASH_FLOWS => [
-            'entity' => 'Cash Flow',
-            'name_de' => 'Mittelfluss',
-            'name_en' => 'Cash Flow',
-            'plural_de' => 'Mittelflüsse',
-            'plural_en' => 'Cash Flows'
         ],
 
         self::CENTERS => [
@@ -247,14 +191,6 @@ class Entities
             'name_en' => 'Cooperation',
             'plural_de' => 'Kooperationen',
             'plural_en' => 'Cooperations'
-        ],
-
-        self::COUNTRIES => [
-            'entity' => 'Country',
-            'name_de' => 'Land',
-            'name_en' => 'Country',
-            'plural_de' => 'Länder',
-            'plural_en' => 'Countries'
         ],
 
         self::CURRICULA => [
@@ -498,7 +434,7 @@ class Entities
         /**
          * Project idea allows researchers to collect project ideas in a pool. Having ideas noted down, discussed,
          * evaluated with colleagues - for some of them a project application will be the result. To clarify the
-         * relation between idea, application and the project itself a constant identifier can be used through out
+         * relation between idea, application and the project itself a constant identifier can be used throughout
          * the process.
          */
         self::IDEAS => [
@@ -534,10 +470,6 @@ class Entities
             'plural_en' => 'Journals'
         ],
 
-        /**
-         * Research fields according to Kerndatensatz Forschung
-         * @link https://www.kerndatensatz-forschung.de/docs_ff/anlage_finale_forschungsfeldklassifikation_ffk-projekt.pdf
-         */
         self::KDSF_FIELDS => [
             'entity' => 'forschungsfeld',
             'name_de' => 'Forschungsfeld',
@@ -655,12 +587,7 @@ class Entities
         // [X] FIS Person Entries
         self::PERSONS => [
             'all' => 'data/entities/Person',
-            'attributes' => 'cfFamilyNames,cfFirstNames,fachgebiet,thmLogin,typeOfPerson',
-            'entity' => 'Person',
-            'name_de' => 'Person',
-            'name_en' => 'Person',
-            'plural_de' => 'Personen',
-            'plural_en' => 'Persons',
+            //'attributes' => 'cfFamilyNames,cfFirstNames,fachgebiet,thmLogin,typeOfPerson',
             self::CARDS => 'data/entities/Person/linked/PERS_has_CARD/'
         ],
 
@@ -728,77 +655,55 @@ class Entities
         self::PUBLICATIONS => [
             'all' => 'data/entities/Publication',
             'attributes' => [
-                'flag_audio',
-                'flag_image',
-                'flag_text',
-                'flag_video'
-            ],
-            /*
+//                'cfAbstr',
+//                'cfURI',
+//                'citAPA',
+//                'citHarvard',
+//                'srcTitle',
 
--alternativeBookTitle
--cfAbstr
--cfEdition
--cfEndPage
--cfFedId
--cfISBN
--cfISSN
--cfIssue
--cfNameAbbrev
--cfNum
--srcPublType
--cfResPublDate
--cfSeries
--cfStartPage
--cfSubTitle
--cfTitle
--cfTotalPages
--cfURI
--cfVol
--chapter
--citAPA
--citHarvard
--comments
--crossRefId
--depositDone
--DOI
--icACCR
--icKcode
--icPercentile
--icPercentileDouble
--ID_PUBL
--idsId
--journalName
--kdsfdocumenttype
--openAccess
--pagesRange
--peerReviewed
--performanceType
--publicationatthm
--publisher
--publStatus
--publYear
--pubmedId
--purchaseTHM
--sourceOfInfo
--srcAddress
--srcAuthors
--srcBookTitle
--srcEditors
--srcIsiSubjCat
--srcJourName
--srcKeywords
--srcMonth
--srcOrganisation
--srcPublDate
--srcTitle
--srcYear
--swepubId
-            */
+                // External references
+//                'cfFedId',
+//                'cfISBN',
+//                'cfISSN',
+//                'DOI',
+//                'idsId',
+
+                // Citation attributes
+//                'cfEdition',
+//                'cfEndPage',
+//                'cfIssue',
+//                'cfSeries',
+//                'cfStartPage',
+//                'cfSubTitle',
+//                'cfTitle',
+//                'cfVol',
+//                'comments',
+//                'journalName',
+//                'publisher',
+//                'publYear',
+//                'srcAddress',
+//                'srcAuthors',
+//                'srcEditors',
+//                'srcJourName',
+
+                // Internal references
+                'kdsfdocumenttype',//forschungsartikel
+                'openAccess',
+                'peerReviewed',
+                'publicationatthm',
+                'publStatus',
+                'purchaseTHM',
+
+                // Filter strings
+//                'srcIsiSubjCat',
+//                'srcKeywords'
+            ],
             'entity' => 'Publication',
             'name_de' => 'Publikation',
             'name_en' => 'Publication',
             'plural_de' => 'Publikationen',
-            'plural_en' => 'Publications'
+            'plural_en' => 'Publications',
+            'statuses' => [5 => 'awaiting validation 1', 6 => 'awaiting validation 2', 7 => 'validated', 8 => 'deleted']
         ],
 
         self::RDF_DOMAINS => [
@@ -868,7 +773,7 @@ class Entities
             'plural_en' => 'Functions'
         ],
 
-        // What the what is this?
+        // What is this?
         self::SEARCH_PROFILES => [
             'entity' => 'Search profile',
             'name_de' => 'Suchprofil',
@@ -939,4 +844,27 @@ class Entities
             'plural_en' => 'Web of Science Subject Categories'
         ],
     ];
+
+    public const NAME_DE = '';
+    public const NAME_EN = '';
+
+
+    /**
+     * Gets the attributes to add to the request header.
+     *
+     * @param bool $all if true all attributes known to have values will be requested
+     *
+     * @return string
+     */
+    public static function getAttributes(bool $all = false): string
+    {
+        $class = get_called_class();
+        $attributes = $all ? $class::ALL_ATTRIBUTES : $class::SELECTED_ATTRIBUTES;
+        return implode(',', $attributes);
+    }
+
+    public static function getName():string
+    {
+        return Application::getTag() === 'de' ? self::NAME_DE : self::NAME_EN;
+    }
 }
