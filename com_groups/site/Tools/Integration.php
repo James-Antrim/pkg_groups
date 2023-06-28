@@ -56,7 +56,7 @@ class Integration
         // TODO: configure entity specific retrieval templates
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Converis-attribute-definition: ALL']);
 
-        $url = $url . Entities::ENTITIES[Entities::PERSONS]['all'];
+        $url = $url . Persons::QUERIES['ALL'];
 
         if (!$persons = self::getRecords($curl, $url)) {
             return;
@@ -139,7 +139,6 @@ class Integration
                 }
                 return $records;
             }
-            echo "<pre>" . print_r($set, true) . "</pre>";
 
             $queries++;
 

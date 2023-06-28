@@ -381,9 +381,8 @@ class Migration
      */
     public static function migrate(): void
     {
-        //Integration::fillIDs();
-        Integration::getTestResults();
-        die;
+        Integration::fillIDs();
+        //Integration::getTestResults();
 
         $session = Application::getSession();
 
