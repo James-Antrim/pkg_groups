@@ -381,9 +381,7 @@ class Migration
      */
     public static function migrate(): void
     {
-        Integration::fillIDs();
         //Integration::getTestResults();
-
         $session = Application::getSession();
 
         if (!$session->get('com_groups.migrated.groups')) {
@@ -393,6 +391,7 @@ class Migration
 
         if (!$session->get('com_groups.migrated.profiles')) {
             self::profiles();
+            Integration::fillIDs();
             $session->set('com_groups.migrated.profiles', true);
         }
 
