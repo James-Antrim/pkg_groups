@@ -207,13 +207,13 @@ class Can
         return match ($view)
         {
             // purely administrative views
-            'Attributes', 'Groups', 'Roles' => self::administrate(),
+            'Attributes', 'Attribute', 'Groups', 'Roles' => self::administrate(),
             // the published content/contents of a specific person or content administration
             'Content', 'Contents' => (Input::getInt('personID') or self::administrate()),
             // persons associated with a specific group or person administration
             'Persons' => (Input::getInt('groupID') or self::administrate()),
             // Development queue
-            'Attribute', 'Group', 'Level', 'Levels', 'Role', 'Template', 'Templates' => false,
+            'Group', 'Level', 'Levels', 'Role', 'Template', 'Templates' => false,
             // Viewing is allowed, functions, layouts and levels may still be restricted elsewhere.
             default => true,
         };
