@@ -20,8 +20,6 @@ class Roles implements Selectable
 {
     use Named;
 
-    public const MEMBER = 1;
-
     /**
      * @inheritDoc
      */

@@ -15,7 +15,6 @@ use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use THM\Groups\Adapters\Application;
-use THM\Groups\Helpers;
 use THM\Groups\Helpers\Groups as Helper;
 use THM\Groups\Adapters\HTML;
 
@@ -122,12 +121,9 @@ class Groups extends ListView
                         $item->role = Text::_('GROUPS_NONE');
                         break;
                     case $count === 1:
-                        $item->role = $roles[Helpers\Roles::MEMBER];
-                        break;
-                    // Doesn't take up too much space I hope...
+                        // Doesn't take up too much space I hope...
                     case $count === 2:
                     case $count === 3:
-                        unset($roles[Helpers\Roles::MEMBER]);
                         $item->viewLevel = implode(', ', $roles);
                         break;
                     default:
@@ -180,45 +176,45 @@ class Groups extends ListView
     {
         $this->headers = [
             'check' => ['type' => 'check'],
-            'name'  => [
+            'name' => [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_GROUP'),
-                'type'       => 'text'
+                'title' => Text::_('GROUPS_GROUP'),
+                'type' => 'text'
             ]
         ];
 
         if (!$this->state->get('filter.roleID')) {
             $this->headers['role'] = [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_ROLE'),
-                'type'       => 'value'
+                'title' => Text::_('GROUPS_ROLE'),
+                'type' => 'value'
             ];
         }
 
         if (!$this->state->get('filter.levelID')) {
             $this->headers['viewLevel'] = [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_LEVEL'),
-                'type'       => 'value'
+                'title' => Text::_('GROUPS_LEVEL'),
+                'type' => 'value'
             ];
         }
 
         $this->headers['users'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title'      => Text::_('GROUPS_USERS'),
-            'type'       => 'value'
+            'title' => Text::_('GROUPS_USERS'),
+            'type' => 'value'
         ];
 
         $this->headers['id'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title'      => Text::_('GROUPS_ID'),
-            'type'       => 'value'
+            'title' => Text::_('GROUPS_ID'),
+            'type' => 'value'
         ];
 
         $this->headers['rights'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title'      => Text::_('GROUPS_RIGHTS'),
-            'type'       => 'value'
+            'title' => Text::_('GROUPS_RIGHTS'),
+            'type' => 'value'
         ];
     }
 }
