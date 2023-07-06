@@ -10,9 +10,10 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Toolbar\ToolbarHelper;
-use THM\Groups\Adapters\{HTML, Text};
+use THM\Groups\Adapters\{Application, HTML, Text};
+use Joomla\CMS\Router\Route;
 use THM\Groups\Helpers\Attributes as Helper;
+use THM\Groups\Layouts\ListItem;
 
 /**
  * View class for displaying available attribute types.
@@ -24,14 +25,11 @@ class Attributes extends ListView
      */
     protected function addToolbar(): void
     {
-        $this->todo = [
-            'Add edit links'
-        ];
-
         // Manage access is a prerequisite for getting this far
-        ToolbarHelper::addNew('Attributes.add');
-        ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Attributes.delete');
-        ToolbarHelper::divider();
+        $toolbar = Application::getToolbar();
+        $toolbar->addNew('Attributes.add');
+        $toolbar->delete('Attributes.delete', 'GROUPS_DELETE')->message('JGLOBAL_CONFIRM_DELETE')->listCheck(true);
+        $toolbar->divider();
 
         parent::addToolbar();
     }
@@ -43,6 +41,8 @@ class Attributes extends ListView
     {
         $unlabeledAttributes = Helper::getUnlabeled();
         $unlabeledTip        = Text::_('GROUPS_TOGGLE_TIP_UNLABELED');
+        $query               = '?option=com_groups&view=Attribute&id=';
+
         foreach ($this->items as $rowNo => $item) {
 
             $neither = in_array($item->id, $unlabeledAttributes) ? $unlabeledTip : '';
@@ -54,6 +54,7 @@ class Attributes extends ListView
                 $item->name = HTML::tip($item->name, $context, $tip);
             }
 
+            $item->link  = Route::_($query . $item->id);
             $item->icon      = '';
             $item->showIcon  = HTML::toggle($rowNo, Helper::showIconStates[$item->showIcon], 'Attributes', $neither);
             $item->showLabel = HTML::toggle($rowNo, Helper::showLabelStates[$item->showLabel], 'Attributes', $neither);
@@ -75,9 +76,10 @@ class Attributes extends ListView
         $this->headers = [
             'check' => ['type' => 'check'],
             'name' => [
+                'link' => ListItem::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title' => Text::_('GROUPS_ATTRIBUTE'),
-                'type' => 'text'
+                'type' => 'value'
             ],
             'showIcon' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
