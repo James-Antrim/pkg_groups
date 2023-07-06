@@ -15,21 +15,33 @@ use THM\Groups\Views\Named;
 
 trait Configured
 {
-	use Named;
+    use Named;
 
-	/**
-	 * Corrects basic configuration that is used by all HTML Views.
-	 */
-	public function configure()
-	{
-		$this->_name = $this->getName();
+    /**
+     * Whether the client accessed was administrative.
+     * @var bool
+     */
+    public bool $backend;
 
-		// Set the default template search path
-		$this->_setPath('template', JPATH_SITE . '/components/com_groups/templates');
+    /**
+     * Whether the client accessed was administrative.
+     * @var bool
+     */
+    public bool $mobile;
 
-		$this->backend = Application::backend();
-		$this->mobile  = Application::mobile();
-	}
+    /**
+     * Corrects basic configuration that is used by all HTML Views.
+     */
+    public function configure(): void
+    {
+        $this->_name = $this->getName();
+
+        // Set the default template search path
+        $this->_setPath('template', JPATH_SITE . '/components/com_groups/templates');
+
+        $this->backend = Application::backend();
+        $this->mobile  = Application::mobile();
+    }
 
 
 }

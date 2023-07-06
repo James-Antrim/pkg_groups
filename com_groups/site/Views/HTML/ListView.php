@@ -15,7 +15,6 @@ use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\MVC\View\ListView as Base;
 use Joomla\CMS\Uri\Uri;
 use THM\Groups\Adapters\{Application, HTML};
-use THM\Groups\Helpers\Can;
 use THM\Groups\Views\Named;
 
 /**
@@ -28,9 +27,7 @@ abstract class ListView extends Base
     use Configured, Named;
 
     public bool $allowBatch = false;
-    public bool $backend;
     public array $headers = [];
-    public bool $mobile;
     public array $todo = [];
     protected $_layout = 'list';
 
@@ -62,10 +59,10 @@ abstract class ListView extends Base
 
         ToolbarHelper::title(Text::_($titleKey), '');
 
-        if (Can::administrate()) {
+        /*if (Can::administrate()) {
             ToolbarHelper::preferences('com_groups');
             //ToolbarHelper::divider();
-        }
+        }*/
 
         //ToolbarHelper::help('Users:_Groups');
     }
