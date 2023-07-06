@@ -26,14 +26,10 @@ class EditModel extends AdminModel
     {
         $options = ['control' => '', 'load_data' => $loadData];
 
-        try
-        {
+        try {
             return $this->loadForm($this->context, strtolower($this->name), $options);
-        }
-        catch (Exception $exception)
-        {
-            Application::message($exception->getMessage(), 'error');
-            Application::redirect('', $exception->getCode());
+        } catch (Exception $exception) {
+            Application::handleException($exception);
         }
 
         return null;

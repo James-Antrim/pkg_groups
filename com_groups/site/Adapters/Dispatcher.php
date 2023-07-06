@@ -33,7 +33,7 @@ class Dispatcher extends ComponentDispatcher
     /**
      * @inheritDoc
      */
-    public function dispatch()
+    public function dispatch(): void
     {
         // Check component access permission
         $this->checkAccess();
@@ -41,20 +41,14 @@ class Dispatcher extends ComponentDispatcher
         $command = Input::getTask();
 
         // Check for a controller.task command.
-        if (strpos($command, '.') !== false)
-        {
+        if (str_contains($command, '.')) {
             [$controller, $task] = explode('.', $command);
             $this->input->set('controller', $controller);
             $this->input->set('task', $task);
-        }
-        elseif (!$controller = Input::getController())
-        {
-            if (Application::backend())
-            {
+        } elseif (!$controller = Input::getController()) {
+            if (Application::backend()) {
                 $controller = 'Groups';
-            }
-            else
-            {
+            } else {
                 Application::redirect();
             }
         }
@@ -65,16 +59,10 @@ class Dispatcher extends ComponentDispatcher
         $config['name']   = $controller;
         $controller       = $this->getController($controller, ucfirst($this->app->getName()), $config);
 
-        try
-        {
+        try {
             $controller->execute($task);
-        }
-        catch (Exception $exception)
-        {
-            // TODO add constants to the application adapter with message types
-            Application::message($exception->getMessage(), 'error');
-            Application::message("<pre>" . print_r($exception->getTraceAsString(), true) . "</pre>", 'error');
-            Application::error(500);
+        } catch (Exception $exception) {
+            Application::handleException($exception);
         }
 
         $controller->redirect();

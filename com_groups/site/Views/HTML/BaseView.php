@@ -20,59 +20,52 @@ use THM\Groups\Views\Named;
  */
 abstract class BaseView extends HtmlView
 {
-	use Named;
+    use Named;
 
-	public bool $backend;
-	protected string $layout;
-	public bool $mobile;
+    public bool $backend;
+    protected string $layout;
+    public bool $mobile;
 
-	/**
-	 * @inheritDoc
-	 */
-	public function __construct($config = [])
-	{
-		parent::__construct($config);
+    /**
+     * @inheritDoc
+     */
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
 
-		$this->_basePath = JPATH_SITE . '/components/com_groups';
-		$this->_name     = $this->getName();
+        $this->_basePath = JPATH_SITE . '/components/com_groups';
+        $this->_name     = $this->getName();
 
-		// Set the default template search path
-		$this->_setPath('helper', $this->_basePath . '/Helpers');
-		$this->_setPath('layout', $this->_basePath . '/Layouts');
-		$this->_setPath('template', $this->_basePath . '/templates');
+        // Set the default template search path
+        $this->_setPath('helper', $this->_basePath . '/Helpers');
+        $this->_setPath('layout', $this->_basePath . '/Layouts');
+        $this->_setPath('template', $this->_basePath . '/templates');
 
-		$this->backend = Application::backend();
-		$this->mobile  = Application::mobile();
-	}
+        $this->backend = Application::backend();
+        $this->mobile  = Application::mobile();
+    }
 
-	/**
-	 * Execute and display a template script. Does not dump the responsibility for exception handling onto inheriting classes.
-	 *
-	 * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
-	 *
-	 * @return  void
-	 */
-	public function display($tpl = null)
-	{
-		try
-		{
-			parent::display($tpl);
-		}
-		catch (Exception $exception)
-		{
-			/**
-			 * So many possible points of failure...
-			 */
-			Application::message($exception->getMessage(), 'error');
-			Application::redirect('', $exception->getCode());
-		}
-	}
+    /**
+     * Execute and display a template script. Does not dump the responsibility for exception handling onto inheriting classes.
+     *
+     * @param string $tpl The name of the template file to parse; automatically searches through the template paths.
+     *
+     * @return  void
+     */
+    public function display($tpl = null): void
+    {
+        try {
+            parent::display($tpl);
+        } catch (Exception $exception) {
+            Application::handleException($exception);
+        }
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getLayout(): string
-	{
-		return $this->layout ?: strtolower($this->_name);
-	}
+    /**
+     * @inheritDoc
+     */
+    public function getLayout(): string
+    {
+        return $this->layout ?: strtolower($this->_name);
+    }
 }

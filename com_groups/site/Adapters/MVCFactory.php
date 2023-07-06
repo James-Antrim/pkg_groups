@@ -45,20 +45,16 @@ class MVCFactory extends Base
      *
      * @return  void
      */
-    private function addDispatcher(object $object)
+    private function addDispatcher(object $object): void
     {
-        if (!$object instanceof DispatcherAwareInterface)
-        {
+        if (!$object instanceof DispatcherAwareInterface) {
             return;
         }
 
-        try
-        {
+        try {
             $object->setDispatcher($this->getDispatcher());
-        }
-        catch (Exception $exception)
-        {
-            // Ignore it
+        } catch (Exception $exception) {
+            Application::handleException($exception);
         }
     }
 
@@ -69,20 +65,16 @@ class MVCFactory extends Base
      *
      * @return  void
      */
-    private function addFormFactory(object $object)
+    private function addFormFactory(object $object): void
     {
-        if (!$object instanceof FormFactoryAwareInterface)
-        {
+        if (!$object instanceof FormFactoryAwareInterface) {
             return;
         }
 
-        try
-        {
+        try {
             $object->setFormFactory($this->getFormFactory());
-        }
-        catch (Exception $exception)
-        {
-            // Ignore it
+        } catch (Exception $exception) {
+            Application::handleException($exception);
         }
     }
 
@@ -131,8 +123,7 @@ class MVCFactory extends Base
         $supported = ['HTML', 'JSON', 'VCF'];
         $type      = strtoupper(preg_replace('/[^A-Z0-9_]/i', '', $type));
 
-        if (!in_array($type, $supported))
-        {
+        if (!in_array($type, $supported)) {
             Application::error(501);
         }
 
@@ -154,8 +145,7 @@ class MVCFactory extends Base
         $name = preg_replace('/[^A-Z0-9_]/i', '', $name);
         $name = empty($this->tableMap[$name]) ? $name : $this->tableMap[$name];
 
-        if (!in_array($name, $this->getTableClasses()))
-        {
+        if (!in_array($name, $this->getTableClasses())) {
             Application::error(503);
         }
 
@@ -173,8 +163,7 @@ class MVCFactory extends Base
     private function getTableClasses(): array
     {
         $tables = [];
-        foreach (glob(JPATH_SITE . '/components/com_groups/Tables/*') as $table)
-        {
+        foreach (glob(JPATH_SITE . '/components/com_groups/Tables/*') as $table) {
             $table    = str_replace(JPATH_SITE . '/components/com_groups/Tables/', '', $table);
             $tables[] = str_replace('.php', '', $table);
         }

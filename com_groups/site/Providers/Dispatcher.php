@@ -22,16 +22,16 @@ use THM\Groups\Adapters\DispatcherFactory;
  */
 class Dispatcher implements ServiceProviderInterface
 {
-	/**
-	 * @inheritDoc
-	 */
-	public function register(Container $container)
-	{
-		$container->set(
-			ComponentDispatcherFactoryInterface::class,
-			function (Container $container) {
-				return new DispatcherFactory('\\THM\\Groups', $container->get(MVCFactoryInterface::class));
-			}
-		);
-	}
+    /**
+     * @inheritDoc
+     */
+    public function register(Container $container): void
+    {
+        $container->set(
+            ComponentDispatcherFactoryInterface::class,
+            function (Container $container) {
+                return new DispatcherFactory('\\THM\\Groups', $container->get(MVCFactoryInterface::class));
+            }
+        );
+    }
 }

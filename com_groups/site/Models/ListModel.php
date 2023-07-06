@@ -51,8 +51,7 @@ abstract class ListModel extends Base
         try {
             parent::__construct($config, $factory);
         } catch (Exception $exception) {
-            Application::message($exception->getMessage(), 'error');
-            Application::redirect('', $exception->getCode());
+            Application::handleException($exception);
         }
     }
 
@@ -141,8 +140,7 @@ abstract class ListModel extends Base
         try {
             return $this->loadForm($context, $this->filterFormName, $options);
         } catch (Exception $exception) {
-            Application::message($exception->getMessage(), 'error');
-            Application::redirect('', $exception->getCode());
+            Application::handleException($exception);
         }
 
         return null;
