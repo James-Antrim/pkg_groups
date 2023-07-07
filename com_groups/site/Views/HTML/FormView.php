@@ -56,6 +56,12 @@ abstract class FormView extends Base
     protected CMSObject $state;
 
     /**
+     * Seems to be used somewhere to decide between Joomla Core UI (true) and bootstrap (false)
+     * @var bool
+     */
+    public bool $useCoreUI = true;
+
+    /**
      * Execute and display a template script. Should be sufficient in itself for most inheriting classes.
      *
      * @param string $tpl unused

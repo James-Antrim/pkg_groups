@@ -1,15 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
     <fieldset name="details">
-        <!-- label de field-->
-        <!-- label en field-->
-        <!-- show label field-->
-        <!-- icon field-->
-        <!-- show icon field-->
-        <!-- context selection field-->
-        <!-- view level selection field-->
-        <!-- type selection field-->
-        <!-- additional fields by type-->
-        <!-- type example display-->
+        <field name="label_de" type="text" label="GROUPS_LABEL_DE"/>
+        <field name="label_en" type="text" label="GROUPS_LABEL_EN"/>
+        <field name="showLabel" type="list" label="GROUPS_SHOW_LABEL">
+            <option value="1">GROUPS_YES</option>
+            <option value="0">GROUPS_NO</option>
+        </field>
+        <field name="icon" type="Icons" label="GROUPS_ICON" description="A select box for choosing an icon."/>
+        <field name="showIcon" type="list" label="GROUPS_SHOW_ICON">
+            <option value="1">GROUPS_YES</option>
+            <option value="0">GROUPS_NO</option>
+        </field>
+        <field name="context" type="list" label="GROUPS_ATTRIBUTE_CONTEXT" description="GROUPS_ATTRIBUTE_CONTEXT_DESC">
+            <option value="0">GROUPS_BOTH_CONTEXTS</option>
+            <option value="1">GROUPS_PROFILES</option>
+            <option value="1">GROUPS_GROUPS</option>
+        </field>
+        <field name="levelID" type="ViewLevels" label="GROUPS_LEVEL" default="1" description="GROUPS_LEVEL_DESC"/>
+        <field name="typeID" type="Types" label="GROUPS_TYPES"
+               description="A select box for choosing the attribute's type. Until this is permanently selected the saved box is limited to the apply option. Save to session and display the example before applying?"/>
+        <field name="other" type="Others" label="GROUPS_OTHERS"
+               description="Other fields further parametrizing the chosen type."/>
+        <field name="example" type="Example" label="GROUPS_EXAMPLE"
+               description="An area where the generated form field and the displayed attribute are displayed with sample data."/>
     </fieldset>
 </form>

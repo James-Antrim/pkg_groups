@@ -32,7 +32,7 @@ abstract class EditModel extends FormModel
 
     /**
      * @inheritDoc
-     * Wraps the parent constructor to ensure inheriting classes specify thier respective table classes.
+     * Wraps the parent constructor to ensure inheriting classes specify their respective table classes.
      */
     public function __construct($config = [], MVCFactoryInterface $factory = null, FormFactoryInterface $formFactory = null)
     {
@@ -79,5 +79,13 @@ abstract class EditModel extends FormModel
         $fqn = "\\THM\\Groups\\Tables\\$this->tableClass";
 
         return new $fqn();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function loadFormData(): ?CMSObject
+    {
+        return $this->getItem();
     }
 }

@@ -20,11 +20,11 @@ use THM\Groups\Views\Named;
  */
 abstract class BaseView extends HtmlView
 {
-    use Named;
+    use Configured, Named;
 
-    public bool $backend;
     protected string $layout;
-    public bool $mobile;
+
+    public bool $useCoreUI = true;
 
     /**
      * @inheritDoc
