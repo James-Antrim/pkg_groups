@@ -10,12 +10,12 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Helper\ContentHelper;
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\ToolbarHelper;
-use Joomla\CMS\MVC\View\FormView as Base;
+use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
-use THM\Groups\Helpers\Can;
 use THM\Groups\Views\Named;
 
 /**
@@ -25,52 +25,106 @@ use THM\Groups\Views\Named;
  */
 abstract class FormView extends Base
 {
-	use Configured, Named;
+    use Configured, Named;
 
-	public bool $backend;
-	public array $batch;
-	public bool $mobile;
-	protected $_layout = 'form';
+    /**
+     * The Form object
+     *
+     * @var  Form
+     */
+    protected $form;
 
-	/**
-	 * Constructor
-	 *
-	 * @param   array  $config  An optional associative array of configuration settings.
-	 */
-	public function __construct(array $config)
-	{
-		// If this is not explicitly set going in Joomla will default to default without looking at the object property value.
-		$config['layout'] = $this->_layout;
+    /**
+     * The active item
+     *
+     * @var   CMSObject
+     */
+    protected CMSObject $item;
 
-		parent::__construct($config);
+    /**
+     * Joomla hard coded default value.
+     *
+     * @var string
+     */
+    protected string $layout = 'form';
 
-		$this->canDo = ContentHelper::getActions('com_users');
-		$this->configure();
-	}
+    /**
+     * The model state
+     *
+     * @var   CMSObject
+     */
+    protected CMSObject $state;
 
-	/**
-	 * Add the page title and toolbar.
-	 *
-	 * @return  void
-	 */
-	protected function addToolbar()
-	{
-		Input::set('hidemainmenu', true);
+    /**
+     * Execute and display a template script. Should be sufficient in itself for most inheriting classes.
+     *
+     * @param string $tpl unused
+     *
+     * @return  void
+     */
+    public function display($tpl = null): void
+    {
+        $this->state = $this->get('State');
+        $this->form  = $this->get('Form');
+        $this->item  = $this->get('Item');
+        $this->addToolbar();
 
-		if ($this->item->id)
-		{
+        parent::display($tpl);
+    }
 
-		}
-		$titleKey = 'GROUPS_' . strtoupper($this->_name);
+    /**
+     * Adds resource related title, cancel/close and eventually help buttons.
+     *
+     * @param string[] $buttons the names of the available button functions
+     *
+     * @return  void adds buttons to the global toolbar object
+     */
+    protected function addToolbar(array $buttons = []): void
+    {
+        Input::set('hidemainmenu', true);
+        $buttons    = $buttons ?: ['save'];
+        $controller = $this->getName();
+        $constant   = strtoupper($controller);
 
-		ToolbarHelper::title(Text::_($titleKey), '');
+        $new = empty($this->item->id);
 
-		if (Can::administrate())
-		{
-			ToolbarHelper::preferences('com_groups');
-			//ToolbarHelper::divider();
-		}
+        $title = $new ? "GROUPS_NEW_$constant" : "GROUPS_EDIT_$constant";
+        ToolbarHelper::title(Text::_($title), '');
 
-		//ToolbarHelper::help('Users:_Groups');
-	}
+        $saveLabel = $new ? 'GROUPS_CREATE_AND_CLOSE' : 'GROUPS_SAVE_AND_CLOSE';
+        $toolbar   = Application::getToolbar();
+
+        if (count($buttons) > 1) {
+            $saveGroup = $toolbar->dropdownButton('save-group');
+            $saveBar   = $saveGroup->getChildToolbar();
+
+            foreach ($buttons as $button) {
+                switch ($button) {
+                    case 'apply':
+                        $applyLabel = $new ? 'GROUPS_CREATE' : 'GROUPS_APPLY';
+                        $saveBar->apply("$controller.apply", $applyLabel);
+                        break;
+                    case 'save':
+                        $saveBar->save("$controller.save", $saveLabel);
+                        break;
+                    case 'save2copy':
+                        if (!$new) {
+                            $saveBar->save2copy("$controller.save2copy", 'GROUPS_SAVE_AS_COPY');
+                        }
+                        break;
+                    case 'save2new':
+                        $newLabel = $new ? 'GROUPS_CREATE_AND_NEW' : 'GROUPS_SAVE_AND_NEW';
+                        $saveBar->save2new("$controller.save2new", $newLabel);
+                        break;
+                }
+            }
+        } else {
+            $toolbar->save("$controller.save", $saveLabel);
+        }
+
+        $closeLabel = $new ? 'GROUPS_CLOSE' : 'GROUPS_CANCEL';
+        $toolbar->cancel("$controller.cancel", $closeLabel);
+
+        //TODO help!
+    }
 }

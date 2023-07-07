@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="details">
+        <!-- label de field-->
+        <!-- label en field-->
+        <!-- show label field-->
+        <!-- icon field-->
+        <!-- show icon field-->
+        <!-- context selection field-->
+        <!-- view level selection field-->
+        <!-- type selection field-->
+        <!-- additional fields by type-->
+        <!-- type example display-->
+    </fieldset>
+</form>
