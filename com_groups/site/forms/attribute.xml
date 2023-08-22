@@ -7,7 +7,9 @@
             <option value="1">GROUPS_YES</option>
             <option value="0">GROUPS_NO</option>
         </field>
-        <field name="icon" type="Icons" label="GROUPS_ICON" description="A select box for choosing an icon."/>
+        <field name="icon" type="Icons" label="GROUPS_ICON" description="A select box for choosing an icon.">
+            <option value="">GROUPS_NO_ICON</option>
+        </field>
         <field name="showIcon" type="list" label="GROUPS_SHOW_ICON">
             <option value="1">GROUPS_YES</option>
             <option value="0">GROUPS_NO</option>

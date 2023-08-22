@@ -14,7 +14,9 @@ use Joomla\CMS\Form\Form;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\HTML;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Views\Named;
 
@@ -74,6 +76,8 @@ abstract class FormView extends Base
         $this->form  = $this->get('Form');
         $this->item  = $this->get('Item');
         $this->addToolbar();
+
+        HTML::stylesheet(Uri::root() . 'components/com_groups/css/global.css');
 
         parent::display($tpl);
     }

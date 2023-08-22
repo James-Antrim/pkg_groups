@@ -33,15 +33,22 @@ class Icons extends ListField
     /**
      * @inheritDoc
      */
+    protected function getLayoutData(): array
+    {
+        $data          = parent::getLayoutData();
+        $data['class'] = 'fa weighted';
+
+        return $data;
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function getOptions(): array
     {
+        $default = parent::getOptions();
         $options = Helper::getOptions();
 
-        foreach ($options as $option)
-        {
-            echo "<span class=\"$option->value\"> $option->text</span>";
-        }
-
-        return $options;
+        return array_merge($default, $options);
     }
 }

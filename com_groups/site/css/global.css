@@ -1,3 +1,7 @@
 .j-main-container.groups a[target=_blank]::before {
     content: none;
 }
+
+.weighted {
+    font-weight: bold;
+}
