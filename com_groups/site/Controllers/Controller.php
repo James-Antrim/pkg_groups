@@ -10,8 +10,12 @@
 
 namespace THM\Groups\Controllers;
 
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Input\Input;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
 
@@ -20,6 +24,40 @@ use THM\Groups\Helpers\Can;
  */
 class Controller extends BaseController
 {
+    protected bool $backend;
+    protected string $list = '';
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
+    {
+        $this->backend = Application::backend();
+        parent::__construct($config, $factory, $app, $input);
+    }
+
+    /**
+     * Closes the form view without saving changes.
+     *
+     * @return void
+     */
+    public function cancel(): void
+    {
+        $base = Uri::base();
+        if ($this->backend) {
+            if (empty($this->list)) {
+                Application::message('Form view does not have its corresponding list view coded.', Application::ERROR);
+                $this->setRedirect($base);
+                return;
+            }
+
+            $this->setRedirect("$base?option=com_groups&view=$this->list");
+            return;
+        }
+
+        Application::error(501);
+    }
+
     /**
      * Calls the appropriate model delete function and redirects to the appropriate list. Authorization occurs in the
      * called model.
@@ -42,19 +80,16 @@ class Controller extends BaseController
      */
     public function display($cachable = false, $urlparams = []): BaseController|Controller
     {
-        if (!$view = $this->input->get('view'))
-        {
+        if (!$view = $this->input->get('view')) {
             Application::error(501);
         }
 
         $format = strtoupper($this->input->get('format', 'HTML'));
-        if (!class_exists("\\THM\\Groups\\Views\\$format\\$view"))
-        {
+        if (!class_exists("\\THM\\Groups\\Views\\$format\\$view")) {
             Application::error(503);
         }
 
-        if (!Can::view($view))
-        {
+        if (!Can::view($view)) {
             Application::error(403);
         }
 
@@ -97,8 +132,7 @@ class Controller extends BaseController
      */
     protected function getUserID(): int
     {
-        if (!$userID = Application::getUser()->id)
-        {
+        if (!$userID = Application::getUser()->id) {
             Application::error(401);
         }
 
@@ -118,26 +152,22 @@ class Controller extends BaseController
         $fqName = "THM\Groups\Tables\\$name";
         $table  = new $fqName();
 
-        if (!property_exists($table, $column))
-        {
+        if (!property_exists($table, $column)) {
             Application::message(Text::_('GROUPS_TABLE_COLUMN_NONEXISTENT'), Application::ERROR);
 
             return 0;
         }
 
         $total = 0;
-        $value = (int)$value;
+        $value = (int) $value;
 
-        foreach ($selectedIDs as $selectedID)
-        {
+        foreach ($selectedIDs as $selectedID) {
             $table = new $fqName();
 
-            if ($table->load($selectedID) and $table->$column !== $value)
-            {
+            if ($table->load($selectedID) and $table->$column !== $value) {
                 $table->$column = $value;
 
-                if ($table->store())
-                {
+                if ($table->store()) {
                     $total++;
                 }
             }

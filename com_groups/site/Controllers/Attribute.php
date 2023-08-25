@@ -15,5 +15,5 @@ namespace THM\Groups\Controllers;
  */
 class Attribute extends Controller
 {
-
+    protected string $list = 'Attributes';
 }
