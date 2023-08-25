@@ -27,6 +27,8 @@ class Base extends HtmlView
      */
     protected string $layout = 'default';
 
+    public array $todo = [];
+
     /**
      * Constructor
      *

@@ -27,6 +27,7 @@ class Attribute extends FormView
     public function display($tpl = null): void
     {
         $this->todo = [
+            'Add a display of an example for the form field and the profile output.',
             'Find a way to display Font Awesome Brand Icons correctly in the select box.'
         ];
 

@@ -1,30 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
     <fieldset name="details">
-        <field name="label_de" type="text" label="GROUPS_LABEL_DE"/>
-        <field name="label_en" type="text" label="GROUPS_LABEL_EN"/>
-        <field name="showLabel" type="list" label="GROUPS_SHOW_LABEL">
+        <field name="label_de" type="text" label="GROUPS_LABEL_DE" description="GROUPS_ATTRIBUTE_LABEL_DESC"
+               required="true"/>
+        <field name="label_en" type="text" label="GROUPS_LABEL_EN" description="GROUPS_ATTRIBUTE_LABEL_DESC"
+               required="true"/>
+        <field name="showLabel" type="radio" label="GROUPS_SHOW_LABEL" class="btn-group btn-group-yesno" default="1">
             <option value="1">GROUPS_YES</option>
             <option value="0">GROUPS_NO</option>
         </field>
-        <field name="icon" type="Icons" label="GROUPS_ICON" description="A select box for choosing an icon.">
+        <field name="showIcon" type="radio" label="GROUPS_SHOW_ICON" class="btn-group btn-group-yesno" default="1">
+            <option value="1">GROUPS_YES</option>
+            <option value="0">GROUPS_NO</option>
+        </field>
+        <field name="icon" type="Icons" label="GROUPS_ICON" description="GROUPS_ICON_DESC" showon="showIcon:1">
             <option value="">GROUPS_NO_ICON</option>
         </field>
-        <field name="showIcon" type="list" label="GROUPS_SHOW_ICON">
-            <option value="1">GROUPS_YES</option>
-            <option value="0">GROUPS_NO</option>
-        </field>
-        <field name="context" type="list" label="GROUPS_ATTRIBUTE_CONTEXT" description="GROUPS_ATTRIBUTE_CONTEXT_DESC">
-            <option value="0">GROUPS_BOTH_CONTEXTS</option>
+        <!-- Later... -->
+        <field name="context" type="hidden" label="GROUPS_ATTRIBUTE_CONTEXT" description="GROUPS_ATTRIBUTE_CONTEXT_DESC"
+               default="0"/>
+        <!--    <option value="0">GROUPS_BOTH_CONTEXTS</option>
             <option value="1">GROUPS_PROFILES</option>
-            <option value="1">GROUPS_GROUPS</option>
-        </field>
+            <option value="2">GROUPS_GROUPS</option>
+        </field> -->
         <field name="levelID" type="ViewLevels" label="GROUPS_LEVEL" default="1" description="GROUPS_LEVEL_DESC"/>
-        <field name="typeID" type="Types" label="GROUPS_TYPES"
-               description="A select box for choosing the attribute's type. Until this is permanently selected the saved box is limited to the apply option. Save to session and display the example before applying?"/>
-        <field name="other" type="Others" label="GROUPS_OTHERS"
-               description="Other fields further parametrizing the chosen type."/>
-        <field name="example" type="Example" label="GROUPS_EXAMPLE"
-               description="An area where the generated form field and the displayed attribute are displayed with sample data."/>
+        <field name="typeID" type="Types" label="GROUPS_TYPE" description="GROUPS_TYPE_DESC" required="true">
+            <option value="">GROUPS_SELECT_TYPE</option>
+        </field>
+
+        <!-- Start: Editor => HTML -->
+        <field name="buttons" type="radio" label="GROUPS_SHOW_EDITOR_BUTTONS" class="btn-group btn-group-yesno"
+               default="0" description="GROUPS_SHOW_EDITOR_BUTTONS_DESC" showon="typeID:6"
+        >
+            <option value="0">GROUPS_NO</option>
+            <option value="1">GROUPS_YES</option>
+        </field>
+        <field name="hide" type="ExcludedButtons" label="GROUPS_EXCLUDED_BUTTONS"
+               description="GROUPS_EXCLUDED_BUTTONS_DESC" showon="typeID:6[AND]buttons:1"/>
+        <!-- End: Editor => HTML -->
     </fieldset>
 </form>

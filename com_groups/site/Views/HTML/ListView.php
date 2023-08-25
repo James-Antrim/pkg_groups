@@ -28,7 +28,6 @@ abstract class ListView extends Base
 
     public bool $allowBatch = false;
     public array $headers = [];
-    public array $todo = [];
     protected $_layout = 'list';
 
     /**
