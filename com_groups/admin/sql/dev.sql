@@ -30,16 +30,16 @@ ALTER TABLE `v7ocf_user_usergroup_map`
 #region Creation
 CREATE TABLE IF NOT EXISTS `v7ocf_groups_attributes`
 (
-    `id`            INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
-    `label_de`      VARCHAR(100)        NOT NULL,
-    `label_en`      VARCHAR(100)        NOT NULL,
-    `showLabel`     TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '0 => No, 1 => Yes',
-    `icon`          VARCHAR(255)        NOT NULL DEFAULT '',
-    `showIcon`      TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => No, 1 => Yes',
-    `typeID`        INT(11) UNSIGNED    NOT NULL,
-    `configuration` TEXT COMMENT 'A JSON string containing the configuration of the attribute.',
-    `context`       TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group',
-    `viewLevelID`   INT(10) UNSIGNED             DEFAULT 1,
+    `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
+    `label_de`    VARCHAR(100)        NOT NULL,
+    `label_en`    VARCHAR(100)        NOT NULL,
+    `showLabel`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '0 => No, 1 => Yes',
+    `icon`        VARCHAR(255)        NOT NULL DEFAULT '',
+    `showIcon`    TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => No, 1 => Yes',
+    `typeID`      INT(11) UNSIGNED    NOT NULL,
+    `options`     TEXT COMMENT 'A JSON string containing the optional parameters specific to the of the attribute.',
+    `context`     TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group',
+    `viewLevelID` INT(10) UNSIGNED             DEFAULT 1,
     PRIMARY KEY (`id`),
     UNIQUE (`label_de`),
     UNIQUE (`label_en`)
@@ -138,7 +138,7 @@ SET @phone = 10;
 SET @supplement = 11;
 
 # Forenames and surnames are now a part of the users table
-INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `showLabel`, `icon`, `showIcon`, `typeID`, `configuration`, `context`, `viewLevelID`)
+INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `showLabel`, `icon`, `showIcon`, `typeID`, `options`, `context`, `viewLevelID`)
 VALUES (1, 'Namenszusatz (nach)', 'Suffix', 0, '', 0, @supplement, '{"hint":"M.Sc."', 1, 1),
        (2, 'Namenszusatz (vor)', 'Prefix', 0, '', 0, @supplement, '{"hint":"Prof. Dr."}', 1, 1),
        (3, 'Bild', 'Picture', 0, '', 0, @image, '{}', 1, 1),

@@ -24,12 +24,6 @@ class Attributes extends Table
     use Incremented;
 
     /**
-     * TEXT
-     * @var string
-     */
-    public $configuration;
-
-    /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group'
      * @var int
      */
@@ -52,6 +46,12 @@ class Attributes extends Table
      * @var string
      */
     public $label_en;
+
+    /**
+     * TEXT
+     * @var string
+     */
+    public $options;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0

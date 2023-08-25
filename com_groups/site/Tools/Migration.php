@@ -72,8 +72,8 @@ class Migration
         }
 
         // Overwritten as necessary
-        $data['label_en']      = $label;
-        $data['configuration'] = '{}';
+        $data['label_en'] = $label;
+        $data['options']  = '{}';
 
         // Dynamic attribute has not yet been recreated.
         return false;
