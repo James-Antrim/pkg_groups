@@ -57,6 +57,8 @@ abstract class FormView extends Base
      */
     protected CMSObject $state;
 
+    public array $todo = [];
+
     /**
      * Seems to be used somewhere to decide between Joomla Core UI (true) and bootstrap (false)
      * @var bool

@@ -71,6 +71,19 @@ class Attributes extends ListView
     /**
      * @inheritDoc
      */
+    public function display($tpl = null): void
+    {
+        $this->todo = [
+            'Add a type migration dialog.',
+            'Add order of display.'
+        ];
+
+        parent::display($tpl);
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function initializeHeaders(): void
     {
         $this->headers = [

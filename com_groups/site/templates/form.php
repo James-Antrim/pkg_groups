@@ -31,6 +31,14 @@ $return         = $input->getBase64('return');
 
 $tabs   = $this->form->getFieldsets();
 $tabbed = count($this->form->getFieldsets()) > 1;
+
+if ($this->todo) {
+    echo '<ul>';
+    foreach ($this->todo as $todo) {
+        echo "<li>$todo</li>";
+    }
+    echo '</ul>';
+}
 ?>
 <form action="<?php echo Route::_('?option=com_groups'); ?>"
       aria-label="<?php echo $ariaLabel; ?>"
