@@ -12,6 +12,9 @@ namespace THM\Groups\Fields;
 
 use THM\Groups\Adapters\Application;
 
+/**
+ * Class provides a standardized output format for fields whose data is used in profile displays.
+ */
 trait Profiled
 {
     /**

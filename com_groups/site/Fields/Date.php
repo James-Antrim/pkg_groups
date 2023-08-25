@@ -18,7 +18,10 @@ class Date extends FormField
 
     protected $type = 'Date';
 
-    protected function getInput()
+    /**
+     * @inheritDoc
+     */
+    protected function getInput(): string
     {
         $attributes = [
             $this->autofocus ? 'autofocus' : '',
