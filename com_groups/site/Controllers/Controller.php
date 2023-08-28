@@ -15,8 +15,8 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Uri\Uri;
-use Joomla\Input\Input;
-use THM\Groups\Adapters\Application;
+use Joomla\Input\Input as JInput;
+use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\Can;
 
 /**
@@ -30,10 +30,28 @@ class Controller extends BaseController
     /**
      * @inheritDoc
      */
-    public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?Input $input = null)
+    public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?JInput $input = null)
     {
         $this->backend = Application::backend();
         parent::__construct($config, $factory, $app, $input);
+    }
+
+    /**
+     * Calls the model's save function and redirects to the same view of the same resource.
+     * @return void
+     */
+    public function apply(): void
+    {
+        // Check for request forgeries
+        $this->checkToken();
+
+        $fqName = 'THM\\Groups\\Models\\' . $this->name;
+
+        $model = new $fqName();
+        $model->save();
+
+        $referrer = Input::getInput()->server->getString('HTTP_REFERER');
+        $this->setRedirect($referrer);
     }
 
     /**
@@ -48,10 +66,12 @@ class Controller extends BaseController
             if (empty($this->list)) {
                 Application::message('Form view does not have its corresponding list view coded.', Application::ERROR);
                 $this->setRedirect($base);
+
                 return;
             }
 
             $this->setRedirect("$base?option=com_groups&view=$this->list");
+
             return;
         }
 
@@ -99,9 +119,10 @@ class Controller extends BaseController
     /**
      * An extract for redirecting back to the list view and providing a message for the number of entries updated.
      *
-     * @param int $selected the number of accounts selected for processing
-     * @param int $updated the number of accounts changed by the calling function
-     * @param bool $delete whether the change affected by the calling function was a deletion
+     * @param   int   $selected  the number of accounts selected for processing
+     * @param   int   $updated   the number of accounts changed by the calling function
+     * @param   bool  $delete    whether the change affected by the calling function was a deletion
+     *
      * @return void
      */
     protected function farewell(int $selected = 0, int $updated = 0, bool $delete = false): void
@@ -140,11 +161,93 @@ class Controller extends BaseController
     }
 
     /**
+     * Saves the model's save function and redirects to the same view of the copy resource.
+     * @return void
+     */
+    public function save(): void
+    {
+        // Check for request forgeries
+        $this->checkToken();
+        $fqName = 'THM\\Groups\\Models\\' . $this->name;
+
+        $model = new $fqName();
+
+        // Success
+        if ($model->save()) {
+
+            // There is no nuance in the administrative area
+            if ($this->backend) {
+                $this->setRedirect("index.php?option=com_groups&view=$this->list");
+                return;
+            }
+
+            // Not yet implemented
+            Application::error(501);
+        }
+
+        // Fail => redirect to the resource
+        $referrer = Input::getInput()->server->getString('HTTP_REFERER');
+        $this->setRedirect($referrer);
+    }
+
+    /**
+     * Saves the model's save function and redirects to the same view of the copy resource.
+     * @return void
+     */
+    public function save2copy(): void
+    {
+        // Check for request forgeries
+        $this->checkToken();
+        $fqName = 'THM\\Groups\\Models\\' . $this->name;
+
+        $model = new $fqName();
+
+        // Present the data as if it was from an empty form.
+        $data       = Input::getFormItems()->toArray();
+        $data['id'] = 0;
+
+        // Success => redirect to the edit view of the copy
+        if ($newID = $model->save($data)) {
+            $this->setRedirect("index.php?option=com_groups&view=$this->name&id=$newID");
+            return;
+        }
+
+        // Fail => redirect to the template resource
+        $referrer = Input::getInput()->server->getString('HTTP_REFERER');
+        $this->setRedirect($referrer);
+    }
+
+    /**
+     * Saves the model's save function and redirects to the same view of a new resource.
+     * @return void
+     */
+    public function save2new(): void
+    {
+        // Check for request forgeries
+        $this->checkToken();
+        $fqName = 'THM\\Groups\\Models\\' . $this->name;
+
+        $model = new $fqName();
+
+        // Success => redirect to an empty edit view
+        if ($model->save()) {
+            $this->setRedirect("index.php?option=com_groups&view=$this->name&id=0");
+            return;
+        }
+
+        // Fail => redirect to the first resource
+        $referrer = Input::getInput()->server->getString('HTTP_REFERER');
+        $this->setRedirect($referrer);
+    }
+
+    /**
      * Updates a boolean column for multiple entries in a
-     * @param string $name
-     * @param string $column
-     * @param array $selectedIDs
-     * @param bool $value
+     *
+     * @param   string  $name
+     * @param   string  $column
+     * @param   array   $selectedIDs
+     * @param   bool    $value
+     *
      * @return int
      */
     protected function updateBool(string $name, string $column, array $selectedIDs, bool $value): int
