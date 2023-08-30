@@ -54,9 +54,10 @@ class Attributes extends ListView
                 $item->name = HTML::tip($item->name, $context, $tip);
             }
 
-            $item->link  = Route::_($query . $item->id);
+            $item->link      = Route::_($query . $item->id);
+            $icon            = ($item->showIcon and $item->icon) ? ' ' . HTML::icon($item->icon) : '';
             $item->icon      = '';
-            $item->showIcon  = HTML::toggle($rowNo, Helper::showIconStates[$item->showIcon], 'Attributes', $neither);
+            $item->showIcon  = HTML::toggle($rowNo, Helper::showIconStates[$item->showIcon], 'Attributes', $neither) . $icon;
             $item->showLabel = HTML::toggle($rowNo, Helper::showLabelStates[$item->showLabel], 'Attributes', $neither);
 
             /*$item->context = match ($item->context)

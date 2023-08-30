@@ -25,11 +25,10 @@ class Types implements Selectable
         HOURS = 5,
         HTML = 6,
         IMAGE = 7,
-        LINK = 8,
-        LINK_LIST = 9,
+        TEXT = 8,
+        LIST = 9,
         PHONE = 10,
-        SUPPLEMENT = 11,
-        TEXT = 12;
+        SUPPLEMENT = 11;
 
     public const TYPES = [
         self::ADDRESS => [
@@ -100,24 +99,14 @@ class Types implements Selectable
             'input' => 'GROUPS_IMAGE_FIELD',
             'name' => 'GROUPS_IMAGE'
         ],
-        self::LINK => [
-            'fields' => [
-                'text_de' => 'Text',
-                'text_en' => 'Text',
-                'value' => 'URL'
-            ],
-            'icon' => '',
-            'input' => 'GROUPS_FORM_TEMPLATE',
-            'name' => 'GROUPS_LINK'
-        ],
-        self::LINK_LIST => [
+        self::LIST => [
             'fields' => [
                 //SF: Linked Text
                 'value' => 'LinkedList'
             ],
             'icon' => '',
             'input' => 'GROUPS_LIST_FORM',
-            'name' => 'GROUPS_LIST'
+            'name' => 'GROUPS_LINK_LIST'
         ],
         self::PHONE => [
             'fields' => [
@@ -126,8 +115,8 @@ class Types implements Selectable
             'icon' => 'phone',
             'input' => 'GROUPS_PHONE_FIELD',
             'name' => 'GROUPS_PHONE_NUMBER',
-            //"+49  (0)  641  309  1234"
-            'hint' => 'TODO'
+            'hint' => 'TODO',
+            'pattern' => '^(\+[\d]+ ?)?( ?((\(0?[\d]*\))|(0?[\d]+(\/| \/)?)))?(([ \-]|[\d]+)+)$'
         ],
         self::SUPPLEMENT => [
             'fields' => [
@@ -145,6 +134,16 @@ class Types implements Selectable
 
             'message' => 'GROUPS_SUPPLEMENT_MESSAGE',
             'pattern' => '^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$'
+        ],
+        self::TEXT => [
+            'fields' => [
+                'text_de' => 'Text',
+                'text_en' => 'Text',
+                'value' => 'URL'
+            ],
+            'icon' => '',
+            'input' => 'GROUPS_FORM_TEMPLATE',
+            'name' => 'GROUPS_LINK_TEXT'
         ]
     ];
 

@@ -4908,8 +4908,8 @@ class Icons implements Selectable
             'classes' => ['fa-sign-out-alt', 'icon-exit'],
             'content' => '\f2f5',
             'priority' => self::ARROWS_AND_ANGLES,
-            'text_de' => 'Verlassen',
-            'text_en' => 'Exit'
+            'text_de' => 'Pfeil, nach außen',
+            'text_en' => 'Arrow, Outwards'
         ],
         '\f2f6' => [
             'class' => 'fa fa-sign-in-alt',

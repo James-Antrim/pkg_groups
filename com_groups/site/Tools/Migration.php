@@ -53,10 +53,10 @@ class Migration
     /**
      * Provides standard preparation for attributes.
      *
-     * @param array $data the migrated data to be saved to the attributes table
-     * @param array $map the map of the deprecated attribute ids to the new attribute ids
+     * @param array  $data  the migrated data to be saved to the attributes table
+     * @param array  $map   the map of the deprecated attribute ids to the new attribute ids
      * @param string $label the label for the migrated attribute
-     * @param int $oldID the id of the deprecated attribute entry
+     * @param int    $oldID the id of the deprecated attribute entry
      *
      * @return bool true if an existing migration of the attribute exists, otherwise false
      */
@@ -81,7 +81,6 @@ class Migration
 
     /**
      * Migrates the attributes table.
-     *
      * @return array an array mapping the existing attributes table to the new one
      */
     private static function attributes(): array
@@ -161,7 +160,6 @@ class Migration
                     /**
                      * Explicitly ignoring attributes which will not be migrated, or where values will be migrated to
                      * other attributes.
-                     *
                      * Ansprechpartner: mostly unused MNI cross-reference between supervisor and supervised. => drop
                      * Leerzeile zwischen Kontakten: formatting aid for LSE department => drop
                      * Quelle Bild: source attributes for the profile picture
@@ -188,7 +186,7 @@ class Migration
                             'Weitere Profile' => 'Other Profiles',
                         };
 
-                        $data['typeID'] = Types::LINK_LIST;
+                        $data['typeID'] = Types::LIST;
 
                         $icon = match ($label) {
                             'Weitere Profile' => 'new-tab',
@@ -441,10 +439,8 @@ class Migration
 
             /**
              * TODO add structured value migration here
-             *
              * Type URL
              * url => {text_de => url, text_en => url, url => url}
-             *
              * LSE / Kontakt => keep actual addresses here and format them
              */
             $data['value']     = $pa->value;
@@ -573,7 +569,6 @@ class Migration
 
     /**
      * Creates any role entries not included in the standard installation.+
-     *
      */
     private static function roles(): array
     {
