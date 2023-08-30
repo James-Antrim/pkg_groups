@@ -24,7 +24,22 @@ use THM\Groups\Helpers\Can;
  */
 class Controller extends BaseController
 {
+    /**
+     * Flag for calling context.
+     * @var bool
+     */
     protected bool $backend;
+
+    /**
+     * The URL to redirection into this component.
+     * @var string
+     */
+    protected string $baseURL = '';
+
+    /**
+     * The list view to redirect to after completion of form view functions.
+     * @var string
+     */
     protected string $list = '';
 
     /**
@@ -33,6 +48,7 @@ class Controller extends BaseController
     public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?JInput $input = null)
     {
         $this->backend = Application::backend();
+        $this->baseURL = $this->baseURL ?: Uri::base() . '?option=com_groups';
         parent::__construct($config, $factory, $app, $input);
     }
 
@@ -48,7 +64,14 @@ class Controller extends BaseController
         $fqName = 'THM\\Groups\\Models\\' . $this->name;
 
         $model = new $fqName();
-        $model->save();
+        if ($resourceID = $model->save()) {
+            if ($this->backend) {
+                $this->setRedirect("$this->baseURL&view=$this->name&id=$resourceID");
+                return;
+            }
+
+            Application::error(501);
+        }
 
         $referrer = Input::getInput()->server->getString('HTTP_REFERER');
         $this->setRedirect($referrer);
@@ -56,21 +79,21 @@ class Controller extends BaseController
 
     /**
      * Closes the form view without saving changes.
-     *
      * @return void
      */
     public function cancel(): void
     {
-        $base = Uri::base();
         if ($this->backend) {
+
+            // A form view without a registered list
             if (empty($this->list)) {
                 Application::message('Form view does not have its corresponding list view coded.', Application::ERROR);
-                $this->setRedirect($base);
+                $this->setRedirect(Uri::base());
 
                 return;
             }
 
-            $this->setRedirect("$base?option=com_groups&view=$this->list");
+            $this->setRedirect("$this->baseURL&view=$this->list");
 
             return;
         }
@@ -92,7 +115,12 @@ class Controller extends BaseController
         $model = new $fqName();
         $model->delete();
 
-        $this->setRedirect("index.php?option=com_groups&controller=$this->name");
+        if ($this->backend) {
+            $this->setRedirect("$this->baseURL&view=$this->name");
+            return;
+        }
+
+        Application::error(501);
     }
 
     /**
@@ -119,9 +147,9 @@ class Controller extends BaseController
     /**
      * An extract for redirecting back to the list view and providing a message for the number of entries updated.
      *
-     * @param   int   $selected  the number of accounts selected for processing
-     * @param   int   $updated   the number of accounts changed by the calling function
-     * @param   bool  $delete    whether the change affected by the calling function was a deletion
+     * @param int  $selected the number of accounts selected for processing
+     * @param int  $updated  the number of accounts changed by the calling function
+     * @param bool $delete   whether the change affected by the calling function was a deletion
      *
      * @return void
      */
@@ -148,7 +176,6 @@ class Controller extends BaseController
 
     /**
      * Checks against unauthenticated access and returns the id of the current user.
-     *
      * @return int
      */
     protected function getUserID(): int
@@ -176,8 +203,8 @@ class Controller extends BaseController
         if ($model->save()) {
 
             // There is no nuance in the administrative area
-            if ($this->backend) {
-                $this->setRedirect("index.php?option=com_groups&view=$this->list");
+            if ($this->backend and $this->list) {
+                $this->setRedirect("$this->baseURL&view=$this->list");
                 return;
             }
 
@@ -185,13 +212,12 @@ class Controller extends BaseController
             Application::error(501);
         }
 
-        // Fail => redirect to the resource
         $referrer = Input::getInput()->server->getString('HTTP_REFERER');
         $this->setRedirect($referrer);
     }
 
     /**
-     * Saves the model's save function and redirects to the same view of the copy resource.
+     * Calls the model's save function and redirects to the same view of the copy resource.
      * @return void
      */
     public function save2copy(): void
@@ -212,7 +238,12 @@ class Controller extends BaseController
             return;
         }
 
-        // Fail => redirect to the template resource
+        // Success => redirect to the edit view of the new resource
+        if ($newID = $model->save($data)) {
+            $this->setRedirect("$this->baseURL&view=$this->name&id=$newID");
+            return;
+        }
+
         $referrer = Input::getInput()->server->getString('HTTP_REFERER');
         $this->setRedirect($referrer);
     }
@@ -231,11 +262,10 @@ class Controller extends BaseController
 
         // Success => redirect to an empty edit view
         if ($model->save()) {
-            $this->setRedirect("index.php?option=com_groups&view=$this->name&id=0");
+            $this->setRedirect("$this->baseURL&view=$this->name&id=0");
             return;
         }
 
-        // Fail => redirect to the first resource
         $referrer = Input::getInput()->server->getString('HTTP_REFERER');
         $this->setRedirect($referrer);
     }
@@ -243,10 +273,10 @@ class Controller extends BaseController
     /**
      * Updates a boolean column for multiple entries in a
      *
-     * @param   string  $name
-     * @param   string  $column
-     * @param   array   $selectedIDs
-     * @param   bool    $value
+     * @param string $name        the table class name
+     * @param string $column      the table column / object property
+     * @param array  $selectedIDs the ids of the resources whose properties will be updated
+     * @param bool   $value       the value to update to
      *
      * @return int
      */
