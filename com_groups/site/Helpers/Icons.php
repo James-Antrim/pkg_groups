@@ -99,7 +99,7 @@ class Icons implements Selectable
             'class' => 'fab fa-ideal',
             'classes' => ['fa-ideal'],
             'content' => '\e013'
-            ],
+        ],
         '\e01a' => [
             'class' => 'fab fa-microblog',
             'classes' => ['fa-microblog'],
@@ -112,7 +112,7 @@ class Icons implements Selectable
             'class' => 'fab fa-pied-piper-square',
             'classes' => ['fa-pied-piper-square'],
             'content' => '\e01e'
-            ],
+        ],
         '\e041' => [
             'class' => 'fa fa-trailer',
             'classes' => ['fa-trailer'],
@@ -125,7 +125,7 @@ class Icons implements Selectable
             'class' => 'fab fa-unity',
             'classes' => ['fa-unity'],
             'content' => '\e049'
-            ],
+        ],
         '\e052' => [
             'class' => 'fa fa-dailymotion',
             'classes' => ['fa-dailymotion'],
@@ -150,7 +150,7 @@ class Icons implements Selectable
             'class' => 'fab fa-shopify',
             'classes' => ['fa-shopify'],
             'content' => '\e057'
-            ],
+        ],
         '\e059' => [
             'class' => 'fa fa-bacteria',
             'classes' => ['fa-bacteria'],
@@ -373,7 +373,7 @@ class Icons implements Selectable
             'class' => 'fab fa-deezer',
             'classes' => ['fa-deezer'],
             'content' => '\e077'
-            ],
+        ],
         '\e078' => [
             'class' => 'fab fa-edge-legacy',
             'classes' => ['fa-edge-legacy'],
@@ -392,7 +392,7 @@ class Icons implements Selectable
             'class' => 'fab fa-rust',
             'classes' => ['fa-rust'],
             'content' => '\e07a'
-            ],
+        ],
         '\e07b' => [
             'class' => 'fab fa-tiktok',
             'classes' => ['fa-tiktok'],
@@ -405,47 +405,47 @@ class Icons implements Selectable
             'class' => 'fab fa-unsplash',
             'classes' => ['fa-unsplash'],
             'content' => '\e07c'
-            ],
+        ],
         '\e07d' => [
             'class' => 'fab fa-cloudflare',
             'classes' => ['fa-cloudflare'],
             'content' => '\e07d'
-            ],
+        ],
         '\e07e' => [
             'class' => 'fab fa-guilded',
             'classes' => ['fa-guilded'],
             'content' => '\e07e'
-            ],
+        ],
         '\e07f' => [
             'class' => 'fab fa-hive',
             'classes' => ['fa-hive'],
             'content' => '\e07f'
-            ],
+        ],
         '\e080' => [
             'class' => 'fab fa-innosoft',
             'classes' => ['fa-innosoft'],
             'content' => '\e080'
-            ],
+        ],
         '\e081' => [
             'class' => 'fab fa-instalod',
             'classes' => ['fa-instalod'],
             'content' => '\e081'
-            ],
+        ],
         '\e082' => [
             'class' => 'fab fa-octopus-deploy',
             'classes' => ['fa-octopus-deploy'],
             'content' => '\e082'
-            ],
+        ],
         '\e083' => [
             'class' => 'fab fa-perbyte',
             'classes' => ['fa-perbyte'],
             'content' => '\e083'
-            ],
+        ],
         '\e084' => [
             'class' => 'fab fa-uncharted',
             'classes' => ['fa-uncharted'],
             'content' => '\e084'
-            ],
+        ],
         '\e085' => [
             'class' => 'fa fa-vest',
             'classes' => ['fa-vest'],
@@ -466,12 +466,12 @@ class Icons implements Selectable
             'class' => 'fab fa-watchman-monitoring',
             'classes' => ['fa-watchman-monitoring'],
             'content' => '\e087'
-            ],
+        ],
         '\e088' => [
             'class' => 'fab fa-wodu',
             'classes' => ['fa-wodu'],
             'content' => '\e088'
-            ],
+        ],
         '\f000' => [
             'class' => 'fa fa-glass-martini',
             'classes' => ['fa-glass-martini'],
@@ -1820,12 +1820,12 @@ class Icons implements Selectable
             'class' => 'fab fa-pinterest',
             'classes' => ['fa-pinterest'],
             'content' => '\f0d2'
-            ],
+        ],
         '\f0d3' => [
             'class' => 'fab fa-pinterest-square',
             'classes' => ['fa-pinterest-square'],
             'content' => '\f0d3'
-            ],
+        ],
         '\f0d4' => [
             'class' => 'fa fa-google-plus-square',
             'classes' => ['fa-google-plus-square'],
@@ -2000,7 +2000,7 @@ class Icons implements Selectable
             'class' => 'fa fa-suitcase',
             'classes' => ['fa-suitcase'],
             'content' => '\f0f2'
-            ],
+        ],
         '\f0f3' => [
             'class' => 'fa fa-bell',
             'classes' => ['fa-bell', 'icon-bell'],
@@ -2413,7 +2413,7 @@ class Icons implements Selectable
             'class' => 'fab fa-maxcdn',
             'classes' => ['fa-maxcdn'],
             'content' => '\f136'
-            ],
+        ],
         '\f137' => [
             'class' => 'fa fa-chevron-circle-left',
             'classes' => ['fa-chevron-circle-left', 'icon-backward-circle'],
@@ -2450,12 +2450,12 @@ class Icons implements Selectable
             'class' => 'fa fa-html5',
             'classes' => ['fa-html5'],
             'content' => '\f13b'
-            ],
+        ],
         '\f13c' => [
             'class' => 'fa fa-css3',
             'classes' => ['fa-css3'],
             'content' => '\f13c'
-            ],
+        ],
         '\f13d' => [
             'class' => 'fa fa-anchor',
             'classes' => ['fa-anchor'],
@@ -2727,7 +2727,7 @@ class Icons implements Selectable
             'class' => 'fab fa-youtube',
             'classes' => ['fa-youtube'],
             'content' => '\f167'
-            ],
+        ],
         '\f168' => [
             'class' => 'fab fa-xing',
             'classes' => ['fa-xing'],
@@ -2756,7 +2756,7 @@ class Icons implements Selectable
             'class' => 'fab fa-stack-overflow',
             'classes' => ['fa-stack-overflow'],
             'content' => '\f16c'
-            ],
+        ],
         '\f16d' => [
             'class' => 'fab fa-instagram',
             'classes' => ['fa-instagram'],
@@ -2769,12 +2769,12 @@ class Icons implements Selectable
             'class' => 'fab fa-flickr',
             'classes' => ['fa-flickr'],
             'content' => '\f16e'
-            ],
+        ],
         '\f170' => [
             'class' => 'fab fa-adn',
             'classes' => ['fa-adn'],
             'content' => '\f170'
-            ],
+        ],
         '\f171' => [
             'class' => 'fab fa-bitbucket',
             'classes' => ['fa-bitbucket'],
@@ -2801,22 +2801,22 @@ class Icons implements Selectable
             'class' => 'fab fa-apple',
             'classes' => ['fa-apple'],
             'content' => '\f179'
-            ],
+        ],
         '\f17a' => [
             'class' => 'fa fa-windows',
             'classes' => ['fa-windows'],
             'content' => '\f17a'
-            ],
+        ],
         '\f17b' => [
             'class' => 'fa fa-android',
             'classes' => ['fa-android'],
             'content' => '\f17b'
-            ],
+        ],
         '\f17c' => [
             'class' => 'fa fa-linux',
             'classes' => ['fa-linux'],
             'content' => '\f17c'
-            ],
+        ],
         '\f17d' => [
             'class' => 'fab fa-dribbble',
             'classes' => ['fa-dribbble'],
@@ -2837,12 +2837,12 @@ class Icons implements Selectable
             'class' => 'fab fa-foursquare',
             'classes' => ['fa-foursquare'],
             'content' => '\f180'
-            ],
+        ],
         '\f181' => [
             'class' => 'fab fa-trello',
             'classes' => ['fa-trello'],
             'content' => '\f181'
-            ],
+        ],
         '\f182' => [
             'class' => 'fa fa-female',
             'classes' => ['fa-female'],
@@ -2863,7 +2863,7 @@ class Icons implements Selectable
             'class' => 'fab fa-gratipay',
             'classes' => ['fa-gratipay'],
             'content' => '\f184'
-            ],
+        ],
         '\f185' => [
             'class' => 'fa fa-sun',
             'classes' => ['fa-sun'],
@@ -2900,7 +2900,7 @@ class Icons implements Selectable
             'class' => 'fab fa-vk',
             'classes' => ['fa-vk'],
             'content' => '\f189'
-            ],
+        ],
         '\f18a' => [
             'class' => 'fab fa-weibo',
             'classes' => ['fa-weibo'],
@@ -2913,17 +2913,17 @@ class Icons implements Selectable
             'class' => 'fab fa-renren',
             'classes' => ['fa-renren'],
             'content' => '\f18b'
-            ],
+        ],
         '\f18c' => [
             'class' => 'fab fa-pagelines',
             'classes' => ['fa-pagelines'],
             'content' => '\f18c'
-            ],
+        ],
         '\f18d' => [
             'class' => 'fab fa-stack-exchange',
             'classes' => ['fa-stack-exchange'],
             'content' => '\f18d'
-            ],
+        ],
         '\f191' => [
             'class' => 'fa fa-caret-square-left',
             'classes' => ['fa-caret-square-left'],
@@ -2952,7 +2952,7 @@ class Icons implements Selectable
             'class' => 'fab fa-vimeo-square',
             'classes' => ['fa-vimeo-square'],
             'content' => '\f194'
-            ],
+        ],
         '\f195' => [
             'class' => 'fa fa-lira-sign',
             'classes' => ['fa-lira-sign'],
@@ -2971,7 +2971,7 @@ class Icons implements Selectable
             'class' => 'fab fa-slack',
             'classes' => ['fa-slack'],
             'content' => '\f198'
-            ],
+        ],
         '\f199' => [
             'class' => 'fa fa-envelope-square',
             'classes' => ['fa-envelope-square'],
@@ -2984,12 +2984,12 @@ class Icons implements Selectable
             'class' => 'fa fa-wordpress',
             'classes' => ['fa-wordpress'],
             'content' => '\f19a'
-            ],
+        ],
         '\f19b' => [
             'class' => 'fab fa-openid',
             'classes' => ['fa-openid'],
             'content' => '\f19b'
-            ],
+        ],
         '\f19c' => [
             'class' => 'fa fa-university',
             'classes' => ['fa-university'],
@@ -3010,12 +3010,12 @@ class Icons implements Selectable
             'class' => 'fab fa-yahoo',
             'classes' => ['fa-yahoo'],
             'content' => '\f19e'
-            ],
+        ],
         '\f1a0' => [
             'class' => 'fa fa-google',
             'classes' => ['fa-google'],
             'content' => '\f1a0'
-            ],
+        ],
         '\f1a1' => [
             'class' => 'fab fa-reddit',
             'classes' => ['fa-reddit'],
@@ -3036,42 +3036,42 @@ class Icons implements Selectable
             'class' => 'fab fa-stumbleupon-circle',
             'classes' => ['fa-stumbleupon-circle'],
             'content' => '\f1a3'
-            ],
+        ],
         '\f1a4' => [
             'class' => 'fab fa-stumbleupon',
             'classes' => ['fa-stumbleupon'],
             'content' => '\f1a4'
-            ],
+        ],
         '\f1a5' => [
             'class' => 'fab fa-delicious',
             'classes' => ['fa-delicious'],
             'content' => '\f1a5'
-            ],
+        ],
         '\f1a6' => [
             'class' => 'fab fa-digg',
             'classes' => ['fa-digg'],
             'content' => '\f1a6'
-            ],
+        ],
         '\f1a7' => [
             'class' => 'fab fa-pied-piper-pp',
             'classes' => ['fa-pied-piper-pp'],
             'content' => '\f1a7'
-            ],
+        ],
         '\f1a8' => [
             'class' => 'fab fa-pied-piper-alt',
             'classes' => ['fa-pied-piper-alt'],
             'content' => '\f1a8'
-            ],
+        ],
         '\f1a9' => [
             'class' => 'fab fa-drupal',
             'classes' => ['fa-drupal'],
             'content' => '\f1a9'
-            ],
+        ],
         '\f1aa' => [
             'class' => 'fab fa-joomla',
             'classes' => ['fa-joomla', 'icon-joomla'],
             'content' => '\f1aa'
-            ],
+        ],
         '\f1ab' => [
             'class' => 'fa fa-language',
             'classes' => ['fa-language', 'icon-language'],
@@ -3146,12 +3146,12 @@ class Icons implements Selectable
             'class' => 'fab fa-steam',
             'classes' => ['fa-steam'],
             'content' => '\f1b6'
-            ],
+        ],
         '\f1b7' => [
             'class' => 'fab fa-steam-square',
             'classes' => ['fa-steam-square'],
             'content' => '\f1b7'
-            ],
+        ],
         '\f1b8' => [
             'class' => 'fa fa-recycle',
             'classes' => ['fa-recycle'],
@@ -3188,17 +3188,17 @@ class Icons implements Selectable
             'class' => 'fab fa-spotify',
             'classes' => ['fa-spotify'],
             'content' => '\f1bc'
-            ],
+        ],
         '\f1bd' => [
             'class' => 'fab fa-deviantart',
             'classes' => ['fa-deviantart'],
             'content' => '\f1bd'
-            ],
+        ],
         '\f1be' => [
             'class' => 'fab fa-soundcloud',
             'classes' => ['fa-soundcloud'],
             'content' => '\f1be'
-            ],
+        ],
         '\f1c0' => [
             'class' => 'fa fa-database',
             'classes' => ['fa-database', 'icon-database'],
@@ -3283,17 +3283,17 @@ class Icons implements Selectable
             'class' => 'fab fa-vine',
             'classes' => ['fa-vine'],
             'content' => '\f1ca'
-            ],
+        ],
         '\f1cb' => [
             'class' => 'fab fa-codepen',
             'classes' => ['fa-codepen'],
             'content' => '\f1cb'
-            ],
+        ],
         '\f1cc' => [
             'class' => 'fab fa-jsfiddle',
             'classes' => ['fa-jsfiddle'],
             'content' => '\f1cc'
-            ],
+        ],
         '\f1cd' => [
             'class' => 'fa fa-life-ring',
             'classes' => ['fa-life-ring', 'icon-support'],
@@ -3314,42 +3314,42 @@ class Icons implements Selectable
             'class' => 'fab fa-rebel',
             'classes' => ['fa-rebel'],
             'content' => '\f1d0'
-            ],
+        ],
         '\f1d1' => [
             'class' => 'fab fa-empire',
             'classes' => ['fa-empire'],
             'content' => '\f1d1'
-            ],
+        ],
         '\f1d2' => [
             'class' => 'fab fa-git-square',
             'classes' => ['fa-git-square'],
             'content' => '\f1d2'
-            ],
+        ],
         '\f1d3' => [
             'class' => 'fab fa-git',
             'classes' => ['fa-git'],
             'content' => '\f1d3'
-            ],
+        ],
         '\f1d4' => [
             'class' => 'fab fa-hacker-news',
             'classes' => ['fa-hacker-news'],
             'content' => '\f1d4'
-            ],
+        ],
         '\f1d5' => [
             'class' => 'fab fa-tencent-weibo',
             'classes' => ['fa-tencent-weibo'],
             'content' => '\f1d5'
-            ],
+        ],
         '\f1d6' => [
             'class' => 'fab fa-qq',
             'classes' => ['fa-qq'],
             'content' => '\f1d6'
-            ],
+        ],
         '\f1d7' => [
             'class' => 'fab fa-weixin',
             'classes' => ['fa-weixin'],
             'content' => '\f1d7'
-            ],
+        ],
         '\f1d8' => [
             'class' => 'fa fa-paper-plane',
             'classes' => ['fa-paper-plane'],
@@ -3458,12 +3458,12 @@ class Icons implements Selectable
             'class' => 'fab fa-twitch',
             'classes' => ['fa-twitch'],
             'content' => '\f1e8'
-            ],
+        ],
         '\f1e9' => [
             'class' => 'fab fa-yelp',
             'classes' => ['fa-yelp'],
             'content' => '\f1e9'
-            ],
+        ],
         '\f1ea' => [
             'class' => 'fa fa-newspaper',
             'classes' => ['fa-newspaper'],
@@ -3633,12 +3633,12 @@ class Icons implements Selectable
             'class' => 'fab fa-lastfm',
             'classes' => ['fa-lastfm'],
             'content' => '\f202'
-            ],
+        ],
         '\f203' => [
             'class' => 'fab fa-lastfm-square',
             'classes' => ['fa-lastfm-square'],
             'content' => '\f203'
-            ],
+        ],
         '\f204' => [
             'class' => 'fa fa-toggle-off',
             'classes' => ['fa-toggle-off', 'icon-toggle-off'],
@@ -3675,12 +3675,12 @@ class Icons implements Selectable
             'class' => 'fab fa-ioxhost',
             'classes' => ['fa-ioxhost'],
             'content' => '\f208'
-            ],
+        ],
         '\f209' => [
             'class' => 'fab fa-angellist',
             'classes' => ['fa-angellist'],
             'content' => '\f209'
-            ],
+        ],
         '\f20a' => [
             'class' => 'fa fa-closed-captioning',
             'classes' => ['fa-closed-captioning'],
@@ -3701,12 +3701,12 @@ class Icons implements Selectable
             'class' => 'fab fa-buysellads',
             'classes' => ['fa-buysellads'],
             'content' => '\f20d'
-            ],
+        ],
         '\f20e' => [
             'class' => 'fab fa-connectdevelop',
             'classes' => ['fa-connectdevelop'],
             'content' => '\f20e'
-            ],
+        ],
         '\f210' => [
             'class' => 'fab fa-dashcube',
             'classes' => ['fa-dashcube'],
@@ -3719,32 +3719,32 @@ class Icons implements Selectable
             'class' => 'fab fa-forumbee',
             'classes' => ['fa-forumbee'],
             'content' => '\f211'
-            ],
+        ],
         '\f212' => [
             'class' => 'fab fa-leanpub',
             'classes' => ['fa-leanpub'],
             'content' => '\f212'
-            ],
+        ],
         '\f213' => [
             'class' => 'fab fa-sellsy',
             'classes' => ['fa-sellsy'],
             'content' => '\f213'
-            ],
+        ],
         '\f214' => [
             'class' => 'fab fa-shirtsinbulk',
             'classes' => ['fa-shirtsinbulk'],
             'content' => '\f214'
-            ],
+        ],
         '\f215' => [
             'class' => 'fab fa-simplybuilt',
             'classes' => ['fa-simplybuilt'],
             'content' => '\f215'
-            ],
+        ],
         '\f216' => [
             'class' => 'fab fa-skyatlas',
             'classes' => ['fa-skyatlas'],
             'content' => '\f216'
-            ],
+        ],
         '\f217' => [
             'class' => 'fa fa-cart-plus',
             'classes' => ['fa-cart-plus'],
@@ -3883,7 +3883,7 @@ class Icons implements Selectable
             'class' => 'fab fa-pinterest-p',
             'classes' => ['fa-pinterest-p'],
             'content' => '\f231'
-            ],
+        ],
         '\f232' => [
             'class' => 'fab fa-whatsapp',
             'classes' => ['fa-whatsapp'],
@@ -3946,27 +3946,27 @@ class Icons implements Selectable
             'class' => 'fab fa-medium',
             'classes' => ['fa-medium'],
             'content' => '\f23a'
-            ],
+        ],
         '\f23b' => [
             'class' => 'fab fa-y-combinator',
             'classes' => ['fa-y-combinator'],
             'content' => '\f23b'
-            ],
+        ],
         '\f23c' => [
             'class' => 'fab fa-optin-monster',
             'classes' => ['fa-optin-monster'],
             'content' => '\f23c'
-            ],
+        ],
         '\f23d' => [
             'class' => 'fab fa-opencart',
             'classes' => ['fa-opencart'],
             'content' => '\f23d'
-            ],
+        ],
         '\f23e' => [
             'class' => 'fab fa-expeditedssl',
             'classes' => ['fa-expeditedssl'],
             'content' => '\f23e'
-            ],
+        ],
         '\f240' => [
             'class' => 'fa fa-battery-full',
             'classes' => ['fa-battery-full'],
@@ -4115,27 +4115,27 @@ class Icons implements Selectable
             'class' => 'fa fa-hand-rock',
             'classes' => ['fa-hand-rock'],
             'content' => '\f255'
-            ],
+        ],
         '\f256' => [
             'class' => 'fa fa-hand-paper',
             'classes' => ['fa-hand-paper'],
             'content' => '\f256'
-            ],
+        ],
         '\f257' => [
             'class' => 'fa fa-hand-scissors',
             'classes' => ['fa-hand-scissors'],
             'content' => '\f257'
-            ],
+        ],
         '\f258' => [
             'class' => 'fa fa-hand-lizard',
             'classes' => ['fa-hand-lizard'],
             'content' => '\f258'
-            ],
+        ],
         '\f259' => [
             'class' => 'fa fa-hand-spock',
             'classes' => ['fa-hand-spock'],
             'content' => '\f259'
-            ],
+        ],
         '\f25a' => [
             'class' => 'fa fa-hand-pointer',
             'classes' => ['fa-hand-pointer'],
@@ -4168,17 +4168,17 @@ class Icons implements Selectable
             'class' => 'fab fa-creative-commons',
             'classes' => ['fa-creative-commons'],
             'content' => '\f25e'
-            ],
+        ],
         '\f260' => [
             'class' => 'fab fa-gg',
             'classes' => ['fa-gg'],
             'content' => '\f260'
-            ],
+        ],
         '\f261' => [
             'class' => 'fab fa-gg-circle',
             'classes' => ['fa-gg-circle'],
             'content' => '\f261'
-            ],
+        ],
         '\f263' => [
             'class' => 'fab fa-odnoklassniki',
             'classes' => ['fa-odnoklassniki'],
@@ -4199,37 +4199,37 @@ class Icons implements Selectable
             'class' => 'fab fa-get-pocket',
             'classes' => ['fa-get-pocket'],
             'content' => '\f265'
-            ],
+        ],
         '\f266' => [
             'class' => 'fab fa-wikipedia-w',
             'classes' => ['fa-wikipedia-w'],
             'content' => '\f266'
-            ],
+        ],
         '\f267' => [
             'class' => 'fa fa-safari',
             'classes' => ['fa-safari'],
             'content' => '\f267'
-            ],
+        ],
         '\f268' => [
             'class' => 'fa fa-chrome',
             'classes' => ['fa-chrome'],
             'content' => '\f268'
-            ],
+        ],
         '\f269' => [
             'class' => 'fa fa-firefox',
             'classes' => ['fa-firefox'],
             'content' => '\f269'
-            ],
+        ],
         '\f26a' => [
             'class' => 'fa fa-opera',
             'classes' => ['fa-opera'],
             'content' => '\f26a'
-            ],
+        ],
         '\f26b' => [
             'class' => 'fa fa-internet-explorer',
             'classes' => ['fa-internet-explorer'],
             'content' => '\f26b'
-            ],
+        ],
         '\f26c' => [
             'class' => 'fa fa-tv',
             'classes' => ['fa-tv'],
@@ -4242,17 +4242,17 @@ class Icons implements Selectable
             'class' => 'fa fa-contao',
             'classes' => ['fa-contao'],
             'content' => '\f26d'
-            ],
+        ],
         '\f26e' => [
             'class' => 'fab fa-500px',
             'classes' => ['fa-500px'],
             'content' => '\f26e'
-            ],
+        ],
         '\f270' => [
             'class' => 'fa fa-amazon',
             'classes' => ['fa-amazon'],
             'content' => '\f270'
-            ],
+        ],
         '\f271' => [
             'class' => 'fa fa-calendar-plus',
             'classes' => ['fa-calendar-plus'],
@@ -4323,22 +4323,22 @@ class Icons implements Selectable
             'class' => 'fab fa-houzz',
             'classes' => ['fa-houzz'],
             'content' => '\f27c'
-            ],
+        ],
         '\f27d' => [
             'class' => 'fab fa-vimeo-v',
             'classes' => ['fa-vimeo-v'],
             'content' => '\f27d'
-            ],
+        ],
         '\f27e' => [
             'class' => 'fab fa-black-tie',
             'classes' => ['fa-black-tie'],
             'content' => '\f27e'
-            ],
+        ],
         '\f280' => [
             'class' => 'fab fa-fonticons',
             'classes' => ['fa-fonticons'],
             'content' => '\f280'
-            ],
+        ],
         '\f281' => [
             'class' => 'fab fa-reddit-alien',
             'classes' => ['fa-reddit-alien'],
@@ -4351,42 +4351,42 @@ class Icons implements Selectable
             'class' => 'fab fa-edge',
             'classes' => ['fa-edge'],
             'content' => '\f282'
-            ],
+        ],
         '\f284' => [
             'class' => 'fab fa-codiepie',
             'classes' => ['fa-codiepie'],
             'content' => '\f284'
-            ],
+        ],
         '\f285' => [
             'class' => 'fab fa-modx',
             'classes' => ['fa-modx'],
             'content' => '\f285'
-            ],
+        ],
         '\f286' => [
             'class' => 'fab fa-fort-awesome',
             'classes' => ['fa-fort-awesome'],
             'content' => '\f286'
-            ],
+        ],
         '\f287' => [
             'class' => 'fab fa-usb',
             'classes' => ['fa-usb'],
             'content' => '\f287'
-            ],
+        ],
         '\f288' => [
             'class' => 'fab fa-product-hunt',
             'classes' => ['fa-product-hunt'],
             'content' => '\f288'
-            ],
+        ],
         '\f289' => [
             'class' => 'fab fa-mixcloud',
             'classes' => ['fa-mixcloud'],
             'content' => '\f289'
-            ],
+        ],
         '\f28a' => [
             'class' => 'fab fa-scribd',
             'classes' => ['fa-scribd'],
             'content' => '\f28a'
-            ],
+        ],
         '\f28b' => [
             'class' => 'fa fa-pause-circle',
             'classes' => ['fa-pause-circle', 'icon-pause-circle'],
@@ -4432,12 +4432,12 @@ class Icons implements Selectable
             'class' => 'fab fa-bluetooth',
             'classes' => ['fa-bluetooth'],
             'content' => '\f293'
-            ],
+        ],
         '\f294' => [
             'class' => 'fab fa-bluetooth-b',
             'classes' => ['fa-bluetooth-b'],
             'content' => '\f294'
-            ],
+        ],
         '\f295' => [
             'class' => 'fa fa-percent',
             'classes' => ['fa-percent'],
@@ -4451,22 +4451,22 @@ class Icons implements Selectable
             'class' => 'fab fa-gitlab',
             'classes' => ['fa-gitlab'],
             'content' => '\f296'
-            ],
+        ],
         '\f297' => [
             'class' => 'fab fa-wpbeginner',
             'classes' => ['fa-wpbeginner'],
             'content' => '\f297'
-            ],
+        ],
         '\f298' => [
             'class' => 'fab fa-wpforms',
             'classes' => ['fa-wpforms'],
             'content' => '\f298'
-            ],
+        ],
         '\f299' => [
             'class' => 'fab fa-envira',
             'classes' => ['fa-envira'],
             'content' => '\f299'
-            ],
+        ],
         '\f29a' => [
             'class' => 'fa fa-universal-access',
             'classes' => ['fa-universal-access', 'icon-accessible', 'icon-universal', 'icon-universal-access'],
@@ -4535,12 +4535,12 @@ class Icons implements Selectable
             'class' => 'fab fa-glide',
             'classes' => ['fa-glide'],
             'content' => '\f2a5'
-            ],
+        ],
         '\f2a6' => [
             'class' => 'fab fa-glide-g',
             'classes' => ['fa-glide-g'],
             'content' => '\f2a6'
-            ],
+        ],
         '\f2a7' => [
             'class' => 'fa fa-sign-language',
             'classes' => ['fa-sign-language'],
@@ -4601,22 +4601,22 @@ class Icons implements Selectable
             'class' => 'fab fa-pied-piper',
             'classes' => ['fa-pied-piper'],
             'content' => '\f2ae'
-            ],
+        ],
         '\f2b0' => [
             'class' => 'fab fa-first-order',
             'classes' => ['fa-first-order'],
             'content' => '\f2b0'
-            ],
+        ],
         '\f2b1' => [
             'class' => 'fab fa-yoast',
             'classes' => ['fa-yoast'],
             'content' => '\f2b1'
-            ],
+        ],
         '\f2b2' => [
             'class' => 'fab fa-themeisle',
             'classes' => ['fa-themeisle'],
             'content' => '\f2b2'
-            ],
+        ],
         '\f2b3' => [
             'class' => 'fab fa-google-plus',
             'classes' => ['fa-google-plus'],
@@ -4627,7 +4627,7 @@ class Icons implements Selectable
             'class' => 'fab fa-font-awesome',
             'classes' => ['fa-font-awesome'],
             'content' => '\f2b4'
-            ],
+        ],
         '\f2b5' => [
             'class' => 'fa fa-handshake',
             'classes' => ['fa-handshake', 'icon-handshake'],
@@ -4646,7 +4646,7 @@ class Icons implements Selectable
             'class' => 'fab fa-linode',
             'classes' => ['fa-linode'],
             'content' => '\f2b8'
-            ],
+        ],
         '\f2b9' => [
             'class' => 'fa fa-address-book',
             'classes' => ['fa-address-book', 'icon-address', 'icon-address-book'],
@@ -4691,12 +4691,12 @@ class Icons implements Selectable
             'class' => 'fab fa-quora',
             'classes' => ['fa-quora'],
             'content' => '\f2c4'
-            ],
+        ],
         '\f2c5' => [
             'class' => 'fab fa-free-code-camp',
             'classes' => ['fa-free-code-camp'],
             'content' => '\f2c5'
-            ],
+        ],
         '\f2c6' => [
             'class' => 'fab fa-telegram',
             'classes' => ['fa-telegram'],
@@ -4797,32 +4797,32 @@ class Icons implements Selectable
             'class' => 'fab fa-bandcamp',
             'classes' => ['fa-bandcamp'],
             'content' => '\f2d5'
-            ],
+        ],
         '\f2d6' => [
             'class' => 'fab fa-grav',
             'classes' => ['fa-grav'],
             'content' => '\f2d6'
-            ],
+        ],
         '\f2d7' => [
             'class' => 'fab fa-etsy',
             'classes' => ['fa-etsy'],
             'content' => '\f2d7'
-            ],
+        ],
         '\f2d8' => [
             'class' => 'fab fa-imdb',
             'classes' => ['fa-imdb'],
             'content' => '\f2d8'
-            ],
+        ],
         '\f2d9' => [
             'class' => 'fab fa-ravelry',
             'classes' => ['fa-ravelry'],
             'content' => '\f2d9'
-            ],
+        ],
         '\f2da' => [
             'class' => 'fab fa-sellcast',
             'classes' => ['fa-sellcast'],
             'content' => '\f2da'
-            ],
+        ],
         '\f2db' => [
             'class' => 'fa fa-microchip',
             'classes' => ['fa-microchip'],
@@ -4843,12 +4843,12 @@ class Icons implements Selectable
             'class' => 'fab fa-superpowers',
             'classes' => ['fa-superpowers'],
             'content' => '\f2dd'
-            ],
+        ],
         '\f2de' => [
             'class' => 'fab fa-wpexplorer',
             'classes' => ['fa-wpexplorer'],
             'content' => '\f2de'
-            ],
+        ],
         '\f2e0' => [
             'class' => 'fab fa-meetup',
             'classes' => ['fa-meetup'],
@@ -5065,7 +5065,7 @@ class Icons implements Selectable
             'class' => 'fa fa-font-awesome-alt',
             'classes' => ['fa-font-awesome-alt'],
             'content' => '\f35c'
-            ],
+        ],
         '\f35d' => [
             'class' => 'fa fa-external-link-alt',
             'classes' => ['fa-external-link-alt', 'icon-external-link-alt', 'icon-new-tab', 'icon-out-2'],
@@ -5102,72 +5102,72 @@ class Icons implements Selectable
             'class' => 'fab fa-accusoft',
             'classes' => ['fa-accusoft'],
             'content' => '\f369'
-            ],
+        ],
         '\f36a' => [
             'class' => 'fab fa-adversal',
             'classes' => ['fa-adversal'],
             'content' => '\f36a'
-            ],
+        ],
         '\f36b' => [
             'class' => 'fab fa-affiliatetheme',
             'classes' => ['fa-affiliatetheme'],
             'content' => '\f36b'
-            ],
+        ],
         '\f36c' => [
             'class' => 'fab fa-algolia',
             'classes' => ['fa-algolia'],
             'content' => '\f36c'
-            ],
+        ],
         '\f36d' => [
             'class' => 'fab fa-amilia',
             'classes' => ['fa-amilia'],
             'content' => '\f36d'
-            ],
+        ],
         '\f36e' => [
             'class' => 'fab fa-angrycreative',
             'classes' => ['fa-angrycreative'],
             'content' => '\f36e'
-            ],
+        ],
         '\f36f' => [
             'class' => 'fab fa-app-store',
             'classes' => ['fa-app-store'],
             'content' => '\f36f'
-            ],
+        ],
         '\f370' => [
             'class' => 'fab fa-app-store-ios',
             'classes' => ['fa-app-store-ios'],
             'content' => '\f370'
-            ],
+        ],
         '\f371' => [
             'class' => 'fab fa-apper',
             'classes' => ['fa-apper'],
             'content' => '\f371'
-            ],
+        ],
         '\f372' => [
             'class' => 'fab fa-asymmetrik',
             'classes' => ['fa-asymmetrik'],
             'content' => '\f372'
-            ],
+        ],
         '\f373' => [
             'class' => 'fab fa-audible',
             'classes' => ['fa-audible'],
             'content' => '\f373'
-            ],
+        ],
         '\f374' => [
             'class' => 'fab fa-avianex',
             'classes' => ['fa-avianex'],
             'content' => '\f374'
-            ],
+        ],
         '\f375' => [
             'class' => 'fab fa-aws',
             'classes' => ['fa-aws'],
             'content' => '\f375'
-            ],
+        ],
         '\f378' => [
             'class' => 'fab fa-bimobject',
             'classes' => ['fa-bimobject'],
             'content' => '\f378'
-            ],
+        ],
         '\f379' => [
             'class' => 'fab fa-bitcoin',
             'classes' => ['fa-bitcoin'],
@@ -5180,32 +5180,32 @@ class Icons implements Selectable
             'class' => 'fab fa-bity',
             'classes' => ['fa-bity'],
             'content' => '\f37a'
-            ],
+        ],
         '\f37b' => [
             'class' => 'fab fa-blackberry',
             'classes' => ['fa-blackberry'],
             'content' => '\f37b'
-            ],
+        ],
         '\f37c' => [
             'class' => 'fab fa-blogger',
             'classes' => ['fa-blogger'],
             'content' => '\f37c'
-            ],
+        ],
         '\f37d' => [
             'class' => 'fab fa-blogger-b',
             'classes' => ['fa-blogger-b'],
             'content' => '\f37d'
-            ],
+        ],
         '\f37f' => [
             'class' => 'fab fa-buromobelexperte',
             'classes' => ['fa-buromobelexperte'],
             'content' => '\f37f'
-            ],
+        ],
         '\f380' => [
             'class' => 'fab fa-centercode',
             'classes' => ['fa-centercode'],
             'content' => '\f380'
-            ],
+        ],
         '\f381' => [
             'class' => 'fa fa-cloud-download-alt',
             'classes' => ['fa-cloud-download-alt', 'icon-cloud-download', 'icon-cloud-download-alt'],
@@ -5226,52 +5226,52 @@ class Icons implements Selectable
             'class' => 'fab fa-cloudscale',
             'classes' => ['fa-cloudscale'],
             'content' => '\f383'
-            ],
+        ],
         '\f384' => [
             'class' => 'fab fa-cloudsmith',
             'classes' => ['fa-cloudsmith'],
             'content' => '\f384'
-            ],
+        ],
         '\f385' => [
             'class' => 'fab fa-cloudversify',
             'classes' => ['fa-cloudversify'],
             'content' => '\f385'
-            ],
+        ],
         '\f388' => [
             'class' => 'fab fa-cpanel',
             'classes' => ['fa-cpanel'],
             'content' => '\f388'
-            ],
+        ],
         '\f38b' => [
             'class' => 'fab fa-css3-alt',
             'classes' => ['fa-css3-alt'],
             'content' => '\f38b'
-            ],
+        ],
         '\f38c' => [
             'class' => 'fab fa-cuttlefish',
             'classes' => ['fa-cuttlefish'],
             'content' => '\f38c'
-            ],
+        ],
         '\f38d' => [
             'class' => 'fab fa-d-and-d',
             'classes' => ['fa-d-and-d'],
             'content' => '\f38d'
-            ],
+        ],
         '\f38e' => [
             'class' => 'fab fa-deploydog',
             'classes' => ['fa-deploydog'],
             'content' => '\f38e'
-            ],
+        ],
         '\f38f' => [
             'class' => 'fab fa-deskpro',
             'classes' => ['fa-deskpro'],
             'content' => '\f38f'
-            ],
+        ],
         '\f391' => [
             'class' => 'fab fa-digital-ocean',
             'classes' => ['fa-digital-ocean'],
             'content' => '\f391'
-            ],
+        ],
         '\f392' => [
             'class' => 'fab fa-discord',
             'classes' => ['fa-discord'],
@@ -5284,12 +5284,12 @@ class Icons implements Selectable
             'class' => 'fab fa-discourse',
             'classes' => ['fa-discourse'],
             'content' => '\f393'
-            ],
+        ],
         '\f394' => [
             'class' => 'fab fa-dochub',
             'classes' => ['fa-dochub'],
             'content' => '\f394'
-            ],
+        ],
         '\f395' => [
             'class' => 'fa fa-docker',
             'classes' => ['fa-docker'],
@@ -5300,7 +5300,7 @@ class Icons implements Selectable
             'class' => 'fab fa-draft2digital',
             'classes' => ['fa-draft2digital'],
             'content' => '\f396'
-            ],
+        ],
         '\f397' => [
             'class' => 'fab fa-dribbble-square',
             'classes' => ['fa-dribbble-square'],
@@ -5359,7 +5359,7 @@ class Icons implements Selectable
             'class' => 'fab fa-fort-awesome-alt',
             'classes' => ['fa-fort-awesome-alt'],
             'content' => '\f3a3'
-            ],
+        ],
         '\f3a4' => [
             'class' => 'fa fa-freebsd',
             'classes' => ['fa-freebsd'],
@@ -5370,7 +5370,7 @@ class Icons implements Selectable
             'class' => 'fa fa-gem',
             'classes' => ['fa-gem'],
             'content' => '\f3a5'
-            ],
+        ],
         '\f3a6' => [
             'class' => 'fa fa-gitkraken',
             'classes' => ['fa-gitkraken'],
@@ -5381,27 +5381,27 @@ class Icons implements Selectable
             'class' => 'fab fa-gofore',
             'classes' => ['fa-gofore'],
             'content' => '\f3a7'
-            ],
+        ],
         '\f3a8' => [
             'class' => 'fab fa-goodreads',
             'classes' => ['fa-goodreads'],
             'content' => '\f3a8'
-            ],
+        ],
         '\f3a9' => [
             'class' => 'fab fa-goodreads-g',
             'classes' => ['fa-goodreads-g'],
             'content' => '\f3a9'
-            ],
+        ],
         '\f3aa' => [
             'class' => 'fab fa-google-drive',
             'classes' => ['fa-google-drive'],
             'content' => '\f3aa'
-            ],
+        ],
         '\f3ab' => [
             'class' => 'fab fa-google-play',
             'classes' => ['fa-google-play'],
             'content' => '\f3ab'
-            ],
+        ],
         '\f3ac' => [
             'class' => 'fa fa-gripfire',
             'classes' => ['fa-gripfire'],
@@ -5430,7 +5430,7 @@ class Icons implements Selectable
             'class' => 'fab fa-hire-a-helper',
             'classes' => ['fa-hire-a-helper'],
             'content' => '\f3b0'
-            ],
+        ],
         '\f3b1' => [
             'class' => 'fa fa-hotjar',
             'classes' => ['fa-hotjar'],
@@ -5447,12 +5447,12 @@ class Icons implements Selectable
             'class' => 'fab fa-itunes',
             'classes' => ['fa-itunes'],
             'content' => '\f3b4'
-            ],
+        ],
         '\f3b5' => [
             'class' => 'fab fa-itunes-note',
             'classes' => ['fa-itunes-note'],
             'content' => '\f3b5'
-            ],
+        ],
         '\f3b6' => [
             'class' => 'fa fa-jenkins',
             'classes' => ['fa-jenkins'],
@@ -5475,7 +5475,7 @@ class Icons implements Selectable
             'class' => 'fab fa-js-square',
             'classes' => ['fa-js-square'],
             'content' => '\f3b9'
-            ],
+        ],
         '\f3ba' => [
             'class' => 'fa fa-keycdn',
             'classes' => ['fa-keycdn'],
@@ -5486,12 +5486,12 @@ class Icons implements Selectable
             'class' => 'fab fa-kickstarter',
             'classes' => ['fa-kickstarter'],
             'content' => '\f3bb'
-            ],
+        ],
         '\f3bc' => [
             'class' => 'fab fa-kickstarter-k',
             'classes' => ['fa-kickstarter-k'],
             'content' => '\f3bc'
-            ],
+        ],
         '\f3bd' => [
             'class' => 'fa fa-laravel',
             'classes' => ['fa-laravel'],
@@ -5518,7 +5518,7 @@ class Icons implements Selectable
             'class' => 'fab fa-line',
             'classes' => ['fa-line'],
             'content' => '\f3c0'
-            ],
+        ],
         '\f3c1' => [
             'class' => 'fa fa-lock-open',
             'classes' => ['fa-lock-open', 'icon-open'],
@@ -5551,12 +5551,12 @@ class Icons implements Selectable
             'class' => 'fab fa-medapps',
             'classes' => ['fa-medapps'],
             'content' => '\f3c6'
-            ],
+        ],
         '\f3c7' => [
             'class' => 'fab fa-medium-m',
             'classes' => ['fa-medium-m'],
             'content' => '\f3c7'
-            ],
+        ],
         '\f3c8' => [
             'class' => 'fa fa-medrt',
             'classes' => ['fa-medrt'],
@@ -5575,17 +5575,17 @@ class Icons implements Selectable
             'class' => 'fab fa-microsoft',
             'classes' => ['fa-microsoft'],
             'content' => '\f3ca'
-            ],
+        ],
         '\f3cb' => [
             'class' => 'fab fa-mix',
             'classes' => ['fa-mix'],
             'content' => '\f3cb'
-            ],
+        ],
         '\f3cc' => [
             'class' => 'fab fa-mizuni',
             'classes' => ['fa-mizuni'],
             'content' => '\f3cc'
-            ],
+        ],
         '\f3cd' => [
             'class' => 'fa fa-mobile-alt',
             'classes' => ['fa-mobile-alt'],
@@ -5598,7 +5598,7 @@ class Icons implements Selectable
             'class' => 'fab fa-monero',
             'classes' => ['fa-monero'],
             'content' => '\f3d0'
-            ],
+        ],
         '\f3d1' => [
             'class' => 'fa fa-money-bill-alt',
             'classes' => ['fa-money-bill-alt'],
@@ -5611,22 +5611,22 @@ class Icons implements Selectable
             'class' => 'fab fa-napster',
             'classes' => ['fa-napster'],
             'content' => '\f3d2'
-            ],
+        ],
         '\f3d3' => [
             'class' => 'fab fa-node-js',
             'classes' => ['fa-node-js'],
             'content' => '\f3d3'
-            ],
+        ],
         '\f3d4' => [
             'class' => 'fab fa-npm',
             'classes' => ['fa-npm'],
             'content' => '\f3d4'
-            ],
+        ],
         '\f3d5' => [
             'class' => 'fab fa-ns8',
             'classes' => ['fa-ns8'],
             'content' => '\f3d5'
-            ],
+        ],
         '\f3d6' => [
             'class' => 'fa fa-nutritionix',
             'classes' => ['fa-nutritionix'],
@@ -5637,32 +5637,32 @@ class Icons implements Selectable
             'class' => 'fab fa-page4',
             'classes' => ['fa-page4'],
             'content' => '\f3d7'
-            ],
+        ],
         '\f3d8' => [
             'class' => 'fab fa-palfed',
             'classes' => ['fa-palfed'],
             'content' => '\f3d8'
-            ],
+        ],
         '\f3d9' => [
             'class' => 'fab fa-patreon',
             'classes' => ['fa-patreon'],
             'content' => '\f3d9'
-            ],
+        ],
         '\f3da' => [
             'class' => 'fab fa-periscope',
             'classes' => ['fa-periscope'],
             'content' => '\f3da'
-            ],
+        ],
         '\f3db' => [
             'class' => 'fab fa-phabricator',
             'classes' => ['fa-phabricator'],
             'content' => '\f3db'
-            ],
+        ],
         '\f3dc' => [
             'class' => 'fab fa-phoenix-framework',
             'classes' => ['fa-phoenix-framework'],
             'content' => '\f3dc'
-            ],
+        ],
         '\f3dd' => [
             'class' => 'fa fa-phone-slash',
             'classes' => ['fa-phone-slash'],
@@ -5673,7 +5673,7 @@ class Icons implements Selectable
             'class' => 'fab fa-playstation',
             'classes' => ['fa-playstation'],
             'content' => '\f3df'
-            ],
+        ],
         '\f3e0' => [
             'class' => 'fa fa-portrait',
             'classes' => ['fa-portrait'],
@@ -5686,22 +5686,22 @@ class Icons implements Selectable
             'class' => 'fab fa-pushed',
             'classes' => ['fa-pushed'],
             'content' => '\f3e1'
-            ],
+        ],
         '\f3e2' => [
             'class' => 'fab fa-python',
             'classes' => ['fa-python'],
             'content' => '\f3e2'
-            ],
+        ],
         '\f3e3' => [
             'class' => 'fab fa-red-river',
             'classes' => ['fa-red-river'],
             'content' => '\f3e3'
-            ],
+        ],
         '\f3e4' => [
             'class' => 'fab fa-wpressr',
             'classes' => ['fa-wpressr'],
             'content' => '\f3e4'
-            ],
+        ],
         '\f3e5' => [
             'class' => 'fa fa-reply',
             'classes' => ['fa-reply'],
@@ -5714,12 +5714,12 @@ class Icons implements Selectable
             'class' => 'fab fa-replyd',
             'classes' => ['fa-replyd'],
             'content' => '\f3e6'
-            ],
+        ],
         '\f3e7' => [
             'class' => 'fab fa-resolving',
             'classes' => ['fa-resolving'],
             'content' => '\f3e7'
-            ],
+        ],
         '\f3e8' => [
             'class' => 'fab fa-rocketchat',
             'classes' => ['fa-rocketchat'],
@@ -5732,22 +5732,22 @@ class Icons implements Selectable
             'class' => 'fab fa-rockrms',
             'classes' => ['fa-rockrms'],
             'content' => '\f3e9'
-            ],
+        ],
         '\f3ea' => [
             'class' => 'fab fa-schlix',
             'classes' => ['fa-schlix'],
             'content' => '\f3ea'
-            ],
+        ],
         '\f3eb' => [
             'class' => 'fab fa-searchengin',
             'classes' => ['fa-searchengin'],
             'content' => '\f3eb'
-            ],
+        ],
         '\f3ec' => [
             'class' => 'fab fa-servicestack',
             'classes' => ['fa-servicestack'],
             'content' => '\f3ec'
-            ],
+        ],
         '\f3ed' => [
             'class' => 'fa fa-shield-alt',
             'classes' => ['fa-shield-alt', 'icon-shield', 'icon-shield-alt'],
@@ -5760,42 +5760,42 @@ class Icons implements Selectable
             'class' => 'fab fa-sistrix',
             'classes' => ['fa-sistrix'],
             'content' => '\f3ee'
-            ],
+        ],
         '\f3ef' => [
             'class' => 'fab fa-slack-hash',
             'classes' => ['fa-slack-hash'],
             'content' => '\f3ef'
-            ],
+        ],
         '\f3f3' => [
             'class' => 'fab fa-speakap',
             'classes' => ['fa-speakap'],
             'content' => '\f3f3'
-            ],
+        ],
         '\f3f5' => [
             'class' => 'fab fa-staylinked',
             'classes' => ['fa-staylinked'],
             'content' => '\f3f5'
-            ],
+        ],
         '\f3f6' => [
             'class' => 'fab fa-steam-symbol',
             'classes' => ['fa-steam-symbol'],
             'content' => '\f3f6'
-            ],
+        ],
         '\f3f7' => [
             'class' => 'fab fa-sticker-mule',
             'classes' => ['fa-sticker-mule'],
             'content' => '\f3f7'
-            ],
+        ],
         '\f3f8' => [
             'class' => 'fab fa-studiovinari',
             'classes' => ['fa-studiovinari'],
             'content' => '\f3f8'
-            ],
+        ],
         '\f3f9' => [
             'class' => 'fab fa-supple',
             'classes' => ['fa-supple'],
             'content' => '\f3f9'
-            ],
+        ],
         '\f3fa' => [
             'class' => 'fa fa-tablet-alt',
             'classes' => ['fa-tablet-alt'],
@@ -5825,7 +5825,7 @@ class Icons implements Selectable
             'class' => 'fa fa-ticket-alt',
             'classes' => ['fa-ticket-alt'],
             'content' => '\f3ff'
-            ],
+        ],
         '\f402' => [
             'class' => 'fa fa-uber',
             'classes' => ['fa-uber'],
@@ -5836,17 +5836,17 @@ class Icons implements Selectable
             'class' => 'fab fa-uikit',
             'classes' => ['fa-uikit'],
             'content' => '\f403'
-            ],
+        ],
         '\f404' => [
             'class' => 'fab fa-uniregistry',
             'classes' => ['fa-uniregistry'],
             'content' => '\f404'
-            ],
+        ],
         '\f405' => [
             'class' => 'fab fa-untappd',
             'classes' => ['fa-untappd'],
             'content' => '\f405'
-            ],
+        ],
         '\f406' => [
             'class' => 'fa fa-user-alt',
             'classes' => ['fa-user-alt'],
@@ -5859,12 +5859,12 @@ class Icons implements Selectable
             'class' => 'fab fa-ussunnah',
             'classes' => ['fa-ussunnah'],
             'content' => '\f407'
-            ],
+        ],
         '\f408' => [
             'class' => 'fab fa-vaadin',
             'classes' => ['fa-vaadin'],
             'content' => '\f408'
-            ],
+        ],
         '\f409' => [
             'class' => 'fab fa-viber',
             'classes' => ['fa-viber'],
@@ -5877,12 +5877,12 @@ class Icons implements Selectable
             'class' => 'fab fa-vimeo',
             'classes' => ['fa-vimeo'],
             'content' => '\f40a'
-            ],
+        ],
         '\f40b' => [
             'class' => 'fab fa-vnv',
             'classes' => ['fa-vnv'],
             'content' => '\f40b'
-            ],
+        ],
         '\f40c' => [
             'class' => 'fab fa-whatsapp-square',
             'classes' => ['fa-whatsapp-square'],
@@ -5895,7 +5895,7 @@ class Icons implements Selectable
             'class' => 'fab fa-whmcs',
             'classes' => ['fa-whmcs'],
             'content' => '\f40d'
-            ],
+        ],
         '\f410' => [
             'class' => 'fa fa-window-close',
             'classes' => ['fa-window-close'],
@@ -5908,22 +5908,22 @@ class Icons implements Selectable
             'class' => 'fab fa-wordpress-simple',
             'classes' => ['fa-wordpress-simple'],
             'content' => '\f411'
-            ],
+        ],
         '\f412' => [
             'class' => 'fa fa-xbox',
             'classes' => ['fa-xbox'],
             'content' => '\f412'
-            ],
+        ],
         '\f413' => [
             'class' => 'fab fa-yandex',
             'classes' => ['fa-yandex'],
             'content' => '\f413'
-            ],
+        ],
         '\f414' => [
             'class' => 'fab fa-yandex-international',
             'classes' => ['fa-yandex-international'],
             'content' => '\f414'
-            ],
+        ],
         '\f415' => [
             'class' => 'fab fa-apple-pay',
             'classes' => ['fa-apple-pay'],
@@ -5944,47 +5944,47 @@ class Icons implements Selectable
             'class' => 'fab fa-fly',
             'classes' => ['fa-fly'],
             'content' => '\f417'
-            ],
+        ],
         '\f419' => [
             'class' => 'fab fa-node',
             'classes' => ['fa-node'],
             'content' => '\f419'
-            ],
+        ],
         '\f41a' => [
             'class' => 'fab fa-osi',
             'classes' => ['fa-osi'],
             'content' => '\f41a'
-            ],
+        ],
         '\f41b' => [
             'class' => 'fa fa-react',
             'classes' => ['fa-react'],
             'content' => '\f41b'
-            ],
+        ],
         '\f41c' => [
             'class' => 'fab fa-autoprefixer',
             'classes' => ['fa-autoprefixer'],
             'content' => '\f41c'
-            ],
+        ],
         '\f41d' => [
             'class' => 'fa fa-less',
             'classes' => ['fa-less'],
             'content' => '\f41d'
-            ],
+        ],
         '\f41e' => [
             'class' => 'fa fa-sass',
             'classes' => ['fa-sass'],
             'content' => '\f41e'
-            ],
+        ],
         '\f41f' => [
             'class' => 'fa fa-vuejs',
             'classes' => ['fa-vuejs'],
             'content' => '\f41f'
-            ],
+        ],
         '\f420' => [
             'class' => 'fa fa-angular',
             'classes' => ['fa-angular'],
             'content' => '\f420'
-            ],
+        ],
         '\f421' => [
             'class' => 'fab fa-aviato',
             'classes' => ['fa-aviato'],
@@ -6002,7 +6002,7 @@ class Icons implements Selectable
             'class' => 'fab fa-ember',
             'classes' => ['fa-ember'],
             'content' => '\f423'
-            ],
+        ],
         '\f424' => [
             'class' => 'fa fa-expand-alt',
             'classes' => ['fa-expand-alt'],
@@ -6015,22 +6015,22 @@ class Icons implements Selectable
             'class' => 'fab fa-font-awesome-flag',
             'classes' => ['fa-font-awesome-flag'],
             'content' => '\f425'
-            ],
+        ],
         '\f426' => [
             'class' => 'fab fa-gitter',
             'classes' => ['fa-gitter'],
             'content' => '\f426'
-            ],
+        ],
         '\f427' => [
             'class' => 'fab fa-hooli',
             'classes' => ['fa-hooli'],
             'content' => '\f427'
-            ],
+        ],
         '\f428' => [
             'class' => 'fab fa-strava',
             'classes' => ['fa-strava'],
             'content' => '\f428'
-            ],
+        ],
         '\f429' => [
             'class' => 'fab fa-stripe',
             'classes' => ['fa-stripe'],
@@ -6051,7 +6051,7 @@ class Icons implements Selectable
             'class' => 'fab fa-typo3',
             'classes' => ['fa-typo3'],
             'content' => '\f42b'
-            ],
+        ],
         '\f42c' => [
             'class' => 'fab fa-amazon-pay',
             'classes' => ['fa-amazon-pay'],
@@ -6080,17 +6080,17 @@ class Icons implements Selectable
             'class' => 'fab fa-korvue',
             'classes' => ['fa-korvue'],
             'content' => '\f42f'
-            ],
+        ],
         '\f430' => [
             'class' => 'fab fa-elementor',
             'classes' => ['fa-elementor'],
             'content' => '\f430'
-            ],
+        ],
         '\f431' => [
             'class' => 'fab fa-youtube-square',
             'classes' => ['fa-youtube-square'],
             'content' => '\f431'
-            ],
+        ],
         '\f433' => [
             'class' => 'fa fa-baseball-ball',
             'classes' => ['fa-baseball-ball'],
@@ -6191,7 +6191,7 @@ class Icons implements Selectable
             'class' => 'fab fa-flipboard',
             'classes' => ['fa-flipboard'],
             'content' => '\f44d'
-            ],
+        ],
         '\f44e' => [
             'class' => 'fa fa-football-ball',
             'classes' => ['fa-football-ball'],
@@ -6212,7 +6212,7 @@ class Icons implements Selectable
             'class' => 'fab fa-hips',
             'classes' => ['fa-hips'],
             'content' => '\f452'
-            ],
+        ],
         '\f453' => [
             'class' => 'fa fa-hockey-puck',
             'classes' => ['fa-hockey-puck'],
@@ -6239,7 +6239,7 @@ class Icons implements Selectable
             'class' => 'fab fa-quinscape',
             'classes' => ['fa-quinscape'],
             'content' => '\f459'
-            ],
+        ],
         '\f45c' => [
             'class' => 'fa fa-square-full',
             'classes' => ['fa-square-full'],
@@ -6466,7 +6466,7 @@ class Icons implements Selectable
             'class' => 'fa fa-shipping-fast',
             'classes' => ['fa-shipping-fast'],
             'content' => '\f48b'
-            ],
+        ],
         '\f48d' => [
             'class' => 'fa fa-smoking',
             'classes' => ['fa-smoking'],
@@ -6625,7 +6625,7 @@ class Icons implements Selectable
             'class' => 'fa fa-parachute-box',
             'classes' => ['fa-parachute-box'],
             'content' => '\f4cd'
-            ],
+        ],
         '\f4ce' => [
             'class' => 'fa fa-people-carry',
             'classes' => ['fa-people-carry'],
@@ -6646,7 +6646,7 @@ class Icons implements Selectable
             'class' => 'fab fa-readme',
             'classes' => ['fa-readme'],
             'content' => '\f4d5'
-            ],
+        ],
         '\f4d6' => [
             'class' => 'fa fa-ribbon',
             'classes' => ['fa-ribbon'],
@@ -6727,12 +6727,12 @@ class Icons implements Selectable
             'class' => 'fab fa-java',
             'classes' => ['fa-java'],
             'content' => '\f4e4'
-            ],
+        ],
         '\f4e5' => [
             'class' => 'fab fa-pied-piper-hat',
             'classes' => ['fa-pied-piper-hat'],
             'content' => '\f4e5'
-            ],
+        ],
         '\f4e6' => [
             'class' => 'fab fa-font-awesome-logo-full',
             'classes' => ['fa-font-awesome-logo-full'],
@@ -6743,77 +6743,77 @@ class Icons implements Selectable
             'class' => 'fab fa-creative-commons-by',
             'classes' => ['fa-creative-commons-by'],
             'content' => '\f4e7'
-            ],
+        ],
         '\f4e8' => [
             'class' => 'fab fa-creative-commons-nc',
             'classes' => ['fa-creative-commons-nc'],
             'content' => '\f4e8'
-            ],
+        ],
         '\f4e9' => [
             'class' => 'fab fa-creative-commons-nc-eu',
             'classes' => ['fa-creative-commons-nc-eu'],
             'content' => '\f4e9'
-            ],
+        ],
         '\f4ea' => [
             'class' => 'fab fa-creative-commons-nc-jp',
             'classes' => ['fa-creative-commons-nc-jp'],
             'content' => '\f4ea'
-            ],
+        ],
         '\f4eb' => [
             'class' => 'fab fa-creative-commons-nd',
             'classes' => ['fa-creative-commons-nd'],
             'content' => '\f4eb'
-            ],
+        ],
         '\f4ec' => [
             'class' => 'fab fa-creative-commons-pd',
             'classes' => ['fa-creative-commons-pd'],
             'content' => '\f4ec'
-            ],
+        ],
         '\f4ed' => [
             'class' => 'fab fa-creative-commons-pd-alt',
             'classes' => ['fa-creative-commons-pd-alt'],
             'content' => '\f4ed'
-            ],
+        ],
         '\f4ee' => [
             'class' => 'fab fa-creative-commons-remix',
             'classes' => ['fa-creative-commons-remix'],
             'content' => '\f4ee'
-            ],
+        ],
         '\f4ef' => [
             'class' => 'fab fa-creative-commons-sa',
             'classes' => ['fa-creative-commons-sa'],
             'content' => '\f4ef'
-            ],
+        ],
         '\f4f0' => [
             'class' => 'fab fa-creative-commons-sampling',
             'classes' => ['fa-creative-commons-sampling'],
             'content' => '\f4f0'
-            ],
+        ],
         '\f4f1' => [
             'class' => 'fab fa-creative-commons-sampling-plus',
             'classes' => ['fa-creative-commons-sampling-plus'],
             'content' => '\f4f1'
-            ],
+        ],
         '\f4f2' => [
             'class' => 'fab fa-creative-commons-share',
             'classes' => ['fa-creative-commons-share'],
             'content' => '\f4f2'
-            ],
+        ],
         '\f4f3' => [
             'class' => 'fab fa-creative-commons-zero',
             'classes' => ['fa-creative-commons-zero'],
             'content' => '\f4f3'
-            ],
+        ],
         '\f4f4' => [
             'class' => 'fab fa-ebay',
             'classes' => ['fa-ebay'],
             'content' => '\f4f4'
-            ],
+        ],
         '\f4f5' => [
             'class' => 'fab fa-keybase',
             'classes' => ['fa-keybase'],
             'content' => '\f4f5'
-            ],
+        ],
         '\f4f6' => [
             'class' => 'fab fa-mastodon',
             'classes' => ['fa-mastodon'],
@@ -6826,7 +6826,7 @@ class Icons implements Selectable
             'class' => 'fab fa-r-project',
             'classes' => ['fa-r-project'],
             'content' => '\f4f7'
-            ],
+        ],
         '\f4f8' => [
             'class' => 'fab fa-researchgate',
             'classes' => ['fa-researchgate'],
@@ -6965,57 +6965,57 @@ class Icons implements Selectable
             'class' => 'fa fa-first-order-alt',
             'classes' => ['fa-first-order-alt'],
             'content' => '\f50a'
-            ],
+        ],
         '\f50b' => [
             'class' => 'fab fa-fulcrum',
             'classes' => ['fa-fulcrum'],
             'content' => '\f50b'
-            ],
+        ],
         '\f50c' => [
             'class' => 'fa fa-galactic-republic',
             'classes' => ['fa-galactic-republic'],
             'content' => '\f50c'
-            ],
+        ],
         '\f50d' => [
             'class' => 'fa fa-galactic-senate',
             'classes' => ['fa-galactic-senate'],
             'content' => '\f50d'
-            ],
+        ],
         '\f50e' => [
             'class' => 'fa fa-jedi-order',
             'classes' => ['fa-jedi-order'],
             'content' => '\f50e'
-            ],
+        ],
         '\f50f' => [
             'class' => 'fa fa-mandalorian',
             'classes' => ['fa-mandalorian'],
             'content' => '\f50f'
-            ],
+        ],
         '\f510' => [
             'class' => 'fa fa-old-republic',
             'classes' => ['fa-old-republic'],
             'content' => '\f510'
-            ],
+        ],
         '\f511' => [
             'class' => 'fa fa-phoenix-squadron',
             'classes' => ['fa-phoenix-squadron'],
             'content' => '\f511'
-            ],
+        ],
         '\f512' => [
             'class' => 'fa fa-sith',
             'classes' => ['fa-sith'],
             'content' => '\f512'
-            ],
+        ],
         '\f513' => [
             'class' => 'fa fa-trade-federation',
             'classes' => ['fa-trade-federation'],
             'content' => '\f513'
-            ],
+        ],
         '\f514' => [
             'class' => 'fa fa-wolf-pack-battalion',
             'classes' => ['fa-wolf-pack-battalion'],
             'content' => '\f514'
-            ],
+        ],
         '\f515' => [
             'class' => 'fa fa-balance-scale-left',
             'classes' => ['fa-balance-scale-left'],
@@ -7823,17 +7823,17 @@ class Icons implements Selectable
             'class' => 'fa fa-globe-africa',
             'classes' => ['fa-globe-africa'],
             'content' => '\f57c'
-            ],
+        ],
         '\f57d' => [
             'class' => 'fa fa-globe-americas',
             'classes' => ['fa-globe-americas'],
             'content' => '\f57d'
-            ],
+        ],
         '\f57e' => [
             'class' => 'fa fa-globe-asia',
             'classes' => ['fa-globe-asia'],
             'content' => '\f57e'
-            ],
+        ],
         '\f57f' => [
             'class' => 'fa fa-grimace',
             'classes' => ['fa-grimace'],
@@ -7962,17 +7962,17 @@ class Icons implements Selectable
             'class' => 'fab fa-hornbill',
             'classes' => ['fa-hornbill'],
             'content' => '\f592'
-            ],
+        ],
         '\f593' => [
             'class' => 'fa fa-hot-tub',
             'classes' => ['fa-hot-tub'],
             'content' => '\f593'
-            ],
+        ],
         '\f594' => [
             'class' => 'fa fa-hotel',
             'classes' => ['fa-hotel'],
             'content' => '\f594'
-            ],
+        ],
         '\f595' => [
             'class' => 'fa fa-joint',
             'classes' => ['fa-joint'],
@@ -8025,12 +8025,12 @@ class Icons implements Selectable
             'class' => 'fa fa-luggage-cart',
             'classes' => ['fa-luggage-cart'],
             'content' => '\f59d'
-            ],
+        ],
         '\f59e' => [
             'class' => 'fab fa-mailchimp',
             'classes' => ['fa-mailchimp'],
             'content' => '\f59e'
-            ],
+        ],
         '\f59f' => [
             'class' => 'fa fa-map-marked',
             'classes' => ['fa-map-marked'],
@@ -8101,7 +8101,7 @@ class Icons implements Selectable
             'class' => 'fab fa-nimblr',
             'classes' => ['fa-nimblr'],
             'content' => '\f5a8'
-            ],
+        ],
         '\f5aa' => [
             'class' => 'fa fa-paint-roller',
             'classes' => ['fa-paint-roller'],
@@ -8146,12 +8146,12 @@ class Icons implements Selectable
             'class' => 'fa fa-plane-arrival',
             'classes' => ['fa-plane-arrival'],
             'content' => '\f5af'
-            ],
+        ],
         '\f5b0' => [
             'class' => 'fa fa-plane-departure',
             'classes' => ['fa-plane-departure'],
             'content' => '\f5b0'
-            ],
+        ],
         '\f5b1' => [
             'class' => 'fa fa-prescription',
             'classes' => ['fa-prescription'],
@@ -8182,7 +8182,7 @@ class Icons implements Selectable
             'class' => 'fab fa-shopware',
             'classes' => ['fa-shopware'],
             'content' => '\f5b5'
-            ],
+        ],
         '\f5b6' => [
             'class' => 'fa fa-shuttle-van',
             'classes' => ['fa-shuttle-van'],
@@ -8217,7 +8217,7 @@ class Icons implements Selectable
             'class' => 'fa fa-spa',
             'classes' => ['fa-spa'],
             'content' => '\f5bb'
-            ],
+        ],
         '\f5bc' => [
             'class' => 'fa fa-splotch',
             'classes' => ['fa-splotch'],
@@ -8259,7 +8259,7 @@ class Icons implements Selectable
             'class' => 'fa fa-suitcase-rolling',
             'classes' => ['fa-suitcase-rolling'],
             'content' => '\f5c1'
-            ],
+        ],
         '\f5c2' => [
             'class' => 'fa fa-surprise',
             'classes' => ['fa-surprise'],
@@ -8319,7 +8319,7 @@ class Icons implements Selectable
             'class' => 'fa fa-umbrella-beach',
             'classes' => ['fa-umbrella-beach'],
             'content' => '\f5ca'
-            ],
+        ],
         '\f5cb' => [
             'class' => 'fa fa-vector-square',
             'classes' => ['fa-vector-square'],
@@ -8504,7 +8504,7 @@ class Icons implements Selectable
             'class' => 'fab fa-markdown',
             'classes' => ['fa-markdown'],
             'content' => '\f60f'
-            ],
+        ],
         '\f610' => [
             'class' => 'fa fa-microscope',
             'classes' => ['fa-microscope'],
@@ -8726,12 +8726,12 @@ class Icons implements Selectable
             'class' => 'fa fa-jedi',
             'classes' => ['fa-jedi'],
             'content' => '\f669'
-            ],
+        ],
         '\f66a' => [
             'class' => 'fa fa-journal-whills',
             'classes' => ['fa-journal-whills'],
             'content' => '\f66a'
-            ],
+        ],
         '\f66b' => [
             'class' => 'fa fa-kaaba',
             'classes' => ['fa-kaaba'],
@@ -8956,7 +8956,7 @@ class Icons implements Selectable
             'class' => 'fa fa-campground',
             'classes' => ['fa-campground'],
             'content' => '\f6bb'
-            ],
+        ],
         '\f6be' => [
             'class' => 'fa fa-cat',
             'classes' => ['fa-cat'],
@@ -8993,17 +8993,17 @@ class Icons implements Selectable
             'class' => 'fab fa-critical-role',
             'classes' => ['fa-critical-role'],
             'content' => '\f6c9'
-            ],
+        ],
         '\f6ca' => [
             'class' => 'fab fa-d-and-d-beyond',
             'classes' => ['fa-d-and-d-beyond'],
             'content' => '\f6ca'
-            ],
+        ],
         '\f6cc' => [
             'class' => 'fab fa-dev',
             'classes' => ['fa-dev'],
             'content' => '\f6cc'
-            ],
+        ],
         '\f6cf' => [
             'class' => 'fa fa-dice-d20',
             'classes' => ['fa-dice-d20'],
@@ -9056,7 +9056,7 @@ class Icons implements Selectable
             'class' => 'fa fa-fantasy-flight-games',
             'classes' => ['fa-fantasy-flight-games'],
             'content' => '\f6dc'
-            ],
+        ],
         '\f6dd' => [
             'class' => 'fa fa-file-csv',
             'classes' => ['fa-file-csv'],
@@ -9176,7 +9176,7 @@ class Icons implements Selectable
             'class' => 'fa fa-penny-arcade',
             'classes' => ['fa-penny-arcade'],
             'content' => '\f704'
-            ],
+        ],
         '\f70b' => [
             'class' => 'fa fa-ring',
             'classes' => ['fa-ring'],
@@ -9275,12 +9275,12 @@ class Icons implements Selectable
             'class' => 'fab fa-wizards-of-the-coast',
             'classes' => ['fa-wizards-of-the-coast'],
             'content' => '\f730'
-            ],
+        ],
         '\f731' => [
             'class' => 'fab fa-think-peaks',
             'classes' => ['fa-think-peaks'],
             'content' => '\f731'
-            ],
+        ],
         '\f73b' => [
             'class' => 'fa fa-cloud-meatball',
             'classes' => ['fa-cloud-meatball'],
@@ -9526,7 +9526,7 @@ class Icons implements Selectable
             'class' => 'fab fa-dhl',
             'classes' => ['fa-dhl'],
             'content' => '\f790'
-            ],
+        ],
         '\f791' => [
             'class' => 'fab fa-diaspora',
             'classes' => ['fa-diaspora'],
@@ -9556,12 +9556,12 @@ class Icons implements Selectable
             'class' => 'fab fa-fedex',
             'classes' => ['fa-fedex'],
             'content' => '\f797'
-            ],
+        ],
         '\f798' => [
             'class' => 'fab fa-fedora',
             'classes' => ['fa-fedora'],
             'content' => '\f798'
-            ],
+        ],
         '\f799' => [
             // Collaborative design platform
             'class' => 'fab fa-figma',
@@ -9681,7 +9681,7 @@ class Icons implements Selectable
             'class' => 'fab fa-jira',
             'classes' => ['fa-jira'],
             'content' => '\f7b1'
-            ],
+        ],
         '\f7b3' => [
             'class' => 'fab fa-mendeley',
             'classes' => ['fa-mendeley'],
@@ -9726,12 +9726,12 @@ class Icons implements Selectable
             'class' => 'fab fa-raspberry-pi',
             'classes' => ['fa-raspberry-pi'],
             'content' => '\f7bb'
-            ],
+        ],
         '\f7bc' => [
             'class' => 'fab fa-redhat',
             'classes' => ['fa-redhat'],
             'content' => '\f7bc'
-            ],
+        ],
         '\f7bd' => [
             'class' => 'fa fa-restroom',
             'classes' => ['fa-restroom'],
@@ -9784,7 +9784,7 @@ class Icons implements Selectable
             'class' => 'fab fa-sketch',
             'classes' => ['fa-sketch'],
             'content' => '\f7c6'
-            ],
+        ],
         '\f7c9' => [
             'class' => 'fa fa-skiing',
             'classes' => ['fa-skiing'],
@@ -9845,12 +9845,12 @@ class Icons implements Selectable
             'class' => 'fab fa-sourcetree',
             'classes' => ['fa-sourcetree'],
             'content' => '\f7d3'
-            ],
+        ],
         '\f7d6' => [
             'class' => 'fab fa-suse',
             'classes' => ['fa-suse'],
             'content' => '\f7d6'
-            ],
+        ],
         '\f7d7' => [
             'class' => 'fa fa-tenge',
             'classes' => ['fa-tenge'],
@@ -9887,22 +9887,22 @@ class Icons implements Selectable
             'class' => 'fab fa-ubuntu',
             'classes' => ['fa-ubuntu'],
             'content' => '\f7df'
-            ],
+        ],
         '\f7e0' => [
             'class' => 'fab fa-ups',
             'classes' => ['fa-ups'],
             'content' => '\f7e0'
-            ],
+        ],
         '\f7e1' => [
             'class' => 'fab fa-usps',
             'classes' => ['fa-usps'],
             'content' => '\f7e1'
-            ],
+        ],
         '\f7e3' => [
             'class' => 'fab fa-yarn',
             'classes' => ['fa-yarn'],
             'content' => '\f7e3'
-            ],
+        ],
         '\f7e4' => [
             'class' => 'fa fa-fire-alt',
             'classes' => ['fa-fire-alt'],
@@ -10081,27 +10081,27 @@ class Icons implements Selectable
             'class' => 'fab fa-airbnb',
             'classes' => ['fa-airbnb'],
             'content' => '\f834'
-            ],
+        ],
         '\f835' => [
             'class' => 'fab fa-battle-net',
             'classes' => ['fa-battle-net'],
             'content' => '\f835'
-            ],
+        ],
         '\f836' => [
             'class' => 'fab fa-bootstrap',
             'classes' => ['fa-bootstrap'],
             'content' => '\f836'
-            ],
+        ],
         '\f837' => [
             'class' => 'fab fa-buffer',
             'classes' => ['fa-buffer'],
             'content' => '\f837'
-            ],
+        ],
         '\f838' => [
             'class' => 'fab fa-chromecast',
             'classes' => ['fa-chromecast'],
             'content' => '\f838'
-            ],
+        ],
         '\f839' => [
             'class' => 'fab fa-evernote',
             'classes' => ['fa-evernote'],
@@ -10114,12 +10114,12 @@ class Icons implements Selectable
             'class' => 'fab fa-itch-io',
             'classes' => ['fa-itch-io'],
             'content' => '\f83a'
-            ],
+        ],
         '\f83b' => [
             'class' => 'fab fa-salesforce',
             'classes' => ['fa-salesforce'],
             'content' => '\f83b'
-            ],
+        ],
         '\f83c' => [
             'class' => 'fab fa-speaker-deck',
             'classes' => ['fa-speaker-deck'],
@@ -10132,7 +10132,7 @@ class Icons implements Selectable
             'class' => 'fab fa-symfony',
             'classes' => ['fa-symfony'],
             'content' => '\f83d'
-            ],
+        ],
         '\f83e' => [
             'class' => 'fa fa-wave-square',
             'classes' => ['fa-wave-square'],
@@ -10145,7 +10145,7 @@ class Icons implements Selectable
             'class' => 'fab fa-waze',
             'classes' => ['fa-waze'],
             'content' => '\f83f'
-            ],
+        ],
         '\f840' => [
             'class' => 'fab fa-yammer',
             'classes' => ['fa-yammer'],
@@ -10158,12 +10158,12 @@ class Icons implements Selectable
             'class' => 'fab fa-git-alt',
             'classes' => ['fa-git-alt'],
             'content' => '\f841'
-            ],
+        ],
         '\f842' => [
             'class' => 'fab fa-stackpath',
             'classes' => ['fa-stackpath'],
             'content' => '\f842'
-            ],
+        ],
         '\f84a' => [
             'class' => 'fa fa-biking',
             'classes' => ['fa-biking'],
@@ -10332,7 +10332,7 @@ class Icons implements Selectable
             'class' => 'fab fa-mdb',
             'classes' => ['fa-mdb'],
             'content' => '\f8ca'
-            ],
+        ],
         '\f8cc' => [
             'class' => 'fa fa-mouse',
             'classes' => ['fa-mouse'],
@@ -10361,7 +10361,7 @@ class Icons implements Selectable
             'class' => 'fab fa-swift',
             'classes' => ['fa-swift'],
             'content' => '\f8e1'
-            ],
+        ],
         '\f8e8' => [
             'class' => 'fab fa-umbraco',
             'classes' => ['fa-umbraco'],
@@ -10380,7 +10380,6 @@ class Icons implements Selectable
 
     /**
      * Checks the stylesheet responsible for content assignment for new content.
-     *
      * @return void
      */
     public static function checkIcons(): void
@@ -10430,7 +10429,7 @@ class Icons implements Selectable
 
         foreach (self::ICONS as $icon) {
 
-            if (empty($icon['priority']) OR !$text = $icon[$nameKey] ?? '') {
+            if (empty($icon['priority']) or !$text = $icon[$nameKey] ?? '') {
                 continue;
             }
 
@@ -10452,5 +10451,23 @@ class Icons implements Selectable
         }
 
         return $options;
+    }
+
+    /**
+     * Validates the icon class value against the supported icons
+     *
+     * @param string $class the class of the selected icon
+     *
+     * @return string the icon class on success, otherwise an empty string
+     */
+    public static function supported(string $class): string
+    {
+        foreach (self::ICONS as $icon) {
+            if ($class === $icon['class']) {
+                return isset($icon['priority']) ? $class : '';
+            }
+        }
+
+        return '';
     }
 }
