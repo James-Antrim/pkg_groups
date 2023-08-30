@@ -53,7 +53,7 @@ class Controller extends BaseController
     }
 
     /**
-     * Calls the model's save function and redirects to the same view of the same resource.
+     * Saves resource data and redirects to the same view of the same resource.
      * @return void
      */
     public function apply(): void
@@ -188,7 +188,7 @@ class Controller extends BaseController
     }
 
     /**
-     * Saves the model's save function and redirects to the same view of the copy resource.
+     * Saves resource data and redirects to the same view of the copy resource.
      * @return void
      */
     public function save(): void
@@ -217,7 +217,7 @@ class Controller extends BaseController
     }
 
     /**
-     * Calls the model's save function and redirects to the same view of the copy resource.
+     * Saves resource data and redirects to the same view of the copy resource.
      * @return void
      */
     public function save2copy(): void
@@ -228,18 +228,11 @@ class Controller extends BaseController
 
         $model = new $fqName();
 
-        // Present the data as if it was from an empty form.
-        $data       = Input::getFormItems()->toArray();
-        $data['id'] = 0;
-
-        // Success => redirect to the edit view of the copy
-        if ($newID = $model->save($data)) {
-            $this->setRedirect("index.php?option=com_groups&view=$this->name&id=$newID");
-            return;
-        }
+        // Reset the id for the new entry.
+        Input::set('id', 0);
 
         // Success => redirect to the edit view of the new resource
-        if ($newID = $model->save($data)) {
+        if ($newID = $model->save()) {
             $this->setRedirect("$this->baseURL&view=$this->name&id=$newID");
             return;
         }
@@ -249,7 +242,7 @@ class Controller extends BaseController
     }
 
     /**
-     * Saves the model's save function and redirects to the same view of a new resource.
+     * Saves resource data and redirects to the same view of a new resource.
      * @return void
      */
     public function save2new(): void

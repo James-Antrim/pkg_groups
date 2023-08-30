@@ -17,7 +17,7 @@ class Attribute extends FormView
      */
     protected function addToolbar(array $buttons = []): void
     {
-        $buttons = empty($this->item->id) ? ['apply'] : ['save', 'apply', 'save2copy', 'save2new'];
+        $buttons = empty($this->item->id) ? ['save', 'apply', 'save2new'] : ['save', 'apply', 'save2copy', 'save2new'];
         parent::addToolbar($buttons);
     }
 

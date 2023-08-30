@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
     <fieldset name="details">
+        <field name="id" type="hidden"/>
         <field name="label_de" type="text" label="GROUPS_LABEL_DE" description="GROUPS_ATTRIBUTE_LABEL_DESC"
                required="true"/>
         <field name="label_en" type="text" label="GROUPS_LABEL_EN" description="GROUPS_ATTRIBUTE_LABEL_DESC"
@@ -28,14 +29,14 @@
             <option value="">GROUPS_SELECT_TYPE</option>
         </field>
 
-        <!-- Start: Editor => HTML -->
+        <!-- Start: Editor => HTML field names corresponds to joomla field parameter names-->
         <field name="buttons" type="radio" label="GROUPS_SHOW_EDITOR_BUTTONS" class="btn-group btn-group-yesno"
                default="0" description="GROUPS_SHOW_EDITOR_BUTTONS_DESC" showon="typeID:6"
         >
             <option value="0">GROUPS_NO</option>
             <option value="1">GROUPS_YES</option>
         </field>
-        <field name="hide" type="ExcludedButtons" label="GROUPS_EXCLUDED_BUTTONS"
+        <field name="hide[]" type="ExcludedButtons" label="GROUPS_EXCLUDED_BUTTONS"
                description="GROUPS_EXCLUDED_BUTTONS_DESC" showon="typeID:6[AND]buttons:1"/>
         <!-- End: Editor => HTML -->
     </fieldset>

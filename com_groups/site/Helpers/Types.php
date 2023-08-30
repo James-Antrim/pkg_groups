@@ -28,7 +28,8 @@ class Types implements Selectable
         LINK = 8,
         LINK_LIST = 9,
         PHONE = 10,
-        SUPPLEMENT = 11;
+        SUPPLEMENT = 11,
+        TEXT = 12;
 
     public const TYPES = [
         self::ADDRESS => [
