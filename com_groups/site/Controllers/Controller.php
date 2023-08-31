@@ -171,7 +171,7 @@ class Controller extends BaseController
         }
 
         $view = Application::getClass($this);
-        $this->setRedirect("index.php?option=com_groups&view=$view");
+        $this->setRedirect("$this->baseURL&view=$view");
     }
 
     /**

@@ -23,6 +23,15 @@ class Attributes extends Controller
      * Deletes the selected attributes.
      * @return void
      */
+    public function add(): void
+    {
+        $this->setRedirect("$this->baseURL&view=Attribute");
+    }
+
+    /**
+     * Deletes the selected attributes.
+     * @return void
+     */
     public function delete(): void
     {
         // Check for request forgeries
