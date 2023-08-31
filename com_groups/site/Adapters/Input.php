@@ -30,15 +30,14 @@ class Input
     /**
      * Filters the given source data according to the type parameter.
      *
-     * @param mixed $source the data to be filtered
-     * @param string $type the type against which to filter the source data
+     * @param mixed  $source the data to be filtered
+     * @param string $type   the type against which to filter the source data
      *
      * @return mixed
      */
-    public static function filter($source, string $type = 'string')
+    public static function filter(mixed $source, string $type = 'string'): mixed
     {
-        if (empty(self::$filter))
-        {
+        if (empty(self::$filter)) {
             self::$filter = new InputFilter();
         }
 
@@ -50,22 +49,19 @@ class Input
      *
      * @param string $property Name of the property to get.
      *
-     * @return array|int|string the value found, or false if the property could not be found
+     * @return array|int|string|null the value found, otherwise null
      */
-    private static function find(string $property)
+    private static function find(string $property): array|int|string|null
     {
-        if ($value = self::getInput()->get($property, null, 'raw'))
-        {
+        if ($value = self::getInput()->get($property, null, 'raw')) {
             return $value;
         }
 
-        if ($value = self::getFormItems()->get($property))
-        {
+        if ($value = self::getFormItems()->get($property)) {
             return $value;
         }
 
-        if ($value = self::getParams()->get($property))
-        {
+        if ($value = self::getParams()->get($property)) {
             return $value;
         }
 
@@ -75,8 +71,8 @@ class Input
     /**
      * Provides a shortcut to retrieve an array from the request.
      *
-     * @param string $name the name of the array item
-     * @param array $default the default array
+     * @param string $name    the name of the array item
+     * @param array  $default the default array
      *
      * @return array
      */
@@ -87,7 +83,6 @@ class Input
 
     /**
      * Retrieves the batch items from the request and creates a registry with the data.
-     *
      * @return Registry
      */
     public static function getBatchItems(): Registry
@@ -99,16 +94,15 @@ class Input
      * Retrieves the specified parameter.
      *
      * @param string $property Name of the property to get.
-     * @param mixed $default Default value to return if variable does not exist.
+     * @param mixed  $default  Default value to return if variable does not exist.
      *
      * @return bool
      */
-    public static function getBool(string $property, $default = false): bool
+    public static function getBool(string $property, bool $default = false): bool
     {
         $value = self::find($property);
 
-        if ($value === null)
-        {
+        if ($value === null) {
             return self::filter($default, 'bool');
         }
 
@@ -117,13 +111,11 @@ class Input
 
     /**
      * Retrieves the controller parameter with the view parameter as fallback.
-     *
      * @return string
      */
     public static function getController(): string
     {
-        if ($controller = self::getCMD('controller'))
-        {
+        if ($controller = self::getCMD('controller')) {
             return $controller;
         }
 
@@ -134,14 +126,13 @@ class Input
      * Retrieves the specified parameter.
      *
      * @param string $property Name of the property to get.
-     * @param mixed $default Default value to return if variable does not exist.
+     * @param mixed  $default  Default value to return if variable does not exist.
      *
      * @return string
      */
-    public static function getCMD(string $property, $default = ''): string
+    public static function getCMD(string $property, string $default = ''): string
     {
-        if ($value = self::find($property))
-        {
+        if ($value = self::find($property)) {
             return self::filter($value, 'cmd');
         }
 
@@ -152,7 +143,7 @@ class Input
      * Returns the application's input object.
      *
      * @param string $resource the name of the resource upon which the ids being sought reference
-     * @param int $default the default value
+     * @param int    $default  the default value
      *
      * @return int the filter id
      */
@@ -177,27 +168,23 @@ class Input
 
         $pluralIndex = "{$resource}IDs";
 
-        if ($values = $filterItems->get($pluralIndex, false))
-        {
+        if ($values = $filterItems->get($pluralIndex, false)) {
             return self::formatIDValues($values);
         }
 
-        if ($values = $listItems->get($pluralIndex, false))
-        {
+        if ($values = $listItems->get($pluralIndex, false)) {
             return self::formatIDValues($values);
         }
 
         $singularIndex = "{$resource}ID";
 
-        if ($value = $filterItems->get($singularIndex, false))
-        {
+        if ($value = $filterItems->get($singularIndex, false)) {
             $values = [$value];
 
             return self::formatIDValues($values);
         }
 
-        if ($value = $listItems->get($singularIndex, false))
-        {
+        if ($value = $listItems->get($singularIndex, false)) {
             $values = [$value];
 
             return self::formatIDValues($values);
@@ -208,13 +195,11 @@ class Input
 
     /**
      * Retrieves the filter items from the request and creates a registry with the data.
-     *
      * @return Registry
      */
     public static function getFilterItems(): Registry
     {
-        if (empty(self::$filterItems))
-        {
+        if (empty(self::$filterItems)) {
             $view     = self::getView();
             $previous = Application::getSession()->get('registry')->get("com_groups.$view.filter", []);
 
@@ -226,7 +211,6 @@ class Input
 
     /**
      * Retrieves the request form.
-     *
      * @return Registry with the request data if available
      */
     public static function getFormItems(): Registry
@@ -236,7 +220,6 @@ class Input
 
     /**
      * Retrieves the id parameter.
-     *
      * @return int
      */
     public static function getID(): int
@@ -262,14 +245,16 @@ class Input
      * Retrieves the specified parameter.
      *
      * @param string $property Name of the property to get.
-     * @param mixed $default Default value to return if variable does not exist.
+     * @param int    $default  Default value to return if variable does not exist.
      *
      * @return int
      */
-    public static function getInt(string $property, $default = 0): int
+    public static function getInt(string $property, int $default = 0): int
     {
-        if ($value = self::find($property))
-        {
+        $value = self::find($property);
+
+        // Better plausibility test for this type whose value can also be 0 on purpose and otherwise evaluate to false.
+        if (is_numeric($value)) {
             return self::filter($value, 'int');
         }
 
@@ -278,7 +263,6 @@ class Input
 
     /**
      * Retrieves the id of the requested menu item / menu item configuration.
-     *
      * @return int
      */
     public static function getItemid(): int
@@ -292,13 +276,11 @@ class Input
 
     /**
      * Returns the application's input object.
-     *
      * @return Base
      */
     public static function getInput(): Base
     {
-        if (empty(self::$input))
-        {
+        if (empty(self::$input)) {
             self::$input = Application::getApplication()->input;
         }
 
@@ -307,13 +289,11 @@ class Input
 
     /**
      * Retrieves the list items from the request and creates a registry with the data.
-     *
      * @return Registry
      */
     public static function getListItems(): Registry
     {
-        if (empty(self::$listItems))
-        {
+        if (empty(self::$listItems)) {
             $view            = self::getView();
             $previous        = Application::getSession()->get('registry')->get("com_groups.$view.list", []);
             self::$listItems = new Registry(self::getArray('list', $previous));
@@ -324,13 +304,11 @@ class Input
 
     /**
      * Consolidates the application, component and menu parameters to a single registry with one call.
-     *
      * @return Registry
      */
     public static function getParams(): Registry
     {
-        if (empty(self::$params))
-        {
+        if (empty(self::$params)) {
             $app          = Application::getApplication();
             self::$params = method_exists($app, 'getParams') ?
                 $app->getParams() : Application::getParams();
@@ -355,7 +333,6 @@ class Input
 
     /**
      * Returns the selected resource ids.
-     *
      * @return int[] the selected ids
      */
     public static function getSelectedIDs(): array
@@ -363,21 +340,17 @@ class Input
         // List Views
         $selectedIDs = self::getIntCollection('cid');
 
-        if (!empty($selectedIDs))
-        {
+        if (!empty($selectedIDs)) {
             return $selectedIDs;
         }
 
         // Forms
         $formItems = self::getFormItems();
-        if ($formItems->count())
-        {
+        if ($formItems->count()) {
             // Merge Views
-            if ($selectedIDs = $formItems->get('ids'))
-            {
+            if ($selectedIDs = $formItems->get('ids')) {
                 $formattedValues = self::formatIDValues($selectedIDs);
-                if (count($formattedValues))
-                {
+                if (count($formattedValues)) {
                     asort($formattedValues);
 
                     return $formattedValues;
@@ -385,8 +358,7 @@ class Input
             }
 
             // Edit Views
-            if ($id = $formItems->get('id'))
-            {
+            if ($id = $formItems->get('id')) {
                 $selectedIDs = [$id];
 
                 return self::formatIDValues($selectedIDs);
@@ -403,14 +375,13 @@ class Input
      * Retrieves the specified parameter.
      *
      * @param string $property Name of the property to get.
-     * @param mixed $default Default value to return if variable does not exist.
+     * @param string $default  $default  Default value to return if variable does not exist.
      *
      * @return string
      */
-    public static function getString(string $property, $default = ''): string
+    public static function getString(string $property, string $default = ''): string
     {
-        if ($value = self::find($property))
-        {
+        if ($value = self::find($property)) {
             return self::filter($value);
         }
 
@@ -419,7 +390,6 @@ class Input
 
     /**
      * Retrieves the batch items from the request and creates a registry with the data.
-     *
      * @return Registry
      */
     public static function getSupplementalItems(): Registry
@@ -429,7 +399,6 @@ class Input
 
     /**
      * Retrieves the task parameter.
-     *
      * @return string
      */
     public static function getTask(): string
@@ -439,7 +408,6 @@ class Input
 
     /**
      * Retrieves the view parameter.
-     *
      * @return string
      */
     public static function getView(): string
@@ -450,22 +418,17 @@ class Input
     /**
      * Resolves a comma separated list of id values to an array of id values.
      *
-     * @param mixed $idValues the id values as an array or string
+     * @param array|string $idValues the id values as an array or string
      *
      * @return int[] the id values, empty if the values were invalid or the input was not an array or a string
      */
-    public static function formatIDValues(&$idValues): array
+    public static function formatIDValues(array|string &$idValues): array
     {
-        if (is_string($idValues))
-        {
+        if (is_string($idValues)) {
             $idValues = explode(',', $idValues);
-        }
-        elseif (is_array($idValues) and count($idValues) === 1 and preg_match('/^(\d+,)*\d+$/', $idValues[0]) !== -1)
-        {
+        } elseif (is_array($idValues) and count($idValues) === 1 and preg_match('/^(\d+,)*\d+$/', $idValues[0]) !== -1) {
             $idValues = explode(',', $idValues[0]);
-        }
-        elseif (!is_array($idValues))
-        {
+        } elseif (!is_array($idValues)) {
             $idValues = [];
         }
 
@@ -478,15 +441,14 @@ class Input
      * Sets an input property with a value.
      *
      * @param string $property the name of the property to set
-     * @param mixed $value the value to set to the property
-     * @param string $method the method group of the property
+     * @param mixed  $value    the value to set to the property
+     * @param string $method   the method group of the property
      *
      * @return void
      */
-    public static function set(string $property, $value, string $method = '')
+    public static function set(string $property, mixed $value, string $method = ''): void
     {
-        if ($method)
-        {
+        if ($method) {
             self::getInput()->$method->set($property, $value);
 
             return;
