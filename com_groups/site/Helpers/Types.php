@@ -12,6 +12,9 @@ namespace THM\Groups\Helpers;
 
 use THM\Groups\Adapters\Text;
 
+/**
+ * @todo Add type conversion routines for migration of values between attributes of differing types.
+ */
 class Types implements Selectable
 {
     /**
@@ -146,11 +149,6 @@ class Types implements Selectable
             'name' => 'GROUPS_LINK_TEXT'
         ]
     ];
-
-    //TODO add type conversion for compatible types
-
-    public const INLINE = [self::SUPPLEMENT];
-    public const FULL_WIDTH = [self::HTML];
 
     /**
      * @inheritDoc

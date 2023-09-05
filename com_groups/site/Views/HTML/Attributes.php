@@ -17,6 +17,8 @@ use THM\Groups\Layouts\ListItem;
 
 /**
  * View class for displaying available attribute types.
+ *
+ * @todo Add a type migration dialog.
  */
 class Attributes extends ListView
 {
@@ -59,27 +61,7 @@ class Attributes extends ListView
             $item->icon      = '';
             $item->showIcon  = HTML::toggle($rowNo, Helper::showIconStates[$item->showIcon], 'Attributes', $neither) . $icon;
             $item->showLabel = HTML::toggle($rowNo, Helper::showLabelStates[$item->showLabel], 'Attributes', $neither);
-
-            /*$item->context = match ($item->context)
-            {
-                Helpers\Attributes::GROUPS_CONTEXT => Text::_('GROUPS_GROUPS'),
-                Helpers\Attributes::PERSONS_CONTEXT => Text::_('GROUPS_PROFILES'),
-                default => Text::_('GROUPS_GROUPS_AND_PROFILES'),
-            };*/
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function display($tpl = null): void
-    {
-        $this->todo = [
-            'Add a type migration dialog.',
-            'Add order of display.'
-        ];
-
-        parent::display($tpl);
     }
 
     /**
@@ -110,11 +92,11 @@ class Attributes extends ListView
                 'title' => Text::_('GROUPS_INPUT'),
                 'type' => 'text'
             ],
-            /*'context' => [
-                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_CONTEXT'),
+            'output' => [
+                'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+                'title' => Text::_('GROUPS_OUTPUT'),
                 'type' => 'text'
-            ],*/
+            ],
             'level' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
                 'title' => Text::_('GROUPS_LEVEL'),
