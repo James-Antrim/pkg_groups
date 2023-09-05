@@ -17,27 +17,61 @@
         <field name="icon" type="Icons" label="GROUPS_ICON" description="GROUPS_ICON_DESC" showon="showIcon:1">
             <option value="">GROUPS_NO_ICON</option>
         </field>
-        <!-- Later... -->
         <field name="context" type="hidden" label="GROUPS_ATTRIBUTE_CONTEXT" description="GROUPS_ATTRIBUTE_CONTEXT_DESC"
                default="0"/>
-        <!--    <option value="0">GROUPS_BOTH_CONTEXTS</option>
-            <option value="1">GROUPS_PROFILES</option>
-            <option value="2">GROUPS_GROUPS</option>
-        </field> -->
-        <field name="levelID" type="ViewLevels" label="GROUPS_LEVEL" default="1" description="GROUPS_LEVEL_DESC"/>
+        <field name="viewLevelID" type="ViewLevels" label="GROUPS_LEVEL" default="1" description="GROUPS_LEVEL_DESC"/>
         <field name="typeID" type="Types" label="GROUPS_TYPE" description="GROUPS_TYPE_DESC" required="true">
             <option value="">GROUPS_SELECT_TYPE</option>
         </field>
-
-        <!-- Start: Editor => HTML field names corresponds to joomla field parameter names-->
+        <field type="spacer" description="GROUPS_OPTIONS_DESC" showon="typeID!:"/>
+        <field name="linked" type="radio" label="GROUPS_LINKED" class="btn-group btn-group-yesno"
+               default="0" description="GROUPS_LINKED_DESC" showon="typeID:8[OR]typeID:9">
+            <option value="0">GROUPS_NO</option>
+            <option value="1">GROUPS_YES</option>
+        </field>
+        <field name="linkType" type="radio" label="GROUPS_LINK_TYPE" class="btn-group"
+               default="0" showon="typeID:8[OR]typeID:9[AND]linked:1">
+            <option value="0">GROUPS_URL</option>
+            <option value="1">GROUPS_EMAIL</option>
+        </field>
+        <field name="maxLength" type="number" label="GROUPS_MAX_LENGTH" showon="typeID:8[OR]typeID:9"
+               default="200" min="5" max="200" step="5"/>
+        <field name="codeFirst" type="radio" label="GROUPS_CODE_FIRST" class="btn-group btn-group-yesno"
+               default="1" showon="typeID:1">
+            <option value="1">GROUPS_YES</option>
+            <option value="0">GROUPS_NO</option>
+        </field>
+        <field name="showCountry" type="radio" label="GROUPS_SHOW_COUNTRY" class="btn-group btn-group-yesno"
+               default="0" showon="typeID:1">
+            <option value="1">GROUPS_YES</option>
+            <option value="0">GROUPS_NO</option>
+        </field>
+        <field name="countryNext" type="radio" label="GROUPS_COUNTRY_NEW_LINE" class="btn-group btn-group-yesno"
+               default="1" showon="typeID:1[AND]showCountry:1">
+            <option value="1">GROUPS_YES</option>
+            <option value="0">GROUPS_NO</option>
+        </field>
         <field name="buttons" type="radio" label="GROUPS_SHOW_EDITOR_BUTTONS" class="btn-group btn-group-yesno"
-               default="0" description="GROUPS_SHOW_EDITOR_BUTTONS_DESC" showon="typeID:6"
-        >
+               default="0" description="GROUPS_SHOW_EDITOR_BUTTONS_DESC" showon="typeID:6">
             <option value="0">GROUPS_NO</option>
             <option value="1">GROUPS_YES</option>
         </field>
         <field name="hide[]" type="ExcludedButtons" label="GROUPS_EXCLUDED_BUTTONS"
                description="GROUPS_EXCLUDED_BUTTONS_DESC" showon="typeID:6[AND]buttons:1"/>
-        <!-- End: Editor => HTML -->
+        <field name="accept" type="list" label="GROUPS_ACCEPTED_FORMATS" description="GROUPS_MULTIPLE_EXPLANATION"
+               default="image/*,.pdf" multiple="multiple" showon="typeID:7" size="8">
+            <option value="image/*,.pdf">GROUPS_ALL_FORMATS</option>
+            <option value=".avif">AV1 Image Format</option>
+            <option value=".gif">Graphics Interchange Format</option>
+            <option value=".jfi,.jfif,.jif,.jpe,.jpeg,.jpg,.jxl">Joint Photographic Experts Group</option>
+            <option value=".pdf">Portable Document Format</option>
+            <option value=".png">Portable Network Graphics</option>
+            <option value=".webp">WebP</option>
+            <option value=".svg,.svgz">Scalable Vector Graphics</option>
+        </field>
+        <field name="hint_de" type="text" label="GROUPS_HINT_DE" description="GROUPS_HINT_DE_DESC" showon="typeID:8"/>
+        <field name="hint_en" type="text" label="GROUPS_HINT_EN" description="GROUPS_HINT_EN_DESC" showon="typeID:8"/>
+        <field name="maxRows" type="number" label="GROUPS_MAX_ROWS" default="20" min="2" max="40" showon="typeID:9"
+               step="2"/>
     </fieldset>
 </form>

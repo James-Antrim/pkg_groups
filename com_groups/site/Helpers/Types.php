@@ -47,7 +47,7 @@ class Types implements Selectable
                 'value' => 'URL'
             ],
             'icon' => '',
-            'input' => 'GROUPS_FORM_TEMPLATE',
+            'input' => 'GROUPS_URL_FIELD',
             'name' => 'GROUPS_MEDIA_BUTTON'
         ],
         self::DATE => [
@@ -151,15 +151,6 @@ class Types implements Selectable
 
     public const INLINE = [self::SUPPLEMENT];
     public const FULL_WIDTH = [self::HTML];
-
-    /**
-     * URL
-     * BUTTON
-     * ROOM
-     * LIST
-     * URL LIST
-     * NESTED LIST
-     */
 
     /**
      * @inheritDoc

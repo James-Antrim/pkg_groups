@@ -10,6 +10,9 @@
 
 namespace THM\Groups\Views\HTML;
 
+/**
+ * @todo Find a way to display Font Awesome Brand Icons correctly in the select box.
+ */
 class Attribute extends FormView
 {
     /**
@@ -19,18 +22,5 @@ class Attribute extends FormView
     {
         $buttons = empty($this->item->id) ? ['save', 'apply', 'save2new'] : ['save', 'apply', 'save2copy', 'save2new'];
         parent::addToolbar($buttons);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function display($tpl = null): void
-    {
-        $this->todo = [
-            'Add a display of an example for the form field and the profile output.',
-            'Find a way to display Font Awesome Brand Icons correctly in the select box.'
-        ];
-
-        parent::display($tpl);
     }
 }

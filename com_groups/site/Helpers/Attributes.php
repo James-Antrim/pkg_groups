@@ -14,6 +14,8 @@ use THM\Groups\Adapters\Application;
 
 class Attributes
 {
+    public const PUBLIC = 1;
+
     public const BOTH_CONTEXTS = 0, GROUPS_CONTEXT = 2, PERSONS_CONTEXT = 1;
 
     public const CONTEXTS = [self::BOTH_CONTEXTS, self::GROUPS_CONTEXT, self::PERSONS_CONTEXT];
@@ -80,19 +82,4 @@ class Attributes
 
         return $db->loadColumn();
     }
-
-    /**
-     * Name attributes
-     * message_de: Namen dürfen nur aus Buchstaben und einzelne Apostrophen, Leer- und Minuszeichen und Punkten bestehen.
-     * message_en: Names may only consist of letters and singular apostrophes, hyphens, periods, and spaces.
-     * pattern: ^([a-zß-ÿ]+ )*([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+)([ |-]([a-zß-ÿ]+ )?([a-zß-ÿ]+\'\')?[A-ZÀ-ÖØ-Þ](\\\\.|[a-zß-ÿ]+))*$
-     */
-
-    /**
-     * Aktuell,
-     * Weitere Informationen,
-     * Zur Person => HTML (Label & Full width output) => Editor, VL/PUB
-     *
-     * Email
-     */
 }
