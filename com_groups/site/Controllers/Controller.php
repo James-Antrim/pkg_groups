@@ -43,6 +43,12 @@ class Controller extends BaseController
     protected string $list = '';
 
     /**
+     * The item view to redirect to for the creation of new resources
+     * @var string
+     */
+    protected string $item = '';
+
+    /**
      * @inheritDoc
      */
     public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?JInput $input = null)
@@ -50,6 +56,24 @@ class Controller extends BaseController
         $this->backend = Application::backend();
         $this->baseURL = $this->baseURL ?: Uri::base() . '?option=com_groups';
         parent::__construct($config, $factory, $app, $input);
+    }
+
+    /**
+     * Deletes the selected attributes.
+     * @return void
+     */
+    public function add(): void
+    {
+        $this->setRedirect("$this->baseURL&view=Attribute");
+        // A form view without a registered list
+        if (empty($this->item)) {
+            Application::message('List view does not have its corresponding item view coded.', Application::ERROR);
+            $this->setRedirect(Uri::base());
+
+            return;
+        }
+
+        $this->setRedirect("$this->baseURL&view=$this->item");
     }
 
     /**

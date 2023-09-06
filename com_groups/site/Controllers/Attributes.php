@@ -20,13 +20,9 @@ use THM\Groups\Tables\Attributes as Table;
 class Attributes extends Controller
 {
     /**
-     * Deletes the selected attributes.
-     * @return void
+     * @inheritdoc
      */
-    public function add(): void
-    {
-        $this->setRedirect("$this->baseURL&view=Attribute");
-    }
+    protected string $item = 'Attribute';
 
     /**
      * Deletes the selected attributes.
@@ -109,8 +105,9 @@ class Attributes extends Controller
 
     /**
      * Toggles a boolean column's value.
+     *
      * @param string $column
-     * @param bool $value
+     * @param bool   $value
      *
      * @return void
      */

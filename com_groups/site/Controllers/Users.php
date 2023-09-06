@@ -31,6 +31,11 @@ class Users extends Controller
     private const ACTIONS = [self::ADD, self::REMOVE, self::RESET, self::STOP];
 
     /**
+     * @inheritdoc
+     */
+    protected string $item = 'User';
+
+    /**
      * Activates the selected users.
      * @return void
      */
@@ -83,7 +88,6 @@ class Users extends Controller
     }
 
     /**
-     *
      * @return void
      */
     public function batch(): void
@@ -317,6 +321,7 @@ class Users extends Controller
 
     /**
      * Filters selected accounts for the current user.
+     *
      * @param array $selectedIDs
      *
      * @return array
@@ -331,10 +336,10 @@ class Users extends Controller
     /**
      * Maps / removes mappings of the given user id to the given groups & roles.
      *
-     * @param int $userID the id of the user to (dis-) associate
-     * @param int $action the action to be performed on the user
+     * @param int $userID  the id of the user to (dis-) associate
+     * @param int $action  the action to be performed on the user
      * @param int $groupID the id of the group to be (dis-) associated
-     * @param int $roleID the id of the role to be (dis-) associated
+     * @param int $roleID  the id of the role to be (dis-) associated
      *
      * @return bool
      */
@@ -395,8 +400,8 @@ class Users extends Controller
     /**
      * Resets the user account with the given id. Joomla did not raise events here, so I also did not...
      *
-     * @param int $userID the id of the user account
-     * @param bool $value the value which the requireReset column should be set to
+     * @param int  $userID the id of the user account
+     * @param bool $value  the value which the requireReset column should be set to
      *
      * @return bool
      */
@@ -520,6 +525,7 @@ class Users extends Controller
 
     /**
      * Toggles the values of the published column.
+     *
      * @param bool $value
      *
      * @return void

@@ -15,5 +15,8 @@ namespace THM\Groups\Controllers;
  */
 class Groups extends Controller
 {
-	//Stuff
+    /**
+     * @inheritdoc
+     */
+    protected string $item = 'Group';
 }
