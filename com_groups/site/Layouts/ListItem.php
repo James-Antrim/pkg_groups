@@ -24,8 +24,8 @@ class ListItem
     /**
      * Renders a check all box style list header.
      *
-     * @param int $rowNo the row iteration count
-     * @param object $item the item being rendered
+     * @param int    $rowNo the row iteration count
+     * @param object $item  the item being rendered
      */
     private static function check(int $rowNo, object $item): void
     {
@@ -39,8 +39,8 @@ class ListItem
     /**
      * Renders a sorting tool.
      *
-     * @param object $item the item being rendered
-     * @param bool $enabled whether sorting has been enabled
+     * @param object $item    the item being rendered
+     * @param bool   $enabled whether sorting has been enabled
      */
     private static function ordering(object $item, bool $enabled): void
     {
@@ -61,7 +61,7 @@ class ListItem
             </span>
             <?php if ($item->access and $enabled) : ?>
                 <!--suppress HtmlFormInputWithoutLabel -->
-                <input type="text" class="width-20 text-area-order hidden" name="order[]" size="5"
+                <input type="text" class="hidden" name="order[]" size="5"
                        value="<?php echo $item->ordering; ?>">
             <?php endif; ?>
         </td>
@@ -71,19 +71,25 @@ class ListItem
     /**
      * Renders a list item.
      *
-     * @param ListView $view the view being rendered
-     * @param int $rowNo the row number being rendered
-     * @param object $item the item being rendered
+     * @param ListView $view        the view being rendered
+     * @param int      $rowNo       the row number being rendered
+     * @param object   $item        the item being rendered
+     * @param bool     $dragEnabled whether the table has drag enabled
      */
-    public static function render(ListView $view, int $rowNo, object $item): void
+    public static function render(ListView $view, int $rowNo, object $item, bool $dragEnabled = false): void
     {
-        $context     = $view->backend;
-        $state       = $view->get('state');
-        $direction   = $view->escape($state->get('list.direction'));
-        $orderBy     = $view->escape($state->get('list.ordering'));
-        $dragEnabled = ($orderBy == 'ordering' and strtolower($direction) == 'asc');
+        $context        = $view->backend;
+        $dragAttributes = '';
+
+        // The row attributes seem to tell the row in which context it can be dragged.
+        if ($dragEnabled) {
+            $dragAttributes .= " data-draggable-group=\"1\"";
+            $dragAttributes .= " data-level=\"1\"";
+            $dragAttributes .= " data-item-id=\"$item->id\"";
+            $dragAttributes .= " data-parents=\"\"";
+        }
         ?>
-        <tr>
+        <tr <?php echo $dragAttributes ?>>
             <?php
 
             foreach ($view->headers as $column => $header) {
@@ -114,10 +120,10 @@ class ListItem
     /**
      * Renders a check all box style list header.
      *
-     * @param object $item the current row item
-     * @param string $column the current column
-     * @param bool $context the display context (false: public, true: admin)
-     * @param int $linkType the link type to use for the displayed column value
+     * @param object $item     the current row item
+     * @param string $column   the current column
+     * @param bool   $context  the display context (false: public, true: admin)
+     * @param int    $linkType the link type to use for the displayed column value
      */
     private static function text(object $item, string $column, bool $context, int $linkType): void
     {

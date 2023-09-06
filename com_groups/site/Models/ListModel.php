@@ -15,10 +15,13 @@ use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel as Base;
+use Joomla\CMS\Table\Table;
 use Joomla\Database\QueryInterface;
 use Joomla\Registry\Registry;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
+use THM\Groups\Adapters\Text;
+use THM\Groups\Helpers\Can;
 
 /**
  * Model class for handling lists of items.
@@ -35,7 +38,6 @@ abstract class ListModel extends Base
 
     /**
      * A state object. Overrides the use of the deprecated CMSObject.
-     *
      * @var    Registry
      */
     protected $state = null;
@@ -59,7 +61,7 @@ abstract class ListModel extends Base
      * Adds a binary value filter clause for the given $query;
      *
      * @param QueryInterface $query the query to modify
-     * @param string $name the attribute whose value to filter against
+     * @param string         $name  the attribute whose value to filter against
      *
      * @return void modifies the query if a binary value was delivered in the request
      */
@@ -82,7 +84,6 @@ abstract class ListModel extends Base
 
     /**
      * Deletes entries.
-     *
      * @return void
      */
     abstract public function delete(): void;
@@ -101,7 +102,8 @@ abstract class ListModel extends Base
 
     /**
      * @inheritDoc
-     * Replacing the deprecated CMSObject with Registry makes the parent no longer function correctly this compensates for that.
+     * Replacing the deprecated CMSObject with Registry makes the parent no longer function correctly this compensates
+     * for that.
      */
     public function getActiveFilters(): array
     {
@@ -125,8 +127,8 @@ abstract class ListModel extends Base
      * Gets the filter form. Overwrites the parent to have form names analog to the view names in which they are used.
      * Also has enhanced error reporting in the event of failure.
      *
-     * @param array $data data
-     * @param bool $loadData load current data
+     * @param array $data     data
+     * @param bool  $loadData load current data
      *
      * @return  Form|null  the form object or null if the form can't be found
      */
@@ -257,5 +259,42 @@ abstract class ListModel extends Base
 
         $this->setState('list.limit', $limit);
         $this->setState('list.start', $start);
+    }
+
+    /**
+     * Method to save the reordered set.
+     * @return  void
+     */
+    public function saveorder(): void
+    {
+        if (!Can::administrate()) {
+            echo Text::_('GROUPS_403');
+            return;
+        }
+
+        $fqName = 'THM\\Groups\\Tables\\' . $this->name;
+
+        /** @var Table $table */
+        $table = new $fqName();
+
+        if (!property_exists($table, 'ordering')) {
+            echo Text::_('GROUPS_501');
+            return;
+        }
+
+        $ordering    = 1;
+        $resourceIDs = Input::getArray('cid');
+
+        foreach ($resourceIDs as $resourceID) {
+            $table = new $fqName();
+            $table->load($resourceID);
+            $table->ordering = $ordering;
+            $table->store();
+            $ordering++;
+        }
+
+        echo Text::_('Request performed successfully.');
+
+        $this->cleanCache();
     }
 }

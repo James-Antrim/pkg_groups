@@ -149,7 +149,6 @@ class Roles extends ListModel
 
     /**
      * Build an SQL query to load the list data.
-     *
      * @return  QueryInterface
      */
     protected function getListQuery(): QueryInterface

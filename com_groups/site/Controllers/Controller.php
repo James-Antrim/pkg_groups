@@ -264,6 +264,19 @@ class Controller extends BaseController
     }
 
     /**
+     * Method to save the submitted ordering values for records via AJAX.
+     * @return  void
+     */
+    public function saveOrderAjax(): void
+    {
+        $this->checkToken();
+        $fqName = 'THM\\Groups\\Models\\' . $this->name;
+        $model  = new $fqName();
+        $model->saveOrder();
+        $this->app->close();
+    }
+
+    /**
      * Updates a boolean column for multiple entries in a
      *
      * @param string $name        the table class name

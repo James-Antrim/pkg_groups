@@ -26,9 +26,10 @@ abstract class ListView extends Base
 {
     use Configured, Named;
 
+    protected $_layout = 'list';
     public bool $allowBatch = false;
     public array $headers = [];
-    protected $_layout = 'list';
+    public array $todo = [];
 
     /**
      * Constructor
@@ -49,7 +50,6 @@ abstract class ListView extends Base
 
     /**
      * Add the page title and toolbar.
-     *
      * @return  void
      */
     protected function addToolbar(): void
@@ -108,7 +108,7 @@ abstract class ListView extends Base
     /**
      * Initializes the headers after the view has been initialized.
      */
-    abstract protected function initializeHeaders();
+    abstract protected function initializeHeaders(): void;
 
     /**
      * @inheritDoc

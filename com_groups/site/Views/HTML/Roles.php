@@ -20,13 +20,12 @@ class Roles extends ListView
 {
     /**
      * Add the page title and toolbar.
-     *
      * @return  void
      */
     protected function addToolbar(): void
     {
         // Manage access is a prerequisite for getting this far
-        ToolbarHelper::addNew('Role.add');
+        ToolbarHelper::addNew('Roles.add');
         ToolbarHelper::deleteList('JGLOBAL_CONFIRM_DELETE', 'Roles.delete');
         ToolbarHelper::divider();
 
@@ -36,7 +35,7 @@ class Roles extends ListView
     /**
      * @inheritDoc
      */
-    protected function initializeHeaders()
+    protected function initializeHeaders(): void
     {
         //TODO: suppress ordering if a filter has been used
         $this->headers = [

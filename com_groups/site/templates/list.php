@@ -21,12 +21,12 @@ use THM\Groups\Views\HTML\ListView;
 $action         = Route::_('index.php?option=com_groups&view=' . $this->_name);
 $direction      = $this->escape($this->state->get('list.direction'));
 $orderBy        = $this->escape($this->state->get('list.ordering'));
-$dragEnabled    = ($orderBy == 'ordering' and strtolower($direction) == 'asc');
+$dragEnabled    = (!empty($this->items) and $orderBy == 'ordering' and strtolower($direction) == 'asc');
 $dragProperties = '';
 
-if ($dragEnabled and !empty($this->items)) {
+if ($dragEnabled) {
     $baseURL      = 'index.php?option=com_groups';
-    $draggableURL = "$baseURL&task=$this->_name.saveOrderAjax&tmpl=component&" . Session::getFormToken() . '=1';
+    $draggableURL = "$baseURL&task=$this->_name.saveOrderAjax&tmpl=component" . Session::getFormToken() . '=1';
     HTML::_('draggablelist.draggable');
     $dragProperties = [
         'class' => 'js-draggable',
@@ -66,7 +66,7 @@ $wa->useScript('table.columns');
                         <?php Layouts\ListHeaders::render($this); ?>
                         <tbody <?php echo $dragProperties; ?>>
                         <?php foreach ($this->items as $rowNo => $item) : ?>
-                            <?php Layouts\ListItem::render($this, $rowNo, $item); ?>
+                            <?php Layouts\ListItem::render($this, $rowNo, $item, $dragEnabled); ?>
                         <?php endforeach; ?>
                         </tbody>
                     </table>
