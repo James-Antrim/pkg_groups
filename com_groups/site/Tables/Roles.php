@@ -24,22 +24,22 @@ class Roles extends Table
     use Incremented, Named;
 
     /**
-     * VARCHAR(100) NOT NULL
-     * @var string
-     */
-    public $names_de;
-
-    /**
-     * VARCHAR(100) NOT NULL
-     * @var string
-     */
-    public $names_en;
-
-    /**
      * INT(3) UNSIGNED NOT NULL DEFAULT 0
      * @var int
      */
     public $ordering;
+
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $plural_de;
+
+    /**
+     * VARCHAR(100) NOT NULL
+     * @var string
+     */
+    public $plural_en;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
@@ -76,9 +76,9 @@ class Roles extends Table
         }
 
         if (Application::getTag() === 'en') {
-            return $this->names_en;
+            return $this->plural_en;
         }
 
-        return $this->names_de;
+        return $this->plural_de;
     }
 }

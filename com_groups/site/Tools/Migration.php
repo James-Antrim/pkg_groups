@@ -639,8 +639,8 @@ class Migration
             $migrant = [
                 'name_de' => $thmName,
                 'name_en' => $thmName,
-                'names_de' => $thmName,
-                'names_en' => $thmName,
+                'plural_de' => $thmName,
+                'plural_en' => $thmName,
 
                 // Ordering has no default value, will be set correctly in the next portion of the function.
                 'ordering' => 0

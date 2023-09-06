@@ -132,7 +132,7 @@ class Roles extends ListModel
         foreach ($items as $item) {
             // Management access is a prerequisite of accessing this view at all.
             $item->access   = true;
-            $item->editLink = Route::_('index.php?option=com_groups&view=RoleEdit&id=' . $item->id);
+            $item->editLink = Route::_('index.php?option=com_groups&view=Role&id=' . $item->id);
 
             if ($item->groups === 0) {
                 $item->groups = Text::_('GROUPS_NO_GROUPS');
@@ -167,7 +167,7 @@ class Roles extends ListModel
             $db->quoteName('r.id'),
             $db->quoteName('r.ordering'),
             $db->quoteName("r.name_$tag", 'name'),
-            $db->quoteName("r.names_$tag", 'names'),
+            $db->quoteName("r.plural_$tag", 'plural'),
             $db->quoteName("g.name_$tag", 'group'),
             $groups
         ]);

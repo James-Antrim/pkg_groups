@@ -10,14 +10,13 @@
 
 namespace THM\Groups\Views\HTML;
 
-use THM\Groups\Adapters\{Application, HTML, Text};
 use Joomla\CMS\Router\Route;
+use THM\Groups\Adapters\{Application, HTML, Text};
 use THM\Groups\Helpers\Attributes as Helper;
 use THM\Groups\Layouts\ListItem;
 
 /**
  * View class for displaying available attribute types.
- *
  * @todo Add a type migration dialog.
  */
 class Attributes extends ListView

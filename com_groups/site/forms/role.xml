@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="details">
+        <field name="id" type="hidden"/>
+        <field name="name_de" type="text" label="GROUPS_NAME_DE" required="true"/>
+        <field name="name_en" type="text" label="GROUPS_NAME_EN" required="true"/>
+        <field name="plural_de" type="text" label="GROUPS_PLURAL_DE" required="true"/>
+        <field name="plural_en" type="text" label="GROUPS_PLURAL_EN" required="true"/>
+    </fieldset>
+</form>

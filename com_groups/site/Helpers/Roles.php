@@ -25,11 +25,11 @@ class Roles implements Selectable
      */
     public static function getAll(): array
     {
-        $db          = Application::getDB();
-        $query       = $db->getQuery(true);
-        $namesColumn = $db->quoteName('names_' . Application::getTag());
-        $roles       = $db->quoteName('#__groups_roles');
-        $query->select('*')->from($roles)->order($namesColumn);
+        $db     = Application::getDB();
+        $query  = $db->getQuery(true);
+        $plural = $db->quoteName('plural_' . Application::getTag());
+        $roles  = $db->quoteName('#__groups_roles');
+        $query->select('*')->from($roles)->order($plural);
         $db->setQuery($query);
 
         if (!$roles = $db->loadObjectList('id')) {
@@ -44,14 +44,30 @@ class Roles implements Selectable
     }
 
     /**
+     * Gets the current maximum value in the ordering column.
+     * @return int the current maximum value in the ordering column
+     */
+    public static function getMaxOrdering(): int
+    {
+        $db       = Application::getDB();
+        $query    = $db->getQuery(true);
+        $ordering = $db->quoteName('ordering');
+        $query->select("MAX($ordering)")->from($db->quoteName('#__groups_roles'));
+        $db->setQuery($query);
+
+        return (int) $db->loadResult();
+    }
+
+    /**
      * @inheritDoc
+     *
      * @param bool $bound whether the role must already be associated
      */
     public static function getOptions(bool $associated = true): array
     {
-        $namesColumn = 'names_' . Application::getTag();
-        $options     = [];
-        $options[]   = (object) [
+        $plural    = 'plural_' . Application::getTag();
+        $options   = [];
+        $options[] = (object) [
             'text' => Text::_('GROUPS_NONE_MEMBER'),
             'value' => ''
         ];
@@ -62,7 +78,7 @@ class Roles implements Selectable
             }
 
             $options[] = (object) [
-                'text' => $role->$namesColumn,
+                'text' => $role->$plural,
                 'value' => $roleID
             ];
         }

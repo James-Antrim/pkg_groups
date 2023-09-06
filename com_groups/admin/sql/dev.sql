@@ -89,15 +89,15 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_role_associations`
 
 CREATE TABLE IF NOT EXISTS `v7ocf_groups_roles`
 (
-    `id`       INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `name_de`  VARCHAR(100)     NOT NULL,
-    `name_en`  VARCHAR(100)     NOT NULL,
-    `names_de` VARCHAR(100)     NOT NULL,
-    `names_en` VARCHAR(100)     NOT NULL,
-    `ordering` INT(3) UNSIGNED  NOT NULL DEFAULT 0,
+    `id`        INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name_de`   VARCHAR(100)     NOT NULL,
+    `name_en`   VARCHAR(100)     NOT NULL,
+    `plural_de` VARCHAR(100)     NOT NULL,
+    `plural_en` VARCHAR(100)     NOT NULL,
+    `ordering`  INT(3) UNSIGNED  NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     UNIQUE KEY `entry` (`name_de`, `name_en`),
-    UNIQUE KEY `entries` (`names_de`, `names_en`)
+    UNIQUE KEY `entries` (`plural_de`, `plural_en`)
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = utf8mb4
@@ -163,7 +163,7 @@ VALUES (1, 'Namenszusatz (nach)', 'Suffix', 0, '', 0, @supplement, '{"hint":"M.S
        (22, 'Weiterführende Links', 'Additional Links', 1, 'fa fa-external-link-alt', 0, @linkList, '{}', 0, 1),
        (23, 'zur Person', 'Personal Information', 1, 'fa fa-user', 0, @html, '{}', 0, 1);
 
-INSERT INTO `v7ocf_groups_roles` (`id`, `name_de`, `name_en`, `names_de`, `names_en`, `ordering`)
+INSERT INTO `v7ocf_groups_roles` (`id`, `name_de`, `name_en`, `plural_de`, `plural_en`, `ordering`)
 VALUES (1, 'Dekan', 'Dean', 'Dekane', 'Deans', 1),
        (2, 'Dekanin', 'Dean', 'Dekaninnen', 'Deans', 2),
        (3, 'Prodekan', 'Vice Dean', 'Prodekane', 'Vice Deans', 3),

@@ -18,7 +18,6 @@ class Can
 {
     /**
      * Checks whether the user has access to administrate the component.
-     *
      * @return bool true if the user has 'admin' access, otherwise false
      */
     public static function administrate(): bool
@@ -28,13 +27,11 @@ class Can
 
     /**
      * Checks whether the user has access to perform batch processing on component resources.
-     *
      * @return bool true if the user has 'create' access, otherwise false
      */
     public static function batchProcess(): bool
     {
-        if (self::administrate())
-        {
+        if (self::administrate()) {
             return true;
         }
 
@@ -45,7 +42,6 @@ class Can
 
     /**
      * Checks whether the user has access to change resource states.
-     *
      * @return bool true if the user has 'create' access, otherwise false
      */
     public static function changeState(): bool
@@ -55,7 +51,6 @@ class Can
 
     /**
      * Checks whether the user has access to configure the component.
-     *
      * @return bool
      */
     public static function configure(): bool
@@ -65,7 +60,6 @@ class Can
 
     /**
      * Checks whether the user has access to create component resources.
-     *
      * @return bool
      */
     public static function create(): bool
@@ -75,7 +69,6 @@ class Can
 
     /**
      * Checks whether the user has access to debug the users component.
-     *
      * @return bool
      */
     public static function debug(): bool
@@ -85,7 +78,6 @@ class Can
 
     /**
      * Checks whether the user has access to delete component resources.
-     *
      * @return bool
      */
     public static function delete(): bool
@@ -95,7 +87,6 @@ class Can
 
     /**
      * Checks whether the user has access to create component resources.
-     *
      * @return bool
      */
     public static function edit(): bool
@@ -117,9 +108,7 @@ class Can
 
     /**
      * Checks whether the user has administrative (back-end) access to the component.
-     *
      * @return bool true if the user has 'manage' access, otherwise false
-     *
      * @todo make sure this is being used as intended...
      */
     public static function manage(): bool
@@ -129,18 +118,15 @@ class Can
 
     /**
      * Checks whether the user has access to publish users or a specific user.
-     *
      * @return bool true if the user has 'manage' access, otherwise false
      */
     public static function publish(int $id = 0): bool
     {
-        if (self::changeState())
-        {
+        if (self::changeState()) {
             return true;
         }
 
-        if (!$id)
-        {
+        if (!$id) {
             return false;
         }
 
@@ -198,22 +184,22 @@ class Can
 
     /**
      * Checks whether the user has viewing access to the view.
+     *
      * @param string $view
      *
      * @return bool
      */
     public static function view(string $view): bool
     {
-        return match ($view)
-        {
+        return match ($view) {
             // purely administrative views
-            'Attributes', 'Attribute', 'Groups', 'Roles' => self::administrate(),
+            'Attribute', 'Attributes', 'Groups', 'Role', 'Roles', 'Template', 'Templates' => self::administrate(),
             // the published content/contents of a specific person or content administration
             'Content', 'Contents' => (Input::getInt('personID') or self::administrate()),
             // persons associated with a specific group or person administration
             'Persons' => (Input::getInt('groupID') or self::administrate()),
             // Development queue
-            'Group', 'Level', 'Levels', 'Role', 'Template', 'Templates' => false,
+            'Group', 'Level', 'Levels' => false,
             // Viewing is allowed, functions, layouts and levels may still be restricted elsewhere.
             default => true,
         };
