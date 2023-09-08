@@ -2778,8 +2778,7 @@ class Icons implements Selectable
         '\f171' => [
             'class' => 'fab fa-bitbucket',
             'classes' => ['fa-bitbucket'],
-            'content' => '\f171',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f171'
         ],
         '\f173' => [
             'class' => 'fab fa-tumblr',
@@ -4344,8 +4343,8 @@ class Icons implements Selectable
             'classes' => ['fa-reddit-alien'],
             'content' => '\f281',
             'priority' => self::SOCIAL_NETWORKS,
-            'text_de' => 'reddit, Alien',
-            'text_en' => 'reddit, Alien'
+            'text_de' => 'Reddit, Alien',
+            'text_en' => 'Reddit, Alien'
         ],
         '\f282' => [
             'class' => 'fab fa-edge',
@@ -5291,10 +5290,9 @@ class Icons implements Selectable
             'content' => '\f394'
         ],
         '\f395' => [
-            'class' => 'fa fa-docker',
+            'class' => 'fab fa-docker',
             'classes' => ['fa-docker'],
-            'content' => '\f395',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f395'
         ],
         '\f396' => [
             'class' => 'fab fa-draft2digital',
@@ -5310,22 +5308,19 @@ class Icons implements Selectable
             'text_en' => 'dribbble, Square'
         ],
         '\f399' => [
-            'class' => 'fa fa-dyalog',
+            'class' => 'fab fa-dyalog',
             'classes' => ['fa-dyalog'],
-            'content' => '\f399',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f399'
         ],
         '\f39a' => [
-            'class' => 'fa fa-earlybirds',
+            'class' => 'fab fa-earlybirds',
             'classes' => ['fa-earlybirds'],
-            'content' => '\f39a',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f39a'
         ],
         '\f39d' => [
-            'class' => 'fa fa-erlang',
+            'class' => 'fab fa-erlang',
             'classes' => ['fa-erlang'],
-            'content' => '\f39d',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f39d'
         ],
         '\f39e' => [
             'class' => 'fab fa-facebook-f',
@@ -5344,16 +5339,14 @@ class Icons implements Selectable
             'text_en' => 'Facebook Messenger'
         ],
         '\f3a1' => [
-            'class' => 'fa fa-firstdraft',
+            'class' => 'fab fa-firstdraft',
             'classes' => ['fa-firstdraft'],
-            'content' => '\f3a1',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3a1'
         ],
         '\f3a2' => [
-            'class' => 'fa fa-fonticons-fi',
+            'class' => 'fab fa-fonticons-fi',
             'classes' => ['fa-fonticons-fi'],
-            'content' => '\f3a2',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3a2'
         ],
         '\f3a3' => [
             'class' => 'fab fa-fort-awesome-alt',
@@ -5363,8 +5356,7 @@ class Icons implements Selectable
         '\f3a4' => [
             'class' => 'fa fa-freebsd',
             'classes' => ['fa-freebsd'],
-            'content' => '\f3a4',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3a4'
         ],
         '\f3a5' => [
             'class' => 'fa fa-gem',
@@ -5372,10 +5364,9 @@ class Icons implements Selectable
             'content' => '\f3a5'
         ],
         '\f3a6' => [
-            'class' => 'fa fa-gitkraken',
+            'class' => 'fab fa-gitkraken',
             'classes' => ['fa-gitkraken'],
-            'content' => '\f3a6',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3a6'
         ],
         '\f3a7' => [
             'class' => 'fab fa-gofore',
@@ -5403,28 +5394,24 @@ class Icons implements Selectable
             'content' => '\f3ab'
         ],
         '\f3ac' => [
-            'class' => 'fa fa-gripfire',
+            'class' => 'fab fa-gripfire',
             'classes' => ['fa-gripfire'],
-            'content' => '\f3ac',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3ac'
         ],
         '\f3ad' => [
-            'class' => 'fa fa-grunt',
+            'class' => 'fab fa-grunt',
             'classes' => ['fa-grunt'],
-            'content' => '\f3ad',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3ad'
         ],
         '\f3ae' => [
-            'class' => 'fa fa-gulp',
+            'class' => 'fab fa-gulp',
             'classes' => ['fa-gulp'],
-            'content' => '\f3ae',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3ae'
         ],
         '\f3af' => [
-            'class' => 'fa fa-hacker-news-square',
+            'class' => 'fab fa-hacker-news-square',
             'classes' => ['fa-hacker-news-square'],
-            'content' => '\f3af',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3af'
         ],
         '\f3b0' => [
             'class' => 'fab fa-hire-a-helper',
@@ -5432,16 +5419,14 @@ class Icons implements Selectable
             'content' => '\f3b0'
         ],
         '\f3b1' => [
-            'class' => 'fa fa-hotjar',
+            'class' => 'fab fa-hotjar',
             'classes' => ['fa-hotjar'],
-            'content' => '\f3b1',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3b1'
         ],
         '\f3b2' => [
-            'class' => 'fa fa-hubspot',
+            'class' => 'fab fa-hubspot',
             'classes' => ['fa-hubspot'],
-            'content' => '\f3b2',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3b2'
         ],
         '\f3b4' => [
             'class' => 'fab fa-itunes',
@@ -5454,22 +5439,19 @@ class Icons implements Selectable
             'content' => '\f3b5'
         ],
         '\f3b6' => [
-            'class' => 'fa fa-jenkins',
+            'class' => 'fab fa-jenkins',
             'classes' => ['fa-jenkins'],
-            'content' => '\f3b6',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3b6'
         ],
         '\f3b7' => [
-            'class' => 'fa fa-joget',
+            'class' => 'fab fa-joget',
             'classes' => ['fa-joget'],
-            'content' => '\f3b7',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3b7'
         ],
         '\f3b8' => [
-            'class' => 'fa fa-js',
+            'class' => 'fab fa-js',
             'classes' => ['fa-js'],
-            'content' => '\f3b8',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3b8'
         ],
         '\f3b9' => [
             'class' => 'fab fa-js-square',
@@ -5477,10 +5459,9 @@ class Icons implements Selectable
             'content' => '\f3b9'
         ],
         '\f3ba' => [
-            'class' => 'fa fa-keycdn',
+            'class' => 'fab fa-keycdn',
             'classes' => ['fa-keycdn'],
-            'content' => '\f3ba',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3ba'
         ],
         '\f3bb' => [
             'class' => 'fab fa-kickstarter',
@@ -5493,10 +5474,9 @@ class Icons implements Selectable
             'content' => '\f3bc'
         ],
         '\f3bd' => [
-            'class' => 'fa fa-laravel',
+            'class' => 'fab fa-laravel',
             'classes' => ['fa-laravel'],
-            'content' => '\f3bd',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3bd'
         ],
         '\f3be' => [
             'class' => 'fa fa-level-down-alt',
@@ -5528,16 +5508,14 @@ class Icons implements Selectable
             'text_en' => 'Lock, Open'
         ],
         '\f3c3' => [
-            'class' => 'fa fa-lyft',
+            'class' => 'fab fa-lyft',
             'classes' => ['fa-lyft'],
-            'content' => '\f3c3',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3c3'
         ],
         '\f3c4' => [
-            'class' => 'fa fa-magento',
+            'class' => 'fab fa-magento',
             'classes' => ['fa-magento'],
-            'content' => '\f3c4',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3c4'
         ],
         '\f3c5' => [
             'class' => 'fa fa-map-marker-alt',
@@ -5558,10 +5536,9 @@ class Icons implements Selectable
             'content' => '\f3c7'
         ],
         '\f3c8' => [
-            'class' => 'fa fa-medrt',
+            'class' => 'fab fa-medrt',
             'classes' => ['fa-medrt'],
-            'content' => '\f3c8',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3c8'
         ],
         '\f3c9' => [
             'class' => 'fa fa-microphone-alt',
@@ -5628,10 +5605,9 @@ class Icons implements Selectable
             'content' => '\f3d5'
         ],
         '\f3d6' => [
-            'class' => 'fa fa-nutritionix',
+            'class' => 'fab fa-nutritionix',
             'classes' => ['fa-nutritionix'],
-            'content' => '\f3d6',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f3d6'
         ],
         '\f3d7' => [
             'class' => 'fab fa-page4',
@@ -5827,10 +5803,9 @@ class Icons implements Selectable
             'content' => '\f3ff'
         ],
         '\f402' => [
-            'class' => 'fa fa-uber',
+            'class' => 'fab fa-uber',
             'classes' => ['fa-uber'],
-            'content' => '\f402',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f402'
         ],
         '\f403' => [
             'class' => 'fab fa-uikit',
@@ -6222,10 +6197,9 @@ class Icons implements Selectable
             'text_en' => 'Hockey Puck'
         ],
         '\f457' => [
-            'class' => 'fa fa-php',
+            'class' => 'fab fa-php',
             'classes' => ['fa-php'],
-            'content' => '\f457',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f457'
         ],
         '\f458' => [
             'class' => 'fa fa-quidditch',
@@ -8064,10 +8038,9 @@ class Icons implements Selectable
             'text_en' => 'Medal'
         ],
         '\f5a3' => [
-            'class' => 'fa fa-megaport',
+            'class' => 'fab fa-megaport',
             'classes' => ['fa-megaport'],
-            'content' => '\f5a3',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f5a3'
         ],
         '\f5a4' => [
             'class' => 'fa fa-meh-blank',
@@ -8613,10 +8586,9 @@ class Icons implements Selectable
             'text_en' => 'Ad'
         ],
         '\f642' => [
-            'class' => 'fa fa-alipay',
+            'class' => 'fab fa-alipay',
             'classes' => ['fa-alipay'],
-            'content' => '\f642',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f642'
         ],
         '\f644' => [
             'class' => 'fa fa-ankh',
@@ -8886,10 +8858,9 @@ class Icons implements Selectable
             'text_en' => 'Synagogue'
         ],
         '\f69d' => [
-            'class' => 'fa fa-the-red-yeti',
+            'class' => 'fab fa-the-red-yeti',
             'classes' => ['fa-the-red-yeti'],
-            'content' => '\f69d',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f69d'
         ],
         '\f6a0' => [
             'class' => 'fa fa-torah',
@@ -8931,10 +8902,9 @@ class Icons implements Selectable
 '
         ],
         '\f6af' => [
-            'class' => 'fa fa-acquisitions-incorporated',
+            'class' => 'fab fa-acquisitions-incorporated',
             'classes' => ['fa-acquisitions-incorporated'],
-            'content' => '\f6af',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f6af'
         ],
         '\f6b6' => [
             'class' => 'fa fa-blender-phone',
@@ -9360,10 +9330,9 @@ class Icons implements Selectable
             'text_en' => 'Rainbow'
         ],
         '\f75d' => [
-            'class' => 'fa fa-reacteurope',
+            'class' => 'fab fa-reacteurope',
             'classes' => ['fa-reacteurope'],
-            'content' => '\f75d',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f75d'
         ],
         '\f75e' => [
             'class' => 'fa fa-republican',
@@ -9502,10 +9471,9 @@ class Icons implements Selectable
             'text_en' => 'Cash Register'
         ],
         '\f789' => [
-            'class' => 'fa fa-centos',
+            'class' => 'fab fa-centos',
             'classes' => ['fa-centos'],
-            'content' => '\f789',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f789'
         ],
         '\f78c' => [
             'class' => 'fa fa-compress-arrows-alt',
@@ -10301,10 +10269,9 @@ class Icons implements Selectable
             'text_en' => 'Reels'
         ],
         '\f89e' => [
-            'class' => 'fa fa-cotton-bureau',
+            'class' => 'fab fa-cotton-bureau',
             'classes' => ['fa-cotton-bureau'],
-            'content' => '\f89e',
-            'priority' => self::BROKEN_OR_DEPRECATED
+            'content' => '\f89e'
         ],
         '\f8a6' => [
             'class' => 'fab fa-buy-n-large',
