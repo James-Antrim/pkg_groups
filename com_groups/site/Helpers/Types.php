@@ -35,96 +35,64 @@ class Types implements Selectable
 
     public const TYPES = [
         self::ADDRESS => [
-            'fields' => [
-                //SF: 1, 2, ZIP, CITY & placement check (before or after)
-                'value' => 'Address'
-            ],
             'icon' => 'location',
             'input' => 'GROUPS_FORM_TEMPLATE',
-            'name' => 'GROUPS_ADDRESS'
+            'name' => 'GROUPS_ADDRESS',
+            'output' => 'GROUPS_FORMATTED_TEXT'
         ],
         self::BUTTON => [
-            'fields' => [
-                'text_de' => 'Text',
-                'text_en' => 'Text',
-                'value' => 'URL'
-            ],
             'icon' => '',
             'input' => 'GROUPS_URL_FIELD',
-            'name' => 'GROUPS_MEDIA_BUTTON'
+            'name' => 'GROUPS_MEDIA_BUTTON',
+            'output' => 'GROUPS_MEDIA_BUTTON'
         ],
         self::DATE => [
-            'fields' => [
-                'value' => 'Date'
-            ],
             'icon' => 'calendar',
             'input' => 'GROUPS_DATE_FIELD',
-            'name' => 'GROUPS_DATE'
+            'name' => 'GROUPS_DATE',
+            'output' => 'GROUPS_DATE'
         ],
         self::EMAIL => [
-            'fields' => [
-                'value' => 'EMail'
-            ],
             'hint' => 'maxine.mustermann@fb.thm.de',
             'icon' => 'envelope',
             'input' => 'GROUPS_EMAIL_FIELD',
-            'name' => 'GROUPS_EMAIL'
+            'name' => 'GROUPS_EMAIL',
+            'output' => 'GROUPS_LINKED_EMAIL'
         ],
         self::HOURS => [
-            'fields' => [
-                //SF: weekdays, times + checkbox for by appointment
-                'value' => 'Hours'
-            ],
             'icon' => 'comment',
             'input' => 'GROUPS_FORM_TEMPLATE',
-            'name' => 'GROUPS_HOURS_TYPE'
+            'name' => 'GROUPS_HOURS_TYPE',
+            'output' => 'GROUPS_FORMATTED_TEXT'
         ],
         self::HTML => [
             'buttons' => 0,
-            'fields' => [
-                'buttons' => 'Toggle',
-                //showon yes
-                'hide' => 'ButtonSelect',
-                'value' => 'Editor'
-            ],
             'icon' => '',
             'input' => 'GROUPS_EDITOR_FIELD',
-            'name' => 'GROUPS_HTML_TYPE'
+            'name' => 'GROUPS_HTML_TYPE',
+            'output' => 'GROUPS_HTML_TYPE'
         ],
         self::IMAGE => [
-            'fields' => [
-                'source_de' => 'Text',
-                'source_en' => 'Text',
-                'source_url' => 'URL',
-                'value' => 'Image'
-            ],
             'icon' => '',
             'input' => 'GROUPS_IMAGE_FIELD',
-            'name' => 'GROUPS_IMAGE'
+            'name' => 'GROUPS_IMAGE',
+            'output' => 'GROUPS_IMAGE'
         ],
         self::LIST => [
-            'fields' => [
-                //SF: Linked Text
-                'value' => 'LinkedList'
-            ],
             'icon' => '',
             'input' => 'GROUPS_LIST_FORM',
-            'name' => 'GROUPS_LINK_LIST'
+            'name' => 'GROUPS_LINK_LIST',
+            'output' => 'GROUPS_LINK_LIST'
         ],
         self::PHONE => [
-            'fields' => [
-                'value' => 'Phone'
-            ],
             'icon' => 'phone',
             'input' => 'GROUPS_PHONE_FIELD',
             'name' => 'GROUPS_PHONE_NUMBER',
             'hint' => 'TODO',
-            'pattern' => '^(\+[\d]+ ?)?( ?((\(0?[\d]*\))|(0?[\d]+(\/| \/)?)))?(([ \-]|[\d]+)+)$'
+            'pattern' => '^(\+[\d]+ ?)?( ?((\(0?[\d]*\))|(0?[\d]+(\/| \/)?)))?(([ \-]|[\d]+)+)$',
+            'output' => 'GROUPS_LINKED_TELEPHONE'
         ],
         self::SUPPLEMENT => [
-            'fields' => [
-                'value' => 'Text'
-            ],
             'icon' => '',
             'hint' => '',
             'input' => 'GROUPS_TEXT_FIELD',
@@ -136,17 +104,14 @@ class Types implements Selectable
              */
 
             'message' => 'GROUPS_SUPPLEMENT_MESSAGE',
+            'output' => 'GROUPS_SUPPLEMENT',
             'pattern' => '^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$'
         ],
         self::TEXT => [
-            'fields' => [
-                'text_de' => 'Text',
-                'text_en' => 'Text',
-                'value' => 'URL'
-            ],
             'icon' => '',
             'input' => 'GROUPS_FORM_TEMPLATE',
-            'name' => 'GROUPS_LINK_TEXT'
+            'name' => 'GROUPS_LINK_TEXT',
+            'output' => 'GROUPS_LINK_TEXT'
         ]
     ];
 

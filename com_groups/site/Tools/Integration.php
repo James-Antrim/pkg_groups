@@ -15,7 +15,7 @@ use stdClass;
 use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\Groups;
 use THM\Groups\Tables\Users;
-use THM\Groups\Tools\FIS\{Cards, Entities, Persons};
+use THM\Groups\Tools\FIS\{Cards, Persons};
 
 class Integration
 {
@@ -81,8 +81,9 @@ class Integration
 
     /**
      * Retrieves a single record from the converis API
+     *
      * @param CurlHandle $curl the curl handle used to communicate with the API
-     * @param string $url the url of the API and any relevant parameters
+     * @param string     $url  the url of the API and any relevant parameters
      *
      * @return stdClass|null
      */
@@ -100,9 +101,9 @@ class Integration
     /**
      * Retrieves multiple records from the converis API.
      *
-     * @param CurlHandle $curl the curl handle used to communicate with the API
-     * @param string $url the url of the API and any relevant parameters unrelated to pagination
-     * @param bool $break whether the process should stop at a break point or continue
+     * @param CurlHandle $curl  the curl handle used to communicate with the API
+     * @param string     $url   the url of the API and any relevant parameters unrelated to pagination
+     * @param bool       $break whether the process should stop at a break point or continue
      *
      * @return array the JSON decoded records delivered by the API
      */
@@ -185,7 +186,7 @@ class Integration
 
         $IDMap      = self::getUsers(true);
         $attributes = Cards::getAttributes();
-        $cardURL = Persons::QUERIES[Persons::CARDS];
+        $cardURL    = Persons::QUERIES[Persons::CARDS];
 
         $headers               = self::HEADERS;
         $headers['attributes'] = str_replace('ALL', $attributes, $headers['attributes']);
@@ -195,7 +196,7 @@ class Integration
         foreach ($IDMap as $converisID) {
             if ($converisID !== 2483544) continue;
             $thisURL = $url . sprintf($cardURL, $converisID);
-            $cards = self::getRecords($curl, $thisURL);
+            $cards   = self::getRecords($curl, $thisURL);
             echo "<pre>" . print_r($cards, true) . "</pre>";
         }
 
@@ -254,8 +255,7 @@ class Integration
                 }
 
                 $userID = $users[$userName];
-                echo "<pre>User: $userName UserID: $userID ConverisID: $personID</pre>";
-                $table = new Users();
+                $table  = new Users();
                 $table->load($userID);
                 $table->converisID = $personID;
                 if (!$table->store()) {

@@ -42,7 +42,7 @@ class Role extends EditModel
         }
 
         if (empty($table->ordering)) {
-            $data['ordering'] = Helper::getMaxOrdering() + 1;
+            $data['ordering'] = Helper::getMaxOrdering('roles') + 1;
         }
 
         if (!$table->save($data)) {

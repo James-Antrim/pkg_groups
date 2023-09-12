@@ -14,22 +14,19 @@ use THM\Groups\Adapters\Application;
 
 class Attributes
 {
+    use Persistent;
+
     public const PUBLIC = 1;
 
     public const BOTH_CONTEXTS = 0, GROUPS_CONTEXT = 2, PERSONS_CONTEXT = 1;
 
     public const CONTEXTS = [self::BOTH_CONTEXTS, self::GROUPS_CONTEXT, self::PERSONS_CONTEXT];
 
-    public const IMAGE = 3, SUPPLEMENT_POST = 1, SUPPLEMENT_PRE = 2;
+    public const BANNER = 4, IMAGE = 3, SUPPLEMENT_POST = 1, SUPPLEMENT_PRE = 2;
 
-    // Attributes protected because of their special display in various templates
+    // Attributes protected because of their special role in template output
     public const PROTECTED = [
-        self::SUPPLEMENT_POST,
-        self::SUPPLEMENT_PRE
-    ];
-
-    // Attributes whose labelling is always suppressed
-    public const UNLABELED = [
+        self::BANNER,
         self::IMAGE,
         self::SUPPLEMENT_POST,
         self::SUPPLEMENT_PRE

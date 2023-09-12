@@ -122,7 +122,7 @@ class Attributes extends Controller
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $selectedIDs = array_diff($selectedIDs, Helper::UNLABELED);
+        $selectedIDs = array_diff($selectedIDs, Helper::PROTECTED);
         $updated     = $this->updateBool('Attributes', $column, $selectedIDs, $value);
 
         $this->farewell($selected, $updated);

@@ -27,6 +27,8 @@ use THM\Groups\Tools\Migration;
  */
 class Roles extends ListModel
 {
+    use Ordered;
+
     protected string $defaultOrdering = 'ordering';
 
     /**
@@ -206,13 +208,5 @@ class Roles extends ListModel
         $this->orderBy($query);
 
         return $query;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function populateState($ordering = 'ordering', $direction = 'asc'): void
-    {
-        parent::populateState($ordering, $direction);
     }
 }

@@ -26,29 +26,30 @@ class Migration
 {
     private const FORENAMES = 1, SURNAMES = 2;
 
+    // Banner => 4 non-existent before
     private const
-        ABOUT_ME = 23,
-        ACTIVITIES = 14,
-        ADDRESS = 4,
-        CLASSES = 20,
-        CURRENT = 13,
-        DUTIES = 17,
-        EMAIL1 = 6,
-        EMAIL2 = 7,
-        FAX1 = 8,
-        FAX2 = 9,
-        FIELDS = 15,
-        HOURS = 19,
-        INFORMATION = 21,
-        LINKS = 22,
-        OFFICE = 5,
-        PHONE1 = 10,
-        PHONE2 = 11,
+        ABOUT_ME = 24,
+        ACTIVITIES = 15,
+        ADDRESS = 5,
+        CLASSES = 21,
+        CURRENT = 14,
+        DUTIES = 18,
+        EMAIL1 = 7,
+        EMAIL2 = 8,
+        FAX1 = 9,
+        FAX2 = 10,
+        FIELDS = 16,
+        HOURS = 20,
+        INFORMATION = 22,
+        LINKS = 23,
+        OFFICE = 6,
+        PHONE1 = 11,
+        PHONE2 = 12,
         PICTURE = 3,
-        RESEARCH_FIELDS = 16,
+        RESEARCH_FIELDS = 17,
         SUPPLEMENT_POST = 1,
         SUPPLEMENT_PRE = 2,
-        URL = 12;
+        URL = 13;
 
     /**
      * Provides standard preparation for attributes.
@@ -334,6 +335,7 @@ class Migration
                 $data['icon']        = $oldAttribute->icon ?? $icon;
                 $data['context']     = Attributes::PERSONS_CONTEXT;
                 $data['viewLevelID'] = $oldAttribute->viewLevelID;
+                $data['ordering']    = Attributes::getMaxOrdering('attributes');
 
                 $new = new Tables\Attributes();
                 $new->save($data);

@@ -14,8 +14,9 @@ use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
-use THM\Groups\Adapters\{Application, Text};
-use THM\Groups\Helpers\{Attributes as Helper, Types};
+use THM\Groups\Adapters\{Application, Input, Text};
+use THM\Groups\Helpers\{Attributes as Helper, Can, Types};
+use THM\Groups\Tables\Attributes as Table;
 use THM\Groups\Tools\Migration;
 
 /**
@@ -23,7 +24,9 @@ use THM\Groups\Tools\Migration;
  */
 class Attributes extends ListModel
 {
-    protected string $defaultOrdering = 'name';
+    use Ordered;
+
+    protected string $defaultOrdering = 'ordering';
 
     /**
      * @inheritDoc
@@ -63,8 +66,9 @@ class Attributes extends ListModel
             $item->access   = true;
             $item->editLink = Route::_('index.php?option=com_groups&view=Attribute&id=' . $item->id);
 
-            $type        = Types::TYPES[$item->typeID];
-            $item->input = Text::_($type['input']);
+            $type         = Types::TYPES[$item->typeID];
+            $item->input  = Text::_($type['input']);
+            $item->output = Text::_($type['output']);
         }
 
         return $items;
@@ -72,7 +76,6 @@ class Attributes extends ListModel
 
     /**
      * Build an SQL query to load the list data.
-     *
      * @return  QueryInterface
      */
     protected function getListQuery(): QueryInterface
@@ -126,10 +129,31 @@ class Attributes extends ListModel
     }
 
     /**
-     * @inheritDoc
+     * Method to save the reordered set.
+     * @return  void
      */
-    protected function populateState($ordering = null, $direction = null): void
+    public function saveorder(): void
     {
-        parent::populateState($ordering, $direction);
+        if (!Can::administrate()) {
+            echo Text::_('GROUPS_403');
+            return;
+        }
+
+        $ordering    = 1;
+        $resourceIDs = Input::getArray('cid');
+
+        foreach ($resourceIDs as $resourceID) {
+            $protected = in_array($resourceID, Helper::PROTECTED);
+            $table     = new Table();
+            $table->load($resourceID);
+            $table->ordering = $protected ? 0 : $ordering;
+            $table->store();
+
+            $ordering = $protected ? $ordering : $ordering + 1;
+        }
+
+        echo Text::_('Request performed successfully.');
+
+        $this->cleanCache();
     }
 }

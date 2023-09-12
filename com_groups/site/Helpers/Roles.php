@@ -18,7 +18,7 @@ use THM\Groups\Adapters\Application;
  */
 class Roles implements Selectable
 {
-    use Named;
+    use Named, Persistent;
 
     /**
      * @inheritDoc
@@ -41,21 +41,6 @@ class Roles implements Selectable
         }
 
         return $roles;
-    }
-
-    /**
-     * Gets the current maximum value in the ordering column.
-     * @return int the current maximum value in the ordering column
-     */
-    public static function getMaxOrdering(): int
-    {
-        $db       = Application::getDB();
-        $query    = $db->getQuery(true);
-        $ordering = $db->quoteName('ordering');
-        $query->select("MAX($ordering)")->from($db->quoteName('#__groups_roles'));
-        $db->setQuery($query);
-
-        return (int) $db->loadResult();
     }
 
     /**

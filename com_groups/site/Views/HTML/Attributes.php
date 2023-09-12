@@ -70,6 +70,7 @@ class Attributes extends ListView
     {
         $this->headers = [
             'check' => ['type' => 'check'],
+            'ordering' => ['active' => false, 'type' => 'ordering'],
             'name' => [
                 'link' => ListItem::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],

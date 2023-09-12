@@ -18,6 +18,8 @@ use THM\Groups\Adapters\Application;
  */
 class RoleAssociations
 {
+    use Persistent;
+
     /**
      * Gets the ids of the associated roles
      *

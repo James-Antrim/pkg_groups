@@ -10,7 +10,6 @@
 
 namespace THM\Groups\Helpers;
 
-use Joomla\CMS\Table\Table;
 use THM\Groups\Adapters\Application;
 
 trait Named
@@ -33,30 +32,27 @@ trait Named
      * Attempts to retrieve the name of the resource.
      *
      * @param string $columnName the substantive part of the column name to search for
-     * @param int $resourceID the id of the resource
+     * @param int    $resourceID the id of the resource
      *
      * @return string
      */
     public static function getNameAttribute(string $columnName, int $resourceID): string
     {
         $table = self::getTable();
-        if (!$table->load($resourceID))
-        {
+        if (!$table->load($resourceID)) {
             return '';
         }
 
         $tableFields = $table->getFields();
-        if (array_key_exists($columnName, $tableFields))
-        {
+        if (array_key_exists($columnName, $tableFields)) {
             // Some name columns may contain a null value
-            return (string)$table->$columnName;
+            return (string) $table->$columnName;
         }
 
         $localizedName = "{$columnName}_" . Application::getTag();
-        if (array_key_exists($localizedName, $tableFields))
-        {
+        if (array_key_exists($localizedName, $tableFields)) {
             // Some name columns may contain a null value
-            return (string)$table->$localizedName;
+            return (string) $table->$localizedName;
         }
 
         return '';
