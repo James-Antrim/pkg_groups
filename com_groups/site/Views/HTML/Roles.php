@@ -38,7 +38,6 @@ class Roles extends ListView
      */
     protected function initializeHeaders(): void
     {
-        //TODO: suppress ordering if a filter has been used
         $this->headers = [
             'check' => ['type' => 'check'],
             'ordering' => ['type' => 'ordering'],
@@ -59,5 +58,9 @@ class Roles extends ListView
                 'type' => 'value'
             ]
         ];
+
+        if ($this->filtered()) {
+            unset($this->headers['ordering']);
+        }
     }
 }

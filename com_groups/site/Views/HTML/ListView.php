@@ -26,6 +26,8 @@ abstract class ListView extends Base
 {
     use Configured, Named;
 
+    const NONE = -1;
+
     protected $_layout = 'list';
     public bool $allowBatch = false;
     public array $headers = [];
@@ -67,6 +69,14 @@ abstract class ListView extends Base
     }
 
     /**
+     * Supplements item information for display purposes as necessary.
+     */
+    protected function completeItems()
+    {
+        // Filled by inheriting classes as necessary.
+    }
+
+    /**
      * @inheritDoc
      */
     public function display($tpl = null): void
@@ -91,11 +101,12 @@ abstract class ListView extends Base
         if ($filters = (array) $this->state->get('filter')) {
             // Search for filter value which has been set
             foreach ($filters as $filter) {
-                if ($filter) {
+                // Empty values or none value
+                if ($filter and $filter !== self::NONE) {
                     return true;
                 }
 
-                // Positive empty values
+                // Positive empty values must be explicitly tested
                 if ($filter === 0 or $filter === '0') {
                     return true;
                 }
@@ -122,13 +133,5 @@ abstract class ListView extends Base
         // All the tools are now there.
         $this->initializeHeaders();
         $this->completeItems();
-    }
-
-    /**
-     * Supplements item information for display purposes as necessary.
-     */
-    protected function completeItems()
-    {
-        // Filled by inheriting classes as necessary.
     }
 }

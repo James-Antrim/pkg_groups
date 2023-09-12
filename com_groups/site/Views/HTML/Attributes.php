@@ -103,5 +103,9 @@ class Attributes extends ListView
                 'type' => 'text'
             ],
         ];
+
+        if ($this->filtered()) {
+            unset($this->headers['ordering']);
+        }
     }
 }
