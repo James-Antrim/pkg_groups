@@ -8,7 +8,9 @@ DROP TABLE IF EXISTS
     `v7ocf_groups_groups`,
     `v7ocf_groups_profile_attributes`,
     `v7ocf_groups_role_associations`,
-    `v7ocf_groups_roles`;
+    `v7ocf_groups_roles`,
+    `v7ocf_groups_template_attributes`,
+    `v7ocf_groups_templates`;
 
 ALTER TABLE `v7ocf_users`
     DROP COLUMN IF EXISTS `alias`,
@@ -104,6 +106,34 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_roles`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `v7ocf_groups_template_attributes`
+(
+    `id`          INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `templateID`  INT(11) UNSIGNED NOT NULL,
+    `attributeID` INT(11) UNSIGNED NOT NULL,
+    `ordering`    INT(3) UNSIGNED  NOT NULL DEFAULT 0,
+    `showLabel`   TINYINT(1) UNSIGNED       DEFAULT NULL COMMENT 'null => inherit from attribute, 0 => no, 1 => yes',
+    `showIcon`    TINYINT(1) UNSIGNED       DEFAULT NULL COMMENT 'null => inherit from attribute, 0 => no, 1 => yes',
+    PRIMARY KEY (`id`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `v7ocf_groups_templates`
+(
+    `id`       INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
+    `name_de`  VARCHAR(100)        NOT NULL,
+    `name_en`  VARCHAR(100)        NOT NULL,
+    `default`  TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `showRole` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `entry` (`name_de`, `name_en`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
 # modernize the table for ease of reference from the role associations table
 ALTER TABLE `v7ocf_user_usergroup_map`
     DROP CONSTRAINT `PRIMARY`,
@@ -128,6 +158,7 @@ ALTER TABLE `v7ocf_users`
 
 #region Fill
 
+#region Type Vars
 SET @address = 1;
 SET @email = 4;
 SET @hours = 5;
@@ -137,6 +168,7 @@ SET @link = 8;
 SET @linkList = 9;
 SET @phone = 10;
 SET @supplement = 11;
+#endregion
 
 # Forenames and surnames are now a part of the users table
 INSERT INTO `v7ocf_groups_attributes` (`id`, `label_de`, `label_en`, `showLabel`, `icon`, `showIcon`, `typeID`, `options`, `ordering`, `context`, `viewLevelID`)
@@ -183,6 +215,29 @@ VALUES (1, 'Dekan', 'Dean', 'Dekane', 'Deans', 1),
        (15, 'Schülerpraktikant:in', 'Student Intern', 'Schülerpraktikant:innen', 'Student Interns', 15),
        (16, 'Student:in', 'Student', 'Studenten:innen', 'Student', 16),
        (17, 'Ehemalige', 'Alumnus', 'Alumni', 'Alumni', 18);
+
+SET @vcard = 1;
+
+#region Attribute Vars
+SET @email = 7;
+SET @office = 6;
+SET @picture = 3;
+SET @prefix = 2;
+SET @suffix = 1;
+SET @telephone = 11;
+#endregion
+
+INSERT INTO `v7ocf_groups_template_attributes` (`id`, `templateID`, `attributeID`, `ordering`)
+VALUES (1, @vcard, @prefix, 0),
+       (2, @vcard, @suffix, 0),
+       (3, @vcard, @picture, 0),
+       (4, @vcard, @office, 1),
+       (5, @vcard, @email, 2),
+       (6, @vcard, @telephone, 3);
+
+INSERT INTO `v7ocf_groups_templates` (`id`, `name_de`, `name_en`, `default`)
+VALUES (1, 'VCard', 'VCard', 1);
+
 #endregion
 
 #region Reference
@@ -203,6 +258,15 @@ ALTER TABLE `v7ocf_groups_profile_attributes`
 ALTER TABLE `v7ocf_groups_role_associations`
     ADD CONSTRAINT `fk_rAssocs_mapID` FOREIGN KEY (`mapID`) REFERENCES `v7ocf_user_usergroup_map` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
     ADD CONSTRAINT `fk_rAssocs_roleID` FOREIGN KEY (`roleID`) REFERENCES `v7ocf_groups_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `v7ocf_groups_template_attributes`
+    ADD CONSTRAINT `fk_tattribs_templateID` FOREIGN KEY (`templateID`) REFERENCES `v7ocf_groups_templates` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    ADD CONSTRAINT `fk_tattribs_attributeID` FOREIGN KEY (`attributeID`) REFERENCES `v7ocf_groups_attributes` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE;
+
 #endregion
 
 SET foreign_key_checks = 1;

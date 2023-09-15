@@ -21,6 +21,20 @@ use THM\Groups\Adapters\Application;
  */
 class Templates extends Table
 {
+    use Incremented, Named;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => No, 1 => Yes'
+     * @var bool
+     */
+    public $default;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => No, 1 => Yes'
+     * @var bool
+     */
+    public $showRole;
+
     /**
      * @inheritDoc
      */
@@ -29,6 +43,6 @@ class Templates extends Table
         $dbo = $dbo ?? Application::getDB();
 
         /** @var DatabaseDriver $dbo */
-        parent::__construct('#__thm_groups_templates', 'id', $dbo);
+        parent::__construct('#__groups_templates', 'id', $dbo);
     }
 }

@@ -2,7 +2,7 @@
 
 Extends and integrates Joomla! user, user group, content category and contact management.
 
-Joomla users and contacts are combined into profiles which integrate the
+Joomla's users and contacts are combined into profiles which integrate the
 functions of both to create profiles. Profiles are extensible via custom
 attributes which can be anything from a telephone to a list of publications.
 
@@ -23,10 +23,9 @@ unnecessarily bloat this resource.
 
 ## Component
 
-The component provides an administrative area for resource management and a
-public area for the display of managed resources. Additionally the the
-component provides general purpose functionality also used by the other package
-extenstions.
+The component provides an administrative area for resource management and a public area for the display of managed
+resources. Additionally the component provides general purpose functionality also used by the other package
+extensions.
 
 ### Public views
 
@@ -68,4 +67,16 @@ Resolves names to profiles.
 
 ## User Plugin
 
-Synchronizes changes made over the Joomla user interface with profile information.
+Supplements additional column values in the user and usergroups tables during their 'AfterSave' events.
+
+## Development Notes
+
+### Table Classes
+
+Table and table trait properties are not explicitly typed, because the values are often added after object creation.
+This has the effect that columns which are explicitly NOT NULL in the DDL become implicitly nullable when no value is
+assigned during object instantiation and throw errors when typing reflects the DDL.
+
+### PHP Bool vs SQL TINYINT(1) UNSIGNED
+
+Sometimes an explicit cast from bool to int is necessary when saving relevant information.

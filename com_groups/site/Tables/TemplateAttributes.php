@@ -21,6 +21,32 @@ use THM\Groups\Adapters\Application;
  */
 class TemplateAttributes extends Table
 {
+    use Incremented, Ordered;
+
+    /**
+     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+     * @var int
+     */
+    public $attributeID;
+
+    /**
+     * TINYINT(1) UNSIGNED DEFAULT NULL COMMENT 'null => inherit from attribute, 0 => no, 1 => yes'
+     * @var bool
+     */
+    public $showLabel;
+
+    /**
+     * TINYINT(1) UNSIGNED DEFAULT NULL COMMENT 'null => inherit from attribute, 0 => no, 1 => yes'
+     * @var int
+     */
+    public $showIcon;
+
+    /**
+     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+     * @var int
+     */
+    public $templateID;
+
     /**
      * @inheritDoc
      */
@@ -29,6 +55,6 @@ class TemplateAttributes extends Table
         $dbo = $dbo ?? Application::getDB();
 
         /** @var DatabaseDriver $dbo */
-        parent::__construct('#__thm_groups_template_attributes', 'id', $dbo);
+        parent::__construct('#__groups_template_attributes', 'id', $dbo);
     }
 }

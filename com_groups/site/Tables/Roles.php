@@ -21,13 +21,7 @@ use THM\Groups\Adapters\Application;
  */
 class Roles extends Table
 {
-    use Incremented, Named;
-
-    /**
-     * INT(3) UNSIGNED NOT NULL DEFAULT 0
-     * @var int
-     */
-    public $ordering;
+    use Incremented, Named, Ordered;
 
     /**
      * VARCHAR(100) NOT NULL

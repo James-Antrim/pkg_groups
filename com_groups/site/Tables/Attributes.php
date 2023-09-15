@@ -21,7 +21,7 @@ use THM\Groups\Adapters\Application;
  */
 class Attributes extends Table
 {
-    use Incremented;
+    use Incremented, Ordered;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group'
