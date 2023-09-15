@@ -12,11 +12,8 @@ namespace THM\Groups\Tools;
 
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\Text;
-use THM\Groups\Helpers\Attributes;
-use THM\Groups\Helpers\Groups;
-use THM\Groups\Helpers\Types;
+use THM\Groups\Adapters\{Application, Text};
+use THM\Groups\Helpers\{Attributes, Groups, Types};
 use THM\Groups\Tables;
 
 /**
@@ -82,7 +79,7 @@ class Migration
 
     /**
      * Migrates the attributes table.
-     * @return array an array mapping the existing attributes table to the new one
+     * @return array an array mapping the old attribute ids to the new ones
      */
     private static function attributes(): array
     {
@@ -404,6 +401,8 @@ class Migration
         if (!$session->get('com_groups.migrated.attributes')) {
             $aMap = self::attributes();
             self::personAttributes($aMap);
+            $tMap = self::templates();
+            self::templateAttributes($aMap, $tMap);
             $session->set('com_groups.migrated.attributes', true);
         }
     }
@@ -671,6 +670,83 @@ class Migration
 
             $ordering++;
             unset($roleIDs[$position]);
+        }
+
+        return $map;
+    }
+
+
+    /**
+     * Migrates the person attribute mappings and values to the new table.
+     *
+     * @param array $aMap a map of old attribute ids to new attribute ids
+     * @param array $tMap a map of old template ids to new template ids
+     *
+     * @return void
+     */
+    private static function templateAttributes(array $aMap, array $tMap): void
+    {
+        $db      = Application::getDB();
+        $oldKeys = array_keys($aMap);
+
+        $query = $db->getQuery(true);
+        $query->select('*')
+            ->from($db->quoteName('#__thm_groups_template_attributes'))
+            ->whereIn($db->quoteName('attributeID'), $oldKeys);
+        $db->setQuery($query);
+
+        if (!$tas = $db->loadObjectList()) {
+            return;
+        }
+
+        foreach ($tas as $ta) {
+            $data = ['attributeID' => $aMap[$ta->attributeID], 'templateID' => $tMap[$ta->templateID]];
+
+            $table = new Tables\TemplateAttributes();
+
+            if ($table->load($data)) {
+                continue;
+            }
+
+            $data['ordering']  = $ta->ordering;
+            $data['showIcon']  = $ta->showIcon;
+            $data['showLabel'] = $ta->showLabel;
+
+            $table->save($data);
+        }
+    }
+
+    /**
+     * Migrates the old templates to the new table.
+     * @return array a map of the old template ids to the new
+     */
+    private static function templates(): array
+    {
+        $db  = Application::getDB();
+        $map = [];
+
+        $query = $db->getQuery(true);
+        $query->select('*')->from($db->quoteName('#__thm_groups_templates'));
+        $db->setQuery($query);
+
+        // No existing data
+        if (!$oldTemplates = $db->loadObjectList()) {
+            return $map;
+        }
+
+        foreach ($oldTemplates as $old) {
+            $new  = new Tables\Templates();
+            $data = ['name_de' => $old->templateName];
+            $new->load($data);
+
+            if ($new->id) {
+                $map[$old->id] = $new->id;
+                continue;
+            }
+
+            $data['name_en'] = $old->templateName;
+            $new->save($data);
+            $map[$old->id] = $new->id;
         }
 
         return $map;

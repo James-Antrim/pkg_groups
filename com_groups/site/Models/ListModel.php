@@ -149,6 +149,24 @@ abstract class ListModel extends Base
     }
 
     /**
+     * Method to get a table object, load it if necessary.
+     *
+     * @param string $name    the table name, unused
+     * @param string $prefix  the class prefix, unused
+     * @param array  $options configuration array for model, unused
+     *
+     * @return  Table  a table object
+     */
+    public function getTable($name = '', $prefix = '', $options = []): Table
+    {
+        // With few exception the table and list class names are identical
+        $class = Application::getClass($this);
+        $fqn   = "\\THM\\Groups\\Tables\\$class";
+
+        return new $fqn();
+    }
+
+    /**
      * @inheritDoc
      */
     protected function loadForm($name, $source = null, $options = [], $clear = false, $xpath = false): Form
