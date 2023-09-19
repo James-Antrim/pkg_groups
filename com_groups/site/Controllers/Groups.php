@@ -10,6 +10,8 @@
 
 namespace THM\Groups\Controllers;
 
+use THM\Groups\Adapters\Application;
+
 /**
  * Controller class for groups.
  */
@@ -19,4 +21,12 @@ class Groups extends Controller
      * @inheritdoc
      */
     protected string $item = 'Group';
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(): void
+    {
+        Application::message('GROUPS_503');
+    }
 }

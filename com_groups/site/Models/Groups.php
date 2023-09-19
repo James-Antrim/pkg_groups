@@ -11,7 +11,6 @@
 namespace THM\Groups\Models;
 
 use Joomla\CMS\Helper\UserGroupsHelper as UGH;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
@@ -43,14 +42,6 @@ class Groups extends ListModel
     /**
      * @inheritDoc
      */
-    public function delete(): void
-    {
-        Application::message(Text::_('GROUPS_503'));
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getItems()
     {
         $items    = parent::getItems() ?: [];
@@ -67,7 +58,6 @@ class Groups extends ListModel
 
     /**
      * Build an SQL query to load the list data.
-     *
      * @return  QueryInterface
      */
     protected function getListQuery(): QueryInterface
@@ -151,7 +141,7 @@ class Groups extends ListModel
     /**
      * Adds associated user counts to the group
      *
-     * @param   stdClass  $group  the group to set values for
+     * @param stdClass $group the group to set values for
      *
      * @return void
      */

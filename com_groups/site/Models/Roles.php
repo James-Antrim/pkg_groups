@@ -13,13 +13,9 @@ namespace THM\Groups\Models;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
-use Joomla\Database\DatabaseDriver;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\Input;
-use THM\Groups\Helpers\Can;
-use THM\Groups\Tables\Roles as Table;
 use THM\Groups\Tools\Migration;
 
 /**
@@ -46,82 +42,6 @@ class Roles extends ListModel
         }
 
         parent::__construct($config, $factory);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function delete(): void
-    {
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
-
-        if (!$ids = Input::getSelectedIDs()) {
-            Application::message(Text::_('JERROR_NO_ITEMS_SELECTED'), Application::WARNING);
-
-            return;
-        }
-
-        /** @var DatabaseDriver $db */
-        $db        = $this->getDatabase();
-        $deleted   = 0;
-        $protected = 0;
-        $skipped   = 0;
-
-        foreach ($ids as $id) {
-            $table = new Table();
-
-            if (!$table->load($id)) {
-                Application::error(412);
-            }
-
-            if ($table->protected or !$table->delete($id)) {
-                $protected++;
-                continue;
-            }
-
-            if (!$table->delete($id)) {
-                $skipped++;
-                continue;
-            }
-
-            $deleted++;
-        }
-
-        $id       = $db->quoteName('id');
-        $ordering = $db->quoteName('ordering');
-        $query    = $db->getQuery(true);
-        $roles    = $db->quoteName('#__groups_roles');
-
-        $query->select([$id, $ordering])->from($roles);
-        $db->setQuery($query);
-        $results = $db->loadAssocList('id', 'ordering');
-        $results = array_flip($results);
-        ksort($results);
-
-        $ordering = 1;
-
-        foreach ($results as $id) {
-            $table = new Table();
-            $table->load($id);
-            $table->ordering = $ordering;
-            $table->store();
-            $ordering++;
-        }
-
-        if ($skipped) {
-            Application::message(Text::sprintf('GROUPS_X_SKIPPED_NOT_DELETED', $skipped), Application::ERROR);
-        }
-
-        if ($protected) {
-            Application::message(Text::sprintf('GROUPS_X_PROTECTED_NOT_DELETED', $protected), Application::INFO);
-        }
-
-        if ($deleted) {
-            $message = $deleted === 1 ? Text::sprintf('GROUPS_1_DELETED') : Text::sprintf('GROUPS_X_DELETED', $deleted);
-            Application::message($message);
-        }
     }
 
     /**

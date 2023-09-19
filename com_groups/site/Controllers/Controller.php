@@ -14,6 +14,7 @@ use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Table\Table;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Input\Input as JInput;
 use THM\Groups\Adapters\{Application, Input};
@@ -125,24 +126,36 @@ class Controller extends BaseController
     }
 
     /**
-     * Calls the appropriate model delete function and redirects to the appropriate list. Authorization occurs in the
-     * called model.
+     * Deletes the selected attributes.
+     * @return void
      */
     public function delete(): void
     {
         $this->checkToken();
 
-        $fqName = 'THM\\Groups\\Models\\' . $this->name;
+        if (!Can::administrate()) {
+            Application::error(403);
+        }
 
-        $model = new $fqName();
-        $model->delete();
+        if (!$selectedIDs = Input::getSelectedIDs()) {
+            Application::message(Text::_('GROUPS_NO_SELECTION'), Application::WARNING);
 
-        if ($this->backend) {
-            $this->setRedirect("$this->baseURL&view=$this->name");
             return;
         }
 
-        Application::error(501);
+        $selected = count($selectedIDs);
+
+        $deleted = 0;
+
+        foreach ($selectedIDs as $selectedID) {
+            $table = $this->getTable();
+
+            if ($table->delete($selectedID)) {
+                $deleted++;
+            }
+        }
+
+        $this->farewell($selected, $deleted, true);
     }
 
     /**
@@ -194,6 +207,17 @@ class Controller extends BaseController
 
         $view = Application::getClass($this);
         $this->setRedirect("$this->baseURL&view=$view");
+    }
+
+    /**
+     * Instances a table object corresponding to the controller's name.
+     * @return Table
+     */
+    protected function getTable(): Table
+    {
+        $fqName = 'THM\\Groups\\Tables\\' . $this->name;
+
+        return new $fqName();
     }
 
     /**
