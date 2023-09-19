@@ -12,7 +12,6 @@ namespace THM\Groups\Controllers;
 
 use Joomla\CMS\Access\Access;
 use Joomla\CMS\Application\CMSApplication;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Plugin\PluginHelper;
 use Joomla\CMS\User\UserHelper;
 use THM\Groups\Adapters\{Application, Input};
@@ -115,7 +114,7 @@ class Users extends Controller
              * super authorization.
              */
             if (!$super and Access::checkGroup($groupID, 'core.admin')) {
-                Application::message(Text::_('GROUPS_CANNOT_BATCH_SUPER_ADMIN'), Application::ERROR);
+                Application::message('GROUPS_CANNOT_BATCH_SUPER_ADMIN', Application::ERROR);
                 $this->farewell($selected);
             }
 
@@ -145,12 +144,12 @@ class Users extends Controller
             if ($batchReset) {
                 if ($resetting) {
                     if (!$super and Access::check($selectedID, 'core.admin')) {
-                        Application::message(Text::_('GROUPS_CANNOT_BATCH_SUPER_ADMIN'), Application::WARNING);
+                        Application::message('GROUPS_CANNOT_BATCH_SUPER_ADMIN', Application::WARNING);
                         continue;
                     }
 
                     if ($user->id === $selectedID) {
-                        Application::message(Text::_('GROUPS_CANNOT_BATCH_SELF'), Application::WARNING);
+                        Application::message('GROUPS_CANNOT_BATCH_SELF', Application::WARNING);
                         continue;
                     }
                 }
@@ -211,12 +210,12 @@ class Users extends Controller
         foreach ($selectedIDs as $selectedID) {
 
             if ($selectedID === $user->id) {
-                Application::message(Text::_('GROUPS_CANNOT_DELETE_SELF'), Application::ERROR);
+                Application::message('GROUPS_CANNOT_DELETE_SELF', Application::ERROR);
                 continue;
             }
 
             if (!$super and Access::check($selectedID, 'core.admin')) {
-                Application::message(Text::_('GROUPS_CANNOT_DELETE_SUPER_ADMIN'), Application::WARNING);
+                Application::message('GROUPS_CANNOT_DELETE_SUPER_ADMIN', Application::WARNING);
                 continue;
             }
 
@@ -255,7 +254,7 @@ class Users extends Controller
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('Users', 'content', $selectedIDs, false);
+        $updated     = $this->updateBool('content', $selectedIDs, false);
 
         // todo add category suppression
 
@@ -275,7 +274,7 @@ class Users extends Controller
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('Users', 'editing', $selectedIDs, false);
+        $updated     = $this->updateBool('editing', $selectedIDs, false);
 
         $this->farewell($selected, $updated);
     }
@@ -294,7 +293,7 @@ class Users extends Controller
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('Users', 'content', $selectedIDs, true);
+        $updated     = $this->updateBool('content', $selectedIDs, true);
 
         // todo add category creation
 
@@ -314,7 +313,7 @@ class Users extends Controller
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('Users', 'editing', $selectedIDs, true);
+        $updated     = $this->updateBool('editing', $selectedIDs, true);
 
         $this->farewell($selected, $updated);
     }
@@ -463,12 +462,12 @@ class Users extends Controller
 
         foreach ($selectedIDs as $selectedID) {
             if ($block and $selectedID === $user->id) {
-                Application::message(Text::_('GROUPS_CANNOT_BLOCK_SELF'), Application::ERROR);
+                Application::message('GROUPS_CANNOT_BLOCK_SELF', Application::ERROR);
                 continue;
             }
 
             if (!$super and Access::check($selectedID, 'core.admin')) {
-                Application::message(Text::_('GROUPS_CANNOT_BLOCK_SUPER_ADMIN'), Application::WARNING);
+                Application::message('GROUPS_CANNOT_BLOCK_SUPER_ADMIN', Application::WARNING);
                 continue;
             }
 
@@ -545,7 +544,7 @@ class Users extends Controller
         }
 
         $selected = count($selectedIDs);
-        $updated  = $this->updateBool('Users', 'published', $selectedIDs, $value);
+        $updated  = $this->updateBool('published', $selectedIDs, $value);
 
         $this->farewell($selected, $updated);
     }

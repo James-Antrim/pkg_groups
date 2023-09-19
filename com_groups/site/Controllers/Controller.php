@@ -138,7 +138,7 @@ class Controller extends BaseController
         }
 
         if (!$selectedIDs = Input::getSelectedIDs()) {
-            Application::message(Text::_('GROUPS_NO_SELECTION'), Application::WARNING);
+            Application::message('GROUPS_NO_SELECTION', Application::WARNING);
 
             return;
         }
@@ -322,20 +322,18 @@ class Controller extends BaseController
     /**
      * Updates a boolean column for multiple entries in a
      *
-     * @param string $name        the table class name
      * @param string $column      the table column / object property
      * @param array  $selectedIDs the ids of the resources whose properties will be updated
      * @param bool   $value       the value to update to
      *
      * @return int
      */
-    protected function updateBool(string $name, string $column, array $selectedIDs, bool $value): int
+    protected function updateBool(string $column, array $selectedIDs, bool $value): int
     {
-        $fqName = "THM\Groups\Tables\\$name";
-        $table  = new $fqName();
+        $table = $this->getTable();
 
         if (!property_exists($table, $column)) {
-            Application::message(Text::_('GROUPS_TABLE_COLUMN_NONEXISTENT'), Application::ERROR);
+            Application::message('GROUPS_TABLE_COLUMN_NONEXISTENT', Application::ERROR);
 
             return 0;
         }
@@ -344,7 +342,7 @@ class Controller extends BaseController
         $value = (int) $value;
 
         foreach ($selectedIDs as $selectedID) {
-            $table = new $fqName();
+            $table = $this->getTable();
 
             if ($table->load($selectedID) and $table->$column !== $value) {
                 $table->$column = $value;

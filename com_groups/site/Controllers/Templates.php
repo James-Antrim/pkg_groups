@@ -79,7 +79,7 @@ class Templates extends Controller
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('Templates', 'roles', $selectedIDs, $value);
+        $updated     = $this->updateBool('roles', $selectedIDs, $value);
 
         $this->farewell($selected, $updated);
     }

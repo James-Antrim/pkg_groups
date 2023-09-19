@@ -45,14 +45,12 @@ class Application
 
     /**
      * Stores toolbar references.
-     *
      * @var    Toolbar[]
      */
     protected static array $toolbars = [];
 
     /**
      * Checks whether the current context is the administrator context.
-     *
      * @return bool
      */
     public static function backend(): bool
@@ -93,7 +91,7 @@ class Application
             $url      = $referrer === $current ? Uri::base() : $referrer;
         }
 
-        self::message(Text::_("GROUPS_$code"), $severity);
+        self::message("GROUPS_$code", $severity);
         self::redirect($url, $code);
     }
 
@@ -101,7 +99,6 @@ class Application
      * Surrounds the call to the application with a try catch so that not every function needs to have a throws tag. If
      * the application has an error it would have never made it to the component in the first place, so the error would
      * not have been thrown in this call regardless.
-     *
      * @return CMSApplicationInterface|null
      */
     public static function getApplication(): ?CMSApplicationInterface
@@ -120,7 +117,8 @@ class Application
     /**
      * Gets the name of an object's class without its namespace.
      *
-     * @param object|string $object the object whose namespace free name is requested or the fq name of the class to be loaded
+     * @param object|string $object the object whose namespace free name is requested or the fq name of the class to be
+     *                              loaded
      *
      * @return string the name of the class without its namespace
      */
@@ -165,7 +163,6 @@ class Application
 
     /**
      * Method to get the application language object.
-     *
      * @return  Language  The language object
      */
     public static function getLanguage(): Language
@@ -187,7 +184,6 @@ class Application
 
     /**
      * Gets the session from the application container.
-     *
      * @return Session
      */
     public static function getSession(): Session
@@ -197,7 +193,6 @@ class Application
 
     /**
      * Gets the language portion of the localization tag.
-     *
      * @return string
      */
     public static function getTag(): string
@@ -286,7 +281,7 @@ class Application
      * Masks the Joomla application enqueueMessage function
      *
      * @param string $message the message to enqueue
-     * @param string $type how the message is to be presented
+     * @param string $type    how the message is to be presented
      *
      * @return void
      */
@@ -297,7 +292,6 @@ class Application
 
     /**
      * Checks whether the client device is a mobile phone.
-     *
      * @return bool
      */
     public static function mobile(): bool
@@ -313,8 +307,8 @@ class Application
     /**
      * Redirect to another URL.
      *
-     * @param string $url The URL to redirect to. Can only be http/https URL
-     * @param int $status The HTTP 1.1 status code to be provided. 303 is assumed by default.
+     * @param string $url    The URL to redirect to. Can only be http/https URL
+     * @param int    $status The HTTP 1.1 status code to be provided. 303 is assumed by default.
      *
      * @return  void
      */

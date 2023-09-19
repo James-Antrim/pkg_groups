@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Controllers;
 
-use THM\Groups\Adapters\{Application, Input, Text};
+use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Roles as Table;
 
@@ -37,7 +37,7 @@ class Roles extends Controller
         }
 
         if (!$selectedIDs = Input::getSelectedIDs()) {
-            Application::message(Text::_('GROUPS_NO_SELECTION'), Application::WARNING);
+            Application::message('GROUPS_NO_SELECTION', Application::WARNING);
 
             return;
         }
