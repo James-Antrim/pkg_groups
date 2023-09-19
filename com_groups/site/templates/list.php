@@ -45,8 +45,10 @@ if ($this->todo) {
     echo '</ul>';
 }
 
-$wa = $this->document->getWebAssetManager();
-$wa->useScript('table.columns');
+if (!empty($view->filterForm)) {
+    $wa = $this->document->getWebAssetManager();
+    $wa->useScript('table.columns');
+}
 
 ?>
 <form action="<?php echo $action; ?>" method="post" name="adminForm" id="adminForm">
