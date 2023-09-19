@@ -94,8 +94,9 @@ CREATE TABLE IF NOT EXISTS `#__groups_templates`
     `id`       INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `name_de`  VARCHAR(100)        NOT NULL,
     `name_en`  VARCHAR(100)        NOT NULL,
-    `default`  TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-    `showRole` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `cards`    TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `roles` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `vcards`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     UNIQUE KEY `entry` (`name_de`, `name_en`)
 )
@@ -185,10 +186,17 @@ VALUES (1, 'Dekan', 'Dean', 'Dekane', 'Deans', 1),
        (16, 'Student:in', 'Student', 'Studenten:innen', 'Student', 16),
        (17, 'Ehemalige', 'Alumnus', 'Alumni', 'Alumni', 18);
 
-SET @vcard = 1;
+#region Default Templates
+SET @cards = 1;
+SET @vcards = 2;
+#endregion
 
 #region Attribute Vars
 SET @email = 7;
+SET @fax = 9;
+SET @further = 22;
+SET @homepage = 13;
+SET @hours = 20;
 SET @office = 6;
 SET @picture = 3;
 SET @prefix = 2;
@@ -196,16 +204,31 @@ SET @suffix = 1;
 SET @telephone = 11;
 #endregion
 
-INSERT INTO `#__groups_template_attributes` (`id`, `templateID`, `attributeID`, `ordering`)
-VALUES (1, @vcard, @prefix, 0),
-       (2, @vcard, @suffix, 0),
-       (3, @vcard, @picture, 0),
-       (4, @vcard, @office, 1),
-       (5, @vcard, @email, 2),
-       (6, @vcard, @telephone, 3);
+# further vcard specific attributes can be extrapolated from the data provided, base-64 data is ignored by default
+INSERT INTO `#__groups_template_attributes` (`templateID`, `attributeID`, `ordering`)
+VALUES (@cards, @prefix, 0),
+       (@cards, @suffix, 0),
+       (@cards, @picture, 0),
+       (@cards, @email, 1),
+       (@cards, @telephone, 2),
+       (@cards, @fax, 3),
+       (@cards, @homepage, 4),
+       (@cards, @office, 5),
+       (@cards, @address, 6),
+       (@cards, @hours, 7),
+       (@cards, @further, 8),
+       (@vcards, @address, 1),
+       (@vcards, @email, 2),
+       (@vcards, @prefix, 0),
+       (@vcards, @suffix, 0),
+       (@vcards, @office, 3),
+       (@vcards, @telephone, 4),
+       (@vcards, @homepage, 5);
 
-INSERT INTO `#__groups_templates` (`id`, `name_de`, `name_en`, `default`)
-VALUES (1, 'VCard', 'VCard', 1);
+# vcard roles will only be added if an explicit role is assigned
+INSERT INTO `#__groups_templates` (`id`, `name_de`, `name_en`, `cards`, `roles`, `vcards`)
+VALUES (1, 'Cards', 'Cards', 1, 1, 0),
+       (2, 'VCards', 'VCards', 0, 1, 1);
 
 #endregion
 
@@ -225,8 +248,8 @@ ALTER TABLE `#__groups_profile_attributes`
         ON DELETE CASCADE;
 
 ALTER TABLE `#__groups_role_associations`
-    ADD CONSTRAINT `fk_rAssocs_mapID` FOREIGN KEY (`mapID`) REFERENCES `v7ocf_user_usergroup_map` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    ADD CONSTRAINT `fk_rAssocs_roleID` FOREIGN KEY (`roleID`) REFERENCES `v7ocf_groups_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+    ADD CONSTRAINT `fk_rAssocs_mapID` FOREIGN KEY (`mapID`) REFERENCES `#__user_usergroup_map` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    ADD CONSTRAINT `fk_rAssocs_roleID` FOREIGN KEY (`roleID`) REFERENCES `#__groups_roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `#__groups_template_attributes`
     ADD CONSTRAINT `fk_tattribs_templateID` FOREIGN KEY (`templateID`) REFERENCES `#__groups_templates` (`id`)

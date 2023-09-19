@@ -405,6 +405,9 @@ class Migration
             self::templateAttributes($aMap, $tMap);
             $session->set('com_groups.migrated.attributes', true);
         }
+
+        // todo migrate menu assignments
+        // todo migrate
     }
 
     /**
@@ -675,7 +678,6 @@ class Migration
         return $map;
     }
 
-
     /**
      * Migrates the person attribute mappings and values to the new table.
      *
@@ -692,7 +694,10 @@ class Migration
         $query = $db->getQuery(true);
         $query->select('*')
             ->from($db->quoteName('#__thm_groups_template_attributes'))
-            ->whereIn($db->quoteName('attributeID'), $oldKeys);
+            // only those attributes which have been migrated
+            ->whereIn($db->quoteName('attributeID'), $oldKeys)
+            // only those associations which were actually used
+            ->where($db->quoteName('published') . ' = 1');
         $db->setQuery($query);
 
         if (!$tas = $db->loadObjectList()) {

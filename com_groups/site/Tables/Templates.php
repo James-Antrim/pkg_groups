@@ -24,16 +24,22 @@ class Templates extends Table
     use Incremented, Named;
 
     /**
-     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => No, 1 => Yes'
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var bool
      */
-    public $default;
+    public $cards;
 
     /**
-     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => No, 1 => Yes'
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var bool
      */
-    public $showRole;
+    public $roles;
+
+    /**
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
+     * @var bool
+     */
+    public $vcards;
 
     /**
      * @inheritDoc
