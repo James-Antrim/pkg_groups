@@ -83,12 +83,6 @@ abstract class ListModel extends Base
     }
 
     /**
-     * Deletes entries.
-     * @return void
-     */
-    abstract public function delete(): void;
-
-    /**
      * Filters out form inputs which should not be displayed due to menu settings.
      *
      * @param Form $form the form to be filtered

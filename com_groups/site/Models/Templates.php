@@ -14,6 +14,7 @@ use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
 use Joomla\Database\QueryInterface;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Templates as Table;
 use THM\Groups\Tools\Migration;
@@ -59,14 +60,6 @@ class Templates extends ListModel
         $db->setQuery($query);
 
         return $db->execute();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function delete(): void
-    {
-        Application::message(\THM\Groups\Adapters\Text::_('GROUPS_503'));
     }
 
     /**

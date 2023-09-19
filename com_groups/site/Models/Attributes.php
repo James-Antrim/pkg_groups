@@ -49,14 +49,6 @@ class Attributes extends ListModel
     /**
      * @inheritDoc
      */
-    public function delete(): void
-    {
-        Application::message(Text::_('GROUPS_503'));
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getItems()
     {
         $items = parent::getItems();

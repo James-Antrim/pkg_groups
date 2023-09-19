@@ -54,14 +54,6 @@ class Users extends ListModel
     /**
      * @inheritDoc
      */
-    public function delete(): void
-    {
-        Application::message(Text::_('GROUPS_503'));
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function filterFilterForm(Form $form): void
     {
         if ($this->state->get('filter.association')) {
