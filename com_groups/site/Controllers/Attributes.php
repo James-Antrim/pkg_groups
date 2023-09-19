@@ -30,7 +30,6 @@ class Attributes extends Controller
      */
     public function delete(): void
     {
-        // Check for request forgeries
         $this->checkToken();
 
         if (!Can::administrate()) {
@@ -113,7 +112,6 @@ class Attributes extends Controller
      */
     private function toggle(string $column, bool $value): void
     {
-        // Check for request forgeries
         $this->checkToken();
 
         if (!Can::administrate()) {

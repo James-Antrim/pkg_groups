@@ -82,7 +82,6 @@ class Controller extends BaseController
      */
     public function apply(): void
     {
-        // Check for request forgeries
         $this->checkToken();
 
         $fqName = 'THM\\Groups\\Models\\' . $this->name;
@@ -131,7 +130,6 @@ class Controller extends BaseController
      */
     public function delete(): void
     {
-        // Check for request forgeries
         $this->checkToken();
 
         $fqName = 'THM\\Groups\\Models\\' . $this->name;
@@ -217,7 +215,6 @@ class Controller extends BaseController
      */
     public function save(): void
     {
-        // Check for request forgeries
         $this->checkToken();
         $fqName = 'THM\\Groups\\Models\\' . $this->name;
 
@@ -246,7 +243,6 @@ class Controller extends BaseController
      */
     public function save2copy(): void
     {
-        // Check for request forgeries
         $this->checkToken();
         $fqName = 'THM\\Groups\\Models\\' . $this->name;
 
@@ -271,7 +267,6 @@ class Controller extends BaseController
      */
     public function save2new(): void
     {
-        // Check for request forgeries
         $this->checkToken();
         $fqName = 'THM\\Groups\\Models\\' . $this->name;
 
