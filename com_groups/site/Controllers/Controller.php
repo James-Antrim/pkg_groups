@@ -20,9 +20,6 @@ use Joomla\Input\Input as JInput;
 use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\Can;
 
-/**
- * Controller class for attribute types.
- */
 class Controller extends BaseController
 {
     /**

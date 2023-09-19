@@ -10,9 +10,6 @@
 
 namespace THM\Groups\Controllers;
 
-/**
- * Controller class for attribute types.
- */
 class Attribute extends Controller
 {
     protected string $list = 'Attributes';

@@ -19,9 +19,6 @@ use THM\Groups\Helpers\{Can, Groups};
 use Joomla\Component\Users\Administrator\Model\UserModel;
 use THM\Groups\Tables\{RoleAssociations, Users as UT, UserUsergroupMap as UUGM};
 
-/**
- * Controller class for groups.
- */
 class Users extends Controller
 {
     private const ADD = 1, RESET = 1, REMOVE = 0, STOP = 0;

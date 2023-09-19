@@ -14,9 +14,6 @@ use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\{Attributes as Helper, Can};
 use THM\Groups\Tables\Attributes as Table;
 
-/**
- * Controller class for attribute types.
- */
 class Attributes extends Controller
 {
     /**

@@ -14,9 +14,6 @@ use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Roles as Table;
 
-/**
- * Controller class for roles.
- */
 class Roles extends Controller
 {
     /**

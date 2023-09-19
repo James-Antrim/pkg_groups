@@ -10,9 +10,6 @@
 
 namespace THM\Groups\Controllers;
 
-/**
- * Controller class for roles.
- */
 class Role extends Controller
 {
     protected string $list = 'Roles';

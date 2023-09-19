@@ -12,9 +12,6 @@ namespace THM\Groups\Controllers;
 
 use THM\Groups\Adapters\Application;
 
-/**
- * Controller class for groups.
- */
 class Groups extends Controller
 {
     /**

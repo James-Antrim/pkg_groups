@@ -15,9 +15,6 @@ use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Templates as Table;
 
-/**
- * Controller class for roles.
- */
 class Templates extends Controller
 {
     /**
@@ -62,10 +59,9 @@ class Templates extends Controller
     }
 
     /**
-     * Toggles a boolean column's value.
+     * Toggles the role column's value.
      *
-     * @param string $column
-     * @param bool   $value
+     * @param bool $value
      *
      * @return void
      */
