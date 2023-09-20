@@ -13,6 +13,7 @@ namespace THM\Groups\Adapters;
 use Exception;
 use Joomla\CMS\Dispatcher\ComponentDispatcher;
 use Joomla\CMS\MVC\Controller\BaseController;
+use THM\Groups\Controllers\Controller;
 
 /**
  * @inheritDoc
@@ -39,12 +40,21 @@ class Dispatcher extends ComponentDispatcher
         $this->checkAccess();
 
         $command = Input::getTask();
+        $args    = [];
+        $task    = '';
 
         // Check for a controller.task command.
         if (str_contains($command, '.')) {
-            [$controller, $task] = explode('.', $command);
+            $commands   = explode('.', $command);
+            $controller = array_shift($commands);
             $this->input->set('controller', $controller);
+            $task = array_shift($commands);
             $this->input->set('task', $task);
+
+            while ($commands) {
+                $args[] = array_shift($commands);
+            }
+
         } elseif (!$controller = Input::getController()) {
             if (Application::backend()) {
                 $controller = 'Groups';
@@ -57,10 +67,12 @@ class Dispatcher extends ComponentDispatcher
 
         $config['option'] = $this->option;
         $config['name']   = $controller;
-        $controller       = $this->getController($controller, ucfirst($this->app->getName()), $config);
+
+        $controller = $this->getController($controller, ucfirst($this->app->getName()), $config);
 
         try {
-            $controller->execute($task);
+            /** @var Controller $controller */
+            $args ? $controller->executeArgs($task, $args) : $controller->execute($task);
         } catch (Exception $exception) {
             Application::handleException($exception);
         }

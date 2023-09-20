@@ -10,12 +10,14 @@
 
 namespace THM\Groups\Controllers;
 
+use Exception;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Input\Input as JInput;
 use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\Text;
 use THM\Groups\Helpers\Can;
 
 class Controller extends BaseController
@@ -61,5 +63,34 @@ class Controller extends BaseController
         }
 
         return parent::display($cachable, $urlparams);
+    }
+
+    /**
+     * Execute a task by triggering a method in the derived class.
+     *
+     * @param string $task The task to perform. If no matching task is found, the '__default' task is executed, if
+     *                     defined.
+     *
+     * @return  mixed   The value returned by the called method.
+     * @throws  Exception
+     */
+    public function executeArgs(string $task, array $args): mixed
+    {
+        $this->task = $task;
+
+        $task = strtolower($task);
+
+        if (isset($this->taskMap[$task])) {
+            $doTask = $this->taskMap[$task];
+        } elseif (isset($this->taskMap['__default'])) {
+            $doTask = $this->taskMap['__default'];
+        } else {
+            throw new Exception(Text::sprintf('JLIB_APPLICATION_ERROR_TASK_NOT_FOUND', $task), 404);
+        }
+
+        // Record the actual task being fired
+        $this->doTask = $doTask;
+
+        return call_user_func_array([$this, $this->task], $args);
     }
 }
