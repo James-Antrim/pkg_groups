@@ -57,10 +57,6 @@ class Input
             return $value;
         }
 
-        if ($value = self::getFormItems()->get($property)) {
-            return $value;
-        }
-
         if ($value = self::getParams()->get($property)) {
             return $value;
         }
@@ -210,15 +206,6 @@ class Input
     }
 
     /**
-     * Retrieves the request form.
-     * @return Registry with the request data if available
-     */
-    public static function getFormItems(): Registry
-    {
-        return new Registry(self::getArray());
-    }
-
-    /**
      * Retrieves the id parameter.
      * @return int
      */
@@ -338,37 +325,14 @@ class Input
     public static function getSelectedIDs(): array
     {
         // List Views
-        $selectedIDs = self::getIntCollection('cid');
-
-        if (!empty($selectedIDs)) {
+        if ($selectedIDs = self::getIntCollection('cid')) {
             return $selectedIDs;
-        }
-
-        // Forms
-        $formItems = self::getFormItems();
-        if ($formItems->count()) {
-            // Merge Views
-            if ($selectedIDs = $formItems->get('ids')) {
-                $formattedValues = self::formatIDValues($selectedIDs);
-                if (count($formattedValues)) {
-                    asort($formattedValues);
-
-                    return $formattedValues;
-                }
-            }
-
-            // Edit Views
-            if ($id = $formItems->get('id')) {
-                $selectedIDs = [$id];
-
-                return self::formatIDValues($selectedIDs);
-            }
         }
 
         // Default: explicit GET/POST parameter
         $selectedID = self::getID();
 
-        return empty($selectedID) ? [] : [$selectedID];
+        return $selectedID ? [$selectedID] : [];
     }
 
     /**
