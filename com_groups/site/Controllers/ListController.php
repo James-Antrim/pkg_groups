@@ -16,6 +16,7 @@ use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Table\Table;
 use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\Can;
+use THM\Groups\Tables\Ordered;
 
 class ListController extends Controller
 {
@@ -127,9 +128,33 @@ class ListController extends Controller
     public function saveOrderAjax(): void
     {
         $this->checkToken();
-        $fqName = 'THM\\Groups\\Models\\' . $this->name;
-        $model  = new $fqName();
-        $model->saveOrder();
+
+        if (!Can::administrate()) {
+            echo Text::_('GROUPS_403');
+            return;
+        }
+
+        $table = $this->getTable();
+
+        if (!property_exists($table, 'ordering')) {
+            echo Text::_('GROUPS_501');
+            return;
+        }
+
+        $ordering    = 1;
+        $resourceIDs = Input::getArray('cid');
+
+        foreach ($resourceIDs as $resourceID) {
+            /** @var Ordered|Table $table */
+            $table = $this->getTable();
+            $table->load($resourceID);
+            $table->ordering = $ordering;
+            $table->store();
+            $ordering++;
+        }
+
+        echo Text::_('Request performed successfully.');
+
         $this->app->close();
     }
 

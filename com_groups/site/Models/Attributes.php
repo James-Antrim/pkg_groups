@@ -14,9 +14,8 @@ use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
-use THM\Groups\Adapters\{Application, Input, Text};
-use THM\Groups\Helpers\{Attributes as Helper, Can, Types};
-use THM\Groups\Tables\Attributes as Table;
+use THM\Groups\Adapters\{Application, Text};
+use THM\Groups\Helpers\{Attributes as Helper, Types};
 use THM\Groups\Tools\Migration;
 
 /**
@@ -118,34 +117,5 @@ class Attributes extends ListModel
         $this->orderBy($query);
 
         return $query;
-    }
-
-    /**
-     * Method to save the reordered set.
-     * @return  void
-     */
-    public function saveorder(): void
-    {
-        if (!Can::administrate()) {
-            echo Text::_('GROUPS_403');
-            return;
-        }
-
-        $ordering    = 1;
-        $resourceIDs = Input::getArray('cid');
-
-        foreach ($resourceIDs as $resourceID) {
-            $protected = in_array($resourceID, Helper::PROTECTED);
-            $table     = new Table();
-            $table->load($resourceID);
-            $table->ordering = $protected ? 0 : $ordering;
-            $table->store();
-
-            $ordering = $protected ? $ordering : $ordering + 1;
-        }
-
-        echo Text::_('Request performed successfully.');
-
-        $this->cleanCache();
     }
 }

@@ -20,15 +20,13 @@ use Joomla\Database\QueryInterface;
 use Joomla\Registry\Registry;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
-use THM\Groups\Adapters\Text;
-use THM\Groups\Helpers\Can;
 
 /**
  * Model class for handling lists of items.
  * - Overrides/-writes to avoid deprecated code in the platform or promote ease of use
  * - Supplemental functions to extract common code from list models
  */
-abstract class ListModel extends Base
+class ListModel extends Base
 {
     use Named;
 
@@ -80,6 +78,15 @@ abstract class ListModel extends Base
         $column = strpos($name, '.') ? substr($name, strpos($name, '.') + 1) : $name;
         $column = $this->getDatabase()->quoteName($column);
         $query->where("$column = $value");
+    }
+
+    /** Provides external access to the clean cache function. This belongs in the input adapter, but I do not want to
+     *  have to put in the effort to resolve everything necessary to get it there.
+     * @void initiates cache cleaning
+     */
+    public function emptyCache(): void
+    {
+        $this->cleanCache();
     }
 
     /**
@@ -271,42 +278,5 @@ abstract class ListModel extends Base
 
         $this->setState('list.limit', $limit);
         $this->setState('list.start', $start);
-    }
-
-    /**
-     * Method to save the reordered set.
-     * @return  void
-     */
-    public function saveorder(): void
-    {
-        if (!Can::administrate()) {
-            echo Text::_('GROUPS_403');
-            return;
-        }
-
-        $fqName = 'THM\\Groups\\Tables\\' . $this->name;
-
-        /** @var Table $table */
-        $table = new $fqName();
-
-        if (!property_exists($table, 'ordering')) {
-            echo Text::_('GROUPS_501');
-            return;
-        }
-
-        $ordering    = 1;
-        $resourceIDs = Input::getArray('cid');
-
-        foreach ($resourceIDs as $resourceID) {
-            $table = new $fqName();
-            $table->load($resourceID);
-            $table->ordering = $ordering;
-            $table->store();
-            $ordering++;
-        }
-
-        echo Text::_('Request performed successfully.');
-
-        $this->cleanCache();
     }
 }

@@ -82,6 +82,37 @@ class Attributes extends ListController
     }
 
     /**
+     * Method to save the submitted ordering values for records via AJAX.
+     * @return  void
+     */
+    public function saveOrderAjax(): void
+    {
+        $this->checkToken();
+
+        if (!Can::administrate()) {
+            echo Text::_('GROUPS_403');
+            return;
+        }
+
+        $ordering     = 1;
+        $attributeIDs = Input::getArray('cid');
+
+        foreach ($attributeIDs as $attributeID) {
+            $protected = in_array($attributeID, Helper::PROTECTED);
+            $table     = new Table();
+            $table->load($attributeID);
+            $table->ordering = $protected ? 0 : $ordering;
+            $table->store();
+
+            $ordering = $protected ? $ordering : $ordering + 1;
+        }
+
+        echo Text::_('Request performed successfully.');
+
+        $this->app->close();
+    }
+
+    /**
      * Displays the icon in the attribute label in profile views.
      * @return void
      */
