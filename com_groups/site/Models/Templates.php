@@ -41,28 +41,6 @@ class Templates extends ListModel
     }
 
     /**
-     * Sets the template with the given id as the default template for module contexts.
-     * @return bool true if the default was reset successfully, otherwise false
-     */
-    public function resetDefault(): bool
-    {
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
-
-        $db = $this->getDatabase();
-
-        $default   = $db->quoteName('default');
-        $templates = $db->quoteName('#__groups_templates');
-
-        $query = $db->getQuery(true);
-        $query->update($templates)->set("$default = 0");
-        $db->setQuery($query);
-
-        return $db->execute();
-    }
-
-    /**
      * @inheritDoc
      */
     public function getItems()
@@ -95,5 +73,29 @@ class Templates extends ListModel
         $this->orderBy($query);
 
         return $query;
+    }
+
+    /**
+     * Zeros out the values of the given column
+     *
+     * @param string $column
+     *
+     * @return bool
+     */
+    public static function zeroColumn(string $column): bool
+    {
+        if (!Can::administrate()) {
+            Application::error(403);
+        }
+
+        $db = Application::getDB();
+
+        // Perform one query to set the column values to 0 instead of two for search and replace
+        $query = $db->getQuery(true)
+            ->update($db->quoteName('#__groups_templates'))
+            ->set($db->quoteName($column) . " = 0");
+        $db->setQuery($query);
+
+        return $db->execute();
     }
 }

@@ -72,7 +72,7 @@ class Templates extends ListView
             ],
             'cards' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_PROFILE_CARDS'),
+                'title' => Text::_('GROUPS_CARDS'),
                 'type' => 'value'
             ],
             'roles' => [

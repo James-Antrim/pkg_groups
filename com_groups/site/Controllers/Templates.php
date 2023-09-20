@@ -13,6 +13,7 @@ namespace THM\Groups\Controllers;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Can;
+use THM\Groups\Models\Templates as Model;
 use THM\Groups\Tables\Templates as Table;
 
 class Templates extends Controller
@@ -92,22 +93,13 @@ class Templates extends Controller
         $table       = new Table();
 
         if ($selectedID = reset($selectedIDs) and $table->load($selectedID)) {
-            $db = Application::getDB();
-
-            // Perform one query to set the column values to 0 instead of two for search and replace
-            $query = $db->getQuery(true)
-                ->update($db->quoteName('#__groups_templates'))
-                ->set($db->quoteName($column) . " = 0");
-            $db->setQuery($query);
-
             $table->$column = 1;
 
-            if ($db->execute() and $table->store()) {
+            if (Model::zeroColumn($column) and $table->store()) {
                 Application::message('GROUPS_DEFAULT_SET');
             } else {
                 Application::message('GROUPS_500', Application::ERROR);
             }
-
         }
 
         $view = Application::getClass($this);
