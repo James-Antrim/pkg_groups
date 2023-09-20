@@ -41,9 +41,12 @@ class Templates extends ListView
     protected function completeItems(): void
     {
         foreach ($this->items as $rowNo => $item) {
-            $item->cards  = HTML::toggle($rowNo, Helper::CARDS[$item->cards], 'Templates');
-            $item->roles  = HTML::toggle($rowNo, Helper::ROLES[$item->roles], 'Templates');
-            $item->vcards = HTML::toggle($rowNo, Helper::VCARDS[$item->vcards], 'Templates');
+            $icon             = HTML::icon('fa fa-list-ol');
+            $tip              = Text::_('GROUPS_TEMPLATE_ATTRIBUTES_TIP');
+            $item->attributes = HTML::tip($icon, "attributes-tip-$item->id", $tip, [], $item->attributes);
+            $item->cards      = HTML::toggle($rowNo, Helper::CARDS[$item->cards], 'Templates');
+            $item->roles      = HTML::toggle($rowNo, Helper::ROLES[$item->roles], 'Templates');
+            $item->vcards     = HTML::toggle($rowNo, Helper::VCARDS[$item->vcards], 'Templates');
         }
     }
 
@@ -68,6 +71,11 @@ class Templates extends ListView
                 'link' => ListItem::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title' => Text::_('GROUPS_TEMPLATE'),
+                'type' => 'value'
+            ],
+            'attributes' => [
+                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+                'title' => Text::_('GROUPS_ATTRIBUTES'),
                 'type' => 'value'
             ],
             'cards' => [

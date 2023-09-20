@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="details">
+        <field name="id" type="hidden"/>
+        <field name="name_de" type="text" label="GROUPS_NAME_DE" required="true"/>
+        <field name="name_en" type="text" label="GROUPS_NAME_EN" required="true"/>
+        <field name="cards" type="radio" label="GROUPS_CARDS" description="GROUPS_CARDS_DEFAULT_DESC"
+               class="btn-group btn-group-yesno" default="0">
+            <option value="1">GROUPS_YES</option>
+            <option value="0">GROUPS_NO</option>
+        </field>
+        <field name="roles" type="radio" label="GROUPS_ROLES" description="GROUPS_TEMPLATE_ROLES_DESC"
+               class="btn-group btn-group-yesno" default="1">
+            <option value="1">GROUPS_YES</option>
+            <option value="0">GROUPS_NO</option>
+        </field>
+        <field name="vcards" type="radio" label="GROUPS_VCARDS" description="GROUPS_VCARDS_DEFAULT_DESC"
+               class="btn-group btn-group-yesno" default="0">
+            <option value="1">GROUPS_YES</option>
+            <option value="0">GROUPS_NO</option>
+        </field>
+    </fieldset>
+</form>

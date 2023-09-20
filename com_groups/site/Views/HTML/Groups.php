@@ -150,12 +150,12 @@ class Groups extends ListView
                 $eLink       = Route::_($link . 1);
                 $properties  = ['class' => 'btn btn-success'];
                 $tip         = Text::_('GROUPS_ENABLED_USERS');
-                $item->users = HTML::tip($item->enabled, "enabled-tip->$item->id", $tip, $properties, $eLink);
+                $item->users = HTML::tip($item->enabled, "enabled-tip-$item->id", $tip, $properties, $eLink);
 
                 $bLink       = Route::_($link . 0);
                 $properties  = ['class' => 'btn btn-danger'];
                 $tip         = Text::_('GROUPS_BLOCKED_USERS');
-                $item->users .= HTML::tip($item->blocked, "blocked-tip->$item->id", $tip, $properties, $bLink);
+                $item->users .= HTML::tip($item->blocked, "blocked-tip-$item->id", $tip, $properties, $bLink);
             } else {
                 $item->users = '';
             }
@@ -163,7 +163,7 @@ class Groups extends ListView
             $link         = "?option=com_users&view=debuggroup&group_id=$item->id";
             $tip          = Text::_('GROUPS_DEBUG_GROUP_RIGHTS');
             $icon         = HTML::icon('fas fa-th');
-            $item->rights = HTML::tip($icon, "rights-tip->$item->id", $tip, [], $link, true);
+            $item->rights = HTML::tip($icon, "rights-tip-$item->id", $tip, [], $link, true);
 
             $item->editLink = Route::_('?option=com_groups&view=Group&id=' . $item->id);
         }

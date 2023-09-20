@@ -94,7 +94,7 @@ class Templates extends ListController
         if ($selectedID = reset($selectedIDs) and $table->load($selectedID)) {
             $table->$column = 1;
 
-            if ($this->zeroColumn('Templates', $column) and $table->store()) {
+            if ($this->zeroColumn('templates', $column) and $table->store()) {
                 Application::message('GROUPS_DEFAULT_SET');
             } else {
                 Application::message('GROUPS_500', Application::ERROR);
