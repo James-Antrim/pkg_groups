@@ -22,7 +22,7 @@ use THM\Groups\Adapters\{Application, Input};
  * Class for editing a single resource record, based loosely on AdminModel, but without all the extra code it now caries
  * with it.
  */
-abstract class EditModel extends FormModel
+abstract class Edit extends Form
 {
     /**
      * The resource's table class.
@@ -47,7 +47,6 @@ abstract class EditModel extends FormModel
 
     /**
      * Retrieves a resource record.
-     *
      * @return  CMSObject  Object on success, false on failure.
      */
     public function getItem(): CMSObject
@@ -68,9 +67,9 @@ abstract class EditModel extends FormModel
     /**
      * Method to get a table object, load it if necessary.
      *
-     * @param string $name the table name, unused
-     * @param string $prefix the class prefix, unused
-     * @param array $options configuration array for model, unused
+     * @param string $name    the table name, unused
+     * @param string $prefix  the class prefix, unused
+     * @param array  $options configuration array for model, unused
      *
      * @return  Table  a table object
      */

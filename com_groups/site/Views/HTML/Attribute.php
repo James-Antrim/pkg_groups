@@ -13,7 +13,7 @@ namespace THM\Groups\Views\HTML;
 /**
  * @todo Find a way to display Font Awesome Brand Icons correctly in the select box.
  */
-class Attribute extends FormView
+class Attribute extends Form
 {
     /**
      * @inheritDoc

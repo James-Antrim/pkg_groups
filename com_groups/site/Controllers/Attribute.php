@@ -17,7 +17,7 @@ use THM\Groups\Helpers\Can;
 use THM\Groups\Helpers\Icons;
 use THM\Groups\Helpers\Types;
 
-class Attribute extends FormController
+class Attribute extends Form
 {
     protected string $list = 'Attributes';
 

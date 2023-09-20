@@ -14,7 +14,7 @@ use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Roles as Table;
 
-class Roles extends Controller
+class Roles extends ListController
 {
     /**
      * @inheritdoc

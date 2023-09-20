@@ -11,13 +11,11 @@
 namespace THM\Groups\Controllers;
 
 use Joomla\CMS\Application\CMSApplication;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use Joomla\CMS\Table\Table;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Input\Input as JInput;
-use THM\Groups\Adapters\{Application, Input};
+use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Can;
 
 class Controller extends BaseController
@@ -35,12 +33,6 @@ class Controller extends BaseController
     protected string $baseURL = '';
 
     /**
-     * The item view to redirect to for the creation of new resources
-     * @var string
-     */
-    protected string $item = '';
-
-    /**
      * @inheritDoc
      */
     public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?JInput $input = null)
@@ -48,57 +40,6 @@ class Controller extends BaseController
         $this->backend = Application::backend();
         $this->baseURL = $this->baseURL ?: Uri::base() . '?option=com_groups';
         parent::__construct($config, $factory, $app, $input);
-    }
-
-    /**
-     * Deletes the selected attributes.
-     * @return void
-     */
-    public function add(): void
-    {
-        $this->setRedirect("$this->baseURL&view=Attribute");
-        // A form view without a registered list
-        if (empty($this->item)) {
-            Application::message('List view does not have its corresponding item view coded.', Application::ERROR);
-            $this->setRedirect(Uri::base());
-
-            return;
-        }
-
-        $this->setRedirect("$this->baseURL&view=$this->item");
-    }
-
-    /**
-     * Deletes the selected attributes.
-     * @return void
-     */
-    public function delete(): void
-    {
-        $this->checkToken();
-
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
-
-        if (!$selectedIDs = Input::getSelectedIDs()) {
-            Application::message('GROUPS_NO_SELECTION', Application::WARNING);
-
-            return;
-        }
-
-        $selected = count($selectedIDs);
-
-        $deleted = 0;
-
-        foreach ($selectedIDs as $selectedID) {
-            $table = $this->getTable();
-
-            if ($table->delete($selectedID)) {
-                $deleted++;
-            }
-        }
-
-        $this->farewell($selected, $deleted, true);
     }
 
     /**
@@ -120,130 +61,5 @@ class Controller extends BaseController
         }
 
         return parent::display($cachable, $urlparams);
-    }
-
-    /**
-     * An extract for redirecting back to the list view and providing a message for the number of entries updated.
-     *
-     * @param int  $selected the number of accounts selected for processing
-     * @param int  $updated  the number of accounts changed by the calling function
-     * @param bool $delete   whether the change affected by the calling function was a deletion
-     *
-     * @return void
-     */
-    protected function farewell(int $selected = 0, int $updated = 0, bool $delete = false): void
-    {
-        if ($selected) {
-            if ($selected === $updated) {
-                $key     = $updated === 1 ? 'GROUPS_1_' : 'GROUPS_X_';
-                $key     .= $delete === true ? 'DELETED' : 'UPDATED';
-                $message = $updated === 1 ? Text::_($key, $updated) : Text::sprintf($key, $updated);
-                $type    = Application::MESSAGE;
-            } else {
-                $message = $delete ?
-                    Text::sprintf('GROUPS_XX_DELETED', $updated, $selected) : Text::sprintf('GROUPS_XX_UPDATED', $updated, $selected);
-                $type    = Application::WARNING;
-            }
-
-            Application::message($message, $type);
-        }
-
-        $view = Application::getClass($this);
-        $this->setRedirect("$this->baseURL&view=$view");
-    }
-
-    /**
-     * Instances a table object corresponding to the controller's name.
-     * @return Table
-     */
-    protected function getTable(): Table
-    {
-        $fqName = 'THM\\Groups\\Tables\\' . $this->name;
-
-        return new $fqName();
-    }
-
-    /**
-     * Checks against unauthenticated access and returns the id of the current user.
-     * @return int
-     */
-    protected function getUserID(): int
-    {
-        if (!$userID = Application::getUser()->id) {
-            Application::error(401);
-        }
-
-        return $userID;
-    }
-
-    /**
-     * Method to save the submitted ordering values for records via AJAX.
-     * @return  void
-     */
-    public function saveOrderAjax(): void
-    {
-        $this->checkToken();
-        $fqName = 'THM\\Groups\\Models\\' . $this->name;
-        $model  = new $fqName();
-        $model->saveOrder();
-        $this->app->close();
-    }
-
-    /**
-     * Updates a boolean column for multiple entries in a
-     *
-     * @param string $column      the table column / object property
-     * @param array  $selectedIDs the ids of the resources whose properties will be updated
-     * @param bool   $value       the value to update to
-     *
-     * @return int
-     */
-    protected function updateBool(string $column, array $selectedIDs, bool $value): int
-    {
-        $table = $this->getTable();
-
-        if (!property_exists($table, $column)) {
-            Application::message('GROUPS_TABLE_COLUMN_NONEXISTENT', Application::ERROR);
-
-            return 0;
-        }
-
-        $total = 0;
-        $value = (int) $value;
-
-        foreach ($selectedIDs as $selectedID) {
-            $table = $this->getTable();
-
-            if ($table->load($selectedID) and $table->$column !== $value) {
-                $table->$column = $value;
-
-                if ($table->store()) {
-                    $total++;
-                }
-            }
-        }
-
-        return $total;
-    }
-
-    /**
-     * Zeros out the values of the given column
-     *
-     * @param string $table  the table where the column is located
-     * @param string $column the column to be zeroed
-     *
-     * @return bool true on success, otherwise, false
-     */
-    protected function zeroColumn(string $table, string $column): bool
-    {
-        $db = Application::getDB();
-
-        // Perform one query to set the column values to 0 instead of two for search and replace
-        $query = $db->getQuery(true)
-            ->update($db->quoteName("#__groups_$table"))
-            ->set($db->quoteName($column) . " = 0");
-        $db->setQuery($query);
-
-        return $db->execute();
     }
 }

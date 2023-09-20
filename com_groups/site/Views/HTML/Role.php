@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Views\HTML;
 
-class Role extends FormView
+class Role extends Form
 {
     /**
      * @inheritDoc

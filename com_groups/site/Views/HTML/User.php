@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Views\HTML;
 
-class User extends FormView
+class User extends Form
 {
     /**
      * @inheritDoc

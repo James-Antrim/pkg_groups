@@ -19,7 +19,7 @@ use THM\Groups\Helpers\{Can, Groups};
 use Joomla\Component\Users\Administrator\Model\UserModel;
 use THM\Groups\Tables\{RoleAssociations, Users as UT, UserUsergroupMap as UUGM};
 
-class Users extends Controller
+class Users extends ListController
 {
     private const ADD = 1, RESET = 1, REMOVE = 0, STOP = 0;
 
@@ -324,7 +324,9 @@ class Users extends Controller
      */
     private function filterSelected(array $selectedIDs): array
     {
-        $userID = $this->getUserID();
+        if (!$userID = Application::getUser()->id) {
+            Application::error(401);
+        }
 
         return in_array($userID, $selectedIDs) ? [$userID] : [];
     }

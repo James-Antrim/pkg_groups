@@ -15,7 +15,7 @@ use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Templates as Table;
 
-class Templates extends Controller
+class Templates extends ListController
 {
     /**
      * @inheritdoc

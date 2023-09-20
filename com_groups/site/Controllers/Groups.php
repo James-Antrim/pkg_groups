@@ -12,7 +12,7 @@ namespace THM\Groups\Controllers;
 
 use THM\Groups\Adapters\Application;
 
-class Groups extends Controller
+class Groups extends ListController
 {
     /**
      * @inheritdoc

@@ -14,9 +14,9 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Adapters\Text;
-use THM\Groups\Views\HTML\FormView;
+use THM\Groups\Views\HTML\Form;
 
-/** @var FormView $this */
+/** @var Form $this */
 
 // Core behaviour scripts
 $wa = $this->document->getWebAssetManager();

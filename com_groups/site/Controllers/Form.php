@@ -18,7 +18,7 @@ use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Tables\Incremented;
 
-abstract class FormController extends Controller
+abstract class Form extends Controller
 {
     /**
      * The list view to redirect to after completion of form view functions.

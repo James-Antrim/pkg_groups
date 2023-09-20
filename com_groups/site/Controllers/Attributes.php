@@ -14,7 +14,7 @@ use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\{Attributes as Helper, Can};
 use THM\Groups\Tables\Attributes as Table;
 
-class Attributes extends Controller
+class Attributes extends ListController
 {
     /**
      * @inheritdoc

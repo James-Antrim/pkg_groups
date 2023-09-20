@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Models;
 
-class Role extends EditModel
+class Role extends Edit
 {
     protected string $tableClass = 'Roles';
 }

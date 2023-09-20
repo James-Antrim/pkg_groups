@@ -11,18 +11,18 @@
 namespace THM\Groups\Models;
 
 use Exception;
-use Joomla\CMS\Form\Form;
-use Joomla\CMS\MVC\Model\FormModel as Base;
+use Joomla\CMS\Form\Form as FormAlias;
+use Joomla\CMS\MVC\Model\FormModel;
 use THM\Groups\Adapters\Application;
 
-abstract class FormModel extends Base
+abstract class Form extends FormModel
 {
     use Named;
 
     /**
      * @inheritDoc
      */
-    public function getForm($data = array(), $loadData = true): ?Form
+    public function getForm($data = array(), $loadData = true): ?FormAlias
     {
         $options = ['control' => '', 'load_data' => $loadData];
 

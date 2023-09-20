@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Form\Form;
+use Joomla\CMS\Form\Form as FormAlias;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\ToolbarHelper;
@@ -25,34 +25,30 @@ use THM\Groups\Views\Named;
  * - Overrides/-writes to avoid deprecated code in the platform or promote ease of use
  * - Supplemental functions to extract common code from list models
  */
-abstract class FormView extends Base
+abstract class Form extends Base
 {
     use Configured, Named;
 
     /**
      * The Form object
-     *
-     * @var  Form
+     * @var  FormAlias
      */
     protected $form;
 
     /**
      * The active item
-     *
      * @var   CMSObject
      */
     protected CMSObject $item;
 
     /**
      * Joomla hard coded default value.
-     *
      * @var string
      */
     protected string $layout = 'form';
 
     /**
      * The model state
-     *
      * @var   CMSObject
      */
     protected CMSObject $state;

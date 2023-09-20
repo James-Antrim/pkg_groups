@@ -17,7 +17,7 @@ use THM\Groups\Helpers\Can;
 use THM\Groups\Helpers\Roles as Helper;
 use THM\Groups\Tables\Incremented;
 
-class Role extends FormController
+class Role extends Form
 {
     protected string $list = 'Roles';
 
