@@ -35,12 +35,6 @@ class Controller extends BaseController
     protected string $baseURL = '';
 
     /**
-     * The list view to redirect to after completion of form view functions.
-     * @var string
-     */
-    protected string $list = '';
-
-    /**
      * The item view to redirect to for the creation of new resources
      * @var string
      */
@@ -72,54 +66,6 @@ class Controller extends BaseController
         }
 
         $this->setRedirect("$this->baseURL&view=$this->item");
-    }
-
-    /**
-     * Saves resource data and redirects to the same view of the same resource.
-     * @return void
-     */
-    public function apply(): void
-    {
-        $this->checkToken();
-
-        $fqName = 'THM\\Groups\\Models\\' . $this->name;
-
-        $model = new $fqName();
-        if ($resourceID = $model->save()) {
-            if ($this->backend) {
-                $this->setRedirect("$this->baseURL&view=$this->name&id=$resourceID");
-                return;
-            }
-
-            Application::error(501);
-        }
-
-        $referrer = Input::getInput()->server->getString('HTTP_REFERER');
-        $this->setRedirect($referrer);
-    }
-
-    /**
-     * Closes the form view without saving changes.
-     * @return void
-     */
-    public function cancel(): void
-    {
-        if ($this->backend) {
-
-            // A form view without a registered list
-            if (empty($this->list)) {
-                Application::message('Form view does not have its corresponding list view coded.', Application::ERROR);
-                $this->setRedirect(Uri::base());
-
-                return;
-            }
-
-            $this->setRedirect("$this->baseURL&view=$this->list");
-
-            return;
-        }
-
-        Application::error(501);
     }
 
     /**
@@ -231,79 +177,6 @@ class Controller extends BaseController
     }
 
     /**
-     * Saves resource data and redirects to the same view of the copy resource.
-     * @return void
-     */
-    public function save(): void
-    {
-        $this->checkToken();
-        $fqName = 'THM\\Groups\\Models\\' . $this->name;
-
-        $model = new $fqName();
-
-        // Success
-        if ($model->save()) {
-
-            // There is no nuance in the administrative area
-            if ($this->backend and $this->list) {
-                $this->setRedirect("$this->baseURL&view=$this->list");
-                return;
-            }
-
-            // Not yet implemented
-            Application::error(501);
-        }
-
-        $referrer = Input::getInput()->server->getString('HTTP_REFERER');
-        $this->setRedirect($referrer);
-    }
-
-    /**
-     * Saves resource data and redirects to the same view of the copy resource.
-     * @return void
-     */
-    public function save2copy(): void
-    {
-        $this->checkToken();
-        $fqName = 'THM\\Groups\\Models\\' . $this->name;
-
-        $model = new $fqName();
-
-        // Reset the id for the new entry.
-        Input::set('id', 0);
-
-        // Success => redirect to the edit view of the new resource
-        if ($newID = $model->save()) {
-            $this->setRedirect("$this->baseURL&view=$this->name&id=$newID");
-            return;
-        }
-
-        $referrer = Input::getInput()->server->getString('HTTP_REFERER');
-        $this->setRedirect($referrer);
-    }
-
-    /**
-     * Saves resource data and redirects to the same view of a new resource.
-     * @return void
-     */
-    public function save2new(): void
-    {
-        $this->checkToken();
-        $fqName = 'THM\\Groups\\Models\\' . $this->name;
-
-        $model = new $fqName();
-
-        // Success => redirect to an empty edit view
-        if ($model->save()) {
-            $this->setRedirect("$this->baseURL&view=$this->name&id=0");
-            return;
-        }
-
-        $referrer = Input::getInput()->server->getString('HTTP_REFERER');
-        $this->setRedirect($referrer);
-    }
-
-    /**
      * Method to save the submitted ordering values for records via AJAX.
      * @return  void
      */
@@ -351,5 +224,26 @@ class Controller extends BaseController
         }
 
         return $total;
+    }
+
+    /**
+     * Zeros out the values of the given column
+     *
+     * @param string $table  the table where the column is located
+     * @param string $column the column to be zeroed
+     *
+     * @return bool true on success, otherwise, false
+     */
+    protected function zeroColumn(string $table, string $column): bool
+    {
+        $db = Application::getDB();
+
+        // Perform one query to set the column values to 0 instead of two for search and replace
+        $query = $db->getQuery(true)
+            ->update($db->quoteName("#__groups_$table"))
+            ->set($db->quoteName($column) . " = 0");
+        $db->setQuery($query);
+
+        return $db->execute();
     }
 }

@@ -34,10 +34,4 @@ abstract class FormModel extends Base
 
         return null;
     }
-
-    /**
-     * Saves the resource to the database.
-     * @return int
-     */
-    public abstract function save(): int;
 }

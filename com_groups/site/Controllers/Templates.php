@@ -13,7 +13,6 @@ namespace THM\Groups\Controllers;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Can;
-use THM\Groups\Models\Templates as Model;
 use THM\Groups\Tables\Templates as Table;
 
 class Templates extends Controller
@@ -95,14 +94,13 @@ class Templates extends Controller
         if ($selectedID = reset($selectedIDs) and $table->load($selectedID)) {
             $table->$column = 1;
 
-            if (Model::zeroColumn($column) and $table->store()) {
+            if ($this->zeroColumn('Templates', $column) and $table->store()) {
                 Application::message('GROUPS_DEFAULT_SET');
             } else {
                 Application::message('GROUPS_500', Application::ERROR);
             }
         }
 
-        $view = Application::getClass($this);
-        $this->setRedirect("$this->baseURL&view=$view");
+        $this->setRedirect("$this->baseURL&view=Templates");
     }
 }

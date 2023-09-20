@@ -14,9 +14,6 @@ use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
 use Joomla\Database\QueryInterface;
 use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\Input;
-use THM\Groups\Helpers\Can;
-use THM\Groups\Tables\Templates as Table;
 use THM\Groups\Tools\Migration;
 
 /**
@@ -73,29 +70,5 @@ class Templates extends ListModel
         $this->orderBy($query);
 
         return $query;
-    }
-
-    /**
-     * Zeros out the values of the given column
-     *
-     * @param string $column
-     *
-     * @return bool
-     */
-    public static function zeroColumn(string $column): bool
-    {
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
-
-        $db = Application::getDB();
-
-        // Perform one query to set the column values to 0 instead of two for search and replace
-        $query = $db->getQuery(true)
-            ->update($db->quoteName('#__groups_templates'))
-            ->set($db->quoteName($column) . " = 0");
-        $db->setQuery($query);
-
-        return $db->execute();
     }
 }
