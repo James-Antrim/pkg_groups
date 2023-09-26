@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Controllers;
 
+use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\{Attributes as AH, TemplateAttributes as Helper};
 use THM\Groups\Adapters\Text;
@@ -22,6 +23,27 @@ class TemplateAttributes extends Attributed
      * Not used here due to the attributes themselves being managed in their own context.
      */
     protected string $item = 'TemplateAttribute';
+
+    public function add(): void
+    {
+        $referrer = Input::getReferrer();
+        if ($args = Input::getArray('args') and count($args) === 2) {
+            list($templateID, $attributeID) = $args;
+            $data  = ['attributeID' => $attributeID, 'templateID' => $templateID];
+            $table = new Table();
+            if ($table->load($data)) {
+                Application::message('GROUPS_ENTRY_EXISTS', Application::NOTICE);
+            } else {
+                $data['ordering'] = Helper::getMaxOrdering('template_attributes', ['templateID' => $templateID]) + 1;
+                if ($table->save($data)) {
+                    Application::message('GROUPS_ENTRY_SAVED');
+                } else {
+                    Application::message('GROUPS_ENTRY_FAILED', Application::ERROR);
+                }
+            }
+        }
+        $this->setRedirect($referrer);
+    }
 
     /**
      * Closes the form view without saving changes.

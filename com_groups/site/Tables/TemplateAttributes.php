@@ -30,13 +30,13 @@ class TemplateAttributes extends Table
     public $attributeID;
 
     /**
-     * TINYINT(1) UNSIGNED DEFAULT NULL COMMENT 'null => inherit from attribute, 0 => no, 1 => yes'
+     * TINYINT(1) UNSIGNED  NOT NULL DEFAULT 0
      * @var bool
      */
     public $showLabel;
 
     /**
-     * TINYINT(1) UNSIGNED DEFAULT NULL COMMENT 'null => inherit from attribute, 0 => no, 1 => yes'
+     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var int
      */
     public $showIcon;

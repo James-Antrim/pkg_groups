@@ -27,15 +27,23 @@ class TemplateAttributes extends ListView
      */
     protected function addToolbar(): void
     {
-        // Manage access is a prerequisite for getting this far
-        $toolbar = Application::getToolbar();
-        $toolbar->addNew('TemplateAttributes.add');
+        $templateID = Input::getID();
+        $toolbar    = Application::getToolbar();
+
+        if ($available = $this->getAvailable()) {
+            $addGroup = $toolbar->dropdownButton('add-group');
+            $addBar   = $addGroup->getChildToolbar();
+
+            foreach ($available as $attributeID => $attribute) {
+                $addBar->addNew("TemplateAttributes.add.$templateID.$attributeID", $attribute);
+            }
+        }
+
         $toolbar->delete('TemplateAttributes.delete', 'GROUPS_DELETE')->message('JGLOBAL_CONFIRM_DELETE')->listCheck(true);
         $toolbar->cancel('TemplateAttributes.cancel');
         $toolbar->divider();
 
-        $templateID = Input::getID();
-        ToolbarHelper::title(TH::getName($templateID));
+        ToolbarHelper::title(TH::getName($templateID), 'fa fa-list-ol');
     }
 
     /**
@@ -67,16 +75,32 @@ class TemplateAttributes extends ListView
     }
 
     /**
-     * @inheritDoc
+     * Retrieves the attributes not already associated with this template.
+     * @return array
      */
-    public function display($tpl = null): void
+    private function getAvailable(): array
     {
-        $this->todo = [
-            'Add \'Add\' buttons for any attributes not already present.',
-            'Fix redirection on add.'
-        ];
+        $associatedIDs = [];
+        foreach ($this->items as $association) {
+            $associatedIDs[] = $association->attributeID;
+        }
 
-        parent::display($tpl);
+        $all    = AH::getAll();
+        $allIDs = array_keys($all);
+
+        if (!$availableIDs = array_diff($allIDs, $associatedIDs)) {
+            return [];
+        }
+
+        $available = [];
+        $label     = 'label_' . Application::getTag();
+
+        foreach ($availableIDs as $attributeID) {
+            $attribute               = $all[$attributeID];
+            $available[$attributeID] = $attribute->$label;
+        }
+
+        return $available;
     }
 
     /**

@@ -108,12 +108,12 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_roles`
 
 CREATE TABLE IF NOT EXISTS `v7ocf_groups_template_attributes`
 (
-    `id`          INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `templateID`  INT(11) UNSIGNED NOT NULL,
-    `attributeID` INT(11) UNSIGNED NOT NULL,
-    `ordering`    INT(3) UNSIGNED  NOT NULL DEFAULT 0,
-    `showLabel`   TINYINT(1) UNSIGNED       DEFAULT NULL COMMENT 'null => inherit from attribute, 0 => no, 1 => yes',
-    `showIcon`    TINYINT(1) UNSIGNED       DEFAULT NULL COMMENT 'null => inherit from attribute, 0 => no, 1 => yes',
+    `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
+    `templateID`  INT(11) UNSIGNED    NOT NULL,
+    `attributeID` INT(11) UNSIGNED    NOT NULL,
+    `ordering`    INT(3) UNSIGNED     NOT NULL DEFAULT 0,
+    `showLabel`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `showIcon`    TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`)
 )
     ENGINE = InnoDB
@@ -122,12 +122,12 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_template_attributes`
 
 CREATE TABLE IF NOT EXISTS `v7ocf_groups_templates`
 (
-    `id`       INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
-    `name_de`  VARCHAR(100)        NOT NULL,
-    `name_en`  VARCHAR(100)        NOT NULL,
-    `cards`    TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-    `roles` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-    `vcards`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `id`      INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
+    `name_de` VARCHAR(100)        NOT NULL,
+    `name_en` VARCHAR(100)        NOT NULL,
+    `cards`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `roles`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `vcards`  TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     PRIMARY KEY (`id`),
     UNIQUE KEY `entry` (`name_de`, `name_en`)
 )

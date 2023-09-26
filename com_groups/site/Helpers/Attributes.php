@@ -11,8 +11,9 @@
 namespace THM\Groups\Helpers;
 
 use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\Text;
 
-class Attributes
+class Attributes implements Selectable
 {
     use Persistent;
 
@@ -61,6 +62,48 @@ class Attributes
             'task' => 'showLabel',
             'tip' => 'GROUPS_TOGGLE_TIP_HIDDEN'
         ]];
+
+    /**
+     * @inheritDoc
+     */
+    public static function getAll(): array
+    {
+        $db         = Application::getDB();
+        $query      = $db->getQuery(true);
+        $label      = $db->quoteName('label_' . Application::getTag());
+        $attributes = $db->quoteName('#__groups_attributes');
+        $query->select('*')->from($attributes)->order($label);
+        $db->setQuery($query);
+
+        if (!$attributes = $db->loadObjectList('id')) {
+            return [];
+        }
+
+        foreach ($attributes as $attribute) {
+            $attribute->type = Text::_(Types::TYPES[$attribute->typeID]['name']);
+        }
+
+        return $attributes;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getOptions(): array
+    {
+        $label   = 'label_' . Application::getTag();
+        $options = [];
+
+        foreach (self::getAll() as $attributeID => $attribute) {
+
+            $options[] = (object) [
+                'text' => $attribute->$label,
+                'value' => $attributeID
+            ];
+        }
+
+        return $options;
+    }
 
     /**
      * Retrieves the ids of attributes which are of unlabeled types.

@@ -19,12 +19,17 @@ trait Persistent
      * Gets the current maximum value in the ordering column.
      * @return mixed the current maximum value in the ordering column
      */
-    public static function getMax(string $table, string $column): mixed
+    public static function getMax(string $table, string $column, array $filters = []): mixed
     {
         $db     = Application::getDB();
         $query  = $db->getQuery(true);
         $column = $db->quoteName($column);
         $query->select("MAX($column)")->from($db->quoteName("#__groups_$table"));
+
+        foreach ($filters as $filter => $value) {
+            $query->where($db->quoteName($filter) . " = $value");
+        }
+
         $db->setQuery($query);
 
         return $db->loadResult();
@@ -34,9 +39,9 @@ trait Persistent
      * Gets the current maximum value in the ordering column.
      * @return int the current maximum value in the ordering column
      */
-    public static function getMaxOrdering(string $table): int
+    public static function getMaxOrdering(string $table, array $filters = []): int
     {
-        return (int) self::getMax($table, 'ordering');
+        return (int) self::getMax($table, 'ordering', $filters);
     }
 
     /**

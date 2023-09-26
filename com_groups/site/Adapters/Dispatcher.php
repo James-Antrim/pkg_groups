@@ -55,6 +55,8 @@ class Dispatcher extends ComponentDispatcher
                 $args[] = array_shift($commands);
             }
 
+            Input::set('args', $args);
+
         } elseif (!$controller = Input::getController()) {
             if (Application::backend()) {
                 $controller = 'Groups';
@@ -72,7 +74,7 @@ class Dispatcher extends ComponentDispatcher
 
         try {
             /** @var Controller $controller */
-            $args ? $controller->executeArgs($task, $args) : $controller->execute($task);
+            $controller->execute($task);
         } catch (Exception $exception) {
             Application::handleException($exception);
         }
