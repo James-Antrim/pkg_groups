@@ -11,7 +11,6 @@
 namespace THM\Groups\Controllers;
 
 use THM\Groups\Adapters\{Application, Input};
-use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Roles as Table;
 
 class Roles extends ListController
@@ -28,10 +27,7 @@ class Roles extends ListController
     public function delete(): void
     {
         $this->checkToken();
-
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
+        $this->authorize();
 
         if (!$selectedIDs = Input::getSelectedIDs()) {
             Application::message('GROUPS_NO_SELECTION', Application::WARNING);

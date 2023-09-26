@@ -13,23 +13,12 @@ namespace THM\Groups\Controllers;
 use Joomla\CMS\Table\Table;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
-use THM\Groups\Helpers\Can;
 use THM\Groups\Helpers\Roles as Helper;
 use THM\Groups\Tables\Incremented;
 
 class Role extends Form
 {
     protected string $list = 'Roles';
-
-    /**
-     * @inheritDoc
-     */
-    protected function authorize(): void
-    {
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
-    }
 
     /**
      * @inheritDoc

@@ -37,9 +37,8 @@ class Users extends ListController
      */
     public function activate(): void
     {
-        if (!Can::changeState()) {
-            Application::error(403);
-        }
+        $this->checkToken();
+        $this->authorize();
 
         $app         = Application::getApplication();
         $selectedIDs = Input::getSelectedIDs();
@@ -83,14 +82,28 @@ class Users extends ListController
         $this->farewell($selected, $updated);
     }
 
+    protected function authorize(): void
+    {
+        $authorized = match (debug_backtrace()[1]) {
+            'activate', 'disableContent', 'disableEditing', 'enableContent', 'enableEditing', 'toggleBlock'
+            => Can::changeState(),
+            'batch' => Can::batchProcess(),
+            'delete' => Can::delete(),
+            default => Can::administrate()
+        };
+
+        if (!$authorized) {
+            Application::error(403);
+        }
+    }
+
     /**
      * @return void
      */
     public function batch(): void
     {
-        if (!Can::batchProcess()) {
-            Application::error(403);
-        }
+        $this->checkToken();
+        $this->authorize();
 
         $user  = Application::getUser();
         $super = $user->get('isRoot');
@@ -188,10 +201,7 @@ class Users extends ListController
     public function delete(): void
     {
         $this->checkToken();
-
-        if (!Can::delete()) {
-            Application::error(403);
-        }
+        $this->authorize();
 
         /** @var CMSApplication $app */
         $app         = Application::getApplication();
@@ -245,9 +255,8 @@ class Users extends ListController
      */
     public function disableContent(): void
     {
-        if (!Can::changeState()) {
-            Application::error(403);
-        }
+        $this->checkToken();
+        $this->authorize();
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
@@ -265,9 +274,8 @@ class Users extends ListController
      */
     public function disableEditing(): void
     {
-        if (!Can::changeState()) {
-            Application::error(403);
-        }
+        $this->checkToken();
+        $this->authorize();
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
@@ -284,9 +292,8 @@ class Users extends ListController
      */
     public function enableContent(): void
     {
-        if (!Can::changeState()) {
-            Application::error(403);
-        }
+        $this->checkToken();
+        $this->authorize();
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
@@ -304,9 +311,8 @@ class Users extends ListController
      */
     public function enableEditing(): void
     {
-        if (!Can::changeState()) {
-            Application::error(403);
-        }
+        $this->checkToken();
+        $this->authorize();
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
@@ -439,10 +445,7 @@ class Users extends ListController
     private function toggleBlock(bool $value): void
     {
         $this->checkToken();
-
-        if (!Can::changeState()) {
-            Application::error(403);
-        }
+        $this->authorize();
 
         /** @var CMSApplication $app */
         $app         = Application::getApplication();
@@ -534,6 +537,7 @@ class Users extends ListController
 
         $selectedIDs = Input::getSelectedIDs();
 
+        // Deviating authorization because of personal account access
         if (!Can::changeState()) {
             $selectedIDs = $this->filterSelected($selectedIDs);
         }

@@ -45,6 +45,29 @@ class Controller extends BaseController
     }
 
     /**
+     * Default authorization check. Level component administrator. Override for nuance.
+     * @return void
+     */
+    protected function authorize(): void
+    {
+        if (!Can::administrate()) {
+            Application::error(403);
+        }
+    }
+
+    /**
+     * Default authorization check. Level component administrator. Override for nuance.
+     * @return void
+     */
+    protected function authorizeAJAX(): void
+    {
+        if (!Can::administrate()) {
+            echo Text::_('GROUPS_403');
+            $this->app->close();
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     public function display($cachable = false, $urlparams = []): BaseController|Controller

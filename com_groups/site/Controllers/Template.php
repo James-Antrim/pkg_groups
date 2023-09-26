@@ -13,7 +13,6 @@ namespace THM\Groups\Controllers;
 use Joomla\CMS\Table\Table;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
-use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Incremented;
 
 class Template extends Form
@@ -22,16 +21,6 @@ class Template extends Form
      * @inheritdoc
      */
     protected string $list = 'Templates';
-
-    /**
-     * @inheritDoc
-     */
-    protected function authorize(): void
-    {
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
-    }
 
     /**
      * @inheritDoc

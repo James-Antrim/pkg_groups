@@ -15,7 +15,6 @@ use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Table\Table;
 use THM\Groups\Adapters\{Application, Input, Text};
-use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Ordered;
 
 class ListController extends Controller
@@ -54,10 +53,7 @@ class ListController extends Controller
     public function delete(): void
     {
         $this->checkToken();
-
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
+        $this->authorize();
 
         if (!$selectedIDs = Input::getSelectedIDs()) {
             Application::message('GROUPS_NO_SELECTION', Application::WARNING);
@@ -128,12 +124,7 @@ class ListController extends Controller
     public function saveOrderAjax(): void
     {
         $this->checkToken();
-
-        if (!Can::administrate()) {
-            echo Text::_('GROUPS_403');
-            return;
-        }
-
+        $this->authorizeAJAX();
         $table = $this->getTable();
 
         if (!property_exists($table, 'ordering')) {

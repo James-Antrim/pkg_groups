@@ -10,26 +10,14 @@
 
 namespace THM\Groups\Controllers;
 
-use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Attributes as Helper;
-use THM\Groups\Helpers\Can;
 use THM\Groups\Helpers\Icons;
 use THM\Groups\Helpers\Types;
 
 class Attribute extends Form
 {
     protected string $list = 'Attributes';
-
-    /**
-     * @inheritdoc
-     */
-    protected function authorize(): void
-    {
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
-    }
 
     /**
      * @inheritdoc

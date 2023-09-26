@@ -12,7 +12,6 @@ namespace THM\Groups\Controllers;
 
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
-use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Templates as Table;
 
 class Templates extends ListController
@@ -68,10 +67,7 @@ class Templates extends ListController
     private function toggle(bool $value): void
     {
         $this->checkToken();
-
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
+        $this->authorize();
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
@@ -83,10 +79,7 @@ class Templates extends ListController
     private function toggleUnique(string $column): void
     {
         $this->checkToken();
-
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
+        $this->authorize();
 
         $selectedIDs = Input::getSelectedIDs();
         $table       = new Table();

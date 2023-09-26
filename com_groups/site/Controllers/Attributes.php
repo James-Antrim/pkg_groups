@@ -11,7 +11,7 @@
 namespace THM\Groups\Controllers;
 
 use THM\Groups\Adapters\{Application, Input, Text};
-use THM\Groups\Helpers\{Attributes as Helper, Can};
+use THM\Groups\Helpers\Attributes as Helper;
 use THM\Groups\Tables\Attributes as Table;
 
 class Attributes extends ListController
@@ -28,10 +28,7 @@ class Attributes extends ListController
     public function delete(): void
     {
         $this->checkToken();
-
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
+        $this->authorize();
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
@@ -88,11 +85,7 @@ class Attributes extends ListController
     public function saveOrderAjax(): void
     {
         $this->checkToken();
-
-        if (!Can::administrate()) {
-            echo Text::_('GROUPS_403');
-            return;
-        }
+        $this->authorizeAJAX();
 
         $ordering     = 1;
         $attributeIDs = Input::getArray('cid');
@@ -141,10 +134,7 @@ class Attributes extends ListController
     private function toggle(string $column, bool $value): void
     {
         $this->checkToken();
-
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
+        $this->authorize();
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);

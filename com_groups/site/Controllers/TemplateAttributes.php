@@ -10,9 +10,7 @@
 
 namespace THM\Groups\Controllers;
 
-use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
-use THM\Groups\Helpers\Can;
 
 class TemplateAttributes extends ListController
 {
@@ -37,17 +35,14 @@ class TemplateAttributes extends ListController
      *
      * @return void
      */
-    private function toggle(bool $value): void
+    public function toggle(bool $value): void
     {
         $this->checkToken();
-
-        if (!Can::administrate()) {
-            Application::error(403);
-        }
+        $this->authorize();
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('roles', $selectedIDs, $value);
+        $updated     = $this->updateBool('template_attributes', $selectedIDs, $value);
 
         $this->farewell($selected, $updated);
     }
