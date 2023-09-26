@@ -10,8 +10,12 @@
 
 namespace THM\Groups\Helpers;
 
+use THM\Groups\Tables\TemplateAttributes as Table;
+
 class TemplateAttributes
 {
+    use Persistent;
+
     public const SHOWN = 1, HIDDEN = 0;
 
     public const showIconStates = [
@@ -41,4 +45,19 @@ class TemplateAttributes
             'task' => 'showLabel',
             'tip' => 'GROUPS_TOGGLE_TIP_HIDDEN'
         ]];
+
+    /**
+     * Gets the attribute id if the association.
+     *
+     * @param int $id the id of the association
+     *
+     * @return int
+     */
+    public static function getAttributeID(int $id): int
+    {
+        /** @var Table $table */
+        $table = self::getTable();
+
+        return ($table->load($id) and $table->attributeID) ? $table->attributeID : 0;
+    }
 }

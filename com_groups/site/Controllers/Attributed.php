@@ -10,7 +10,10 @@
 
 namespace THM\Groups\Controllers;
 
-abstract class Labeled extends ListController
+/**
+ * Class has common functions used for attribute management.
+ */
+abstract class Attributed extends ListController
 {
     /**
      * Removes the icon from the attribute label in profile views.

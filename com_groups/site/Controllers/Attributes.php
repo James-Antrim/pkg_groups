@@ -14,7 +14,7 @@ use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\Attributes as Helper;
 use THM\Groups\Tables\Attributes as Table;
 
-class Attributes extends Labeled
+class Attributes extends Attributed
 {
     /**
      * @inheritdoc

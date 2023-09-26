@@ -11,8 +11,11 @@
 namespace THM\Groups\Controllers;
 
 use THM\Groups\Adapters\Input;
+use THM\Groups\Helpers\{Attributes as AH, TemplateAttributes as Helper};
+use THM\Groups\Adapters\Text;
+use THM\Groups\Tables\TemplateAttributes as Table;
 
-class TemplateAttributes extends Labeled
+class TemplateAttributes extends Attributed
 {
     /**
      * @inheritdoc
@@ -30,6 +33,39 @@ class TemplateAttributes extends Labeled
     }
 
     /**
+     * Method to save the submitted ordering values for records via AJAX.
+     * @return  void
+     */
+    public function saveOrderAjax(): void
+    {
+        $this->checkToken();
+        $this->authorizeAJAX();
+
+        $ordering       = 1;
+        $associationIDs = Input::getArray('cid');
+
+        foreach ($associationIDs as $associationID) {
+            $attributeID = Helper::getAttributeID($associationID);
+            $table       = new Table();
+            $table->load($associationID);
+
+            if (in_array($attributeID, AH::PROTECTED)) {
+                $table->ordering = 0;
+            } else {
+                $table->ordering = $ordering;
+                $ordering++;
+            }
+
+            $table->store();
+
+        }
+
+        echo Text::_('Request performed successfully.');
+
+        $this->app->close();
+    }
+
+    /**
      * @inheritdoc
      */
     public function toggle(string $column, bool $value): void
@@ -41,7 +77,15 @@ class TemplateAttributes extends Labeled
         $selected    = count($selectedIDs);
         $updated     = $this->updateBool($column, $selectedIDs, $value);
 
-        $this->farewell($selected, $updated, false, false);
+        $this->farewell($selected, $updated);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function farewell(int $selected = 0, int $updated = 0, bool $delete = false, bool $autoRedirect = false): void
+    {
+        parent::farewell($selected, $updated, $delete, $autoRedirect);
 
         $referrer = Input::getReferrer();
         parse_str($referrer, $params);

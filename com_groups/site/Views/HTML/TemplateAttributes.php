@@ -52,7 +52,7 @@ class TemplateAttributes extends ListView
             $attribute = new AT();
             $attribute->load($item->attributeID);
             $item->name = $attribute->$label;
-            $neither    = in_array($item->id, $unlabeledAttributes) ? $unlabeledTip : '';
+            $neither    = in_array($item->attributeID, $unlabeledAttributes) ? $unlabeledTip : '';
 
             if (in_array($item->attributeID, AH::PROTECTED)) {
                 $context    = "groups-attribute-$item->id";
@@ -72,11 +72,8 @@ class TemplateAttributes extends ListView
     public function display($tpl = null): void
     {
         $this->todo = [
-            'Make it so the protected items are unaffected during ordering/toggle.',
             'Add \'Add\' buttons for any attributes not already present.',
-            'Add delete functionality.',
-            'Add toggle functionality.',
-            'Fix redirection on add/delete/toggle.'
+            'Fix redirection on add.'
         ];
 
         parent::display($tpl);
