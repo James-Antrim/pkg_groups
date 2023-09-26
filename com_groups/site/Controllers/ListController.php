@@ -90,13 +90,14 @@ class ListController extends Controller
     /**
      * An extract for redirecting back to the list view and providing a message for the number of entries updated.
      *
-     * @param int  $selected the number of accounts selected for processing
-     * @param int  $updated  the number of accounts changed by the calling function
-     * @param bool $delete   whether the change affected by the calling function was a deletion
+     * @param int  $selected     the number of accounts selected for processing
+     * @param int  $updated      the number of accounts changed by the calling function
+     * @param bool $delete       whether the change affected by the calling function was a deletion
+     * @param bool $autoRedirect whether the function should initiate redirection automatically
      *
      * @return void
      */
-    protected function farewell(int $selected = 0, int $updated = 0, bool $delete = false): void
+    protected function farewell(int $selected = 0, int $updated = 0, bool $delete = false, bool $autoRedirect = true): void
     {
         if ($selected) {
             if ($selected === $updated) {
@@ -113,8 +114,10 @@ class ListController extends Controller
             Application::message($message, $type);
         }
 
-        $view = Application::getClass($this);
-        $this->setRedirect("$this->baseURL&view=$view");
+        if ($autoRedirect) {
+            $view = Application::getClass($this);
+            $this->setRedirect("$this->baseURL&view=$view");
+        }
     }
 
     /**

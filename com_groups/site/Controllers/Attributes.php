@@ -14,7 +14,7 @@ use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\Attributes as Helper;
 use THM\Groups\Tables\Attributes as Table;
 
-class Attributes extends ListController
+class Attributes extends Labeled
 {
     /**
      * @inheritdoc
@@ -61,24 +61,6 @@ class Attributes extends ListController
     }
 
     /**
-     * Removes the icon from the attribute label in profile views.
-     * @return void
-     */
-    public function hideIcon(): void
-    {
-        $this->toggle('showIcon', false);
-    }
-
-    /**
-     * Removes the text from the attribute label in profile views.
-     * @return void
-     */
-    public function hideLabel(): void
-    {
-        $this->toggle('showLabel', false);
-    }
-
-    /**
      * Method to save the submitted ordering values for records via AJAX.
      * @return  void
      */
@@ -106,32 +88,9 @@ class Attributes extends ListController
     }
 
     /**
-     * Displays the icon in the attribute label in profile views.
-     * @return void
+     * @inheritdoc
      */
-    public function showIcon(): void
-    {
-        $this->toggle('showIcon', true);
-    }
-
-    /**
-     * Displays the text in the attribute label in profile views.
-     * @return void
-     */
-    public function showLabel(): void
-    {
-        $this->toggle('showLabel', true);
-    }
-
-    /**
-     * Toggles a boolean column's value.
-     *
-     * @param string $column
-     * @param bool   $value
-     *
-     * @return void
-     */
-    private function toggle(string $column, bool $value): void
+    protected function toggle(string $column, bool $value): void
     {
         $this->checkToken();
         $this->authorize();

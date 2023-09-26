@@ -12,10 +12,11 @@ namespace THM\Groups\Controllers;
 
 use THM\Groups\Adapters\Input;
 
-class TemplateAttributes extends ListController
+class TemplateAttributes extends Labeled
 {
     /**
      * @inheritdoc
+     * Not used here due to the attributes themselves being managed in their own context.
      */
     protected string $item = 'TemplateAttribute';
 
@@ -29,21 +30,25 @@ class TemplateAttributes extends ListController
     }
 
     /**
-     * Toggles the role column's value.
-     *
-     * @param bool $value
-     *
-     * @return void
+     * @inheritdoc
      */
-    public function toggle(bool $value): void
+    public function toggle(string $column, bool $value): void
     {
         $this->checkToken();
         $this->authorize();
 
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('template_attributes', $selectedIDs, $value);
+        $updated     = $this->updateBool($column, $selectedIDs, $value);
 
-        $this->farewell($selected, $updated);
+        $this->farewell($selected, $updated, false, false);
+
+        $referrer = Input::getReferrer();
+        parse_str($referrer, $params);
+
+        $url = $this->baseURL;
+        $url .= empty($params['id']) ? '&view=Templates' : "&view=TemplateAttributes&id={$params['id']}";
+
+        $this->setRedirect($url);
     }
 }

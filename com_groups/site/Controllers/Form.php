@@ -49,12 +49,6 @@ abstract class Form extends Controller
     }
 
     /**
-     * Checks that the user is authorized to perform the requested action.
-     * @return void
-     */
-    abstract protected function authorize(): void;
-
-    /**
      * Closes the form view without saving changes.
      * @return void
      */

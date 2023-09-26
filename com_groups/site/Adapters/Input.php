@@ -305,6 +305,15 @@ class Input
     }
 
     /**
+     * Gets the URL of the referrer.
+     * @return string
+     */
+    public static function getReferrer(): string
+    {
+        return self::getInput()->server->getString('HTTP_REFERER');
+    }
+
+    /**
      * Returns the selected resource id.
      *
      * @param int $default the default value

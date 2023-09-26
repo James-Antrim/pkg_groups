@@ -29,8 +29,8 @@ class TemplateAttributes extends ListView
     {
         // Manage access is a prerequisite for getting this far
         $toolbar = Application::getToolbar();
-        $toolbar->addNew('Attributes.add');
-        $toolbar->delete('Attributes.delete', 'GROUPS_DELETE')->message('JGLOBAL_CONFIRM_DELETE')->listCheck(true);
+        $toolbar->addNew('TemplateAttributes.add');
+        $toolbar->delete('TemplateAttributes.delete', 'GROUPS_DELETE')->message('JGLOBAL_CONFIRM_DELETE')->listCheck(true);
         $toolbar->cancel('TemplateAttributes.cancel');
         $toolbar->divider();
 
@@ -54,7 +54,7 @@ class TemplateAttributes extends ListView
             $item->name = $attribute->$label;
             $neither    = in_array($item->id, $unlabeledAttributes) ? $unlabeledTip : '';
 
-            if (in_array($item->id, AH::PROTECTED)) {
+            if (in_array($item->attributeID, AH::PROTECTED)) {
                 $context    = "groups-attribute-$item->id";
                 $item->name = HTML::icon('fa fa-lock') . " $item->name";
                 $tip        = Text::_('GROUPS_PROTECTED_ATTRIBUTE');
@@ -64,6 +64,22 @@ class TemplateAttributes extends ListView
             $item->showIcon  = HTML::toggle($rowNo, Helper::showIconStates[$item->showIcon], 'TemplateAttributes', $neither);
             $item->showLabel = HTML::toggle($rowNo, Helper::showLabelStates[$item->showLabel], 'TemplateAttributes', $neither);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function display($tpl = null): void
+    {
+        $this->todo = [
+            'Make it so the protected items are unaffected during ordering/toggle.',
+            'Add \'Add\' buttons for any attributes not already present.',
+            'Add delete functionality.',
+            'Add toggle functionality.',
+            'Fix redirection on add/delete/toggle.'
+        ];
+
+        parent::display($tpl);
     }
 
     /**
