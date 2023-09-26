@@ -70,22 +70,7 @@ class Templates implements Selectable
      */
     public static function getAll(): array
     {
-        $db     = Application::getDB();
-        $query  = $db->getQuery(true);
-        $plural = $db->quoteName('plural_' . Application::getTag());
-        $roles  = $db->quoteName('#__groups_roles');
-        $query->select('*')->from($roles)->order($plural);
-        $db->setQuery($query);
-
-        if (!$roles = $db->loadObjectList('id')) {
-            return [];
-        }
-
-        foreach ($roles as $roleID => $role) {
-            $role->groups = RoleAssociations::byRoleID($roleID);
-        }
-
-        return $roles;
+        return [];
     }
 
     /**
@@ -95,24 +80,6 @@ class Templates implements Selectable
      */
     public static function getOptions(bool $associated = true): array
     {
-        $plural    = 'plural_' . Application::getTag();
-        $options   = [];
-        $options[] = (object) [
-            'text' => Text::_('GROUPS_NONE_MEMBER'),
-            'value' => ''
-        ];
-
-        foreach (self::getAll() as $roleID => $role) {
-            if ($associated and empty($role->groups)) {
-                continue;
-            }
-
-            $options[] = (object) [
-                'text' => $role->$plural,
-                'value' => $roleID
-            ];
-        }
-
-        return $options;
+        return [];
     }
 }
