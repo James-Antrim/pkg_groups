@@ -17,6 +17,7 @@ use Joomla\CMS\Router\Route;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\Groups as Helper;
 use THM\Groups\Adapters\HTML;
+use THM\Groups\Layouts\ListItem;
 
 /**
  * View class for displaying available groups.
@@ -77,8 +78,7 @@ class Groups extends ListView
     {
         $this->todo = [
             'Add batch processing for adding / removing roles.',
-            'Add batch processing for view levels.',
-            'Add column for published / unpublished person counts with links to persons.'
+            'Add batch processing for view levels.'
         ];
 
         parent::display($tpl);
@@ -145,7 +145,7 @@ class Groups extends ListView
             }
 
             if ($item->enabled or $item->blocked) {
-                $link = "?option=com_groups&view=Profiles&filter[groupID]=$item->id&filter[state]=";
+                $link = "?option=com_groups&view=Users&filter[groupID]=$item->id&filter[state]=";
 
                 $eLink       = Route::_($link . 1);
                 $properties  = ['class' => 'btn btn-success'];
@@ -164,8 +164,6 @@ class Groups extends ListView
             $tip          = Text::_('GROUPS_DEBUG_GROUP_RIGHTS');
             $icon         = HTML::icon('fas fa-th');
             $item->rights = HTML::tip($icon, "rights-tip-$item->id", $tip, [], $link, true);
-
-            $item->editLink = Route::_('?option=com_groups&view=Group&id=' . $item->id);
         }
     }
 
@@ -177,9 +175,10 @@ class Groups extends ListView
         $this->headers = [
             'check' => ['type' => 'check'],
             'name' => [
+                'link' => ListItem::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title' => Text::_('GROUPS_GROUP'),
-                'type' => 'text'
+                'type' => 'value'
             ]
         ];
 

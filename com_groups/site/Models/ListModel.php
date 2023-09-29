@@ -188,7 +188,7 @@ class ListModel extends Base
      */
     protected function isBinary(mixed $value): bool
     {
-        if (!is_numeric($value)) {
+        if (!is_bool($value) and !is_numeric($value)) {
             return false;
         }
 

@@ -11,11 +11,11 @@
 namespace THM\Groups\Models;
 
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
+use stdClass;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Tools\Migration;
 
@@ -137,7 +137,6 @@ class Users extends ListModel
 
     /**
      * Build an SQL query to load the list data.
-     *
      * @return  QueryInterface
      */
     protected function getListQuery(): QueryInterface
@@ -314,11 +313,51 @@ class Users extends ListModel
     }
 
     /**
+     * Determines whether the page was called from as a link from the groups view.
+     * @return bool
+     */
+    private function groupLinked(): bool
+    {
+        $groupID = (int) $this->state->get('filter.groupID');
+        $state   = $this->state->get('filter.state');
+
+        return $groupID and is_numeric($state);
+    }
+
+    /**
+     * Method to get the data that should be injected in the form.
+     * @return  stdClass   Should
+     */
+    protected function loadFormData(): stdClass
+    {
+        $data = parent::loadFormData();
+
+        if ($this->groupLinked()) {
+            // Replace external parameter names with internal filter names
+            $data->filter = [
+                'association' => $this->state->get('filter.association'),
+                'block' => (int) $this->state->get('filter.block')
+            ];
+        }
+
+        return $data;
+    }
+
+    /**
      * @inheritDoc
      */
     protected function populateState($ordering = null, $direction = null): void
     {
         parent::populateState($ordering, $direction);
+
+        if ($this->groupLinked()) {
+            $groupID = (int) $this->state->get('filter.groupID');
+            $this->state->set('filter.association', "groupID-$groupID");
+
+            // An active state is determined by a negative block attribute
+            $state = (bool) $this->state->get('filter.state');
+            $this->state->set('filter.block', !$state);
+        }
 
         if ($this->state->get('filter.association')) {
             $this->state->set('filter.roleID', '');

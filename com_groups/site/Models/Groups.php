@@ -12,6 +12,7 @@ namespace THM\Groups\Models;
 
 use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\Router\Route;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 use stdClass;
@@ -48,6 +49,7 @@ class Groups extends ListModel
         $ugHelper = UGH::getInstance();
 
         foreach ($items as $item) {
+            $item->editLink = Route::_('?option=com_groups&view=Group&id=' . $item->id);
             $ugHelper->populateGroupData($item);
             $this->getUserCounts($item);
         }
