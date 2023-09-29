@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fieldset name="details">
+        <field name="id" type="hidden"/>
+        <field name="name_de" type="text" label="GROUPS_NAME_DE" required="true"/>
+        <field name="name_en" type="text" label="GROUPS_NAME_EN" required="true"/>
+        <field name="title" type="text" label="GROUPS_USERGROUP" description="GROUPS_USERGROUP_DESC"/>
+        <field name="parent_id" type="Groups" label="GROUPS_SUPERORDINATE_GROUP" allowDefault="true" default="1"/>
+        <field name="viewLevels" type="ViewLevels" label="GROUPS_LEVELS" multiple="true" required="true" size="10"/>
+    </fieldset>
+</form>

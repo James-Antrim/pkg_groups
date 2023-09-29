@@ -193,13 +193,17 @@ class Can
     {
         return match ($view) {
             // purely administrative views
-            'Attribute', 'Attributes', 'Groups', 'Role', 'Roles', 'Template', 'Templates' => self::administrate(),
+            'Attribute', 'Attributes',
+            'Role', 'Roles',
+            'Template', 'Templates',
+                // TODO group/s authorization was admin in users, but need to be revisited for presentation
+            'Group', 'Groups' => self::administrate(),
             // the published content/contents of a specific person or content administration
             'Content', 'Contents' => (Input::getInt('personID') or self::administrate()),
             // persons associated with a specific group or person administration
             'Persons' => (Input::getInt('groupID') or self::administrate()),
             // Development queue
-            'Group', 'Level', 'Levels' => false,
+            'Level', 'Levels' => false,
             // Viewing is allowed, functions, layouts and levels may still be restricted elsewhere.
             default => true,
         };
