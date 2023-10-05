@@ -40,7 +40,7 @@ class Controller extends BaseController
     public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?JInput $input = null)
     {
         $this->backend = Application::backend();
-        $this->baseURL = $this->baseURL ?: Uri::base() . '?option=com_groups';
+        $this->baseURL = $this->baseURL ?: Uri::base() . 'index.php?option=com_groups';
         parent::__construct($config, $factory, $app, $input);
     }
 

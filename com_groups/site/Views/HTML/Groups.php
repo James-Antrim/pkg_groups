@@ -145,7 +145,7 @@ class Groups extends ListView
             }
 
             if ($item->enabled or $item->blocked) {
-                $link = "?option=com_groups&view=Users&filter[groupID]=$item->id&filter[state]=";
+                $link = "index.php?option=com_groups&view=Users&filter[groupID]=$item->id&filter[state]=";
 
                 $eLink       = Route::_($link . 1);
                 $properties  = ['class' => 'btn btn-success'];
@@ -160,7 +160,7 @@ class Groups extends ListView
                 $item->users = '';
             }
 
-            $link         = "?option=com_users&view=debuggroup&group_id=$item->id";
+            $link         = "index.php?option=com_users&view=debuggroup&group_id=$item->id";
             $tip          = Text::_('GROUPS_DEBUG_GROUP_RIGHTS');
             $icon         = HTML::icon('fas fa-th');
             $item->rights = HTML::tip($icon, "rights-tip-$item->id", $tip, [], $link, true);

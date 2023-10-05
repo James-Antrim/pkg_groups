@@ -40,7 +40,7 @@ if ($this->todo) {
     echo '</ul>';
 }
 ?>
-<form action="<?php echo Route::_('?option=com_groups'); ?>"
+<form action="<?php echo Route::_('index.php?option=com_groups'); ?>"
       aria-label="<?php echo $ariaLabel; ?>"
       class="form-validate"
       enctype="multipart/form-data"

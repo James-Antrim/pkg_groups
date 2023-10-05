@@ -42,7 +42,7 @@ class Attributes extends ListView
     {
         $unlabeledAttributes = Helper::getUnlabeled();
         $unlabeledTip        = Text::_('GROUPS_TOGGLE_TIP_UNLABELED');
-        $query               = '?option=com_groups&view=Attribute&id=';
+        $query               = 'index.php?option=com_groups&view=Attribute&id=';
 
         foreach ($this->items as $rowNo => $item) {
 
