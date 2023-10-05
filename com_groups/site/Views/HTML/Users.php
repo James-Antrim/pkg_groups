@@ -146,9 +146,9 @@ class Users extends ListView
     {
         $this->allowBatch = Can::batchProcess();
         $this->todo       = [
-            'main menu',
-            'toolbar'
-            // User notes support is not planned at this time.
+            'add configuration to overwrite com_users links to here?',
+            'add button',
+            'access debug button under group list'
         ];
 
         parent::display($tpl);

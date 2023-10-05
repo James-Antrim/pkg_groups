@@ -45,7 +45,7 @@ if ($this->todo) {
     echo '</ul>';
 }
 
-if (!empty($view->filterForm)) {
+if (count($this->headers) > 4) {
     $wa = $this->document->getWebAssetManager();
     $wa->useScript('table.columns');
 }
