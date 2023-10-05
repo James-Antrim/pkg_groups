@@ -78,7 +78,7 @@ abstract class Form extends Controller
      * Code common in storing resource data.
      * @return int
      */
-    private function process(): int
+    protected function process(): int
     {
         $this->checkToken();
         $this->authorize();

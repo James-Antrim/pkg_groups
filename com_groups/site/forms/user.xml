@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form addfieldprefix="Joomla\Component\Users\Administrator\Field">
+    <fieldset name="account" label="GROUPS_USER_INFORMATION">
+        <field name="surname" type="text" label="GROUPS_SURNAME" required="true"/>
+        <field name="forename" type="text" label="GROUPS_FORENAME"/>
+        <field name="password" type="password" label="GROUPS_PASSWORD" autocomplete="new-password"
+               class="validate-password-strength" filter="raw" force="on"
+               rules="true" strengthmeter="true" validate="password"
+        />
+        <field name="password2" type="password" label="GROUPS_PASSWORD2" autocomplete="new-password"
+               class="validate-passwordExtra" field="password" filter="raw"
+               message="COM_USERS_USER_FIELD_PASSWORD1_MESSAGE" validate="equals"
+        />
+        <field name="email" type="email" label="GROUPS_EMAIL" required="true" validate="email"/>
+        <field name="settings" type="spacer" label="GROUPS_SETTINGS"/>
+        <field name="language" type="language" label="GROUPS_LANGUAGE" client="site">
+            <option value="">GROUPS_USE_DEFAULT</option>
+        </field>
+        <field name="timezone" type="timezone" label="GROUPS_TIMEZONE">
+            <option value="">GROUPS_USE_DEFAULT</option>
+        </field>
+        <field name="accessibility" type="spacer" label="GROUPS_ACCESSIBILITY"/>
+        <field name="a11y_contrast" type="radio" label="GROUPS_CONTRAST" default="0"
+               layout="joomla.form.field.radio.switcher">
+            <option value="0">GROUPS_NO</option>
+            <option value="high_contrast">GROUPS_YES</option>
+        </field>
+        <field name="a11y_font" type="radio" label="GROUPS_FONTSIZE" default="0"
+               layout="joomla.form.field.radio.switcher">
+            <option value="0">GROUPS_NO</option>
+            <option value="fontsize">GROUPS_YES</option>
+        </field>
+        <field name="a11y_highlight" type="radio" label="GROUPS_HIGHLIGHT" default="0"
+               layout="joomla.form.field.radio.switcher">
+            <option value="0">GROUPS_NO</option>
+            <option value="highlight">GROUPS_YES</option>
+        </field>
+        <field name="a11y_mono" type="radio" label="GROUPS_MONOCHROME" default="0"
+               layout="joomla.form.field.radio.switcher">
+            <option value="0">GROUPS_NO</option>
+            <option value="monochrome">GROUPS_YES</option>
+        </field>
+        <field name="id" type="hidden"/>
+        <field name="lastResetTime" type="hidden"/>
+        <field name="lastvisitDate" type="hidden"/>
+        <field name="registerDate" type="hidden"/>
+        <field name="resetCount" type="hidden"/>
+    </fieldset>
+    <fieldset name="administration" label="GROUPS_USER_ADMINISTRATION">
+        <field name="associations" type="spacer" label="GROUPS_ASSOCIATIONS"/>
+        <field name="groups" type="hidden"/>
+        <field name="flags" type="spacer" label="GROUPS_USER_STATUS"/>
+        <field name="block" type="radio" label="GROUPS_BLOCK_USER" default="0"
+               layout="joomla.form.field.radio.switcher">
+            <option value="1">GROUPS_BLOCK_USER</option>
+            <option value="0">GROUPS_UNBLOCK_USER</option>
+        </field>
+        <field name="requireReset" type="radio" label="GROUPS_RESET_REQUIRED" default="0"
+               layout="joomla.form.field.radio.switcher">
+            <option value="0">GROUPS_NO</option>
+            <option value="1">GROUPS_YES</option>
+        </field>
+        <field name="sendEmail" type="hidden" value="0"/>
+        <field name="settings" type="spacer" label="GROUPS_BACKEND_SETTINGS"/>
+        <field name="editor" type="plugins" label="GROUPS_EDITOR_FIELD" folder="editors">
+            <option value="">GROUPS_USE_DEFAULT</option>
+        </field>
+        <field name="admin_language" type="language" label="GROUPS_LANGUAGE" client="administrator">
+            <option value="">GROUPS_USE_DEFAULT</option>
+        </field>
+        <field name="admin_style" type="templatestyle" label="GROUPS_TEMPLATE_STYLE" client="administrator" filter="uint">
+            <option value="">GROUPS_USE_DEFAULT</option>
+        </field>
+    </fieldset>
+</form>

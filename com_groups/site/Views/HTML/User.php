@@ -18,7 +18,6 @@ class User extends Form
     public function display($tpl = null): void
     {
         $this->todo = [
-            'Everything ;)',
             'Add JS to validate image properties.'
         ];
 
