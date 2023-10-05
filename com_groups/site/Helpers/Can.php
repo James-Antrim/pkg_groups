@@ -18,35 +18,44 @@ class Can
 {
     /**
      * Checks whether the user has access to administrate the component.
+     *
+     * @param string $context the context in which access is being checked
+     *
      * @return bool true if the user has 'admin' access, otherwise false
      */
-    public static function administrate(): bool
+    public static function administrate(string $context = 'com_users'): bool
     {
-        return ContentHelper::getActions('com_users')->get('core.admin');
+        return ContentHelper::getActions($context)->get('core.admin');
     }
 
     /**
      * Checks whether the user has access to perform batch processing on component resources.
+     *
+     * @param string $context the context in which access is being checked
+     *
      * @return bool true if the user has 'create' access, otherwise false
      */
-    public static function batchProcess(): bool
+    public static function batchProcess(string $context = 'com_users'): bool
     {
-        if (self::administrate()) {
+        if (self::administrate($context)) {
             return true;
         }
 
-        $actions = ContentHelper::getActions('com_users');
+        $actions = ContentHelper::getActions($context);
 
         return ($actions->get('core.create') and $actions->get('core.edit') and $actions->get('core.edit.state'));
     }
 
     /**
      * Checks whether the user has access to change resource states.
+     *
+     * @param string $context the context in which access is being checked
+     *
      * @return bool true if the user has 'create' access, otherwise false
      */
-    public static function changeState(): bool
+    public static function changeState(string $context = 'com_users'): bool
     {
-        return (self::administrate() or ContentHelper::getActions('com_users')->get('core.edit.state'));
+        return (self::administrate($context) or ContentHelper::getActions($context)->get('core.edit.state'));
     }
 
     /**
@@ -60,38 +69,50 @@ class Can
 
     /**
      * Checks whether the user has access to create component resources.
+     *
+     * @param string $context the context in which access is being checked
+     *
      * @return bool
      */
-    public static function create(): bool
+    public static function create(string $context = 'com_users'): bool
     {
-        return (self::administrate() or ContentHelper::getActions('com_users')->get('core.create'));
+        return (self::administrate($context) or ContentHelper::getActions($context)->get('core.create'));
     }
 
     /**
      * Checks whether the user has access to debug the users component.
+     *
+     * @param string $context the context in which access is being checked
+     *
      * @return bool
      */
-    public static function debug(): bool
+    public static function debug(string $context = 'com_users'): bool
     {
-        return self::manage();
+        return self::manage($context);
     }
 
     /**
      * Checks whether the user has access to delete component resources.
+     *
+     * @param string $context the context in which access is being checked
+     *
      * @return bool
      */
-    public static function delete(): bool
+    public static function delete(string $context = 'com_users'): bool
     {
-        return (self::administrate() or ContentHelper::getActions('com_users')->get('core.delete'));
+        return (self::administrate($context) or ContentHelper::getActions($context)->get('core.delete'));
     }
 
     /**
      * Checks whether the user has access to create component resources.
+     *
+     * @param string $context the context in which access is being checked
+     *
      * @return bool
      */
-    public static function edit(): bool
+    public static function edit(string $context = 'com_users'): bool
     {
-        return (self::administrate() or ContentHelper::getActions('com_users')->get('core.edit'));
+        return (self::administrate($context) or ContentHelper::getActions($context)->get('core.edit'));
     }
 
     /**
@@ -109,7 +130,6 @@ class Can
     /**
      * Checks whether the user has administrative (back-end) access to the component.
      * @return bool true if the user has 'manage' access, otherwise false
-     * @todo make sure this is being used as intended...
      */
     public static function manage(): bool
     {
@@ -137,37 +157,14 @@ class Can
     /**
      * Check whether the user has the access required to save the resource.
      *
-     * @param int $id
+     * @param int    $id      the id of the resource to save
+     * @param string $context the context in which access is being checked
      *
      * @return bool
      */
-    public static function save(int $id): bool
+    public static function save(int $id, string $context = 'com_users'): bool
     {
-        return $id ? self::edit() : self::create();
-    }
-
-    /**
-     * Check whether the user has the access required to save the current resource and create a new one.
-     *
-     * @param int $id
-     *
-     * @return bool
-     */
-    public static function saveNew(int $id): bool
-    {
-        return (self::save($id) and self::create());
-    }
-
-    /**
-     * Check whether the user has the access required to save the current resource and create a new one.
-     *
-     * @param int $id
-     *
-     * @return bool
-     */
-    public static function saveNewPerson(int $id): bool
-    {
-        return (self::savePerson($id) and self::create());
+        return $id ? self::edit($context) : self::create($context);
     }
 
     /**
@@ -177,9 +174,9 @@ class Can
      *
      * @return bool
      */
-    public static function savePerson(int $id): bool
+    public static function saveUser(int $id): bool
     {
-        return (self::save($id) or self::identity($id));
+        return (self::save($id) or ($id and self::identity($id)));
     }
 
     /**
