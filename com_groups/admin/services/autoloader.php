@@ -12,28 +12,25 @@ namespace Groups;
 
 defined('_JEXEC') or die;
 
-spl_autoload_register(function ($originalClassName) {
+spl_autoload_register(function ($originalClassName)
+{
+    $classNameParts = explode('\\', $originalClassName);
 
-	$classNameParts = explode('\\', $originalClassName);
+    if (array_shift($classNameParts) !== 'THM' or array_shift($classNameParts) !== 'Groups') {
+        return;
+    }
 
-	if (array_shift($classNameParts) !== 'THM' or array_shift($classNameParts) !== 'Groups')
-	{
-		return;
-	}
+    $className = array_pop($classNameParts);
 
-	$className = array_pop($classNameParts);
+    if (reset($classNameParts) === 'Admin') {
+        array_shift($classNameParts);
+    }
 
-	if (reset($classNameParts) === 'Admin')
-	{
-		array_shift($classNameParts);
-	}
+    $classNameParts[] = empty($className) ? 'Component' : $className;
 
-	$classNameParts[] = empty($className) ? 'Component' : $className;
+    $filepath = JPATH_ROOT . '/components/com_groups/' . implode('/', $classNameParts) . '.php';
 
-	$filepath = JPATH_ROOT . '/components/com_groups/' . implode('/', $classNameParts) . '.php';
-
-	if (is_file($filepath))
-	{
-		require_once $filepath;
-	}
+    if (is_file($filepath)) {
+        require_once $filepath;
+    }
 });
