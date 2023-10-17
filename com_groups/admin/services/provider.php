@@ -19,9 +19,9 @@ use Joomla\CMS\Extension\Service;
 // Adds default Joomla default implementations, not to be confused with Joomla\Registry\Registry
 use Joomla\CMS\HTML\Registry;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use THM\Groups\Component;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
+use THM\Groups\Component;
 use THM\Groups\Providers;
 
 /**
@@ -44,8 +44,7 @@ return new class implements ServiceProviderInterface {
         //$container->registerServiceProvider(new Service\Provider\RouterFactory('\\THM\\Groups'));
         $container->set(
             ComponentInterface::class,
-            function (Container $container)
-            {
+            function (Container $container) {
                 $component = new Component($container->get(ComponentDispatcherFactoryInterface::class));
                 $component->setMVCFactory($container->get(MVCFactoryInterface::class));
                 //$component->setCategoryFactory($container->get(CategoryFactoryInterface::class));

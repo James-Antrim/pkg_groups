@@ -8,12 +8,12 @@
  * @link        www.thm.de
  */
 
-namespace Groups;
+namespace THM\Groups;
 
 defined('_JEXEC') or die;
 
-spl_autoload_register(function ($originalClassName)
-{
+spl_autoload_register(function ($originalClassName) {
+
     $classNameParts = explode('\\', $originalClassName);
 
     if (array_shift($classNameParts) !== 'THM' or array_shift($classNameParts) !== 'Groups') {

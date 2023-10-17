@@ -28,43 +28,6 @@ class Input
     private static Registry $params;
 
     /**
-     * Filters the given source data according to the type parameter.
-     *
-     * @param mixed  $source the data to be filtered
-     * @param string $type   the type against which to filter the source data
-     *
-     * @return mixed
-     */
-    public static function filter(mixed $source, string $type = 'string'): mixed
-    {
-        if (empty(self::$filter)) {
-            self::$filter = new InputFilter();
-        }
-
-        return self::$filter->clean($source, $type);
-    }
-
-    /**
-     * Retrieves the specified parameter.
-     *
-     * @param string $property Name of the property to get.
-     *
-     * @return array|int|string|null the value found, otherwise null
-     */
-    private static function find(string $property): array|int|string|null
-    {
-        if ($value = self::getInput()->get($property, null, 'raw')) {
-            return $value;
-        }
-
-        if ($value = self::getParams()->get($property)) {
-            return $value;
-        }
-
-        return null;
-    }
-
-    /**
      * Provides a shortcut to retrieve an array from the request.
      *
      * @param string $name    the name of the array item
@@ -203,6 +166,24 @@ class Input
         }
 
         return self::$filterItems;
+    }
+
+    /**
+     * The file format of the document to be displayed.
+     * @return string defaults to 'HTML'
+     */
+    public static function getFormat(): string
+    {
+        $document  = Application::getDocument();
+        $supported = ['HTML', 'JSON', 'VCF'];
+        $format    = self::getCMD('format', strtoupper($document->getType()));
+
+        if (!in_array($format, $supported)) {
+            self::set('format', 'HTML');
+            $format = 'HTML';
+        }
+
+        return $format;
     }
 
     /**
@@ -386,6 +367,43 @@ class Input
     public static function getView(): string
     {
         return self::getCMD('view');
+    }
+
+    /**
+     * Filters the given source data according to the type parameter.
+     *
+     * @param mixed  $source the data to be filtered
+     * @param string $type   the type against which to filter the source data
+     *
+     * @return mixed
+     */
+    public static function filter(mixed $source, string $type = 'string'): mixed
+    {
+        if (empty(self::$filter)) {
+            self::$filter = new InputFilter();
+        }
+
+        return self::$filter->clean($source, $type);
+    }
+
+    /**
+     * Retrieves the specified parameter.
+     *
+     * @param string $property Name of the property to get.
+     *
+     * @return array|int|string|null the value found, otherwise null
+     */
+    private static function find(string $property): array|int|null|string
+    {
+        if ($value = self::getInput()->get($property, null, 'raw')) {
+            return $value;
+        }
+
+        if ($value = self::getParams()->get($property)) {
+            return $value;
+        }
+
+        return null;
     }
 
     /**

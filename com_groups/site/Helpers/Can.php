@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection GrazieInspection */
+
 /**
  * @package     Groups
  * @extension   com_groups
@@ -131,9 +132,9 @@ class Can
      * Checks whether the user has administrative (back-end) access to the component.
      * @return bool true if the user has 'manage' access, otherwise false
      */
-    public static function manage(): bool
+    public static function manage(string $context = 'com_users'): bool
     {
-        return (self::administrate() or ContentHelper::getActions('com_users')->get('core.manage'));
+        return (self::administrate() or ContentHelper::getActions($context)->get('core.manage'));
     }
 
     /**
@@ -188,13 +189,17 @@ class Can
      */
     public static function view(string $view): bool
     {
+        if (self::administrate()) {
+            return true;
+        }
+
         return match ($view) {
-            // purely administrative views
+            // Administrative views and admin access was already checked
             'Attribute', 'Attributes',
             'Role', 'Roles',
             'Template', 'Templates',
                 // TODO group/s authorization was admin in users, but need to be revisited for presentation
-            'Group', 'Groups' => self::administrate(),
+            'Group', 'Groups' => false,
             // the published content/contents of a specific person or content administration
             'Content', 'Contents' => (Input::getInt('personID') or self::administrate()),
             // persons associated with a specific group or person administration
