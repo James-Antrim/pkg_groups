@@ -12,7 +12,6 @@ namespace THM\Groups\Adapters;
 
 use InvalidArgumentException;
 use Joomla\CMS\Form\{Form as Base, FormField, FormHelper};
-use Joomla\CMS\Language\Text;
 use Joomla\Database\DatabaseAwareInterface;
 use RuntimeException;
 use SimpleXMLElement;
@@ -31,8 +30,8 @@ class Form extends Base
         parent::__construct($name, $options);
 
         FormHelper::addFieldPath(JPATH_SITE . '/components/com_groups/Fields');
-        FormHelper::addFilterPath(JPATH_SITE . '/components/com_groups/forms');
-        FormHelper::addFormPath(JPATH_SITE . '/components/com_groups/forms');
+        FormHelper::addFilterPath(JPATH_SITE . '/components/com_groups/Forms');
+        FormHelper::addFormPath(JPATH_SITE . '/components/com_groups/Forms');
     }
 
     /**
@@ -94,7 +93,6 @@ class Form extends Base
 
     /**
      * Checks for the available Table classes.
-     *
      * @return array
      */
     private function getFieldClasses(): array
