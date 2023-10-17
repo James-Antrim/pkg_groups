@@ -15,15 +15,14 @@ use Joomla\CMS\Application\{CMSApplication, WebApplication};
 use Joomla\CMS\Component\ComponentHelper;
 use Joomla\CMS\Document\Document;
 use Joomla\CMS\Language\Language;
+use Joomla\CMS\Menu\MenuItem;
 use Joomla\CMS\Session\Session;
-use Joomla\CMS\Toolbar\Toolbar as BaseToolbar;
 use Joomla\CMS\User\{User, UserFactory, UserFactoryInterface};
 use Joomla\Database\DatabaseDriver;
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
 use Joomla\CMS\Application\CMSApplicationInterface;
 use Joomla\CMS\Factory;
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 
 /**
@@ -44,18 +43,21 @@ class Application
         INFO = 'info', MESSAGE = 'message', NOTICE = 'notice', WARNING = 'warning';
 
     /**
-     * Stores toolbar references.
-     * @var    Toolbar[]
-     */
-    protected static array $toolbars = [];
-
-    /**
      * Checks whether the current context is the administrator context.
      * @return bool
      */
     public static function backend(): bool
     {
         return self::getApplication()->isClient('administrator');
+    }
+
+    /**
+     * Determines whether the view was called from a dynamic context
+     * @return bool true if the view was called dynamically, otherwise false
+     */
+    public static function dynamic(): bool
+    {
+        return !self::getMenuItem();
     }
 
     /**
@@ -91,7 +93,7 @@ class Application
             $url      = $referrer === $current ? Uri::base() : $referrer;
         }
 
-        self::message("GROUPS_$code", $severity);
+        self::message($code, $severity);
         self::redirect($url, $code);
     }
 
@@ -171,6 +173,22 @@ class Application
     }
 
     /**
+     * Gets the current menu item.
+     * @return MenuItem|null the current menu item or null
+     */
+    public static function getMenuItem(): ?MenuItem
+    {
+        /** @var CMSApplication $app */
+        $app = self::getApplication();
+
+        if ($menu = $app->getMenu() and $menuItem = $menu->getActive()) {
+            return $menuItem;
+        }
+
+        return null;
+    }
+
+    /**
      * Gets the parameter object for the component
      *
      * @param string $component the component name.
@@ -203,18 +221,6 @@ class Application
     }
 
     /**
-     * Returns a toolbar object, creating it as necessary. Specific toolbars can be accessed over the name parameter.
-     *
-     * @param string $name The name of the toolbar.
-     *
-     * @return  BaseToolbar  The Toolbar object.
-     */
-    public static function getToolbar(string $name = 'toolbar'): BaseToolbar
-    {
-        return Toolbar::getInstance($name);
-    }
-
-    /**
      * Gets a user object (specified or current).
      *
      * @param int|string $userID the user identifier (id or name)
@@ -235,6 +241,40 @@ class Application
 
         // Enforce type consistency, by overwriting the potential null from getIdentity.
         return $current ?: $userFactory->loadUserById(0);
+    }
+
+    /**
+     * Gets the user's state's property value.
+     *
+     * @param string $property the property name
+     * @param mixed  $default  the optional default value
+     *
+     * @return  mixed  the property value or null
+     * @see CMSApplication::getUserState()
+     */
+    public static function getUserState(string $property, mixed $default = null): mixed
+    {
+        /** @var CMSApplication $app */
+        $app = self::getApplication();
+        return $app->getUserState($property, $default);
+    }
+
+    /**
+     * Gets the property value from the state, overwriting the value from the request if available.
+     *
+     * @param string $property the property name
+     * @param string $request  the name of the property as passed in a request.
+     * @param mixed  $default  the optional default value
+     * @param string $type     the optional name of the type filter to use on the variable
+     *
+     * @return  mixed  The request user state.
+     * @see CMSApplication::getUserStateFromRequest(), InputFilter::clean()
+     */
+    public static function getUserRequestState(string $property, string $request, mixed $default = null, string $type = 'none')
+    {
+        /** @var CMSApplication $app */
+        $app = self::getApplication();
+        return $app->getUserStateFromRequest($property, $request, $default, $type);
     }
 
     /**
