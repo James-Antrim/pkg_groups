@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Models;
 
-class User extends Edit
+class User extends EditModel
 {
     protected string $tableClass = 'Users';
 }

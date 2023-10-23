@@ -12,14 +12,12 @@ namespace THM\Groups\Models;
 
 use Exception;
 use Joomla\CMS\Application\CMSApplication;
-use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\MVC\Model\ListModel as Base;
 use Joomla\CMS\Table\Table;
 use Joomla\Database\QueryInterface;
 use Joomla\Registry\Registry;
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\Input;
+use THM\Groups\Adapters\{Application, Form, Input};
 
 /**
  * Model class for handling lists of items.
@@ -125,13 +123,9 @@ abstract class ListModel extends Base
     }
 
     /**
-     * Gets the filter form. Overwrites the parent to have form names analog to the view names in which they are used.
+     * @inheritdoc
+     * Overwrites the parent to have form names analog to the view names in which they are used.
      * Also has enhanced error reporting in the event of failure.
-     *
-     * @param array $data     data
-     * @param bool  $loadData load current data
-     *
-     * @return  Form|null  the form object or null if the form can't be found
      */
     public function getFilterForm($data = [], $loadData = true): ?Form
     {
@@ -172,6 +166,7 @@ abstract class ListModel extends Base
      */
     protected function loadForm($name, $source = null, $options = [], $clear = false, $xpath = false): Form
     {
+        /** @var Form $form */
         if ($form = parent::loadForm($name, $source, $options, $clear, $xpath)) {
             $this->filterFilterForm($form);
         }

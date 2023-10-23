@@ -18,9 +18,31 @@ use THM\Groups\Adapters\Application;
 trait Named
 {
     /**
+     * The form context. (com_groups.<model><.menuID>)
+     * @var string $context
+     */
+    protected $context;
+
+    /**
      * The name of the called class
      */
     protected $name;
+
+    /**
+     * Sets the form context to prevent bleeding.
+     * @return void
+     */
+    public function setContext(): void
+    {
+        if (empty($this->context)) {
+            $this->context = strtolower($this->option . '.' . $this->getName());
+
+            // Make sure the filters from different instances of the same model don't bleed
+            if ($menuItem = Application::getMenuItem() and $menuID = $menuItem->id) {
+                $this->context .= '.' . $menuID;
+            }
+        }
+    }
 
     /**
      * Method to get the model name.
@@ -28,8 +50,9 @@ trait Named
      */
     public function getName(): string
     {
-        if (empty($this->name)) {
-            $this->name = Application::getClass($this);
+        if (empty($this->name) or empty($this->option)) {
+            $this->name   = Application::getClass($this);
+            $this->option = 'com_groups';
         }
 
         return $this->name;

@@ -15,9 +15,7 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\HTML;
-use THM\Groups\Adapters\Input;
+use THM\Groups\Adapters\{HTML, Input, Toolbar};
 use THM\Groups\Views\Named;
 
 /**
@@ -25,7 +23,7 @@ use THM\Groups\Views\Named;
  * - Overrides/-writes to avoid deprecated code in the platform or promote ease of use
  * - Supplemental functions to extract common code from list models
  */
-abstract class Form extends Base
+abstract class Form extends BaseView
 {
     use Configured, Named;
 
@@ -52,6 +50,8 @@ abstract class Form extends Base
      * @var   CMSObject
      */
     protected CMSObject $state;
+
+    public array $todo = [];
 
     /**
      * Seems to be used somewhere to decide between Joomla Core UI (true) and bootstrap (false)
@@ -98,7 +98,7 @@ abstract class Form extends Base
         ToolbarHelper::title(Text::_($title), '');
 
         $saveLabel = $new ? 'GROUPS_CREATE_AND_CLOSE' : 'GROUPS_SAVE_AND_CLOSE';
-        $toolbar   = Application::getToolbar();
+        $toolbar   = Toolbar::getInstance();
 
         if (count($buttons) > 1) {
             $saveGroup = $toolbar->dropdownButton('save-group');

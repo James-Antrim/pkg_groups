@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Models;
 
-class Template extends Edit
+class Template extends EditModel
 {
     protected string $tableClass = 'Templates';
 }

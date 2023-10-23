@@ -10,7 +10,6 @@
 
 namespace THM\Groups\Views\HTML;
 
-use THM\Groups\Adapters\Application;
 use THM\Groups\Views\Named;
 
 trait Configured
@@ -18,29 +17,17 @@ trait Configured
     use Named;
 
     /**
-     * Whether the client accessed was administrative.
-     * @var bool
-     */
-    public bool $backend;
-
-    /**
-     * Whether the client accessed was administrative.
-     * @var bool
-     */
-    public bool $mobile;
-
-    /**
      * Corrects basic configuration that is used by all HTML Views.
      */
     public function configure(): void
     {
-        $this->_name = $this->getName();
+        $this->_basePath = JPATH_SITE . '/components/com_groups';
+        $this->_name     = $this->getName();
 
         // Set the default template search path
-        $this->_setPath('template', JPATH_SITE . '/components/com_groups/templates');
-
-        $this->backend = Application::backend();
-        $this->mobile  = Application::mobile();
+        $this->_setPath('helper', $this->_basePath . '/Helpers');
+        $this->_setPath('layout', $this->_basePath . '/Layouts');
+        $this->_setPath('template', $this->_basePath . '/templates');
     }
 
 

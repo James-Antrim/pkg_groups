@@ -11,18 +11,16 @@
 namespace THM\Groups\Models;
 
 use Exception;
-use Joomla\CMS\Form\FormFactoryInterface;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
-use THM\Groups\Adapters\{Application, Input};
+use THM\Groups\Adapters\{Application, Input, FormFactory, MVCFactory};
 
 /**
  * Class for editing a single resource record, based loosely on AdminModel, but without all the extra code it now caries
  * with it.
  */
-abstract class Edit extends Form
+abstract class EditModel extends FormModel
 {
     /**
      * The resource's table class.
@@ -34,7 +32,7 @@ abstract class Edit extends Form
      * @inheritDoc
      * Wraps the parent constructor to ensure inheriting classes specify their respective table classes.
      */
-    public function __construct($config = [], MVCFactoryInterface $factory = null, FormFactoryInterface $formFactory = null)
+    public function __construct($config, MVCFactory $factory, FormFactory $formFactory)
     {
         if (empty($this->tableClass)) {
             $childClass = get_called_class();

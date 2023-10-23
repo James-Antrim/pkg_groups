@@ -146,7 +146,7 @@ VALUES (1, 'Namenszusatz (nach)', 'Suffix', 0, '', 0, @supplement, '{"hint":"M.S
        (2, 'Namenszusatz (vor)', 'Prefix', 0, '', 0, @supplement, '{"hint":"Prof. Dr."}', 2, 1, 1),
        (3, 'Bild', 'Picture', 0, '', 0, @image, '{}', 3, 1, 1),
        (4, 'Banner', 'Banner', 0, '', 0, @image, '{}', 4, 1, 1),
-       (5, 'Anschrift', 'Address', 0, 'icon-location', 1, @address, '{}', 5, 0, 1),
+       (5, 'Anschrift', 'Address', 0, 'fa fa-map-pin', 1, @address, '{}', 5, 0, 1),
        (6, 'Büro', 'Office', 0, 'fa fa-home', 1, @linkList, '{}', 6, 0, 1),
        (7, 'E-Mail', 'E-Mail', 0, 'fa fa-envelope', 1, @email, '{}', 7, 0, 1),
        (8, 'weitere E-Mail', 'Additional E-Mail', 1, 'fa fa-envelope', 0, @email, '{}', 8, 0, 1),

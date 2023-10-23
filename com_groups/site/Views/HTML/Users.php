@@ -13,8 +13,7 @@ namespace THM\Groups\Views\HTML;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\Button\DropdownButton;
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\HTML;
+use THM\Groups\Adapters\{HTML, Toolbar};
 use THM\Groups\Helpers\{Can, Users as Helper};
 use THM\Groups\Layouts\ListItem;
 
@@ -29,7 +28,7 @@ class Users extends ListView
     protected function addToolbar(): void
     {
         // Get the toolbar object instance
-        $toolbar = Application::getToolbar();
+        $toolbar = Toolbar::getInstance();
 
         /*if (Can::create())
         {

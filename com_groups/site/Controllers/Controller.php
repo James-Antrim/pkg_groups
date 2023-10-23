@@ -21,12 +21,6 @@ use THM\Groups\Helpers\Can;
 class Controller extends BaseController
 {
     /**
-     * Flag for calling context.
-     * @var bool
-     */
-    protected bool $backend;
-
-    /**
      * The URL to redirection into this component.
      * @var string
      */
@@ -37,7 +31,6 @@ class Controller extends BaseController
      */
     public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?JInput $input = null)
     {
-        $this->backend = Application::backend();
         $this->baseURL = $this->baseURL ?: Uri::base() . 'index.php?option=com_groups';
         parent::__construct($config, $factory, $app, $input);
     }

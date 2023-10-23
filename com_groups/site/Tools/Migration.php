@@ -187,7 +187,7 @@ class Migration
                         $data['typeID'] = Types::LIST;
 
                         $icon = match ($label) {
-                            'Weitere Profile' => 'new-tab',
+                            'Weitere Profile' => 'fa fa-external-link-alt',
                             default => ''
                         };
 
@@ -201,7 +201,7 @@ class Migration
                         }
 
                         $data['typeID'] = Types::EMAIL;
-                        $icon           = 'mail';
+                        $icon           = 'fa fa-envelope';
 
                         break;
 
@@ -217,7 +217,7 @@ class Migration
 
                         $data['label_en'] = $tmpLabel === 'Fax' ? 'Fax (private)' : 'Telephone (private)';
                         $data['typeID']   = Types::PHONE;
-                        $icon             = $tmpLabel === 'Fax' ? 'print' : 'phone';
+                        $icon             = $tmpLabel === 'Fax' ? 'fa fa-fax' : 'fa fa-phone';
 
                         break;
 
@@ -229,7 +229,7 @@ class Migration
 
                         $data['label_en'] = 'Birthday';
                         $data['typeID']   = Types::DATE;
-                        $icon             = 'calendar';
+                        $icon             = 'fa fa-calendar';
 
                         break;
 
@@ -263,9 +263,7 @@ class Migration
 
                         $data['label_en'] = 'Cell';
                         $data['typeID']   = Types::PHONE;
-
-                        //TODO is there a mobile icon??
-                        $icon = 'phone';
+                        $icon             = 'fa fa-mobile';
 
                         break;
 
@@ -288,7 +286,7 @@ class Migration
 
                         $data['label_en'] = 'Publications';
                         $data['typeID']   = Types::HTML;
-                        $icon             = 'stack';
+                        $icon             = 'fa fa-copy';
                         break;
 
                     case 'Social  Media':
@@ -320,7 +318,7 @@ class Migration
 
                         $data['label_en'] = 'Additional Contact';
                         $data['typeID']   = Types::ADDRESS;
-                        $icon             = 'icon-location';
+                        $icon             = 'fa fa-map-pin';
 
                         break;
 

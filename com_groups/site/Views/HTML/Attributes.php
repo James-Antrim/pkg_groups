@@ -11,7 +11,7 @@
 namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Router\Route;
-use THM\Groups\Adapters\{Application, HTML, Text};
+use THM\Groups\Adapters\{HTML, Text, Toolbar};
 use THM\Groups\Helpers\Attributes as Helper;
 use THM\Groups\Layouts\ListItem;
 
@@ -27,7 +27,7 @@ class Attributes extends ListView
     protected function addToolbar(): void
     {
         // Manage access is a prerequisite for getting this far
-        $toolbar = Application::getToolbar();
+        $toolbar = Toolbar::getInstance();
         $toolbar->addNew('Attributes.add');
         $toolbar->delete('Attributes.delete', 'GROUPS_DELETE')->message('JGLOBAL_CONFIRM_DELETE')->listCheck(true);
         $toolbar->divider();

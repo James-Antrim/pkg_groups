@@ -14,7 +14,7 @@ use Joomla\CMS\Helper\ContentHelper as CoreAccess;
 use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
-use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\Toolbar;
 use THM\Groups\Helpers\Groups as Helper;
 use THM\Groups\Adapters\HTML;
 use THM\Groups\Layouts\ListItem;
@@ -30,7 +30,7 @@ class Groups extends ListView
     protected function addToolbar(): void
     {
         $actions = CoreAccess::getActions('com_users');
-        $toolbar = Application::getToolbar();
+        $toolbar = Toolbar::getInstance();
 
         if ($actions->get('core.create')) {
             $toolbar->addNew('Group.add');

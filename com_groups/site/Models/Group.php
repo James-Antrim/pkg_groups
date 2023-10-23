@@ -14,7 +14,7 @@ use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\Object\CMSObject;
 use THM\Groups\Helpers\Groups as Helper;
 
-class Group extends Edit
+class Group extends EditModel
 {
     protected string $tableClass = 'Groups';
 

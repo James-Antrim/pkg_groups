@@ -105,9 +105,10 @@ class MVCFactory extends Base
      */
     public function createModel($name, $prefix = '', array $config = [])
     {
-        $name      = preg_replace('/[^A-Z0-9_]/i', '', $name);
-        $className = "THM\Groups\Models\\$name";
-        $model     = new $className($config, $this);
+        $name        = preg_replace('/[^A-Z0-9_]/i', '', $name);
+        $className   = "THM\Groups\Models\\$name";
+        $formFactory = $this->getFormFactory();
+        $model       = new $className($config, $this, $formFactory);
         $this->addDispatcher($model);
         $this->addFormFactory($model);
 

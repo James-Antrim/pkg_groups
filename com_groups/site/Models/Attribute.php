@@ -13,7 +13,7 @@ namespace THM\Groups\Models;
 use Joomla\CMS\Form\Form;
 use Joomla\CMS\Object\CMSObject;
 
-class Attribute extends Edit
+class Attribute extends EditModel
 {
     protected string $tableClass = 'Attributes';
 

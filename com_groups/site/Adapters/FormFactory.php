@@ -18,17 +18,17 @@ use Joomla\Database\DatabaseAwareTrait;
  */
 class FormFactory implements FormFactoryInterface
 {
-	use DatabaseAwareTrait;
+    use DatabaseAwareTrait;
 
-	/**
-	 * @inheritdoc
-	 */
-	public function createForm(string $name, array $options = []): Form
-	{
-		$form = new Form($name, $options);
+    /**
+     * @inheritdoc
+     */
+    public function createForm(string $name, array $options = []): Form
+    {
+        $form = new Form($name, $options);
 
-		$form->setDatabase($this->getDatabase());
+        $form->setDatabase($this->getDatabase());
 
-		return $form;
-	}
+        return $form;
+    }
 }

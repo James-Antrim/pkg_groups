@@ -11,6 +11,7 @@
 namespace THM\Groups\Layouts;
 
 use Joomla\CMS\Language\Text;
+use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\HTML;
 use THM\Groups\Views\HTML\ListView;
 
@@ -78,7 +79,6 @@ class ListItem
      */
     public static function render(ListView $view, int $rowNo, object $item, bool $dragEnabled = false): void
     {
-        $context        = $view->backend;
         $dragAttributes = '';
 
         // The row attributes seem to tell the row in which context it can be dragged.
@@ -108,7 +108,7 @@ class ListItem
                     case 'text':
                     case 'value':
                     default:
-                        self::text($item, $column, $context, $linkType);
+                        self::text($item, $column, Application::backend(), $linkType);
                         break;
                 }
             }

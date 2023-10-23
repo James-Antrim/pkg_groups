@@ -10,8 +10,8 @@
 
 namespace THM\Groups\Views\HTML;
 
-use THM\Groups\Adapters\{Application, HTML, Input, Text};
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use THM\Groups\Adapters\{Application, HTML, Input, Text, Toolbar};
 use THM\Groups\Helpers\{Attributes as AH, TemplateAttributes as Helper, Templates as TH};
 use THM\Groups\Layouts\ListItem;
 use THM\Groups\Tables\Attributes as AT;
@@ -28,7 +28,7 @@ class TemplateAttributes extends ListView
     protected function addToolbar(): void
     {
         $templateID = Input::getID();
-        $toolbar    = Application::getToolbar();
+        $toolbar    = Toolbar::getInstance();
 
         if ($available = $this->getAvailable()) {
             $addGroup = $toolbar->dropdownButton('add-group');
