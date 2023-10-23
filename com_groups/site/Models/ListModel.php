@@ -26,7 +26,7 @@ use THM\Groups\Adapters\Input;
  * - Overrides/-writes to avoid deprecated code in the platform or promote ease of use
  * - Supplemental functions to extract common code from list models
  */
-class ListModel extends Base
+abstract class ListModel extends Base
 {
     use Named;
 
