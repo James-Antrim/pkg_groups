@@ -28,9 +28,11 @@ abstract class ListView extends Base
 
     const NONE = -1;
 
-    protected $_layout = 'list';
     public bool $allowBatch = false;
+    public string $empty = '';
     public array $headers = [];
+    protected string $layout = 'list';
+    /** @var array The default text for an empty result set. */
     public array $todo = [];
 
     /**
@@ -43,7 +45,7 @@ abstract class ListView extends Base
         $this->option = 'com_groups';
 
         // If this is not explicitly set going in Joomla will default to default without looking at the object property value.
-        $config['layout'] = $this->_layout;
+        $config['layout'] = $this->layout;
 
         parent::__construct($config);
 

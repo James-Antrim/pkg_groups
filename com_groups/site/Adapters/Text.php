@@ -14,6 +14,53 @@ use Joomla\CMS\Language\Text as Base;
 
 class Text extends Base
 {
+
+    /**
+     * Translates a string into the current language.
+     *
+     * @param string $string               The string to translate.
+     * @param mixed  $jsSafe               Boolean: Make the result javascript safe.
+     * @param bool   $interpretBackSlashes To interpret backslashes (\\=\, \n=carriage return, \t=tabulation)
+     * @param bool   $script               To indicate that the string will be push in the javascript language store
+     *
+     * @return  string  The translated string or the key if $script is true
+     * @noinspection PhpMethodNamingConventionInspection
+     */
+    public static function _($string, $jsSafe = false, $interpretBackSlashes = true, $script = false): string
+    {
+        $string = self::prefaceKey($string);
+
+        if ($script) {
+            return self::useLocalization($string);
+        }
+
+        return Application::getLanguage()->_($string, $jsSafe, $interpretBackSlashes);
+    }
+
+    /**
+     * Translate a string into the current language and stores it in the JavaScript language store.
+     *
+     * @param string $key the localization key
+     *
+     * @return  array the current localizations queued for use in script
+     */
+    public static function addLocalization(string $key): array
+    {
+        $key = self::prefaceKey($key);
+        $key = strtoupper($key);
+
+        // Normalize the key and translate the string.
+        static::$strings[$key] = Application::getLanguage()->_($key);
+
+        // Load core.js dependency
+        HTML::_('behavior.core');
+
+        // Update Joomla.Text script options
+        Document::addScriptOptions('joomla.jtext', static::$strings, false);
+
+        return static::getScriptStrings();
+    }
+
     /**
      * Filters texts to their alphabetic or alphanumeric components
      *
@@ -35,6 +82,23 @@ class Text extends Base
         $text = str_replace('.', '', $text);
 
         return self::trim($text);
+    }
+
+    /**
+     * Supplements a non-prefaced key as necessary.
+     *
+     * @param string $key
+     *
+     * @return string the resolved localization
+     */
+    private static function prefaceKey(string $key): string
+    {
+        // The key is in fact a localization key and the component preface is missing.
+        if (preg_match('/^([A-Z_]+|\d{3})$/', $key) !== false and !str_starts_with($key, 'GROUPS')) {
+            $key = "GROUPS_$key";
+        }
+
+        return $key;
     }
 
     /**
@@ -117,5 +181,20 @@ class Text extends Base
     public static function trim(string $text): string
     {
         return trim(preg_replace('/ +/u', ' ', $text));
+    }
+
+    /**
+     * Adds the localization as necessary and resolves the value for immediate use.
+     *
+     * @param string $key the localization key to resolve
+     *
+     * @return string the resolved constant
+     */
+    public static function useLocalization(string $key): string
+    {
+        $key = self::prefaceKey($key);
+        self::addLocalization($key);
+
+        return self::_($key);
     }
 }

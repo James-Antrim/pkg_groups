@@ -14,26 +14,20 @@ use THM\Groups\Adapters\Application;
 
 trait Named
 {
-	/**
-	 * The name of the view
-	 *
-	 * @var    string
-	 */
-	protected $_name;
+    /** @var string The name of the view class */
+    protected $_name;
 
-	/**
-	 * Method to get the object name. Original overwrite to avoid Joomla thrown exception. Currently also used for
-	 * non-HTML hierarchy views.
-	 *
-	 * @return  string  The name of the model
-	 */
-	public function getName(): string
-	{
-		if (empty($this->_name))
-		{
-			$this->_name = Application::getClass($this);
-		}
+    /**
+     * Method to get the object name. Original overwrite to avoid Joomla thrown exception. Currently also used for
+     * non-HTML hierarchy views.
+     * @return  string  The name of the model
+     */
+    public function getName(): string
+    {
+        if (empty($this->_name)) {
+            $this->_name = Application::getClass($this);
+        }
 
-		return $this->_name;
-	}
+        return $this->_name;
+    }
 }

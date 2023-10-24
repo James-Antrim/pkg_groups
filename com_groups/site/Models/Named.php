@@ -17,15 +17,9 @@ use THM\Groups\Adapters\Application;
  */
 trait Named
 {
-    /**
-     * The form context. (com_groups.<model><.menuID>)
-     * @var string $context
-     */
+    /** @var string $context the form context (com_groups.<model><.menuID>) */
     protected $context;
-
-    /**
-     * The name of the called class
-     */
+    /** @var string the name of the called class */
     protected $name;
 
     /**

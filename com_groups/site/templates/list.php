@@ -57,7 +57,7 @@ if (count($this->headers) > 4) {
             <div id="j-main-container" class="j-main-container groups">
                 <?php Layouts\ListTools::render($this); ?>
                 <?php if (empty($this->items)) : ?>
-                    <?php Layouts\EmptyList::render(); ?>
+                    <?php Layouts\EmptyList::render($this); ?>
                 <?php else : ?>
                     <table class="table" id="<?php echo $this->_name ?>List">
                         <caption class="visually-hidden">

@@ -35,12 +35,8 @@ abstract class BaseView extends HtmlView
     }
 
     /**
-     * Execute and display a template script. Does not dump the responsibility for exception handling onto inheriting
-     * classes.
-     *
-     * @param string $tpl The name of the template file to parse; automatically searches through the template paths.
-     *
-     * @return  void
+     * @inheritdoc
+     * Does not dump the responsibility for exception handling onto inheriting classes.
      */
     public function display($tpl = null): void
     {

@@ -29,6 +29,4 @@ trait Configured
         $this->_setPath('layout', $this->_basePath . '/Layouts');
         $this->_setPath('template', $this->_basePath . '/templates');
     }
-
-
 }
