@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_groups`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_person_attributes`
+CREATE TABLE IF NOT EXISTS `#__groups_profile_attributes`
 (
     `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `attributeID` INT(11) UNSIGNED    NOT NULL,
@@ -239,7 +239,7 @@ ALTER TABLE `#__groups_attributes`
 ALTER TABLE `#__groups_groups`
     ADD CONSTRAINT `fk_groups_groupID` FOREIGN KEY (`id`) REFERENCES `#__usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `#__groups_person_attributes`
+ALTER TABLE `#__groups_profile_attributes`
     ADD CONSTRAINT `fk_pAttribs_attributeID` FOREIGN KEY (`attributeID`) REFERENCES `#__groups_attributes` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,

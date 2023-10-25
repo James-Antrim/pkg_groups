@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Controllers;
 
-use JInput;
+use Joomla\Input\Input as JInput;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Table\Table;
