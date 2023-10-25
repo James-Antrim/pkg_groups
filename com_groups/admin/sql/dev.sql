@@ -6,7 +6,7 @@ SET foreign_key_checks = 0;
 DROP TABLE IF EXISTS
     `v7ocf_groups_attributes`,
     `v7ocf_groups_groups`,
-    `v7ocf_groups_profile_attributes`,
+    `v7ocf_groups_person_attributes`,
     `v7ocf_groups_role_associations`,
     `v7ocf_groups_roles`,
     `v7ocf_groups_template_attributes`,
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS `v7ocf_groups_groups`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `v7ocf_groups_profile_attributes`
+CREATE TABLE IF NOT EXISTS `v7ocf_groups_person_attributes`
 (
     `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `attributeID` INT(11) UNSIGNED    NOT NULL,
@@ -270,7 +270,7 @@ ALTER TABLE `v7ocf_groups_attributes`
 ALTER TABLE `v7ocf_groups_groups`
     ADD CONSTRAINT `fk_groups_groupID` FOREIGN KEY (`id`) REFERENCES `v7ocf_usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `v7ocf_groups_profile_attributes`
+ALTER TABLE `v7ocf_groups_person_attributes`
     ADD CONSTRAINT `fk_pAttribs_attributeID` FOREIGN KEY (`attributeID`) REFERENCES `v7ocf_groups_attributes` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,

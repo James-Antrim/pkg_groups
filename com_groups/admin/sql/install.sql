@@ -239,7 +239,7 @@ ALTER TABLE `#__groups_attributes`
 ALTER TABLE `#__groups_groups`
     ADD CONSTRAINT `fk_groups_groupID` FOREIGN KEY (`id`) REFERENCES `#__usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-ALTER TABLE `#__groups_profile_attributes`
+ALTER TABLE `#__groups_person_attributes`
     ADD CONSTRAINT `fk_pAttribs_attributeID` FOREIGN KEY (`attributeID`) REFERENCES `#__groups_attributes` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE,

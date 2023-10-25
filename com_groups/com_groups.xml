@@ -48,9 +48,8 @@
         <folder>Controllers</folder>
         <folder>css</folder>
         <folder>Fields</folder>
-        <folder>forms</folder>
+        <folder>Forms</folder>
         <folder>Helpers</folder>
-        <folder>Inputs</folder>
         <folder>Layouts</folder>
         <folder>Models</folder>
         <folder>Providers</folder>
