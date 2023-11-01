@@ -18,7 +18,7 @@ use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Tables\Incremented;
 
-abstract class Form extends Controller
+abstract class FormController extends Controller
 {
     /**
      * The list view to redirect to after completion of form view functions.
@@ -29,7 +29,12 @@ abstract class Form extends Controller
     /**
      * @inheritDoc
      */
-    public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?JInput $input = null)
+    public function __construct(
+        $config = [],
+        MVCFactoryInterface $factory = null,
+        ?CMSApplication $app = null,
+        ?JInput $input = null
+    )
     {
         if (empty($this->list)) {
             Application::error(501);
@@ -84,7 +89,7 @@ abstract class Form extends Controller
         $this->authorize();
         $data = $this->prepareData();
 
-        $id    = Input::getID();
+        $id = Input::getID();
         $table = $this->getTable();
 
         return $this->store($table, $data, $id);
@@ -125,9 +130,9 @@ abstract class Form extends Controller
     /**
      * Reusable function to store data in an Incremented table.
      *
-     * @param Table $table an Incremented table
-     * @param array $data  the data to store
-     * @param int   $id    the id of the row in which to store the data
+     * @param   Table  $table  an Incremented table
+     * @param   array  $data   the data to store
+     * @param   int    $id     the id of the row in which to store the data
      *
      * @return int the id of the table row on success, otherwise the id parameter
      * @uses Incremented
@@ -136,6 +141,7 @@ abstract class Form extends Controller
     {
         if ($id and !$table->load($id)) {
             Application::message('GROUPS_412', Application::ERROR);
+
             return $id;
         }
 
@@ -145,6 +151,7 @@ abstract class Form extends Controller
         }
 
         Application::message($table->getError(), Application::ERROR);
+
         return $id;
     }
 }

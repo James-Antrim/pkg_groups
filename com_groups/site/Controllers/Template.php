@@ -15,7 +15,7 @@ use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Tables\Incremented;
 
-class Template extends Form
+class Template extends FormController
 {
     /**
      * @inheritdoc
@@ -30,18 +30,18 @@ class Template extends Form
         return [
             'name_de' => Input::getString('name_de'),
             'name_en' => Input::getString('name_en'),
-            'cards' => (int) Input::getBool('cards'),
-            'roles' => (int) Input::getBool('roles'),
-            'vcards' => (int) Input::getBool('vcards')
+            'cards'   => (int) Input::getBool('cards'),
+            'roles'   => (int) Input::getBool('roles'),
+            'vcards'  => (int) Input::getBool('vcards')
         ];
     }
 
     /**
      * Reusable function to store data in an Incremented table.
      *
-     * @param Table $table an Incremented table
-     * @param array $data  the data to store
-     * @param int   $id    the id of the row in which to store the data
+     * @param   Table  $table  an Incremented table
+     * @param   array  $data   the data to store
+     * @param   int    $id     the id of the row in which to store the data
      *
      * @return int the id of the table row on success, otherwise the id parameter
      * @uses Incremented
@@ -50,6 +50,7 @@ class Template extends Form
     {
         if ($id and !$table->load($id)) {
             Application::message('GROUPS_412', Application::ERROR);
+
             return $id;
         }
 
@@ -67,14 +68,15 @@ class Template extends Form
         }
 
         Application::message($table->getError(), Application::ERROR);
+
         return $id;
     }
 
     /**
      * Zeros out the values of the given column
      *
-     * @param string $table  the table where the column is located
-     * @param string $column the column to be zeroed
+     * @param   string  $table   the table where the column is located
+     * @param   string  $column  the column to be zeroed
      *
      * @return bool true on success, otherwise, false
      */

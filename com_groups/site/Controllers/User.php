@@ -17,7 +17,7 @@ use THM\Groups\Helpers\Can;
 use THM\Groups\Helpers\Users as Helper;
 use THM\Groups\Tables\Incremented;
 
-class User extends Form
+class User extends FormController
 {
     protected string $list = 'Users';
 
@@ -39,46 +39,47 @@ class User extends Form
         $forename = Input::getString('forename');
         $surname  = Input::getString('surname');
         $name     = $forename ? "$forename $surname" : $surname;
+
         return [
             // id handled separately later
 
             /** User Access **/
             // "user_details
-            'email' => Input::getString('email'),
-            'forename' => $forename,
-            'name' => $name,
-            'surname' => $surname,
-            'password' => Input::getString('password'), // hmmm
-            'password2' => Input::getString('password2'), // hmmm
-            'username' => Input::getString('username'),
+            'email'          => Input::getString('email'),
+            'forename'       => $forename,
+            'name'           => $name,
+            'surname'        => $surname,
+            'password'       => Input::getString('password'), // hmmm
+            'password2'      => Input::getString('password2'), // hmmm
+            'username'       => Input::getString('username'),
             // "profile"
             // Profile attribute values...
             // "settings"
-            'language' => Input::getString('language'),
-            'timezone' => Input::getString('timezone'),
+            'language'       => Input::getString('language'),
+            'timezone'       => Input::getString('timezone'),
             // "accessibility"
-            'a11y_contrast' => Input::getString('a11y_contrast'), // 0/'high_contrast'
-            'a11y_font' => Input::getString('a11y_font'), // 0/'fontsize'
+            'a11y_contrast'  => Input::getString('a11y_contrast'), // 0/'high_contrast'
+            'a11y_font'      => Input::getString('a11y_font'), // 0/'fontsize'
             'a11y_highlight' => Input::getString('a11y_highlight'), // 0/'highlight'
-            'a11y_mono' => Input::getString('a11y_mono'), // 0/'monochrome'
+            'a11y_mono'      => Input::getString('a11y_mono'), // 0/'monochrome'
 
             /** Admin Access **/
             // "user_details"
-            'block' => (int) Input::getBool('block'),
+            'block'          => (int) Input::getBool('block'),
             // Groups field...
-            'requireReset' => (int) Input::getBool('requireReset'),
+            'requireReset'   => (int) Input::getBool('requireReset'),
             // "settings"
-            'admin_style' => Input::getInt('admin_style'),
+            'admin_style'    => Input::getInt('admin_style'),
             'admin_language' => Input::getString('admin_language'),
-            'editor' => Input::getString('editor'),
+            'editor'         => Input::getString('editor'),
 
             /** Trash **/
             // "user_details"
-            'lastResetTime' => Input::getString('lastResetTime'), // immutable and stupid?
-            'lastvisitDate' => Input::getString('lastvisitDate'), // existing: keep, new: irrelevant, field: stupid?
-            'registerDate' => Input::getString('registerDate'), // existing: keep, new: now, field: unnecessary?
-            'resetCount' => Input::getInt('resetCount'), // immutable and stupid?
-            'sendEmail' => 0, // No
+            'lastResetTime'  => Input::getString('lastResetTime'), // immutable and stupid?
+            'lastvisitDate'  => Input::getString('lastvisitDate'), // existing: keep, new: irrelevant, field: stupid?
+            'registerDate'   => Input::getString('registerDate'), // existing: keep, new: now, field: unnecessary?
+            'resetCount'     => Input::getInt('resetCount'), // immutable and stupid?
+            'sendEmail'      => 0, // No
         ];
     }
 
@@ -105,6 +106,7 @@ class User extends Form
     {
         if ($id and !$table->load($id)) {
             Application::message('GROUPS_412', Application::ERROR);
+
             return $id;
         }
 
@@ -114,6 +116,7 @@ class User extends Form
         }
 
         Application::message($table->getError(), Application::ERROR);
+
         return $id;
     }
 

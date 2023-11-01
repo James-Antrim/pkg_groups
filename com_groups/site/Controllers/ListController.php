@@ -17,7 +17,7 @@ use Joomla\CMS\Table\Table;
 use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Tables\Ordered;
 
-class ListController extends Controller
+abstract class ListController extends Controller
 {
     /**
      * The item view to redirect to for the creation of new resources
@@ -28,7 +28,12 @@ class ListController extends Controller
     /**
      * @inheritDoc
      */
-    public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?JInput $input = null)
+    public function __construct(
+        $config = [],
+        MVCFactoryInterface $factory = null,
+        ?CMSApplication $app = null,
+        ?JInput $input = null
+    )
     {
         if (empty($this->item)) {
             Application::error(501);
@@ -90,10 +95,10 @@ class ListController extends Controller
     /**
      * An extract for redirecting back to the list view and providing a message for the number of entries updated.
      *
-     * @param int  $selected     the number of accounts selected for processing
-     * @param int  $updated      the number of accounts changed by the calling function
-     * @param bool $delete       whether the change affected by the calling function was a deletion
-     * @param bool $autoRedirect whether the function should initiate redirection automatically
+     * @param   int   $selected      the number of accounts selected for processing
+     * @param   int   $updated       the number of accounts changed by the calling function
+     * @param   bool  $delete        whether the change affected by the calling function was a deletion
+     * @param   bool  $autoRedirect  whether the function should initiate redirection automatically
      *
      * @return void
      */
@@ -105,9 +110,11 @@ class ListController extends Controller
                 $key     .= $delete === true ? 'DELETED' : 'UPDATED';
                 $message = $updated === 1 ? Text::_($key, $updated) : Text::sprintf($key, $updated);
                 $type    = Application::MESSAGE;
-            } else {
+            }
+            else {
                 $message = $delete ?
-                    Text::sprintf('GROUPS_XX_DELETED', $updated, $selected) : Text::sprintf('GROUPS_XX_UPDATED', $updated, $selected);
+                    Text::sprintf('GROUPS_XX_DELETED', $updated, $selected) : Text::sprintf('GROUPS_XX_UPDATED', $updated,
+                        $selected);
                 $type    = Application::WARNING;
             }
 
@@ -132,6 +139,7 @@ class ListController extends Controller
 
         if (!property_exists($table, 'ordering')) {
             echo Text::_('GROUPS_501');
+
             return;
         }
 
@@ -155,9 +163,9 @@ class ListController extends Controller
     /**
      * Updates a boolean column for multiple entries in a
      *
-     * @param string $column      the table column / object property
-     * @param array  $selectedIDs the ids of the resources whose properties will be updated
-     * @param bool   $value       the value to update to
+     * @param   string  $column       the table column / object property
+     * @param   array   $selectedIDs  the ids of the resources whose properties will be updated
+     * @param   bool    $value        the value to update to
      *
      * @return int
      */
@@ -192,8 +200,8 @@ class ListController extends Controller
     /**
      * Zeros out the values of the given column
      *
-     * @param string $table  the table where the column is located
-     * @param string $column the column to be zeroed
+     * @param   string  $table   the table where the column is located
+     * @param   string  $column  the column to be zeroed
      *
      * @return bool true on success, otherwise, false
      */

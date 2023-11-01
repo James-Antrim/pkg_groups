@@ -16,7 +16,7 @@ use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Tables\{Incremented, ViewLevels, UserGroups};
 
-class Group extends Form
+class Group extends FormController
 {
     protected string $list = 'Groups';
 
@@ -26,10 +26,10 @@ class Group extends Form
     protected function prepareData(): array
     {
         return [
-            'name_de' => Input::getString('name_de'),
-            'name_en' => Input::getString('name_en'),
-            'title' => Input::getString('title'),
-            'parent_id' => Input::getInt('parent_id'),
+            'name_de'    => Input::getString('name_de'),
+            'name_en'    => Input::getString('name_en'),
+            'title'      => Input::getString('title'),
+            'parent_id'  => Input::getInt('parent_id'),
             'viewLevels' => Input::getIntCollection('viewLevels')
         ];
 
@@ -44,6 +44,7 @@ class Group extends Form
 
         if ($id and (!$groups->load($id) or !$table->load($id))) {
             Application::message('GROUPS_412', Application::ERROR);
+
             return $id;
         }
 
@@ -52,6 +53,7 @@ class Group extends Form
 
         if (!$groups->save($groupData)) {
             Application::message($groups->getError(), Application::ERROR);
+
             return $id;
         }
 
@@ -60,6 +62,7 @@ class Group extends Form
 
         if (!$table->save($data)) {
             Application::message($table->getError(), Application::ERROR);
+
             return $id;
         }
 

@@ -15,7 +15,7 @@ use THM\Groups\Helpers\Attributes as Helper;
 use THM\Groups\Helpers\Icons;
 use THM\Groups\Helpers\Types;
 
-class Attribute extends Form
+class Attribute extends FormController
 {
     protected string $list = 'Attributes';
 
@@ -28,12 +28,12 @@ class Attribute extends Form
         $icon    = Input::getString('icon');
 
         $data = [
-            'context' => in_array($context, Helper::CONTEXTS) ? $context : Helper::BOTH_CONTEXTS,
-            'icon' => Icons::supported($icon),
-            'label_de' => Input::getString('label_de'),
-            'label_en' => Input::getString('label_en'),
-            'showIcon' => (int) Input::getBool('showIcon'),
-            'showLabel' => (int) Input::getBool('showLabel'),
+            'context'     => in_array($context, Helper::CONTEXTS) ? $context : Helper::BOTH_CONTEXTS,
+            'icon'        => Icons::supported($icon),
+            'label_de'    => Input::getString('label_de'),
+            'label_en'    => Input::getString('label_en'),
+            'showIcon'    => (int) Input::getBool('showIcon'),
+            'showLabel'   => (int) Input::getBool('showLabel'),
             'viewLevelID' => Input::getInt('viewLevelID', Helper::PUBLIC)
         ];
 
@@ -69,8 +69,8 @@ class Attribute extends Form
     /**
      * Checks the form for the data for a given field with string value.
      *
-     * @param array  $options the array where the options are stored
-     * @param string $option  the name of the option to check for
+     * @param   array   $options  the array where the options are stored
+     * @param   string  $option   the name of the option to check for
      *
      * @return void modifies $options as necessary
      */
@@ -84,8 +84,8 @@ class Attribute extends Form
     /**
      * Checks the form for the data for a given field with string value.
      *
-     * @param array  $options the array where the options are stored
-     * @param string $option  the name of the option to check for
+     * @param   array   $options  the array where the options are stored
+     * @param   string  $option   the name of the option to check for
      *
      * @return void modifies $options as necessary
      */
@@ -99,8 +99,8 @@ class Attribute extends Form
     /**
      * Checks the form for the data for a given field with string value.
      *
-     * @param array  $options the array where the options are stored
-     * @param string $option  the name of the option to check for
+     * @param   array   $options  the array where the options are stored
+     * @param   string  $option   the name of the option to check for
      *
      * @return void modifies $options as necessary
      */
@@ -114,8 +114,8 @@ class Attribute extends Form
     /**
      * Checks the form for the data for a given field with string value.
      *
-     * @param array  $options the array where the options are stored
-     * @param string $option  the name of the option to check for
+     * @param   array   $options  the array where the options are stored
+     * @param   string  $option   the name of the option to check for
      *
      * @return void modifies $options as necessary
      */

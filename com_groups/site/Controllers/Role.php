@@ -16,7 +16,7 @@ use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Roles as Helper;
 use THM\Groups\Tables\Incremented;
 
-class Role extends Form
+class Role extends FormController
 {
     protected string $list = 'Roles';
 
@@ -26,8 +26,8 @@ class Role extends Form
     protected function prepareData(): array
     {
         return [
-            'name_de' => Input::getString('name_de'),
-            'name_en' => Input::getString('name_en'),
+            'name_de'   => Input::getString('name_de'),
+            'name_en'   => Input::getString('name_en'),
             'plural_de' => Input::getString('plural_de'),
             'plural_en' => Input::getString('plural_en')
         ];
@@ -41,6 +41,7 @@ class Role extends Form
     {
         if ($id and !$table->load($id)) {
             Application::message('GROUPS_412', Application::ERROR);
+
             return $id;
         }
 
@@ -54,6 +55,7 @@ class Role extends Form
         }
 
         Application::message($table->getError(), Application::ERROR);
+
         return $id;
     }
 
