@@ -26,7 +26,7 @@
         </schemas>
     </update>
     <administration>
-        <menu>Groups</menu>
+        <menu link="option=com_groups">Groups</menu>
         <submenu>
             <menu view="Groups">GROUPS_GROUPS</menu>
             <menu view="Users">GROUPS_USERS</menu>
