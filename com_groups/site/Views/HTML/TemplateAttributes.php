@@ -13,6 +13,7 @@ namespace THM\Groups\Views\HTML;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use THM\Groups\Adapters\{Application, HTML, Input, Text, Toolbar};
 use THM\Groups\Helpers\{Attributes as AH, TemplateAttributes as Helper, Templates as TH};
+use stdClass;
 use THM\Groups\Layouts\ListItem;
 use THM\Groups\Tables\Attributes as AT;
 
@@ -49,29 +50,36 @@ class TemplateAttributes extends ListView
     /**
      * @inheritDoc
      */
-    protected function completeItems(): void
+    protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        $label               = 'label_' . Application::getTag();
-        $unlabeledAttributes = AH::getUnlabeled();
-        $unlabeledTip        = Text::_('GROUPS_TOGGLE_TIP_UNLABELED');
+        $attribute = new AT();
+        $attribute->load($item->attributeID);
+        $item->name = $attribute->{$options['label']};
+        $neither    = in_array($item->attributeID, $options['unlabeledIDs']) ? $options['unlabeledTip'] : '';
 
-        foreach ($this->items as $rowNo => $item) {
-
-            $attribute = new AT();
-            $attribute->load($item->attributeID);
-            $item->name = $attribute->$label;
-            $neither    = in_array($item->attributeID, $unlabeledAttributes) ? $unlabeledTip : '';
-
-            if (in_array($item->attributeID, AH::PROTECTED)) {
-                $context    = "groups-attribute-$item->id";
-                $item->name = HTML::icon('fa fa-lock') . " $item->name";
-                $tip        = Text::_('GROUPS_PROTECTED_ATTRIBUTE');
-                $item->name = HTML::tip($item->name, $context, $tip);
-            }
-
-            $item->showIcon  = HTML::toggle($rowNo, Helper::showIconStates[$item->showIcon], 'TemplateAttributes', $neither);
-            $item->showLabel = HTML::toggle($rowNo, Helper::showLabelStates[$item->showLabel], 'TemplateAttributes', $neither);
+        if (in_array($item->attributeID, AH::PROTECTED)) {
+            $context    = "groups-attribute-$item->id";
+            $item->name = HTML::icon('fa fa-lock') . " $item->name";
+            $tip        = Text::_('GROUPS_PROTECTED_ATTRIBUTE');
+            $item->name = HTML::tip($item->name, $context, $tip);
         }
+
+        $item->showIcon  = HTML::toggle($index, Helper::showIconStates[$item->showIcon], 'TemplateAttributes', $neither);
+        $item->showLabel = HTML::toggle($index, Helper::showLabelStates[$item->showLabel], 'TemplateAttributes', $neither);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function completeItems(array $options = []): void
+    {
+        $options = [
+            'label'        => 'label_' . Application::getTag(),
+            'unlabeledIDs' => AH::getUnlabeled(),
+            'unlabeledTip' => Text::_('TOGGLE_TIP_UNLABELED')
+        ];
+
+        parent::completeItems($options);
     }
 
     /**
@@ -106,26 +114,26 @@ class TemplateAttributes extends ListView
     /**
      * @inheritDoc
      */
-    protected function initializeHeaders(): void
+    protected function initializeColumns(): void
     {
         $this->headers = [
-            'check' => ['type' => 'check'],
-            'ordering' => ['active' => false, 'type' => 'ordering'],
-            'name' => [
-                'link' => ListItem::DIRECT,
+            'check'     => ['type' => 'check'],
+            'ordering'  => ['active' => false, 'type' => 'ordering'],
+            'name'      => [
+                'link'       => ListItem::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_ATTRIBUTE'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_ATTRIBUTE'),
+                'type'       => 'value'
             ],
-            'showIcon' => [
+            'showIcon'  => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_SHOW_ICON'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_SHOW_ICON'),
+                'type'       => 'value'
             ],
             'showLabel' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_SHOW_LABEL'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_SHOW_LABEL'),
+                'type'       => 'value'
             ]
         ];
     }

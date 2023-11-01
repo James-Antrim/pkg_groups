@@ -15,6 +15,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\CMS\Toolbar\Button\DropdownButton;
 use THM\Groups\Adapters\{HTML, Toolbar};
 use THM\Groups\Helpers\{Can, Users as Helper};
+use stdClass;
 use THM\Groups\Layouts\ListItem;
 
 /**
@@ -122,20 +123,18 @@ class Users extends ListView
     /**
      * @inheritDoc
      */
-    protected function completeItems(): void
+    protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        foreach ($this->items as $rowNo => $item) {
-            $item->activated     = HTML::toggle($rowNo, Helper::activatedStates[$item->activated], 'Users');
-            $item->block         = HTML::toggle($rowNo, Helper::blockedStates[$item->block], 'Users');
-            $item->content       = HTML::toggle($rowNo, Helper::contentStates[$item->content], 'Users');
-            $item->editing       = HTML::toggle($rowNo, Helper::editingStates[$item->editing], 'Users');
-            $item->editLink      = Route::_('index.php?option=com_groups&view=User&id=' . $item->id);
-            $item->groups        = $this->formatGroups($item->groups);
-            $item->lastvisitDate = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
-            $item->name          = $item->forenames ? "$item->forenames $item->surnames" : $item->surnames;
-            $item->published     = HTML::toggle($rowNo, Helper::publishedStates[$item->published], 'Users');
-            $item->viewLink      = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
-        }
+        $item->activated     = HTML::toggle($index, Helper::activatedStates[$item->activated], 'Users');
+        $item->block         = HTML::toggle($index, Helper::blockedStates[$item->block], 'Users');
+        $item->content       = HTML::toggle($index, Helper::contentStates[$item->content], 'Users');
+        $item->editing       = HTML::toggle($index, Helper::editingStates[$item->editing], 'Users');
+        $item->editLink      = Route::_('index.php?option=com_groups&view=User&id=' . $item->id);
+        $item->groups        = $this->formatGroups($item->groups);
+        $item->lastvisitDate = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
+        $item->name          = $item->forenames ? "$item->forenames $item->surnames" : $item->surnames;
+        $item->published     = HTML::toggle($index, Helper::publishedStates[$item->published], 'Users');
+        $item->viewLink      = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
     }
 
     /**
@@ -156,7 +155,7 @@ class Users extends ListView
     /**
      * Formats the person associated groups and roles for display.
      *
-     * @param array $groups the groups associated with the person
+     * @param   array  $groups  the groups associated with the person
      *
      * @return string
      */
@@ -182,59 +181,59 @@ class Users extends ListView
     /**
      * @inheritDoc
      */
-    protected function initializeHeaders(): void
+    protected function initializeColumns(): void
     {
         // Columns made 'redundant' by filters are left in to allow for display of in column buttons.
         $this->headers = [
-            'check' => ['type' => 'check'],
-            'name' => [
-                'column' => 'surnames, forenames',
-                'link' => ListItem::DIRECT,
+            'check'         => ['type' => 'check'],
+            'name'          => [
+                'column'     => 'surnames, forenames',
+                'link'       => ListItem::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_PROFILE'),
-                'type' => 'sort'
+                'title'      => Text::_('GROUPS_PROFILE'),
+                'type'       => 'sort'
             ],
-            'groups' => [
+            'groups'        => [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_GROUPS'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_GROUPS'),
+                'type'       => 'value'
             ],
-            'published' => [
+            'published'     => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_PROFILE_PUBLISHED'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_PROFILE_PUBLISHED'),
+                'type'       => 'value'
             ],
-            'editing' => [
+            'editing'       => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_EDITING'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_EDITING'),
+                'type'       => 'value'
             ],
-            'content' => [
+            'content'       => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_CONTENTS'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_CONTENTS'),
+                'type'       => 'value'
             ],
-            'block' => [
+            'block'         => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_USER_ENABLED'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_USER_ENABLED'),
+                'type'       => 'value'
             ],
-            'activated' => [
+            'activated'     => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_USER_ACTIVATION'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_USER_ACTIVATION'),
+                'type'       => 'value'
             ],
             'lastvisitDate' => [
-                'column' => 'lastvisitDate',
+                'column'     => 'lastvisitDate',
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_VISITED'),
-                'type' => 'sort'
+                'title'      => Text::_('GROUPS_VISITED'),
+                'type'       => 'sort'
             ],
-            'registerDate' => [
-                'column' => 'registerDate',
+            'registerDate'  => [
+                'column'     => 'registerDate',
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_REGISTERED'),
-                'type' => 'sort'
+                'title'      => Text::_('GROUPS_REGISTERED'),
+                'type'       => 'sort'
             ]
         ];
     }

@@ -12,6 +12,7 @@ namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use stdClass;
 use THM\Groups\Layouts\ListItem;
 
 /**
@@ -36,31 +37,39 @@ class Roles extends ListView
     /**
      * @inheritDoc
      */
-    protected function initializeHeaders(): void
+    protected function initializeColumns(): void
     {
         $this->headers = [
-            'check' => ['type' => 'check'],
+            'check'    => ['type' => 'check'],
             'ordering' => ['type' => 'ordering'],
-            'name' => [
-                'link' => ListItem::DIRECT,
+            'name'     => [
+                'link'       => ListItem::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_ROLE'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_ROLE'),
+                'type'       => 'value'
             ],
-            'plural' => [
+            'plural'   => [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_PLURAL'),
-                'type' => 'text'
+                'title'      => Text::_('GROUPS_PLURAL'),
+                'type'       => 'text'
             ],
-            'groups' => [
+            'groups'   => [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_GROUPS'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_GROUPS'),
+                'type'       => 'value'
             ]
         ];
 
         if ($this->filtered()) {
             unset($this->headers['ordering']);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function completeItem(int $index, stdClass $item, array $options = []): void
+    {
+        // Simple resource with no further processing necessary.
     }
 }

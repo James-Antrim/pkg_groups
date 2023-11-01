@@ -11,6 +11,7 @@
 namespace THM\Groups\Adapters;
 
 use Joomla\CMS\Document\HtmlDocument;
+use Joomla\CMS\Toolbar\Toolbar as TB;
 
 /**
  * Adapts functions of the document class to avoid exceptions and deprecated warnings.
@@ -20,7 +21,7 @@ class Document
     /**
      * Adds a linked script to the page.
      *
-     * @param string $url the script URL
+     * @param   string  $url  the script URL
      *
      * @return  HtmlDocument instance of $this to allow chaining
      * @deprecated 5.0 Use WebAssetManager
@@ -29,15 +30,16 @@ class Document
     {
         /** @var HtmlDocument $document */
         $document = Application::getDocument();
+
         return $document->addScript($url);
     }
 
     /**
      * Add script variables for localizations.
      *
-     * @param string       $key           key for addressing the localizations in script files
-     * @param array|string $localizations localization(s)
-     * @param bool         $merge         true if the localizations should be merged with existing
+     * @param   string        $key            key for addressing the localizations in script files
+     * @param   array|string  $localizations  localization(s)
+     * @param   bool          $merge          true if the localizations should be merged with existing
      *
      * @return  HtmlDocument instance of $this to allow chaining
      */
@@ -45,13 +47,14 @@ class Document
     {
         /** @var HtmlDocument $document */
         $document = Application::getDocument();
+
         return $document->addScriptOptions($key, $localizations, $merge);
     }
 
     /**
      * Adds a linked stylesheet to the page
      *
-     * @param string $url the style sheet URL
+     * @param   string  $url  the style sheet URL
      *
      * @return  HtmlDocument instance of $this to allow chaining
      * @deprecated 5.0 Use WebAssetManager
@@ -60,13 +63,29 @@ class Document
     {
         /** @var HtmlDocument $document */
         $document = Application::getDocument();
+
         return $document->addStyleSheet($url);
+    }
+
+    /**
+     * Provides a
+     *
+     * @param   string  $name
+     *
+     * @return TB
+     */
+    public static function getToolbar(string $name = 'toolbar'): TB
+    {
+        /** @var HtmlDocument $document */
+        $document = Application::getDocument();
+
+        return $document->getToolbar($name);
     }
 
     /**
      * Explicitly sets the document's charset.
      *
-     * @param string $type Charset encoding string
+     * @param   string  $type  Charset encoding string
      *
      * @return  HtmlDocument instance of $this to allow chaining
      */
@@ -74,13 +93,14 @@ class Document
     {
         /** @var HtmlDocument $document */
         $document = Application::getDocument();
+
         return $document->setCharset($type);
     }
 
     /**
      * Sets the title of the document
      *
-     * @param string $title The title to be set
+     * @param   string  $title  The title to be set
      *
      * @return  HtmlDocument instance of $this to allow chaining
      * @since   1.7.0
@@ -89,6 +109,7 @@ class Document
     {
         /** @var HtmlDocument $document */
         $document = Application::getDocument();
+
         return $document->setTitle($title);
     }
 }

@@ -21,10 +21,10 @@ class Text extends Base
     /**
      * Translates a string into the current language.
      *
-     * @param string $string               The string to translate.
-     * @param mixed  $jsSafe               Boolean: Make the result javascript safe.
-     * @param bool   $interpretBackSlashes To interpret backslashes (\\=\, \n=carriage return, \t=tabulation)
-     * @param bool   $script               To indicate that the string will be push in the javascript language store
+     * @param   string  $string                The string to translate.
+     * @param   mixed   $jsSafe                Boolean: Make the result javascript safe.
+     * @param   bool    $interpretBackSlashes  To interpret backslashes (\\=\, \n=carriage return, \t=tabulation)
+     * @param   bool    $script                To indicate that the string will be push in the javascript language store
      *
      * @return  string  The translated string or the key if $script is true
      * @noinspection PhpMethodNamingConventionInspection
@@ -43,7 +43,7 @@ class Text extends Base
     /**
      * Translate a string into the current language and stores it in the JavaScript language store.
      *
-     * @param string $key the localization key
+     * @param   string  $key  the localization key
      *
      * @return  array the current localizations queued for use in script
      */
@@ -67,8 +67,8 @@ class Text extends Base
     /**
      * Filters texts to their alphabetic or alphanumeric components
      *
-     * @param string $text the text to be filtered
-     * @param string $type the way in which the text should be filtered
+     * @param   string  $text  the text to be filtered
+     * @param   string  $type  the way in which the text should be filtered
      *
      * @return string the filtered text
      */
@@ -90,14 +90,17 @@ class Text extends Base
     /**
      * Supplements a non-prefaced key as necessary.
      *
-     * @param string $key
+     * @param   string  $key
      *
      * @return string the resolved localization
      */
     private static function prefaceKey(string $key): string
     {
+        preg_match('/^([A-Z_]+|\d{3})$/', $key, $matches);
+        $isKey = !empty($matches);
+
         // The key is in fact a localization key and the component preface is missing.
-        if (preg_match('/^([A-Z_]+|\d{3})$/', $key) !== false and !str_starts_with($key, 'GROUPS')) {
+        if ($isKey and !str_starts_with($key, 'GROUPS_')) {
             $key = "GROUPS_$key";
         }
 
@@ -107,7 +110,7 @@ class Text extends Base
     /**
      * Replaces special characters in a given string with their transliterations.
      *
-     * @param string $text the text to be processed
+     * @param   string  $text  the text to be processed
      *
      * @return string an ASCII compatible transliteration of the given string
      */
@@ -171,13 +174,14 @@ class Text extends Base
         $text    = str_replace($ySearch, 'y', $text);
 
         $zSearch = ['ź', 'ž', 'ż'];
+
         return str_replace($zSearch, 'z', $text);
     }
 
     /**
      * Removes excess space characters from a given string.
      *
-     * @param string $text the text to be trimmed
+     * @param   string  $text  the text to be trimmed
      *
      * @return string the trimmed text
      */
@@ -189,7 +193,7 @@ class Text extends Base
     /**
      * Adds the localization as necessary and resolves the value for immediate use.
      *
-     * @param string $key the localization key to resolve
+     * @param   string  $key  the localization key to resolve
      *
      * @return string the resolved constant
      */

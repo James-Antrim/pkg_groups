@@ -14,6 +14,7 @@ use Joomla\CMS\Helper\ContentHelper as CoreAccess;
 use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
+use stdClass;
 use THM\Groups\Adapters\Toolbar;
 use THM\Groups\Helpers\Groups as Helper;
 use THM\Groups\Adapters\HTML;
@@ -84,136 +85,133 @@ class Groups extends ListView
         parent::display($tpl);
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function completeItems(): void
+    protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
         $ugh = UGH::getInstance();
 
-        foreach ($this->items as $item) {
-            if ($this->filtered()) {
-                // The last item is the $item->name
-                array_pop($item->path);
+        if ($this->filtered()) {
+            // The last item is the $item->name
+            array_pop($item->path);
 
-                foreach ($item->path as $key => $parentID) {
-                    $item->path[$key] = $ugh->get($parentID)->title;
-                }
-                $item->supplement = implode(' / ', $item->path);
-            } else {
-                $item->prefix = Helper::getPrefix($item->level);
+            foreach ($item->path as $key => $parentID) {
+                $item->path[$key] = $ugh->get($parentID)->title;
             }
-
-            if (in_array($item->id, Helper::DEFAULT)) {
-                $context = "groups-group-$item->id";
-                $tip     = Text::_('GROUPS_PROTECTED_GROUP');
-
-                $item->icon = HTML::tip(HTML::icon('lock'), $context, $tip);
-            }
-
-            if (!$this->state->get('filter.roleID')) {
-                $roles = Helper::getRoles($item->id);
-                $count = count($roles);
-
-                //$item->viewLevel = implode(', ', $levels);
-                switch (true) {
-                    case $count === 0:
-                        $item->role = Text::_('GROUPS_NONE');
-                        break;
-                    case $count === 1:
-                        // Doesn't take up too much space I hope...
-                    case $count === 2:
-                    case $count === 3:
-                        $item->viewLevel = implode(', ', $roles);
-                        break;
-                    default:
-                        $item->role = Text::_('GROUPS_MULTIPLE');
-                        break;
-
-                }
-            }
-
-            if (!$this->state->get('filter.levelID')) {
-                $levels = Helper::getLevels($item->id);
-                $count  = count($levels);
-
-                $item->viewLevel = match (true) {
-                    $count === 0 => Text::_('GROUPS_NONE'),
-                    $count > 2 => Text::_('GROUPS_MULTIPLE'),
-                    default => implode(', ', $levels),
-                };
-            }
-
-            if ($item->enabled or $item->blocked) {
-                $link = "index.php?option=com_groups&view=Users&filter[groupID]=$item->id&filter[state]=";
-
-                $eLink       = Route::_($link . 1);
-                $properties  = ['class' => 'btn btn-success'];
-                $tip         = Text::_('GROUPS_ENABLED_USERS');
-                $item->users = HTML::tip($item->enabled, "enabled-tip-$item->id", $tip, $properties, $eLink);
-
-                $bLink       = Route::_($link . 0);
-                $properties  = ['class' => 'btn btn-danger'];
-                $tip         = Text::_('GROUPS_BLOCKED_USERS');
-                $item->users .= HTML::tip($item->blocked, "blocked-tip-$item->id", $tip, $properties, $bLink);
-            } else {
-                $item->users = '';
-            }
-
-            $link         = "index.php?option=com_users&view=debuggroup&group_id=$item->id";
-            $tip          = Text::_('GROUPS_DEBUG_GROUP_RIGHTS');
-            $icon         = HTML::icon('fas fa-th');
-            $item->rights = HTML::tip($icon, "rights-tip-$item->id", $tip, [], $link, true);
+            $item->supplement = implode(' / ', $item->path);
         }
+        else {
+            $item->prefix = Helper::getPrefix($item->level);
+        }
+
+        if (in_array($item->id, Helper::DEFAULT)) {
+            $context = "groups-group-$item->id";
+            $tip     = Text::_('GROUPS_PROTECTED_GROUP');
+
+            $item->icon = HTML::tip(HTML::icon('lock'), $context, $tip);
+        }
+
+        if (!$this->state->get('filter.roleID')) {
+            $roles = Helper::getRoles($item->id);
+            $count = count($roles);
+
+            //$item->viewLevel = implode(', ', $levels);
+            switch (true) {
+                case $count === 0:
+                    $item->role = Text::_('GROUPS_NONE');
+                    break;
+                case $count === 1:
+                    // Doesn't take up too much space I hope...
+                case $count === 2:
+                case $count === 3:
+                    $item->viewLevel = implode(', ', $roles);
+                    break;
+                default:
+                    $item->role = Text::_('GROUPS_MULTIPLE');
+                    break;
+
+            }
+        }
+
+        if (!$this->state->get('filter.levelID')) {
+            $levels = Helper::getLevels($item->id);
+            $count  = count($levels);
+
+            $item->viewLevel = match (true) {
+                $count === 0 => Text::_('GROUPS_NONE'),
+                $count > 2 => Text::_('GROUPS_MULTIPLE'),
+                default => implode(', ', $levels),
+            };
+        }
+
+        if ($item->enabled or $item->blocked) {
+            $link = "index.php?option=com_groups&view=Users&filter[groupID]=$item->id&filter[state]=";
+
+            $eLink       = Route::_($link . 1);
+            $properties  = ['class' => 'btn btn-success'];
+            $tip         = Text::_('GROUPS_ENABLED_USERS');
+            $item->users = HTML::tip($item->enabled, "enabled-tip-$item->id", $tip, $properties, $eLink);
+
+            $bLink       = Route::_($link . 0);
+            $properties  = ['class' => 'btn btn-danger'];
+            $tip         = Text::_('GROUPS_BLOCKED_USERS');
+            $item->users .= HTML::tip($item->blocked, "blocked-tip-$item->id", $tip, $properties, $bLink);
+        }
+        else {
+            $item->users = '';
+        }
+
+        $link         = "index.php?option=com_users&view=debuggroup&group_id=$item->id";
+        $tip          = Text::_('GROUPS_DEBUG_GROUP_RIGHTS');
+        $icon         = HTML::icon('fas fa-th');
+        $item->rights = HTML::tip($icon, "rights-tip-$item->id", $tip, [], $link, true);
     }
 
     /**
      * @inheritDoc
      */
-    protected function initializeHeaders(): void
+    protected function initializeColumns(): void
     {
         $this->headers = [
             'check' => ['type' => 'check'],
-            'name' => [
-                'link' => ListItem::DIRECT,
+            'name'  => [
+                'link'       => ListItem::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_GROUP'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_GROUP'),
+                'type'       => 'value'
             ]
         ];
 
         if (!$this->state->get('filter.roleID')) {
             $this->headers['role'] = [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_ROLE'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_ROLE'),
+                'type'       => 'value'
             ];
         }
 
         if (!$this->state->get('filter.levelID')) {
             $this->headers['viewLevel'] = [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_LEVEL'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_LEVEL'),
+                'type'       => 'value'
             ];
         }
 
         $this->headers['users'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title' => Text::_('GROUPS_USERS'),
-            'type' => 'value'
+            'title'      => Text::_('GROUPS_USERS'),
+            'type'       => 'value'
         ];
 
         $this->headers['id'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title' => Text::_('GROUPS_ID'),
-            'type' => 'value'
+            'title'      => Text::_('GROUPS_ID'),
+            'type'       => 'value'
         ];
 
         $this->headers['rights'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title' => Text::_('GROUPS_RIGHTS'),
-            'type' => 'value'
+            'title'      => Text::_('GROUPS_RIGHTS'),
+            'type'       => 'value'
         ];
     }
 }

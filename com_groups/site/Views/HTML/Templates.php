@@ -12,6 +12,7 @@ namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
+use stdClass;
 use THM\Groups\Adapters\HTML;
 use THM\Groups\Helpers\Templates as Helper;
 use THM\Groups\Layouts\ListItem;
@@ -38,16 +39,14 @@ class Templates extends ListView
     /**
      * @inheritDoc
      */
-    protected function completeItems(): void
+    protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        foreach ($this->items as $rowNo => $item) {
-            $icon             = HTML::icon('fa fa-list-ol');
-            $tip              = Text::_('GROUPS_TEMPLATE_ATTRIBUTES_TIP');
-            $item->attributes = HTML::tip($icon, "attributes-tip-$item->id", $tip, [], $item->attributes);
-            $item->cards      = HTML::toggle($rowNo, Helper::CARDS[$item->cards], 'Templates');
-            $item->roles      = HTML::toggle($rowNo, Helper::ROLES[$item->roles], 'Templates');
-            $item->vcards     = HTML::toggle($rowNo, Helper::VCARDS[$item->vcards], 'Templates');
-        }
+        $icon             = HTML::icon('fa fa-list-ol');
+        $tip              = Text::_('GROUPS_TEMPLATE_ATTRIBUTES_TIP');
+        $item->attributes = HTML::tip($icon, "attributes-tip-$item->id", $tip, [], $item->attributes);
+        $item->cards      = HTML::toggle($index, Helper::CARDS[$item->cards], 'Templates');
+        $item->roles      = HTML::toggle($index, Helper::ROLES[$item->roles], 'Templates');
+        $item->vcards     = HTML::toggle($index, Helper::VCARDS[$item->vcards], 'Templates');
     }
 
     /**
@@ -63,35 +62,35 @@ class Templates extends ListView
     /**
      * @inheritDoc
      */
-    protected function initializeHeaders(): void
+    protected function initializeColumns(): void
     {
         $this->headers = [
-            'check' => ['type' => 'check'],
-            'name' => [
-                'link' => ListItem::DIRECT,
+            'check'      => ['type' => 'check'],
+            'name'       => [
+                'link'       => ListItem::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_TEMPLATE'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_TEMPLATE'),
+                'type'       => 'value'
             ],
             'attributes' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_ATTRIBUTES'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_ATTRIBUTES'),
+                'type'       => 'value'
             ],
-            'cards' => [
+            'cards'      => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_CARDS'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_CARDS'),
+                'type'       => 'value'
             ],
-            'roles' => [
+            'roles'      => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_ROLES'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_ROLES'),
+                'type'       => 'value'
             ],
-            'vcards' => [
+            'vcards'     => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_VCARDS'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_VCARDS'),
+                'type'       => 'value'
             ]
         ];
     }

@@ -12,6 +12,7 @@ namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Router\Route;
 use THM\Groups\Adapters\{HTML, Text, Toolbar};
+use stdClass;
 use THM\Groups\Helpers\Attributes as Helper;
 use THM\Groups\Layouts\ListItem;
 
@@ -36,71 +37,79 @@ class Attributes extends ListView
     }
 
     /**
-     * @inheritDoc
+     * @inheritdoc
      */
-    protected function completeItems(): void
+    protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        $unlabeledAttributes = Helper::getUnlabeled();
-        $unlabeledTip        = Text::_('GROUPS_TOGGLE_TIP_UNLABELED');
-        $query               = 'index.php?option=com_groups&view=Attribute&id=';
+        $neither = in_array($item->id, $options['unlabeledIDs']) ? $options['unlabeledTip'] : '';
+        $query   = $options['query'];
 
-        foreach ($this->items as $rowNo => $item) {
-
-            $neither = in_array($item->id, $unlabeledAttributes) ? $unlabeledTip : '';
-
-            if (in_array($item->id, Helper::PROTECTED)) {
-                $context    = "groups-attribute-$item->id";
-                $item->name = HTML::icon('fa fa-lock') . " $item->name";
-                $tip        = Text::_('GROUPS_PROTECTED_ATTRIBUTE');
-                $item->name = HTML::tip($item->name, $context, $tip);
-            }
-
-            $item->link      = Route::_($query . $item->id);
-            $icon            = ($item->showIcon and $item->icon) ? ' ' . HTML::icon($item->icon) : '';
-            $item->icon      = '';
-            $item->showIcon  = HTML::toggle($rowNo, Helper::showIconStates[$item->showIcon], 'Attributes', $neither) . $icon;
-            $item->showLabel = HTML::toggle($rowNo, Helper::showLabelStates[$item->showLabel], 'Attributes', $neither);
+        if (in_array($item->id, Helper::PROTECTED)) {
+            $context    = "groups-attribute-$item->id";
+            $item->name = HTML::icon('fa fa-lock') . " $item->name";
+            $tip        = Text::_('GROUPS_PROTECTED_ATTRIBUTE');
+            $item->name = HTML::tip($item->name, $context, $tip);
         }
+
+        $item->link      = Route::_($query . $item->id);
+        $icon            = ($item->showIcon and $item->icon) ? ' ' . HTML::icon($item->icon) : '';
+        $item->icon      = '';
+        $item->showIcon  = HTML::toggle($index, Helper::showIconStates[$item->showIcon], 'Attributes', $neither) . $icon;
+        $item->showLabel = HTML::toggle($index, Helper::showLabelStates[$item->showLabel], 'Attributes', $neither);
     }
 
     /**
      * @inheritDoc
      */
-    protected function initializeHeaders(): void
+    protected function completeItems(array $options = []): void
+    {
+        $options = [
+            'query'        => 'index.php?option=com_groups&view=Attribute&id=',
+            'unlabeledIDs' => Helper::getUnlabeled(),
+            'unlabeledTip' => Text::_('TOGGLE_TIP_UNLABELED')
+        ];
+
+        parent::completeItems($options);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function initializeColumns(): void
     {
         $this->headers = [
-            'check' => ['type' => 'check'],
-            'ordering' => ['active' => false, 'type' => 'ordering'],
-            'name' => [
-                'link' => ListItem::DIRECT,
+            'check'     => ['type' => 'check'],
+            'ordering'  => ['active' => false, 'type' => 'ordering'],
+            'name'      => [
+                'link'       => ListItem::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_ATTRIBUTE'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_ATTRIBUTE'),
+                'type'       => 'value'
             ],
-            'showIcon' => [
+            'showIcon'  => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_SHOW_ICON'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_SHOW_ICON'),
+                'type'       => 'value'
             ],
             'showLabel' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_SHOW_LABEL'),
-                'type' => 'value'
+                'title'      => Text::_('GROUPS_SHOW_LABEL'),
+                'type'       => 'value'
             ],
-            'input' => [
+            'input'     => [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_INPUT'),
-                'type' => 'text'
+                'title'      => Text::_('GROUPS_INPUT'),
+                'type'       => 'text'
             ],
-            'output' => [
+            'output'    => [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_OUTPUT'),
-                'type' => 'text'
+                'title'      => Text::_('GROUPS_OUTPUT'),
+                'type'       => 'text'
             ],
-            'level' => [
+            'level'     => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title' => Text::_('GROUPS_LEVEL'),
-                'type' => 'text'
+                'title'      => Text::_('GROUPS_LEVEL'),
+                'type'       => 'text'
             ],
         ];
 
