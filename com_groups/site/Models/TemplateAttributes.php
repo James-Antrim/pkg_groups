@@ -23,7 +23,7 @@ class TemplateAttributes extends ListModel
     /**
      * @inheritDoc
      */
-    public function getItems()
+    public function getItems(): array
     {
         $items = parent::getItems();
 

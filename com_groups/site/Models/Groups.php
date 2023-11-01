@@ -43,7 +43,7 @@ class Groups extends ListModel
     /**
      * @inheritDoc
      */
-    public function getItems()
+    public function getItems(): array
     {
         $items    = parent::getItems() ?: [];
         $ugHelper = UGH::getInstance();
@@ -99,7 +99,8 @@ class Groups extends ListModel
                 $query->join('inner', $ra, $condition)
                     ->where("$roleID = :roleID")
                     ->bind(':roleID', $filterRoleID, ParameterType::INTEGER);
-            } else {
+            }
+            else {
                 $query->join('left', $ra, $condition)
                     ->where("$roleID IS NULL");
             }
@@ -124,7 +125,8 @@ class Groups extends ListModel
                 $ids = (int) substr($search, 3);
                 $query->where($db->quoteName('g.id') . ' = :id');
                 $query->bind(':id', $ids, ParameterType::INTEGER);
-            } else {
+            }
+            else {
                 $nameDE = $db->quoteName('g.name_de');
                 $nameEN = $db->quoteName('g.name_en');
                 $search = '%' . trim($search) . '%';
@@ -143,7 +145,7 @@ class Groups extends ListModel
     /**
      * Adds associated user counts to the group
      *
-     * @param stdClass $group the group to set values for
+     * @param   stdClass  $group  the group to set values for
      *
      * @return void
      */

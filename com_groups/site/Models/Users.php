@@ -59,7 +59,8 @@ class Users extends ListModel
         if ($this->state->get('filter.association')) {
             $form->removeField('roleID', 'filter');
             unset($this->filter_fields['roleID']);
-        } elseif ($this->state->get('filter.roleID')) {
+        }
+        elseif ($this->state->get('filter.roleID')) {
             $form->removeField('association', 'filter');
             unset($this->filter_fields['association']);
         }
@@ -68,7 +69,7 @@ class Users extends ListModel
     /**
      * Gets the groups & roles associated with a given person's id
      *
-     * @param int $itemID
+     * @param   int  $itemID
      *
      * @return array
      */
@@ -120,7 +121,7 @@ class Users extends ListModel
     /**
      * @inheritDoc
      */
-    public function getItems()
+    public function getItems(): array
     {
         $items = parent::getItems();
 
@@ -160,14 +161,15 @@ class Users extends ListModel
 
             if ((int) $activation) {
                 $query->where("($column = '' OR $column = '0')");
-            } else {
+            }
+            else {
                 $query->where("$column != '0'")
                     ->where($query->length($column) . ' > 0');
             }
         }
 
         if ($association = $this->state->get('filter.association')) {
-            list($resource, $id) = explode('-', $association);
+            [$resource, $id] = explode('-', $association);
 
             switch ($resource) {
                 case 'assocID':
@@ -191,11 +193,13 @@ class Users extends ListModel
                     }
                     break;
             }
-        } elseif ($id = $this->state->get('filter.roleID') and is_numeric($id) and $id = (int) $id) {
+        }
+        elseif ($id = $this->state->get('filter.roleID') and is_numeric($id) and $id = (int) $id) {
             if ($id > 0) {
                 $join      = 'inner';
                 $predicate = " = $id";
-            } else {
+            }
+            else {
                 $join      = 'left';
                 $predicate = " IS NULL";
             }
@@ -222,7 +226,8 @@ class Users extends ListModel
             if (is_numeric($search)) {
                 $query->where($db->quoteName('u.id') . ' = :id')
                     ->bind(':id', $search, ParameterType::INTEGER);
-            } else {
+            }
+            else {
                 $search  = '%' . trim($search) . '%';
                 $wherray = [
                     $db->quoteName('email') . ' LIKE :email',
@@ -336,7 +341,7 @@ class Users extends ListModel
             // Replace external parameter names with internal filter names
             $data->filter = [
                 'association' => $this->state->get('filter.association'),
-                'block' => (int) $this->state->get('filter.block')
+                'block'       => (int) $this->state->get('filter.block')
             ];
         }
 
@@ -361,7 +366,8 @@ class Users extends ListModel
 
         if ($this->state->get('filter.association')) {
             $this->state->set('filter.roleID', '');
-        } elseif ($this->state->get('filter.roleID')) {
+        }
+        elseif ($this->state->get('filter.roleID')) {
             $this->state->set('filter.association', '');
         }
     }

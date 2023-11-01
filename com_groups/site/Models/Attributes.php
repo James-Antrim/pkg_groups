@@ -48,7 +48,7 @@ class Attributes extends ListModel
     /**
      * @inheritDoc
      */
-    public function getItems()
+    public function getItems(): array
     {
         $items = parent::getItems();
 
@@ -95,7 +95,8 @@ class Attributes extends ListModel
         if ($positiveInt and in_array($contextValue, Helper::CONTEXTS)) {
             if ($contextValue === Helper::PERSONS_CONTEXT) {
                 $query->where($contextID . ' != ' . Helper::GROUPS_CONTEXT);
-            } elseif ($contextValue === Helper::GROUPS_CONTEXT) {
+            }
+            elseif ($contextValue === Helper::GROUPS_CONTEXT) {
                 $query->where($contextID . ' != ' . Helper::PERSONS_CONTEXT);
             }
         }

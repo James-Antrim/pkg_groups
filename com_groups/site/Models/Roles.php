@@ -47,7 +47,7 @@ class Roles extends ListModel
     /**
      * @inheritDoc
      */
-    public function getItems()
+    public function getItems(): array
     {
         $items = parent::getItems();
 
@@ -58,9 +58,11 @@ class Roles extends ListModel
 
             if ($item->groups === 0) {
                 $item->groups = Text::_('GROUPS_NO_GROUPS');
-            } elseif ($item->groups === 1) {
+            }
+            elseif ($item->groups === 1) {
                 $item->groups = $item->group;
-            } else {
+            }
+            else {
                 //TODO: link to groups view with role filter set to this one
                 $item->groups = $item->group;
             }
@@ -115,7 +117,8 @@ class Roles extends ListModel
                 ->join('inner', $groupsTable, "$groupsID = $mapGroupID")
                 ->where($groupsID . ' = :groupID')
                 ->bind(':groupID', $groupID, ParameterType::INTEGER);
-        } else {
+        }
+        else {
             $query->join('left', $assocTable, "$assocRoleID = $roleID")
                 ->join('left', $mapTable, "$mapID = $assocMapID")
                 ->join('left', $groupsTable, "$groupsID = $mapGroupID");

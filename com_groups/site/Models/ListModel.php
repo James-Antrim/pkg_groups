@@ -44,11 +44,14 @@ abstract class ListModel extends Base
      */
     public function __construct($config = [], MVCFactoryInterface $factory = null)
     {
+        // Preemptively set to avoid unnecessary complications.
+        $this->setContext();
         $this->state = new Registry();
 
         try {
             parent::__construct($config, $factory);
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             Application::handleException($exception);
         }
     }
@@ -56,8 +59,8 @@ abstract class ListModel extends Base
     /**
      * Adds a binary value filter clause for the given $query;
      *
-     * @param QueryInterface $query the query to modify
-     * @param string         $name  the attribute whose value to filter against
+     * @param   QueryInterface  $query  the query to modify
+     * @param   string          $name   the attribute whose value to filter against
      *
      * @return void modifies the query if a binary value was delivered in the request
      */
@@ -90,7 +93,7 @@ abstract class ListModel extends Base
     /**
      * Filters out form inputs which should not be displayed due to menu settings.
      *
-     * @param Form $form the form to be filtered
+     * @param   Form  $form  the form to be filtered
      *
      * @return void modifies $form
      */
@@ -136,7 +139,8 @@ abstract class ListModel extends Base
 
         try {
             return $this->loadForm($context, $this->filterFormName, $options);
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             Application::handleException($exception);
         }
 
@@ -144,11 +148,23 @@ abstract class ListModel extends Base
     }
 
     /**
+     * @inheritDoc
+     * Ensures a standardized return type.
+     * @return  array  An array of data items on success.
+     */
+    public function getItems(): array
+    {
+        $items = parent::getItems();
+
+        return $items ?: [];
+    }
+
+    /**
      * Method to get a table object, load it if necessary.
      *
-     * @param string $name    the table name, unused
-     * @param string $prefix  the class prefix, unused
-     * @param array  $options configuration array for model, unused
+     * @param   string  $name     the table name, unused
+     * @param   string  $prefix   the class prefix, unused
+     * @param   array   $options  configuration array for model, unused
      *
      * @return  Table  a table object
      */
@@ -177,7 +193,7 @@ abstract class ListModel extends Base
     /**
      * Checks whether the given value can safely be interpreted as a binary value.
      *
-     * @param mixed $value the value to be checked
+     * @param   mixed  $value  the value to be checked
      *
      * @return bool if the value can be interpreted as a binary integer
      */
@@ -195,7 +211,7 @@ abstract class ListModel extends Base
     /**
      * Adds a standard order clause for the given $query;
      *
-     * @param QueryInterface $query the query to modify
+     * @param   QueryInterface  $query  the query to modify
      *
      * @return void modifies the query if a binary value was delivered in the request
      */
@@ -223,18 +239,15 @@ abstract class ListModel extends Base
      */
     protected function populateState($ordering = null, $direction = null): void
     {
-        /** @var CMSApplication $app */
-        $app = Application::getApplication();
         parent::populateState($ordering, $direction);
 
-
         // Receive & set filters
-        $filters = $app->getUserStateFromRequest($this->context . '.filter', 'filter', [], 'array');
+        $filters = Application::getUserRequestState($this->context . '.filter', 'filter', [], 'array');
         foreach ($filters as $input => $value) {
             $this->state->set('filter.' . $input, $value);
         }
 
-        $list = $app->getUserStateFromRequest($this->context . '.list', 'list', [], 'array');
+        $list = Application::getUserRequestState($this->context . '.list', 'list', [], 'array');
         foreach ($list as $input => $value) {
             $this->state->set("list.$input", $value);
         }
@@ -265,13 +278,14 @@ abstract class ListModel extends Base
         if ($format = Input::getCMD('format') and $format !== 'html') {
             $limit = 0;
             $start = 0;
-        } else {
+        }
+        else {
             $limit = (isset($list['limit']) && is_numeric($list['limit'])) ? $list['limit'] : $this->defaultLimit;
             $start = $this->getUserStateFromRequest('limitstart', 'limitstart', 0);
             $start = ($limit != 0 ? (floor($start / $limit) * $limit) : 0);
         }
 
-        $this->setState('list.limit', $limit);
-        $this->setState('list.start', $start);
+        $this->state->set('list.limit', $limit);
+        $this->state->set('list.start', $start);
     }
 }
