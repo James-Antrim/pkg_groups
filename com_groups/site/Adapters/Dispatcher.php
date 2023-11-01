@@ -75,11 +75,10 @@ class Dispatcher extends ComponentDispatcher
         try {
             /** @var Controller $controller */
             $controller->execute($task);
+            $controller->redirect();
         } catch (Exception $exception) {
             Application::handleException($exception);
         }
-
-        $controller->redirect();
     }
 
     /**

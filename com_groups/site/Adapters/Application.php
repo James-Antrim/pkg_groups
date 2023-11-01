@@ -130,7 +130,7 @@ class Application
         $nsParts  = explode('\\', $fqName);
         $lastItem = array_pop($nsParts);
 
-        return empty($lastItem) ? 'Dashboard' : $lastItem;
+        return empty($lastItem) ? 'Groups' : $lastItem;
     }
 
     /**

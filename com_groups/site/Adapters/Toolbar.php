@@ -11,7 +11,7 @@
 namespace THM\Groups\Adapters;
 
 use Joomla\DI\Exception\KeyNotFoundException;
-use Joomla\CMS\Toolbar\{Toolbar as Base, ToolbarFactoryInterface};
+use Joomla\CMS\Toolbar\{Toolbar as Base, ToolbarFactoryInterface, ToolbarHelper as Helper};
 
 class Toolbar extends Base
 {
@@ -38,5 +38,20 @@ class Toolbar extends Base
         }
 
         return self::$instances[$name];
+    }
+
+    /**
+     * Sets the application (view) title to a pre-rendered title layout with the given text and optional icon. Also sets
+     * the document title.
+     *
+     * @param string $title the view title
+     * @param string $icon  the icon class name
+     *
+     * @return  void
+     * @see Helper::title()
+     */
+    public static function setTitle(string $title, string $icon = ''): void
+    {
+        Helper::title(Text::_($title), $icon);
     }
 }

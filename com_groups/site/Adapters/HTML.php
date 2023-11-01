@@ -10,12 +10,36 @@
 
 namespace THM\Groups\Adapters;
 
+use Joomla\CMS\HTML\Helpers\{Grid, SearchTools, Select};
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\Utilities\ArrayHelper;
 
 class HTML extends HTMLHelper
 {
+    /**
+     * Method to check all checkboxes in a resource table.
+     * @return  string
+     * @see Grid::checkall()
+     */
+    public static function checkAll(): string
+    {
+        return Grid::checkall();
+    }
+
+    /**
+     * Method to create a checkbox for a resource table row.
+     *
+     * @param int $rowNumber the row number in the HTML output
+     * @param int $rowID     the id of the resource row in the database
+     *
+     * @return  string
+     */
+    public static function checkBox(int $rowNumber, int $rowID): string
+    {
+        return Grid::id($rowNumber, $rowID);
+    }
+
     /**
      * Converts an array $property => $value to a string for use in HTML tags.
      *
@@ -44,15 +68,85 @@ class HTML extends HTMLHelper
         return "<i class=\"$class\" aria-hidden=\"true\"></i>";
     }
 
+    /**
+     * Method to create a sorting column header for a resource table. Header text key is automatically prefaced and
+     * localized.
+     *
+     * @param string $constant      the text to display in the table header
+     * @param string $column        the query column that this link sorts by
+     * @param string $direction     the current sort direction for this query column
+     * @param string $currentColumn the current query column that the results are being sorted by
+     *
+     * @return  string
+     * @see SearchTools::sort()
+     */
+    public static function sort(string $constant, string $column, string $direction, string $currentColumn): string
+    {
+        return SearchTools::sort(Text::_($constant), $column, $direction, $currentColumn);
+    }
+
+    /**
+     * @inheritdoc
+     * Link text key is automatically prefaced and localized.
+     */
+    public static function link($url, $text, $attribs = null): string
+    {
+        return parent::link($url, Text::_($text), $attribs);
+    }
+
+    /**
+     * Create an object that represents an option in an option list.
+     *
+     * @param int|string $value   the option value
+     * @param string     $text    the option text
+     * @param boolean    $disable whether the option is disabled
+     *
+     * @return  stdClass
+     */
+    public static function option(int|string $value, string $text, bool $disable = false): stdClass
+    {
+        return Select::option((string) $value, $text, $disable);
+    }
+
+    /**
+     * Generates an HTML selection list.
+     *
+     * @param string           $name       the field name.
+     * @param stdClass[]       $options    the field options
+     * @param array|int|string $selected   the selected resource designators; called function accepts array|string
+     * @param array            $properties additional HTML properties for the select tag
+     * @param string           $textKey    name of the name column when working directly with table rows
+     * @param string           $valueKey   name of the value column when working directly with table rows
+     *
+     * @return  string
+     */
+    public static function selectBox(
+        string           $name,
+        array            $options,
+        array|int|string $selected = [],
+        array            $properties = [],
+        string           $textKey = 'text',
+        string           $valueKey = 'value'
+    ): string
+    {
+        /**
+         * Called function will most likely eventually be typed to array|string, most of our single selection values
+         * will be integers for resource ids.
+         */
+        $selected = gettype($selected) === 'integer' ? (string) $selected : $selected;
+
+        return Select::genericlist($options, $name, $properties, $valueKey, $textKey, $selected, false, true);
+    }
 
     /**
      * Returns an action on a grid
      *
-     * @param integer $index the row index
-     * @param array $state the state configuration
-     * @param string $controller the name of the controller class
-     * @param string $neither text for columns which cannot be toggled
-     * @return  string  the HTML for the toggle item
+     * @param integer $index      the row index
+     * @param array   $state      the state configuration
+     * @param string  $controller the name of the controller class
+     * @param string  $neither    text for columns which cannot be toggled
+     *
+     * @return  string
      */
     public static function toggle(int $index, array $state, string $controller = '', string $neither = ''): string
     {
@@ -96,11 +190,13 @@ class HTML extends HTMLHelper
      * The content wrapped with a link referencing a tip and the tip.
      *
      * @param string $content the content referenced by the tip
-     * @param string $tip the tip to be displayed
-     * @param string $url the url linked by the tip as applicable
-     * @param bool $newTab whether the url should open in a new tab
+     * @param string $context
+     * @param string $tip     the tip to be displayed
+     * @param array  $properties
+     * @param string $url     the url linked by the tip as applicable
+     * @param bool   $newTab  whether the url should open in a new tab
      *
-     * @return string the HTML for the content and tip
+     * @return string
      */
     public static function tip(
         string $content,
@@ -123,8 +219,21 @@ class HTML extends HTMLHelper
 
         $url     = $url ?: '#';
         $content = self::link($url, $content, $properties);
-        $tip     = "<div role=\"tooltip\" id=\"$context\">" . $tip . '</div>';
+        $tip     = "<div role=\"tooltip\" id=\"$context\">" . Text::_($tip) . '</div>';
 
         return $content . $tip;
+    }
+
+    /**
+     * Converts an array $property => $value to a string for use in HTML tags.
+     *
+     * @param array $array the properties and their values
+     *
+     * @return string
+     * @see ArrayHelper::toString()
+     */
+    public static function toString(array $array): string
+    {
+        return ArrayHelper::toString($array);
     }
 }

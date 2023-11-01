@@ -12,6 +12,9 @@ namespace THM\Groups\Adapters;
 
 use Joomla\CMS\Language\Text as Base;
 
+/**
+ * Class handles localization resolution.
+ */
 class Text extends Base
 {
 

@@ -10,7 +10,6 @@
 
 namespace THM\Groups\Adapters;
 
-use Joomla\CMS\Application\CMSApplication;
 use Joomla\Filter\InputFilter;
 use Joomla\Input\Input as Base;
 use Joomla\Registry\Registry;
@@ -28,6 +27,43 @@ class Input
     private static Registry $params;
 
     /**
+     * Filters the given source data according to the type parameter.
+     *
+     * @param mixed  $source the data to be filtered
+     * @param string $type   the type against which to filter the source data
+     *
+     * @return mixed
+     */
+    public static function filter(mixed $source, string $type = 'string'): mixed
+    {
+        if (empty(self::$filter)) {
+            self::$filter = new InputFilter();
+        }
+
+        return self::$filter->clean($source, $type);
+    }
+
+    /**
+     * Retrieves the specified parameter.
+     *
+     * @param string $property Name of the property to get.
+     *
+     * @return mixed the value found, or false if the property could not be found
+     */
+    private static function find(string $property): mixed
+    {
+        if ($value = self::getInput()->get($property, null, 'raw')) {
+            return $value;
+        }
+
+        if ($value = self::getParams()->get($property)) {
+            return $value;
+        }
+
+        return null;
+    }
+
+    /**
      * Provides a shortcut to retrieve an array from the request.
      *
      * @param string $name    the name of the array item
@@ -35,7 +71,7 @@ class Input
      *
      * @return array
      */
-    public static function getArray(string $name = 'jform', array $default = []): array
+    public static function getArray(string $name, array $default = []): array
     {
         return self::getInput()->get($name, $default, 'array');
     }
@@ -235,9 +271,8 @@ class Input
      */
     public static function getItemid(): int
     {
-        /** @var CMSApplication $app */
-        $app     = Application::getApplication();
-        $default = (empty($app->getMenu()) or empty($app->getMenu()->getActive())) ? 0 : $app->getMenu()->getActive()->id;
+        $item    = Application::getMenuItem();
+        $default = $item ? $item->id : 0;
 
         return self::getInt('Itemid', $default);
     }
@@ -367,43 +402,6 @@ class Input
     public static function getView(): string
     {
         return self::getCMD('view');
-    }
-
-    /**
-     * Filters the given source data according to the type parameter.
-     *
-     * @param mixed  $source the data to be filtered
-     * @param string $type   the type against which to filter the source data
-     *
-     * @return mixed
-     */
-    public static function filter(mixed $source, string $type = 'string'): mixed
-    {
-        if (empty(self::$filter)) {
-            self::$filter = new InputFilter();
-        }
-
-        return self::$filter->clean($source, $type);
-    }
-
-    /**
-     * Retrieves the specified parameter.
-     *
-     * @param string $property Name of the property to get.
-     *
-     * @return array|int|string|null the value found, otherwise null
-     */
-    private static function find(string $property): array|int|null|string
-    {
-        if ($value = self::getInput()->get($property, null, 'raw')) {
-            return $value;
-        }
-
-        if ($value = self::getParams()->get($property)) {
-            return $value;
-        }
-
-        return null;
     }
 
     /**
