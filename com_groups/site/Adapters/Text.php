@@ -108,6 +108,23 @@ class Text extends Base
     }
 
     /**
+     * @inheritdoc
+     * Two Joomla\CMS\Language\Text exist the real one (Text.php) uses $string the dummy (finalisation.php) uses $text.
+     * @noinspection PhpParameterNameChangedDuringInheritanceInspection
+     */
+    public static function sprintf($string): string
+    {
+        $lang    = Application::getLanguage();
+        $args    = func_get_args();
+        $args[0] = $lang->_(self::prefaceKey($string));
+
+        // Replace custom placeholders
+        $args[0] = preg_replace('/\[\[%([0-9]+):[^\]]*\]\]/', '%\1$s', $args[0]);
+
+        return call_user_func_array('sprintf', $args);
+    }
+
+    /**
      * Replaces special characters in a given string with their transliterations.
      *
      * @param   string  $text  the text to be processed

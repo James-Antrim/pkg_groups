@@ -10,8 +10,12 @@
 
 namespace THM\Groups\Adapters;
 
+use Joomla\CMS\Document\HtmlDocument;
 use Joomla\CMS\Toolbar\{Toolbar as Base, ToolbarHelper as Helper};
 
+/**
+ * Class integrates toolbar and toolbar helper into one interface for dealing with toolbars.
+ */
 class Toolbar
 {
     /**
@@ -22,6 +26,7 @@ class Toolbar
      * @param   string  $name  The name of the toolbar.
      *
      * @return  Base  The Toolbar object.
+     * @see HtmlDocument::getToolbar()
      */
     public static function getInstance(string $name = 'toolbar'): Base
     {

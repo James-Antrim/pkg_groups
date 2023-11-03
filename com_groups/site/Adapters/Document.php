@@ -68,7 +68,7 @@ class Document
     }
 
     /**
-     * Provides a
+     * Wraps the new standard access method to retrieve a toolbar.
      *
      * @param   string  $name
      *
