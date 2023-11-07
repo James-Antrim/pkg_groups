@@ -14,8 +14,9 @@ use Exception;
 use Joomla\CMS\MVC\{Factory\MVCFactoryInterface, Model\ListModel as Base};
 use Joomla\CMS\Table\Table;
 use Joomla\Database\QueryInterface;
-use Joomla\Registry\Registry;
-use THM\Groups\Adapters\{Application, Form, Input};
+use Joomla\Utilities\ArrayHelper;
+use stdClass;
+use THM\Groups\Adapters\{Application, Database as DB, Form, Input};
 
 /**
  * Model class for handling lists of items.
@@ -26,25 +27,18 @@ abstract class ListModel extends Base
 {
     use Named;
 
+    protected const ALL = 0, NONE = -1, CURRENT = 1, NEW = 2, REMOVED = 3, CHANGED = 4;
+
     protected int $defaultLimit = 50;
-
-    protected string $defaultOrdering;
-
-    /**
-     * A state object. Overrides the use of the deprecated CMSObject.
-     * @var    Registry
-     */
-    protected $state = null;
+    protected string $defaultOrdering = 'name';
 
     /**
-     * @inheritdoc
-     * The state is set here to prevent the use of a deprecated CMSObject as the state in the stateAwareTrait.
+     * @inheritDoc
      */
     public function __construct($config = [], MVCFactoryInterface $factory = null)
     {
         // Preemptively set to avoid unnecessary complications.
         $this->setContext();
-        $this->state = new Registry();
 
         try {
             parent::__construct($config, $factory);
@@ -79,8 +73,9 @@ abstract class ListModel extends Base
         $query->where("$column = $value");
     }
 
-    /** Provides external access to the clean cache function. This belongs in the input adapter, but I do not want to
-     *  have to put in the effort to resolve everything necessary to get it there.
+    /**
+     * Provides external access to the clean cache function. This belongs in the input adapter, but I do not want to
+     * have to put in the effort to resolve everything necessary to get it there.
      * @void initiates cache cleaning
      */
     public function emptyCache(): void
@@ -242,11 +237,11 @@ abstract class ListModel extends Base
     }
 
     /**
-     * Adds a standard order clause for the given $query;
+     * Adds a standardized order by clause for the given $query;
      *
      * @param   QueryInterface  $query  the query to modify
      *
-     * @return void modifies the query if a binary value was delivered in the request
+     * @return void
      */
     protected function orderBy(QueryInterface $query): void
     {
@@ -320,5 +315,122 @@ abstract class ListModel extends Base
 
         $this->state->set('list.limit', $limit);
         $this->state->set('list.start', $start);
+    }
+
+    /**
+     * Provides a default method for setting filters based on id/unique values
+     *
+     * @param   QueryInterface  $query       the query to modify
+     * @param   string          $idColumn    the id column in the table
+     * @param   string          $filterName  the filter name to look for the id in
+     *
+     * @return void
+     */
+    protected function setIDFilter(QueryInterface $query, string $idColumn, string $filterName): void
+    {
+        $value = $this->state->get($filterName, '');
+        if ($value === '') {
+            return;
+        }
+
+        /**
+         * Special value reserved for empty filtering. Since an empty is dependent upon the column default, we must
+         * check against multiple 'empty' values. Here we check against empty string and null. Should this need to
+         * be extended we could maybe add a parameter for it later.
+         */
+        if ($value == '-1') {
+            $query->where("$idColumn IS NULL");
+
+            return;
+        }
+
+        // IDs are unique and therefore mutually exclusive => one is enough!
+        $query->where("$idColumn = $value");
+    }
+
+    /**
+     * Sets the search filter for the query
+     *
+     * @param   QueryInterface  $query        the query to modify
+     * @param   array           $columnNames  the column names to use in the search
+     *
+     * @return void
+     */
+    protected function setSearchFilter(QueryInterface $query, array $columnNames): void
+    {
+        if (!$userInput = $this->state->get('filter.search')) {
+            return;
+        }
+
+        $search = '%' . $query->escape($userInput, true) . '%';
+        $where  = [];
+
+        foreach ($columnNames as $name) {
+            $name    = DB::qn($name);
+            $where[] = "$name LIKE '$search'";
+        }
+
+        $query->andWhere($where);
+    }
+
+    /**
+     * Provides a default method for setting filters for non-unique values
+     *
+     * @param   QueryInterface  $query         the query to modify
+     * @param   array           $queryColumns  the filter names. names should be synonymous with db column names.
+     *
+     * @return void
+     */
+    protected function setValueFilters(QueryInterface $query, array $queryColumns): void
+    {
+        $filters = Input::getFilterItems();
+        $lists   = Input::getListItems();
+        $state   = $this->getState();
+
+        // The view level filters
+        foreach ($queryColumns as $column) {
+            $filterName = !str_contains($column, '.') ? $column : explode('.', $column)[1];
+
+            $value = $filters->get($filterName);
+
+            if (!$value and $value !== '0') {
+                $value = $lists->get($filterName);
+            }
+
+            if (!$value and $value !== '0') {
+                $value = $state->get("filter.$filterName");
+            }
+
+            if (!$value and $value !== '0') {
+                $value = $state->get("list.$filterName");
+            }
+
+            if (!$value and $value !== '0') {
+                continue;
+            }
+
+            $column = DB::qn($column);
+
+            /**
+             * Special value reserved for empty filtering. Since an empty is dependent upon the column default, we must
+             * check against multiple 'empty' values. Here we check against empty string and null. Should this need to
+             * be extended we could maybe add a parameter for it later.
+             */
+            if ($value === '-1') {
+                $query->where("( $column = '' OR $column IS NULL )");
+                continue;
+            }
+
+            if (is_numeric($value)) {
+                $query->where("$column = $value");
+            }
+            elseif (is_string($value)) {
+                $value = DB::quote($value);
+                $query->where("$column = $value");
+            }
+            elseif (is_array($value) and $values = ArrayHelper::toInteger($value)) {
+                $query->where($column . DB::makeSet($values));
+            }
+        }
     }
 }
