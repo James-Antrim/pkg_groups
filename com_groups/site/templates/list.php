@@ -12,7 +12,7 @@ use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Router\Route;
 use Joomla\CMS\Session\Session;
-use THM\Groups\Adapters\HTML;
+use THM\Groups\Adapters\{Application, HTML};
 use THM\Groups\Layouts;
 use THM\Groups\Views\HTML\ListView;
 
@@ -29,12 +29,12 @@ if ($dragEnabled) {
     $draggableURL = "$baseURL&task=$this->_name.saveOrderAjax&tmpl=component" . Session::getFormToken() . '=1';
     HTML::_('draggablelist.draggable');
     $dragProperties = [
-        'class' => 'js-draggable',
+        'class'          => 'js-draggable',
         'data-direction' => 'asc',
-        'data-nested' => 'false',
-        'data-url' => $draggableURL
+        'data-nested'    => 'false',
+        'data-url'       => $draggableURL
     ];
-    $dragProperties = HTML::toProperties($dragProperties);
+    $dragProperties = HTML::toString($dragProperties);
 }
 
 if ($this->todo) {
@@ -46,7 +46,7 @@ if ($this->todo) {
 }
 
 if (count($this->headers) > 4) {
-    $wa = $this->document->getWebAssetManager();
+    $wa = Application::getDocument()->getWebAssetManager();
     $wa->useScript('table.columns');
 }
 
@@ -78,7 +78,7 @@ if (count($this->headers) > 4) {
                             'bootstrap.renderModal',
                             'collapseModal',
                             [
-                                'title' => Text::_('GROUPS_BATCH_PROCESSING'),
+                                'title'  => Text::_('GROUPS_BATCH_PROCESSING'),
                                 'footer' => Layouts\Batch::renderFooter($this),
                             ],
                             Layouts\Batch::renderBody($this)
@@ -89,7 +89,7 @@ if (count($this->headers) > 4) {
 
                 <input type="hidden" name="task" value="">
                 <input type="hidden" name="boxchecked" value="0">
-                <?php echo HTML::_('form.token'); ?>
+                <?php echo HTML::token(); ?>
             </div>
         </div>
     </div>

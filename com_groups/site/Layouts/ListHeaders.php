@@ -14,6 +14,9 @@ use Joomla\CMS\Language\Text;
 use THM\Groups\Adapters\HTML;
 use THM\Groups\Views\HTML\ListView;
 
+/**
+ * Class provides standardized rendering functions for table headers in list views.
+ */
 class ListHeaders
 {
     /**
@@ -43,7 +46,7 @@ class ListHeaders
     /**
      * Renders list headers.
      *
-     * @param ListView $view the view being displayed
+     * @param   ListView  $view  the view being displayed
      */
     public static function render(ListView $view): void
     {
@@ -82,18 +85,17 @@ class ListHeaders
     /**
      * Renders a check all box style list header.
      *
-     * @param array  $properties the properties for the containing tag
-     * @param string $title      the title text to display
-     * @param string $column     the table column represented by the data displayed in this column
-     * @param string $orderBy    the column the results are currently ordered by
-     * @param string $direction  the current sort direction
+     * @param   array   $properties  the properties for the containing tag
+     * @param   string  $title       the title text to display
+     * @param   string  $column      the table column represented by the data displayed in this column
+     * @param   string  $orderBy     the column the results are currently ordered by
+     * @param   string  $direction   the current sort direction
      */
     private static function sort(array $properties, string $title, string $column, string $orderBy, string $direction): void
     {
-        $properties = HTML::toProperties($properties);
         ?>
-        <th <?php echo $properties; ?>>
-            <?php echo HTML::_('searchtools.sort', $title, $column, $direction, $orderBy); ?>
+        <th <?php echo HTML::toString($properties); ?>>
+            <?php echo HTML::sort($title, $column, $direction, $orderBy); ?>
         </th>
         <?php
     }
@@ -101,14 +103,13 @@ class ListHeaders
     /**
      * Renders a check all box style list header.
      *
-     * @param array  $properties the properties for the containing tag
-     * @param string $title      the title text to display. optional for default processing
+     * @param   array   $properties  the properties for the containing tag
+     * @param   string  $title       the title text to display. optional for default processing
      */
     private static function text(array $properties, string $title = ''): void
     {
-        $properties = HTML::toProperties($properties);
         ?>
-        <th <?php echo $properties; ?>>
+        <th <?php echo HTML::toString($properties); ?>>
             <?php echo Text::_($title); ?>
         </th>
         <?php

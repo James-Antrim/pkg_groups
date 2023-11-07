@@ -11,9 +11,7 @@
 namespace THM\Groups\Models;
 
 use Exception;
-use Joomla\CMS\Application\CMSApplication;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use Joomla\CMS\MVC\Model\ListModel as Base;
+use Joomla\CMS\MVC\{Factory\MVCFactoryInterface, Model\ListModel as Base};
 use Joomla\CMS\Table\Table;
 use Joomla\Database\QueryInterface;
 use Joomla\Registry\Registry;
@@ -126,9 +124,13 @@ abstract class ListModel extends Base
     }
 
     /**
-     * @inheritdoc
-     * Overwrites the parent to have form names analog to the view names in which they are used.
+     * Gets the filter form. Overwrites the parent to have form names analog to the view names in which they are used.
      * Also has enhanced error reporting in the event of failure.
+     *
+     * @param   array  $data      data
+     * @param   bool   $loadData  load current data
+     *
+     * @return  Form|null  the form object or null if the form can't be found
      */
     public function getFilterForm($data = [], $loadData = true): ?Form
     {
@@ -206,6 +208,37 @@ abstract class ListModel extends Base
         $value = (int) $value;
 
         return !(($value > 1 or $value < 0));
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function loadFormData()
+    {
+        // Check the session for previously entered form data.
+        $data = Application::getUserState($this->context, new stdClass());
+
+        // Pre-create the list options
+        if (!property_exists($data, 'list')) {
+            $data->list = [];
+        }
+
+        if (!property_exists($data, 'filter')) {
+            $data->filter = [];
+        }
+
+        foreach ((array) $this->state as $property => $value) {
+            if (str_starts_with($property, 'list.')) {
+                $listProperty              = substr($property, 5);
+                $data->list[$listProperty] = $value;
+            }
+            elseif (str_starts_with($property, 'filter.')) {
+                $filterProperty                = substr($property, 7);
+                $data->filter[$filterProperty] = $value;
+            }
+        }
+
+        return $data;
     }
 
     /**

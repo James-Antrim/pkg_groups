@@ -11,9 +11,8 @@
 namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\MVC\View\ListView as Base;
-use Joomla\CMS\Uri\Uri;
 use stdClass;
-use THM\Groups\Adapters\{Application, HTML, Toolbar};
+use THM\Groups\Adapters\{Application, Text, Toolbar};
 use THM\Groups\Helpers\Can;
 
 /**
@@ -25,7 +24,7 @@ abstract class ListView extends Base
 {
     use Configured;
 
-    const NONE = -1;
+    protected const NONE = -1;
 
     public bool $allowBatch = false;
     public string $empty = '';
@@ -52,16 +51,15 @@ abstract class ListView extends Base
     }
 
     /**
-     * Add the page title and toolbar.
-     * @return  void
+     * @inheritdoc
      */
-    protected function addToolbar(): void
+    protected function addToolBar(): void
     {
         // MVC name identity is now the internal standard
         $controller = $this->getName();
-        Toolbar::setTitle(strtoupper($controller));
+        $this->setTitle(strtoupper($controller));
 
-        if (Can::administrate()) {
+        if (Application::backend() and Can::administrate()) {
             $toolbar = Toolbar::getInstance();
             $toolbar->preferences('com_groups');
         }
@@ -113,13 +111,9 @@ abstract class ListView extends Base
      */
     public function display($tpl = null): void
     {
-        // Check for errors.
-        if (count($errors = $this->get('Errors'))) {
-            Application::message(implode("\n", $errors), 'error');
-            Application::redirect('', 500);
-        }
+        $this->authorize();
 
-        HTML::stylesheet(Uri::root() . 'components/com_groups/css/global.css');
+        //HTML::stylesheet(Uri::root() . 'components/com_groups/css/global.css');
 
         parent::display($tpl);
     }
@@ -149,7 +143,8 @@ abstract class ListView extends Base
     }
 
     /**
-     * Initializes the headers after the view has been initialized.
+     * Initializes the headers after the form and state properties have been initialized.
+     * @return void
      */
     abstract protected function initializeColumns(): void;
 
@@ -161,6 +156,8 @@ abstract class ListView extends Base
         // TODO: check submenu viability
 
         parent::initializeView();
+
+        $this->empty = $this->empty ?: Text::_('EMPTY_RESULT_SET');
 
         // All the tools are now there.
         $this->initializeColumns();

@@ -12,14 +12,13 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
-use THM\Groups\Adapters\Input;
-use THM\Groups\Adapters\Text;
+use THM\Groups\Adapters\{Application, HTML, Input, Text};
 use THM\Groups\Views\HTML\Form;
 
 /** @var Form $this */
 
 // Core behaviour scripts
-$wa = $this->document->getWebAssetManager();
+$wa = Application::getDocument()->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
 
 $formName  = strtoupper($this->getName());
@@ -49,7 +48,8 @@ if ($this->todo) {
       name="adminForm">
     <div class="main-card">
         <?php if ($tabbed): ?>
-            <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab', ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
+            <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab',
+                ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
             <?php foreach ($tabs as $name => $tab): ?>
                 <?php echo HTMLHelper::_('uitab.addTab', 'myTab', $tab->name, Text::_($tab->label)); ?>
                 <fieldset class="options-form">
@@ -70,6 +70,6 @@ if ($this->todo) {
         <input type="hidden" name="task" value="">
         <input type="hidden" name="return" value="<?php echo $return; ?>">
         <input type="hidden" name="forcedLanguage" value="<?php echo $forcedLanguage; ?>">
-        <?php echo HTMLHelper::_('form.token'); ?>
+        <?php echo HTML::token(); ?>
     </div>
 </form>

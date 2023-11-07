@@ -10,11 +10,16 @@
 
 namespace THM\Groups\Adapters;
 
-use Joomla\CMS\HTML\Helpers\{Grid, SearchTools, Select};
+use Joomla\CMS\HTML\Helpers\{Form as FH, Grid, Number, SearchTools, Select};
 use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
+use Joomla\CMS\Utility\Utility;
 use Joomla\Utilities\ArrayHelper;
+use stdClass;
 
+/**
+ * Class integrates HTMLHelper and several further helper classes, wrapping unhandled exceptions and creating simplified
+ * and documented access to functions otherwise called by magic methods.
+ */
 class HTML extends HTMLHelper
 {
     /**
@@ -30,8 +35,8 @@ class HTML extends HTMLHelper
     /**
      * Method to create a checkbox for a resource table row.
      *
-     * @param int $rowNumber the row number in the HTML output
-     * @param int $rowID     the id of the resource row in the database
+     * @param   int  $rowNumber  the row number in the HTML output
+     * @param   int  $rowID      the id of the resource row in the database
      *
      * @return  string
      */
@@ -41,27 +46,11 @@ class HTML extends HTMLHelper
     }
 
     /**
-     * Converts an array $property => $value to a string for use in HTML tags.
-     *
-     * @param array $array the properties and their values
-     *
-     * @return string
-     */
-    public static function toProperties(array $array): string
-    {
-        foreach ($array as $property => $value) {
-            $array[$property] = "$property=\"$value\"";
-        }
-
-        return $array ? implode(' ', $array) : '';
-    }
-
-    /**
      * Creates an icon with tooltip as appropriate.
      *
-     * @param string $class the icon class(es)
+     * @param   string  $class  the icon class(es)
      *
-     * @return string the HTML for the icon to be displayed
+     * @return string
      */
     public static function icon(string $class): string
     {
@@ -72,10 +61,10 @@ class HTML extends HTMLHelper
      * Method to create a sorting column header for a resource table. Header text key is automatically prefaced and
      * localized.
      *
-     * @param string $constant      the text to display in the table header
-     * @param string $column        the query column that this link sorts by
-     * @param string $direction     the current sort direction for this query column
-     * @param string $currentColumn the current query column that the results are being sorted by
+     * @param   string  $constant       the text to display in the table header
+     * @param   string  $column         the query column that this link sorts by
+     * @param   string  $direction      the current sort direction for this query column
+     * @param   string  $currentColumn  the current query column that the results are being sorted by
      *
      * @return  string
      * @see SearchTools::sort()
@@ -95,38 +84,48 @@ class HTML extends HTMLHelper
     }
 
     /**
+     * Method to return the maximum upload size defined in the site configured in the ini.
+     * @return  string
+     * @see Number::bytes(), Utility::getMaxUploadSize()
+     */
+    public static function maxUploadSize(): string
+    {
+        return Number::bytes(Utility::getMaxUploadSize());
+    }
+
+    /**
      * Create an object that represents an option in an option list.
      *
-     * @param int|string $value   the option value
-     * @param string     $text    the option text
-     * @param boolean    $disable whether the option is disabled
+     * @param   int|string  $value    the option value
+     * @param   string      $text     the option text
+     * @param   bool        $disable  whether the option is disabled
      *
      * @return  stdClass
      */
     public static function option(int|string $value, string $text, bool $disable = false): stdClass
     {
-        return Select::option((string) $value, $text, $disable);
+        return Select::option((string) $value, $text, 'value', 'text', $disable);
     }
 
     /**
      * Generates an HTML selection list.
      *
-     * @param string           $name       the field name.
-     * @param stdClass[]       $options    the field options
-     * @param array|int|string $selected   the selected resource designators; called function accepts array|string
-     * @param array            $properties additional HTML properties for the select tag
-     * @param string           $textKey    name of the name column when working directly with table rows
-     * @param string           $valueKey   name of the value column when working directly with table rows
+     * @param   string            $name        the field name.
+     * @param   stdClass[]        $options     the field options
+     * @param   array|int|string  $selected    the selected resource designators; called function accepts array|string
+     * @param   array             $properties  additional HTML properties for the select tag
+     * @param   string            $textKey     name of the name column when working directly with table rows
+     * @param   string            $valueKey    name of the value column when working directly with table rows
      *
      * @return  string
      */
     public static function selectBox(
-        string           $name,
-        array            $options,
+        string $name,
+        array $options,
         array|int|string $selected = [],
-        array            $properties = [],
-        string           $textKey = 'text',
-        string           $valueKey = 'value'
+        array $properties = [],
+        string $textKey = 'text',
+        string $valueKey = 'value'
     ): string
     {
         /**
@@ -139,12 +138,22 @@ class HTML extends HTMLHelper
     }
 
     /**
+     * Displays a hidden token field to reduce the risk of CSRF exploits.
+     * @return  string  A hidden input field with a token
+     * @see     FH::token(), Session::checkToken()
+     */
+    public static function token(): string
+    {
+        return FH::token();
+    }
+
+    /**
      * Returns an action on a grid
      *
-     * @param integer $index      the row index
-     * @param array   $state      the state configuration
-     * @param string  $controller the name of the controller class
-     * @param string  $neither    text for columns which cannot be toggled
+     * @param   int     $index       the row index
+     * @param   array   $state       the state configuration
+     * @param   string  $controller  the name of the controller class
+     * @param   string  $neither     text for columns which cannot be toggled
      *
      * @return  string
      */
@@ -153,7 +162,7 @@ class HTML extends HTMLHelper
         $ariaID     = "{$state['column']}-$index";
         $attributes = [
             'aria-labelledby' => $ariaID,
-            'class' => "tbody-icon"
+            'class'           => "tbody-icon"
         ];
 
         $class  = $state['class'];
@@ -163,7 +172,8 @@ class HTML extends HTMLHelper
             $iconClass = 'fa fa-minus';
             $task      = '';
             $tip       = $neither;
-        } else {
+        }
+        else {
             $iconClass = $class === 'publish' ? 'fa fa-check' : 'fa fa-times';
             $task      = $state['task'];
             $tip       = Text::_($state['tip']);
@@ -177,7 +187,8 @@ class HTML extends HTMLHelper
             $attributes['onclick'] = "return Joomla.listItemTask('cb$index','$controller.$task','adminForm')";
 
             $return .= '<a ' . ArrayHelper::toString($attributes) . '>' . $icon . '</a>';
-        } else {
+        }
+        else {
             $return .= '<span ' . ArrayHelper::toString($attributes) . '>' . $icon . '</span>';
         }
 
@@ -189,12 +200,12 @@ class HTML extends HTMLHelper
     /**
      * The content wrapped with a link referencing a tip and the tip.
      *
-     * @param string $content the content referenced by the tip
-     * @param string $context
-     * @param string $tip     the tip to be displayed
-     * @param array  $properties
-     * @param string $url     the url linked by the tip as applicable
-     * @param bool   $newTab  whether the url should open in a new tab
+     * @param   string  $content  the content referenced by the tip
+     * @param   string  $context
+     * @param   string  $tip      the tip to be displayed
+     * @param   array   $properties
+     * @param   string  $url      the url linked by the tip as applicable
+     * @param   bool    $newTab   whether the url should open in a new tab
      *
      * @return string
      */
@@ -202,9 +213,9 @@ class HTML extends HTMLHelper
         string $content,
         string $context,
         string $tip,
-        array  $properties = [],
+        array $properties = [],
         string $url = '',
-        bool   $newTab = false
+        bool $newTab = false
     ): string
     {
         if (empty($tip) and empty($url)) {
@@ -227,7 +238,7 @@ class HTML extends HTMLHelper
     /**
      * Converts an array $property => $value to a string for use in HTML tags.
      *
-     * @param array $array the properties and their values
+     * @param   array  $array  the properties and their values
      *
      * @return string
      * @see ArrayHelper::toString()
