@@ -25,7 +25,8 @@ use THM\Groups\Views\Named;
  */
 abstract class Form extends BaseView
 {
-    use Configured, Named;
+    use Configured;
+    use Named;
 
     /**
      * The Form object
@@ -34,22 +35,10 @@ abstract class Form extends BaseView
     protected $form;
 
     /**
-     * The active item
-     * @var   CMSObject
-     */
-    protected CMSObject $item;
-
-    /**
      * Joomla hard coded default value.
      * @var string
      */
     protected string $layout = 'form';
-
-    /**
-     * The model state
-     * @var   CMSObject
-     */
-    protected CMSObject $state;
 
     public array $todo = [];
 
@@ -62,7 +51,7 @@ abstract class Form extends BaseView
     /**
      * Execute and display a template script. Should be sufficient in itself for most inheriting classes.
      *
-     * @param string $tpl unused
+     * @param   string  $tpl  unused
      *
      * @return  void
      */
@@ -81,7 +70,7 @@ abstract class Form extends BaseView
     /**
      * Adds resource related title, cancel/close and eventually help buttons.
      *
-     * @param string[] $buttons the names of the available button functions
+     * @param   string[]  $buttons  the names of the available button functions
      *
      * @return  void adds buttons to the global toolbar object
      */
@@ -124,7 +113,8 @@ abstract class Form extends BaseView
                         break;
                 }
             }
-        } else {
+        }
+        else {
             $toolbar->save("$controller.save", $saveLabel);
         }
 

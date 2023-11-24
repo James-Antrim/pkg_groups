@@ -10,10 +10,10 @@
 
 namespace THM\Groups\Controllers;
 
-use JInput;
 use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Table\Table;
+use Joomla\Input\Input as JInput;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Tables\Incremented;
@@ -89,7 +89,7 @@ abstract class FormController extends Controller
         $this->authorize();
         $data = $this->prepareData();
 
-        $id = Input::getID();
+        $id    = Input::getID();
         $table = $this->getTable();
 
         return $this->store($table, $data, $id);

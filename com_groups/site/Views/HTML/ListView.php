@@ -23,6 +23,7 @@ use THM\Groups\Helpers\Can;
 abstract class ListView extends Base
 {
     use Configured;
+    use Titled;
 
     protected const NONE = -1;
 
