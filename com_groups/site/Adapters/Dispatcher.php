@@ -22,12 +22,12 @@ use THM\Groups\Controllers\Controller;
 class Dispatcher extends ComponentDispatcher
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected $mvcFactory;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected $option = 'com_groups';
 
@@ -57,10 +57,12 @@ class Dispatcher extends ComponentDispatcher
 
             Input::set('args', $args);
 
-        } elseif (!$controller = Input::getController()) {
+        }
+        elseif (!$controller = Input::getController()) {
             if (Application::backend()) {
                 $controller = 'Groups';
-            } else {
+            }
+            else {
                 Application::redirect();
             }
         }
@@ -76,7 +78,8 @@ class Dispatcher extends ComponentDispatcher
             /** @var Controller $controller */
             $controller->execute($task);
             $controller->redirect();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             Application::handleException($exception);
         }
     }

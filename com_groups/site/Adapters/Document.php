@@ -12,12 +12,31 @@ namespace THM\Groups\Adapters;
 
 use Joomla\CMS\Document\HtmlDocument;
 use Joomla\CMS\Toolbar\Toolbar as TB;
+use Joomla\CMS\WebAsset\WebAssetManager;
 
 /**
- * Adapts functions of the document class to avoid exceptions and deprecated warnings.
+ * Adapts functions of the document class to avoid exceptions, deprecated warnings, and overlong access chains.
+ *
+ * @see Application::getDocument()
  */
 class Document
 {
+
+    /**
+     * Gets the path for the given file and type.
+     *
+     * @param   string  $file  the name of the file
+     * @param   string  $type  the file extension type
+     *
+     * @return string
+     */
+    private static function getPath(string $file, string $type): string
+    {
+        $path = "components/com_organizer/$type/$file.$type";
+
+        return file_exists(JPATH_ROOT . "/$path") ? $path : '';
+    }
+
     /**
      * Adds a linked script to the page.
      *
@@ -111,5 +130,33 @@ class Document
         $document = Application::getDocument();
 
         return $document->setTitle($title);
+    }
+
+    /**
+     * Adds a style to a page.
+     *
+     * @param   string  $file  the file name
+     *
+     * @return void
+     */
+    public static function style(string $file = ''): void
+    {
+        if ($path = self::getPath($file, 'css')) {
+            self::webAssetManager()->registerAndUseStyle("oz.$file", $path);
+        }
+    }
+
+    /**
+     * Return WebAsset manager
+     *
+     * @return  WebAssetManager
+     * @see HtmlDocument::getWebAssetManager()
+     */
+    public static function webAssetManager(): WebAssetManager
+    {
+        /** @var HtmlDocument $document */
+        $document = Application::getDocument();
+
+        return $document->getWebAssetManager();
     }
 }

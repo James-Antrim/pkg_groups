@@ -29,18 +29,18 @@ class MVCFactory extends Base
      */
     private array $tableMap = [
         'Attribute' => 'Attributes',
-        'Category' => 'Categories',
-        'Group' => 'Groups',
-        'Profile' => 'Profiles',
-        'Role' => 'Roles',
-        'Template' => 'Templates',
-        'Type' => 'Types'
+        'Category'  => 'Categories',
+        'Group'     => 'Groups',
+        'Profile'   => 'Profiles',
+        'Role'      => 'Roles',
+        'Template'  => 'Templates',
+        'Type'      => 'Types'
     ];
 
     /**
      * Sets the internal event dispatcher on the given object. Parent has private access. :(
      *
-     * @param object $object the object
+     * @param   object  $object  the object
      *
      * @return  void
      */
@@ -52,7 +52,8 @@ class MVCFactory extends Base
 
         try {
             $object->setDispatcher($this->getDispatcher());
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             Application::handleException($exception);
         }
     }
@@ -60,7 +61,7 @@ class MVCFactory extends Base
     /**
      * Sets the internal form factory on the given object. Parent has private access. :(
      *
-     * @param object $object the object
+     * @param   object  $object  the object
      *
      * @return  void
      */
@@ -72,7 +73,8 @@ class MVCFactory extends Base
 
         try {
             $object->setFormFactory($this->getFormFactory());
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             Application::handleException($exception);
         }
     }
@@ -80,11 +82,11 @@ class MVCFactory extends Base
     /**
      * Method to load and return a controller object.
      *
-     * @param string                  $name   The name of the controller
-     * @param string                  $prefix The controller prefix
-     * @param array                   $config The configuration array for the controller
-     * @param CMSApplicationInterface $app    The app
-     * @param JInput                  $input  The input
+     * @param   string                   $name    The name of the controller
+     * @param   string                   $prefix  The controller prefix
+     * @param   array                    $config  The configuration array for the controller
+     * @param   CMSApplicationInterface  $app     The app
+     * @param   JInput                   $input   The input
      *
      * @return  Controller
      */
