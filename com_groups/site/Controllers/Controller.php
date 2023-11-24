@@ -11,13 +11,15 @@
 namespace THM\Groups\Controllers;
 
 use Joomla\CMS\Application\CMSApplication;
-use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\CMS\MVC\{Controller\BaseController, Factory\MVCFactoryInterface};
 use Joomla\CMS\Uri\Uri;
 use Joomla\Input\Input as JInput;
 use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\Can;
 
+/**
+ * Class provides basic component functionality.
+ */
 class Controller extends BaseController
 {
     /**
@@ -29,7 +31,11 @@ class Controller extends BaseController
     /**
      * @inheritDoc
      */
-    public function __construct($config = [], MVCFactoryInterface $factory = null, ?CMSApplication $app = null, ?JInput $input = null)
+    public function __construct($config = [],
+        MVCFactoryInterface $factory = null,
+        ?CMSApplication $app = null,
+        ?JInput $input = null
+    )
     {
         $this->baseURL = $this->baseURL ?: Uri::base() . 'index.php?option=com_groups';
         parent::__construct($config, $factory, $app, $input);
@@ -61,7 +67,7 @@ class Controller extends BaseController
     /**
      * @inheritDoc
      */
-    public function display($cachable = false, $urlparams = []): BaseController|Controller
+    public function display($cachable = false, $urlparams = []): BaseController
     {
         $format = Input::getFormat();
         $view   = $this->input->get('view', 'Start');
