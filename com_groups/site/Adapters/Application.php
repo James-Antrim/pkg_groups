@@ -86,49 +86,69 @@ class Application
     }
 
     /**
-     * Determines whether the view was called from a dynamic context
-     * @return bool true if the view was called dynamically, otherwise false
+     * Determines whether the view was called from a dynamic context: no active menu item or the active item does not
+     * belong to the component.
+     * @return bool
      */
     public static function dynamic(): bool
     {
-        return !self::menuItem();
+        $menuItem = self::menuItem();
+
+        if (!empty($menuItem) and $menuItem->type === 'component' and $menuItem->component === 'groups') {
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * Performs a redirect on error.
      *
-     * @param   int  $code  the error code
+     * @param   int     $code  the error code
+     * @param   string  $key   the localization key for a message
      *
      * @return void
      */
-    public static function error(int $code): void
+    public static function error(int $code, string $key = ''): void
     {
         $current = Uri::getInstance()->toString();
 
+        // Unauthenticated
         if ($code === 401) {
+            $message  = $code;
             $return   = urlencode(base64_encode($current));
+            $severity = self::NOTICE;
             $url      = Uri::base() . "?option=com_users&view=login&return=$return";
-            $severity = 'notice';
+        }
+        // Unauthorized
+        elseif ($code === 403) {
+            $message  = $code;
+            $url      = Uri::base();
+            $severity = self::WARNING;
         }
         else {
+            // Use specific message if requested.
+            $message  = $key ?: $code;
             $severity = match ($code) {
-                400, 404 => 'notice',
-                403, 412 => 'warning',
-                default => 'error',
+                // Form error / not found
+                400, 404 => self::NOTICE,
+                // Inconsistent data
+                412 => self::WARNING,
+                default => self::ERROR,
             };
 
-            if ($severity === 'error') {
+            if ($severity === self::ERROR) {
                 // TODO turn this into logging before productive release
+                echo "<pre>" . print_r($message, true) . "</pre>";
                 $exc = new Exception();
                 echo "<pre>" . print_r($exc->getTraceAsString(), true) . "</pre>";
                 die;
             }
 
-            $referrer = Input::getInput()->server->getString('HTTP_REFERER', Uri::base());
-            $url      = $referrer === $current ? Uri::base() : $referrer;
+            $url = Input::getInput()->server->getString('HTTP_REFERER', Uri::base());
         }
 
-        self::message($code, $severity);
+        self::message($message, $severity);
         self::redirect($url, $code);
     }
 
@@ -264,35 +284,9 @@ class Application
     public static function handleException(Exception $exception): void
     {
         $code    = $exception->getCode() ?: 500;
-        $current = Uri::getInstance()->toString();
         $message = $exception->getMessage();
-
-
-        if ($code === 401) {
-            $return   = urlencode(base64_encode($current));
-            $url      = Uri::base() . "?option=com_users&view=login&return=$return";
-            $severity = 'notice';
-        }
-        else {
-            $severity = match ($code) {
-                400, 404 => 'notice',
-                403, 412 => 'warning',
-                default => 'error',
-            };
-
-            if ($severity === 'error') {
-                // TODO turn this into logging before productive release
-                echo "<pre>$message</pre>";
-                echo "<pre>" . print_r($exception->getTraceAsString(), true) . "</pre>";
-                die;
-            }
-
-            $referrer = Input::getInput()->server->getString('HTTP_REFERER', Uri::base());
-            $url      = $referrer === $current ? Uri::base() : $referrer;
-        }
-
-        self::message($message, $severity);
-        self::redirect($url, $code);
+        echo "<pre>" . print_r($exception->getTraceAsString(), true) . "</pre>";
+        self::error($code, $message);
     }
 
     /**
@@ -319,13 +313,17 @@ class Application
      * Gets the current menu item.
      * @return MenuItem|null the current menu item or null
      */
-    public static function menuItem(): ?MenuItem
+    public static function menuItem(int $itemID = 0): ?MenuItem
     {
         /** @var CMSApplication $app */
         $app = self::instance();
 
-        if ($menu = $app->getMenu() and $menuItem = $menu->getActive()) {
-            return $menuItem;
+        if ($menu = $app->getMenu()) {
+            if ($itemID) {
+                return $menu->getItem($itemID);
+            }
+
+            return $menu->getActive();
         }
 
         return null;
