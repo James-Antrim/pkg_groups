@@ -40,7 +40,7 @@ class Users extends ListController
         $this->checkToken();
         $this->authorize();
 
-        $app         = Application::getApplication();
+        $app         = Application::instance();
         $selectedIDs = Input::getSelectedIDs();
         $selected    = count($selectedIDs);
         $updated     = 0;
@@ -165,13 +165,15 @@ class Users extends ListController
                 }
 
                 $reset = $this->reset($selectedID, $resetValue);
-            } else {
+            }
+            else {
                 $reset = true;
             }
 
             if ($batchMap) {
                 $mapped = $this->map($selectedID, $actionValue, $groupID, $roleID);
-            } else {
+            }
+            else {
                 $mapped = true;
             }
 
@@ -204,7 +206,7 @@ class Users extends ListController
         $this->authorize();
 
         /** @var CMSApplication $app */
-        $app         = Application::getApplication();
+        $app         = Application::instance();
         $selectedIDs = Input::getSelectedIDs();
         $user        = Application::getUser();
         $super       = $user->get('isRoot');
@@ -324,7 +326,7 @@ class Users extends ListController
     /**
      * Filters selected accounts for the current user.
      *
-     * @param array $selectedIDs
+     * @param   array  $selectedIDs
      *
      * @return array
      */
@@ -340,10 +342,10 @@ class Users extends ListController
     /**
      * Maps / removes mappings of the given user id to the given groups & roles.
      *
-     * @param int $userID  the id of the user to (dis-) associate
-     * @param int $action  the action to be performed on the user
-     * @param int $groupID the id of the group to be (dis-) associated
-     * @param int $roleID  the id of the role to be (dis-) associated
+     * @param   int  $userID   the id of the user to (dis-) associate
+     * @param   int  $action   the action to be performed on the user
+     * @param   int  $groupID  the id of the group to be (dis-) associated
+     * @param   int  $roleID   the id of the role to be (dis-) associated
      *
      * @return bool
      */
@@ -404,8 +406,8 @@ class Users extends ListController
     /**
      * Resets the user account with the given id. Joomla did not raise events here, so I also did not...
      *
-     * @param int  $userID the id of the user account
-     * @param bool $value  the value which the requireReset column should be set to
+     * @param   int   $userID  the id of the user account
+     * @param   bool  $value   the value which the requireReset column should be set to
      *
      * @return bool
      */
@@ -438,7 +440,7 @@ class Users extends ListController
     /**
      * Toggles the block state of the user.
      *
-     * @param bool $value
+     * @param   bool  $value
      *
      * @return void
      */
@@ -448,7 +450,7 @@ class Users extends ListController
         $this->authorize();
 
         /** @var CMSApplication $app */
-        $app         = Application::getApplication();
+        $app         = Application::instance();
         $block       = $value === true;
         $selectedIDs = Input::getSelectedIDs();
         $user        = Application::getUser();
@@ -527,7 +529,7 @@ class Users extends ListController
     /**
      * Toggles the values of the published column.
      *
-     * @param bool $value
+     * @param   bool  $value
      *
      * @return void
      */

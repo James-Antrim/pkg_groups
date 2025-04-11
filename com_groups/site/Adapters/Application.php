@@ -33,14 +33,18 @@ class Application
 {
     /**
      * Predefined Joomla message types without unnecessary prefixing.
-     * @ALERT, @CRITICAL, @EMERGENCY, @ERROR: danger
-     * @DEBUG, @INFO, @NOTICE: info
-     * @WARNING: warning
-     * default: success
      * @see    CMSApplicationInterface
      */
-    public const ALERT = 'alert', CRITICAL = 'critical', DEBUG = 'debug', EMERGENCY = 'emergency', ERROR = 'error',
-        INFO = 'info', MESSAGE = 'message', NOTICE = 'notice', WARNING = 'warning';
+    public const ERROR = 'error', MESSAGE = 'message', NOTICE = 'notice', WARNING = 'warning';
+
+    /**
+     * Unused locally, but Joomla supported.
+     * @ALERT, @CRITICAL, @EMERGENCY: danger
+     * @DEBUG, @INFO: info
+     *
+     * public const ALERT = 'alert', CRITICAL = 'critical', DEBUG = 'debug', EMERGENCY = 'emergency', INFO = 'info';
+     * @noinspection GrazieInspection
+     */
 
     /**
      * Checks whether the current context is the administrator context.
@@ -48,7 +52,7 @@ class Application
      */
     public static function backend(): bool
     {
-        return self::getApplication()->isClient('administrator');
+        return self::instance()->isClient('administrator');
     }
 
     /**
@@ -99,26 +103,6 @@ class Application
     }
 
     /**
-     * Surrounds the call to the application with a try catch so that not every function needs to have a throws tag. If
-     * the application has an error it would have never made it to the component in the first place, so the error would
-     * not have been thrown in this call regardless.
-     * @return CMSApplicationInterface|null
-     */
-    public static function getApplication(): ?CMSApplicationInterface
-    {
-        $application = null;
-
-        try {
-            $application = Factory::getApplication();
-        }
-        catch (Exception $exception) {
-            self::handleException($exception);
-        }
-
-        return $application;
-    }
-
-    /**
      * Gets the name of an object's class without its namespace.
      *
      * @param   object|string  $object  the object whose namespace free name is requested or the fq name of the class to be
@@ -160,7 +144,7 @@ class Application
     public static function getDocument(): Document
     {
         /** @var WebApplication $app */
-        $app = self::getApplication();
+        $app = self::instance();
 
         return $app->getDocument();
     }
@@ -171,7 +155,7 @@ class Application
      */
     public static function getLanguage(): Language
     {
-        return self::getApplication()->getLanguage();
+        return self::instance()->getLanguage();
     }
 
     /**
@@ -181,7 +165,7 @@ class Application
     public static function getMenuItem(): ?MenuItem
     {
         /** @var CMSApplication $app */
-        $app = self::getApplication();
+        $app = self::instance();
 
         if ($menu = $app->getMenu() and $menuItem = $menu->getActive()) {
             return $menuItem;
@@ -208,7 +192,7 @@ class Application
      */
     public static function getSession(): Session
     {
-        return self::getApplication()->getSession();
+        return self::instance()->getSession();
     }
 
     /**
@@ -217,7 +201,7 @@ class Application
      */
     public static function getTag(): string
     {
-        $language = self::getApplication()->getLanguage();
+        $language = self::instance()->getLanguage();
 
         return explode('-', $language->getTag())[0];
     }
@@ -239,7 +223,7 @@ class Application
             return is_int($userID) ? $userFactory->loadUserById($userID) : $userFactory->loadUserByUsername($userID);
         }
 
-        $current = self::getApplication()->getIdentity();
+        $current = self::instance()->getIdentity();
 
         // Enforce type consistency, by overwriting the potential null from getIdentity.
         return $current ?: $userFactory->loadUserById(0);
@@ -257,7 +241,7 @@ class Application
     public static function getUserState(string $property, mixed $default = null): mixed
     {
         /** @var CMSApplication $app */
-        $app = self::getApplication();
+        $app = self::instance();
 
         return $app->getUserState($property, $default);
     }
@@ -281,7 +265,7 @@ class Application
     ): mixed
     {
         /** @var CMSApplication $app */
-        $app = self::getApplication();
+        $app = self::instance();
 
         return $app->getUserStateFromRequest($property, $request, $default, $type);
     }
@@ -328,6 +312,26 @@ class Application
     }
 
     /**
+     * Surrounds the call to the application with a try catch so that not every function needs to have a throws tag. If
+     * the application has an error it would have never made it to the component in the first place, so the error would
+     * not have been thrown in this call regardless.
+     * @return CMSApplicationInterface|null
+     */
+    public static function instance(): ?CMSApplicationInterface
+    {
+        $application = null;
+
+        try {
+            $application = Factory::getApplication();
+        }
+        catch (Exception $exception) {
+            self::handleException($exception);
+        }
+
+        return $application;
+    }
+
+    /**
      * Masks the Joomla application enqueueMessage function
      *
      * @param   string  $message  the message to enqueue
@@ -337,7 +341,7 @@ class Application
      */
     public static function message(string $message, string $type = self::MESSAGE): void
     {
-        self::getApplication()->enqueueMessage(Text::_($message), $type);
+        self::instance()->enqueueMessage(Text::_($message), $type);
     }
 
     /**
@@ -347,7 +351,7 @@ class Application
     public static function mobile(): bool
     {
         /** @var CMSApplication $app */
-        $app     = self::getApplication();
+        $app     = self::instance();
         $client  = $app->client;
         $tablets = [$client::IPAD, $client::ANDROIDTABLET];
 
@@ -367,7 +371,7 @@ class Application
         $url = $url ?: Uri::getInstance()::base();
 
         /** @var CMSApplication $app */
-        $app = self::getApplication();
+        $app = self::instance();
         $app->redirect($url, $status);
     }
 }

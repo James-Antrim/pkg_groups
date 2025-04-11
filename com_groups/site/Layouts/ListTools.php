@@ -22,12 +22,11 @@ class ListTools
     /**
      * Renders list headers.
      *
-     * @param ListView $view the view being displayed
+     * @param   ListView  $view  the view being displayed
      */
     public static function render(ListView $view)
     {
-        if (empty($view->filterForm))
-        {
+        if (empty($view->filterForm)) {
             return;
         }
 
@@ -38,15 +37,15 @@ class ListTools
         $filterCount = count($filters);
 
         $searchExists = isset($filters['filter_search']);
-        $filtersExist = $searchExists ? $filterCount > 1 : (bool)$filterCount;
+        $filtersExist = $searchExists ? $filterCount > 1 : (bool) $filterCount;
 
         $state   = $view->get('state');
         $options = [
             'activeDirection' => $view->escape($state->get('list.direction')),
-            'activeOrder' => $view->escape($state->get('list.ordering')),
-            'defaultLimit' => Application::getApplication()->get('list_limit', 50),
-            'orderSelector' => '#list_fullordering',
-            'searchSelector' => '#filter_search'
+            'activeOrder'     => $view->escape($state->get('list.ordering')),
+            'defaultLimit'    => Application::instance()->get('list_limit', 50),
+            'orderSelector'   => '#list_fullordering',
+            'searchSelector'  => '#filter_search'
         ];
 
         $class = ($filtersExist and !empty($view->activeFilters)) ? ' js-stools-container-filters-visible' : '';

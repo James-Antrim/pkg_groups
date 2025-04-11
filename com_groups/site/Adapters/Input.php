@@ -284,7 +284,7 @@ class Input
     public static function getInput(): Base
     {
         if (empty(self::$input)) {
-            self::$input = Application::getApplication()->input;
+            self::$input = Application::instance()->input;
         }
 
         return self::$input;
@@ -312,7 +312,7 @@ class Input
     public static function getParams(): Registry
     {
         if (empty(self::$params)) {
-            $app          = Application::getApplication();
+            $app          = Application::instance();
             self::$params = method_exists($app, 'getParams') ?
                 $app->getParams() : Application::getParams();
         }
