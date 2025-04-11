@@ -46,7 +46,7 @@ if ($this->todo) {
 }
 
 if (count($this->headers) > 4) {
-    $wa = Application::getDocument()->getWebAssetManager();
+    $wa = Application::document()->getWebAssetManager();
     $wa->useScript('table.columns');
 }
 

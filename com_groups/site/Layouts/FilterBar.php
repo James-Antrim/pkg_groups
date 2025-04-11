@@ -19,48 +19,43 @@ use THM\Groups\Views\HTML\ListView;
  */
 class FilterBar
 {
-	/**
-	 * Renders the filter bar.
-	 *
-	 * @param   ListView  $view
-	 */
-	public static function render(ListView $view)
-	{
-		if (empty($view->filterForm))
-		{
-			return;
-		}
+    /**
+     * Renders the filter bar.
+     *
+     * @param   ListView  $view
+     */
+    public static function render(ListView $view): void
+    {
+        if (empty($view->filterForm)) {
+            return;
+        }
 
-		if (!$filters = $view->filterForm->getGroup('filter'))
-		{
-			return;
-		}
+        if (!$filters = $view->filterForm->getGroup('filter')) {
+            return;
+        }
 
-		$wam = Application::getDocument()->getWebAssetManager();
+        $wam = Application::document()->getWebAssetManager();
 
-		foreach ($filters as $fieldName => $field)
-		{
-			if ($fieldName !== 'filter_search')
-			{
-				$dataShowOn = '';
+        foreach ($filters as $fieldName => $field) {
+            if ($fieldName !== 'filter_search') {
+                $dataShowOn = '';
 
-				if ($showOn = $field->__get('showon'))
-				{
-					$wam->useScript('showon');
+                if ($showOn = $field->__get('showon')) {
+                    $wam->useScript('showon');
 
-					$control    = $field->__get('formControl');
-					$group      = $field->__get('group');
-					$json       = json_encode(FormHelper::parseShowOnConditions($showOn, $control, $group));
-					$dataShowOn = " data-showon='$json'";
-				}
+                    $control    = $field->__get('formControl');
+                    $group      = $field->__get('group');
+                    $json       = json_encode(FormHelper::parseShowOnConditions($showOn, $control, $group));
+                    $dataShowOn = " data-showon='$json'";
+                }
 
-				?>
+                ?>
                 <div class="js-stools-field-filter"<?php echo $dataShowOn; ?>>
                     <span class="visually-hidden"><?php echo $field->__get('label'); ?></span>
-					<?php echo $field->__get('input'); ?>
+                    <?php echo $field->__get('input'); ?>
                 </div>
-				<?php
-			}
-		}
-	}
+                <?php
+            }
+        }
+    }
 }

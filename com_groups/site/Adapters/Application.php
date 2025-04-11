@@ -74,6 +74,18 @@ class Application
     }
 
     /**
+     * Shortcuts document access.
+     * @return Document
+     */
+    public static function document(): Document
+    {
+        /** @var WebApplication $app */
+        $app = self::instance();
+
+        return $app->getDocument();
+    }
+
+    /**
      * Determines whether the view was called from a dynamic context
      * @return bool true if the view was called dynamically, otherwise false
      */
@@ -135,18 +147,6 @@ class Application
         $lastItem = array_pop($nsParts);
 
         return empty($lastItem) ? 'Groups' : $lastItem;
-    }
-
-    /**
-     * Shortcuts document access.
-     * @return Document
-     */
-    public static function getDocument(): Document
-    {
-        /** @var WebApplication $app */
-        $app = self::instance();
-
-        return $app->getDocument();
     }
 
     /**

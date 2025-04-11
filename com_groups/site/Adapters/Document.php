@@ -17,7 +17,7 @@ use Joomla\CMS\WebAsset\WebAssetManager;
 /**
  * Adapts functions of the document class to avoid exceptions, deprecated warnings, and overlong access chains.
  *
- * @see Application::getDocument()
+ * @see Application::document()
  */
 class Document
 {
@@ -48,7 +48,7 @@ class Document
     public static function addScript(string $url): HtmlDocument
     {
         /** @var HtmlDocument $document */
-        $document = Application::getDocument();
+        $document = Application::document();
 
         return $document->addScript($url);
     }
@@ -65,7 +65,7 @@ class Document
     public static function addScriptOptions(string $key, array|string $localizations, bool $merge = true): HtmlDocument
     {
         /** @var HtmlDocument $document */
-        $document = Application::getDocument();
+        $document = Application::document();
 
         return $document->addScriptOptions($key, $localizations, $merge);
     }
@@ -81,7 +81,7 @@ class Document
     public static function addStyleSheet(string $url): HtmlDocument
     {
         /** @var HtmlDocument $document */
-        $document = Application::getDocument();
+        $document = Application::document();
 
         return $document->addStyleSheet($url);
     }
@@ -96,7 +96,7 @@ class Document
     public static function getToolbar(string $name = 'toolbar'): TB
     {
         /** @var HtmlDocument $document */
-        $document = Application::getDocument();
+        $document = Application::document();
 
         return $document->getToolbar($name);
     }
@@ -111,7 +111,7 @@ class Document
     public static function setCharset(string $type = 'utf-8'): HtmlDocument
     {
         /** @var HtmlDocument $document */
-        $document = Application::getDocument();
+        $document = Application::document();
 
         return $document->setCharset($type);
     }
@@ -127,7 +127,7 @@ class Document
     public static function setTitle(string $title): HtmlDocument
     {
         /** @var HtmlDocument $document */
-        $document = Application::getDocument();
+        $document = Application::document();
 
         return $document->setTitle($title);
     }
@@ -155,7 +155,7 @@ class Document
     public static function webAssetManager(): WebAssetManager
     {
         /** @var HtmlDocument $document */
-        $document = Application::getDocument();
+        $document = Application::document();
 
         return $document->getWebAssetManager();
     }

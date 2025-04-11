@@ -18,7 +18,7 @@ use THM\Groups\Views\HTML\Form;
 /** @var Form $this */
 
 // Core behaviour scripts
-$wa = Application::getDocument()->getWebAssetManager();
+$wa = Application::document()->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
 
 $formName  = strtoupper($this->getName());

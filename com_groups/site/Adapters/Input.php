@@ -210,7 +210,7 @@ class Input
      */
     public static function getFormat(): string
     {
-        $document  = Application::getDocument();
+        $document  = Application::document();
         $supported = ['HTML', 'JSON', 'VCF'];
         $format    = self::getCMD('format', strtoupper($document->getType()));
 
