@@ -32,7 +32,7 @@ trait Named
             $this->context = strtolower($this->option . '.' . $this->getName());
 
             // Make sure the filters from different instances of the same model don't bleed
-            if ($menuItem = Application::getMenuItem() and $menuID = $menuItem->id) {
+            if ($menuItem = Application::menuItem() and $menuID = $menuItem->id) {
                 $this->context .= '.' . $menuID;
             }
         }

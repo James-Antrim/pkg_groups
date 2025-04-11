@@ -271,7 +271,7 @@ class Input
      */
     public static function getItemid(): int
     {
-        $item    = Application::getMenuItem();
+        $item    = Application::menuItem();
         $default = $item ? $item->id : 0;
 
         return self::getInt('Itemid', $default);

@@ -91,7 +91,7 @@ class Application
      */
     public static function dynamic(): bool
     {
-        return !self::getMenuItem();
+        return !self::menuItem();
     }
 
     /**
@@ -156,22 +156,6 @@ class Application
     public static function getLanguage(): Language
     {
         return self::instance()->getLanguage();
-    }
-
-    /**
-     * Gets the current menu item.
-     * @return MenuItem|null the current menu item or null
-     */
-    public static function getMenuItem(): ?MenuItem
-    {
-        /** @var CMSApplication $app */
-        $app = self::instance();
-
-        if ($menu = $app->getMenu() and $menuItem = $menu->getActive()) {
-            return $menuItem;
-        }
-
-        return null;
     }
 
     /**
@@ -329,6 +313,22 @@ class Application
         }
 
         return $application;
+    }
+
+    /**
+     * Gets the current menu item.
+     * @return MenuItem|null the current menu item or null
+     */
+    public static function menuItem(): ?MenuItem
+    {
+        /** @var CMSApplication $app */
+        $app = self::instance();
+
+        if ($menu = $app->getMenu() and $menuItem = $menu->getActive()) {
+            return $menuItem;
+        }
+
+        return null;
     }
 
     /**
