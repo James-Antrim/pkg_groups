@@ -73,7 +73,7 @@ class Attributes extends ListModel
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
-        $tag   = Application::getTag();
+        $tag   = Application::tag();
 
         $query->select([
             $db->quoteName('a') . '.*',

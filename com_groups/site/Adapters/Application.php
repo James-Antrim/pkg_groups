@@ -11,19 +11,15 @@
 namespace THM\Groups\Adapters;
 
 use Exception;
-use Joomla\CMS\Application\{CMSApplication, WebApplication};
-use Joomla\CMS\Component\ComponentHelper;
-use Joomla\CMS\Document\Document;
-use Joomla\CMS\Language\Language;
-use Joomla\CMS\Menu\MenuItem;
-use Joomla\CMS\Session\Session;
+use Joomla\CMS\Application\{CMSApplication, CMSApplicationInterface, WebApplication};
+use Joomla\CMS\{Component\ComponentHelper, Document\Document, Factory, Language\Language};
+use Joomla\CMS\{Menu\MenuItem, Session\Session, Uri\Uri};
+use Joomla\CMS\Extension\{ComponentInterface, ExtensionHelper};
 use Joomla\CMS\User\{User, UserFactory, UserFactoryInterface};
 use Joomla\Database\DatabaseDriver;
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
-use Joomla\CMS\Application\CMSApplicationInterface;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Uri\Uri;
+use THM\Groups\Component;
 
 /**
  * Aggregates various core joomla functions spread around multiple core classes and offers shortcuts to them with no
@@ -53,6 +49,44 @@ class Application
     public static function backend(): bool
     {
         return self::instance()->isClient('administrator');
+    }
+
+    /**
+     * Returns the groups component object.
+     * @return Component
+     */
+    public static function component(): Component
+    {
+        $component = 'groups';
+        $type      = ComponentInterface::class;
+
+        // Check if the extension is already loaded
+        if (!empty(ExtensionHelper::$extensions[$type][$component])) {
+            return ExtensionHelper::$extensions[$type][$component];
+        }
+
+        $application = self::instance();
+        $container   = self::container()->createChild();
+
+        $provider = require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/provider.php';
+        $provider->register($container);
+
+        $extension                                      = $container->get($type);
+        ExtensionHelper::$extensions[$type][$component] = $extension;
+
+        return $extension;
+    }
+
+    /**
+     * Shortcuts configuration access.
+     * @return Registry
+     */
+    public static function configuration(): Registry
+    {
+        /** @var WebApplication $app */
+        $app = self::instance();
+
+        return $app->getConfig();
     }
 
     /**
@@ -153,6 +187,16 @@ class Application
     }
 
     /**
+     * Gets the component's MVC factory.
+     *
+     * @return MVCFactory
+     */
+    public static function factory(): MVCFactory
+    {
+        return self::component()->mvcFactory();
+    }
+
+    /**
      * Gets the name of an object's class without its namespace.
      *
      * @param   object|string  $object  the object whose namespace free name is requested or the fq name of the class to be
@@ -197,17 +241,6 @@ class Application
     public static function getSession(): Session
     {
         return self::instance()->getSession();
-    }
-
-    /**
-     * Gets the language portion of the localization tag.
-     * @return string
-     */
-    public static function getTag(): string
-    {
-        $language = self::instance()->getLanguage();
-
-        return explode('-', $language->getTag())[0];
     }
 
     /**
@@ -371,5 +404,16 @@ class Application
         /** @var CMSApplication $app */
         $app = self::instance();
         $app->redirect($url, $status);
+    }
+
+    /**
+     * Gets the language portion of the localization tag.
+     * @return string
+     */
+    public static function tag(): string
+    {
+        $language = self::instance()->getLanguage();
+
+        return explode('-', $language->getTag())[0];
     }
 }

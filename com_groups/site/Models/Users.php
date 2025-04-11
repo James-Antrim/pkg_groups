@@ -78,7 +78,7 @@ class Users extends ListModel
         $db     = $this->getDatabase();
         $groups = [];
         $query  = $db->getQuery(true);
-        $tag    = Application::getTag();
+        $tag    = Application::tag();
 
         $jCondition1 = $db->quoteName('map.group_id') . ' = ' . $db->quoteName('g.id');
         $jCondition2 = $db->quoteName('ra.mapID') . ' = ' . $db->quoteName('map.id');

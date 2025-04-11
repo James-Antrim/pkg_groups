@@ -63,7 +63,7 @@ class Templates extends ListModel
         // Create a new query object.
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
-        $tag   = Application::getTag();
+        $tag   = Application::tag();
 
         // Select the required fields from the table.
         $query->select(['*', $db->quoteName("name_$tag", 'name')])->from($db->quoteName('#__groups_templates'));

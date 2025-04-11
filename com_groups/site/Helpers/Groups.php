@@ -147,7 +147,7 @@ class Groups implements Selectable
      */
     public static function getRoles(int $groupID): array
     {
-        $tag = Application::getTag();
+        $tag = Application::tag();
         $db  = Application::database();
 
         $roleID     = $db->quoteName("r.id");

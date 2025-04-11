@@ -74,7 +74,7 @@ class TemplateAttributes extends ListView
     protected function completeItems(array $options = []): void
     {
         $options = [
-            'label'        => 'label_' . Application::getTag(),
+            'label'        => 'label_' . Application::tag(),
             'unlabeledIDs' => AH::getUnlabeled(),
             'unlabeledTip' => Text::_('TOGGLE_TIP_UNLABELED')
         ];
@@ -101,7 +101,7 @@ class TemplateAttributes extends ListView
         }
 
         $available = [];
-        $label     = 'label_' . Application::getTag();
+        $label     = 'label_' . Application::tag();
 
         foreach ($availableIDs as $attributeID) {
             $attribute               = $all[$attributeID];

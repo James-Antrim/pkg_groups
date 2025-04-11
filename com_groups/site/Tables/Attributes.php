@@ -111,7 +111,7 @@ class Attributes extends Table
             return '';
         }
 
-        if (Application::getTag() === 'en') {
+        if (Application::tag() === 'en') {
             return $this->label_en;
         }
 

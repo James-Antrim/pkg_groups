@@ -72,7 +72,7 @@ class Attributes implements Selectable
     {
         $db         = Application::database();
         $query      = $db->getQuery(true);
-        $label      = $db->quoteName('label_' . Application::getTag());
+        $label      = $db->quoteName('label_' . Application::tag());
         $attributes = $db->quoteName('#__groups_attributes');
         $query->select('*')->from($attributes)->order($label);
         $db->setQuery($query);
@@ -93,7 +93,7 @@ class Attributes implements Selectable
      */
     public static function getOptions(): array
     {
-        $label   = 'label_' . Application::getTag();
+        $label   = 'label_' . Application::tag();
         $options = [];
 
         foreach (self::getAll() as $attributeID => $attribute) {

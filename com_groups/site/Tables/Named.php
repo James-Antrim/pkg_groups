@@ -29,24 +29,21 @@ trait Named
     /**
      * Gets the localized entry name.
      *
-     * @param int $id
+     * @param   int  $id
      *
      * @return string     *
      */
     public function getName(int $id): string
     {
-        if (!$id)
-        {
+        if (!$id) {
             return '';
         }
 
-        if (!$this->load($id))
-        {
+        if (!$this->load($id)) {
             return '';
         }
 
-        if (Application::getTag() === 'en')
-        {
+        if (Application::tag() === 'en') {
             return $this->name_en;
         }
 

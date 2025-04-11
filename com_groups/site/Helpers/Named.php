@@ -19,7 +19,7 @@ trait Named
     /**
      * Attempts to retrieve the name of the resource.
      *
-     * @param int $resourceID the id of the resource
+     * @param   int  $resourceID  the id of the resource
      *
      * @return string
      */
@@ -31,8 +31,8 @@ trait Named
     /**
      * Attempts to retrieve the name of the resource.
      *
-     * @param string $columnName the substantive part of the column name to search for
-     * @param int    $resourceID the id of the resource
+     * @param   string  $columnName  the substantive part of the column name to search for
+     * @param   int     $resourceID  the id of the resource
      *
      * @return string
      */
@@ -49,7 +49,7 @@ trait Named
             return (string) $table->$columnName;
         }
 
-        $localizedName = "{$columnName}_" . Application::getTag();
+        $localizedName = "{$columnName}_" . Application::tag();
         if (array_key_exists($localizedName, $tableFields)) {
             // Some name columns may contain a null value
             return (string) $table->$localizedName;
@@ -61,7 +61,7 @@ trait Named
     /**
      * Attempts to retrieve the plural of the resource.
      *
-     * @param int $resourceID the id of the resource
+     * @param   int  $resourceID  the id of the resource
      *
      * @return string
      */

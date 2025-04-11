@@ -30,7 +30,7 @@ class PlgUserGroups extends CMSPlugin
     /**
      * Method fills user related table information.
      *
-     * @param array $properties the user table properties
+     * @param   array  $properties  the user table properties
      *
      * @return void
      * @throws Exception
@@ -64,7 +64,7 @@ class PlgUserGroups extends CMSPlugin
         $updated = false;
 
         if (empty($user->surnames)) {
-            list($surnames, $forenames) = Cohesion::parseNames($user->name);
+            [$surnames, $forenames] = Cohesion::parseNames($user->name);
 
             $user->forenames = $forenames;
             $user->surnames  = $surnames;
@@ -84,14 +84,12 @@ class PlgUserGroups extends CMSPlugin
     /**
      * Creates a groups group entry. The current language anchors the default name column.
      *
-     * @param string $context com_users.group
-     * @param Usergroup $usergroups the group table object
-     * @param bool $isNew whether the group is new to the instance
-     * @param array $data the form data
+     * @param   string     $context     com_users.group
+     * @param   Usergroup  $usergroups  the group table object
+     * @param   bool       $isNew       whether the group is new to the instance
+     * @param   array      $data        the form data
      *
      * @return void
-     * @noinspection PhpUnusedParameterInspection
-     * @noinspection PhpUndefinedFieldInspection
      */
     public function onUserAfterSaveGroup(string $context, Usergroup $usergroups, bool $isNew, array $data): void
     {
@@ -103,7 +101,7 @@ class PlgUserGroups extends CMSPlugin
         if ($group->load($groupID)) {
 
             // Update the localization for the current language. Update the other language if no value is set.
-            switch (Application::getTag()) {
+            switch (Application::tag()) {
                 case 'en':
                     if ($group->name_en !== $title) {
                         $group->name_en = $title;

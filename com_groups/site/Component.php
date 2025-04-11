@@ -10,25 +10,27 @@
 
 namespace THM\Groups;
 
-use Joomla\CMS\Application\CMSApplicationInterface;
-use Joomla\CMS\Component\Router\RouterInterface;
-use Joomla\CMS\Component\Router\RouterServiceInterface;
-use Joomla\CMS\Extension\BootableExtensionInterface;
-use Joomla\CMS\Extension\MVCComponent;
-use Joomla\CMS\HTML\HTMLRegistryAwareTrait;
-use Joomla\CMS\Menu\AbstractMenu;
-use Psr\Container\ContainerInterface;
+use Joomla\CMS\{Application\CMSApplicationInterface, Extension\MVCComponent};
+use Joomla\CMS\{HTML\HTMLRegistryAwareTrait, Menu\AbstractMenu};
+use Joomla\CMS\Component\Router\{RouterInterface, RouterServiceInterface};
+use THM\Groups\Adapters\{MVCFactory, RouterFactory};
 
-class Component extends MVCComponent implements BootableExtensionInterface, RouterServiceInterface
+class Component extends MVCComponent implements RouterServiceInterface
 {
     use HTMLRegistryAwareTrait;
 
+    private ?RouterFactory $routerFactory = null;
+
     /**
-     * @inheritDoc
+     * Wrapper for the getMVCFactory function to accurately return type the unnecessarily private property mvcFactory.
+     * @return MVCFactory
      */
-    public function boot(ContainerInterface $container)
+    public function mvcFactory(): MVCFactory
     {
-        // TODO: Implement boot() method.
+        /** @var MVCFactory $factory */
+        $factory = $this->getMVCFactory();
+
+        return $factory;
     }
 
     /**
@@ -36,15 +38,20 @@ class Component extends MVCComponent implements BootableExtensionInterface, Rout
      */
     public function createRouter(CMSApplicationInterface $application, AbstractMenu $menu): RouterInterface
     {
-        // TODO: Implement createRouter() method.
+        echo "<pre>246810</pre>";
+        return $this->routerFactory->createRouter($application, $menu);
     }
 
-    public function setCategoryFactory($get)
+    /**
+     * The router factory.
+     *
+     * @param   RouterFactory  $factory  The router factory
+     *
+     * @return  void
+     */
+    public function setRouterFactory(RouterFactory $factory): void
     {
-    }
-
-    public function setRouterFactory($get)
-    {
+        $this->routerFactory = $factory;
     }
 }
 

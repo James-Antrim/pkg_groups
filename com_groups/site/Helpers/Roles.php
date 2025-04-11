@@ -27,7 +27,7 @@ class Roles implements Selectable
     {
         $db     = Application::database();
         $query  = $db->getQuery(true);
-        $plural = $db->quoteName('plural_' . Application::getTag());
+        $plural = $db->quoteName('plural_' . Application::tag());
         $roles  = $db->quoteName('#__groups_roles');
         $query->select('*')->from($roles)->order($plural);
         $db->setQuery($query);
@@ -50,7 +50,7 @@ class Roles implements Selectable
      */
     public static function getOptions(bool $associated = true): array
     {
-        $plural    = 'plural_' . Application::getTag();
+        $plural    = 'plural_' . Application::tag();
         $options   = [];
         $options[] = (object) [
             'text'  => Text::_('GROUPS_NONE_MEMBER'),

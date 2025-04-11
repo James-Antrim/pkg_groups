@@ -69,7 +69,7 @@ class Roles extends Table
             return '';
         }
 
-        if (Application::getTag() === 'en') {
+        if (Application::tag() === 'en') {
             return $this->plural_en;
         }
 

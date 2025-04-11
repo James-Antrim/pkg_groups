@@ -19,44 +19,44 @@ class Associations
     public const TARGETS = [
 
         Entities::AREAS => [
-            Entities::AREAS => [
-                'byChild' => [
-                    'id' => 3009,
+            Entities::AREAS    => [
+                'byChild'  => [
+                    'id'   => 3009,
                     'name' => 'AREA_has_child_AREA',
                 ],
                 'byParent' => [
-                    'id' => 3009,
+                    'id'   => 3009,
                     'name' => 'AREA_has_child_AREA',
                 ],
             ],
-            Entities::FILES => [
+            Entities::FILES    => [
                 self::DEFAULT => [
-                    'id' => 3331,
-                    'name' => 'AREA_has_FILE',
+                    'id'    => 3331,
+                    'name'  => 'AREA_has_FILE',
                     'query' => 'data/entities/Area/linked/AREA_has_FILE/%d'
                 ]
             ],
             Entities::PICTURES => [
                 self::DEFAULT => [
-                    'id' => 3354,
-                    'name' => 'AREA_has_PICT',
+                    'id'    => 3354,
+                    'name'  => 'AREA_has_PICT',
                     'query' => 'data/entities/Area/linked/AREA_has_PICT/%d'
                 ]
             ],
         ],
 
         Entities::CARDS => [
-            Entities::ROLES => [
+            Entities::ROLES         => [
                 self::DEFAULT => [
-                    'id' => 2208588,
-                    'name' => 'CARD_has_FUNC',
+                    'id'    => 2208588,
+                    'name'  => 'CARD_has_FUNC',
                     'query' => 'data/entities/Card/linked/CARD_has_FUNC/%d'
                 ],
             ],
             Entities::ORGANIZATIONS => [
                 self::DEFAULT => [
-                    'id' => 3101,
-                    'name' => 'CARD_has_ORGA',
+                    'id'    => 3101,
+                    'name'  => 'CARD_has_ORGA',
                     'query' => 'data/entities/Card/linked/CARD_has_ORGA/%d'
                 ],
             ],
@@ -67,210 +67,210 @@ class Associations
         Entities::PERSONS => [
             Entities::AREAS => [
                 self::DEFAULT => [
-                    'id' => 3377,
-                    'name' => 'PERS_has_AREA',
+                    'id'    => 3377,
+                    'name'  => 'PERS_has_AREA',
                     'query' => 'data/entities/Person/linked/PERS_has_AREA/%d'
                 ]
             ],
         ],
 
         Entities::PUBLICATIONS => [
-            Entities::AREAS => [
+            Entities::AREAS                    => [
                 self::DEFAULT => [
-                    'id' => 3239,
-                    'name' => 'PUBL_has_AREA',
+                    'id'    => 3239,
+                    'name'  => 'PUBL_has_AREA',
                     'query' => 'data/entities/Publication/linked/PUBL_has_AREA/%d'
                 ],
             ],
-            Entities::BRANCHES => [
+            Entities::BRANCHES                 => [
                 self::DEFAULT => [
-                    'id' => 2301844,
-                    'name' => 'PUBL_has_WIZW',
+                    'id'    => 2301844,
+                    'name'  => 'PUBL_has_WIZW',
                     'query' => 'data/entities/Publication/linked/PUBL_has_WIZW/%d'
                 ],
             ],
-            Entities::CARDS => [
+            Entities::CARDS                    => [
 
                 [
-                    'id' => 7195,
-                    'name' => 'PUBL_has_cl_CARD',
-                    'isTree' => false,
+                    'id'          => 7195,
+                    'name'        => 'PUBL_has_cl_CARD',
+                    'isTree'      => false,
                     'description' => '[X] Anfragen von Autoren',
-                    'select' => 'Publication',
-                    'where' => 'Card',
-                    'query' => 'data/entities/Publication/linked/PUBL_has_cl_CARD/%d'
+                    'select'      => 'Publication',
+                    'where'       => 'Card',
+                    'query'       => 'data/entities/Publication/linked/PUBL_has_cl_CARD/%d'
                 ],
                 [
-                    'id' => 3745,
-                    'name' => 'PUBL_has_vali_CARD',
-                    'isTree' => false,
+                    'id'          => 3745,
+                    'name'        => 'PUBL_has_vali_CARD',
+                    'isTree'      => false,
                     'description' => '[X] Bearbeiter',
-                    'select' => 'Publication',
-                    'where' => 'Card',
-                    'query' => 'data/entities/Publication/linked/PUBL_has_vali_CARD/%d'
+                    'select'      => 'Publication',
+                    'where'       => 'Card',
+                    'query'       => 'data/entities/Publication/linked/PUBL_has_vali_CARD/%d'
                 ],
             ],
-            Entities::DFG_FIELDS => [
+            Entities::DFG_FIELDS               => [
                 self::DEFAULT => [
-                    'id' => 14463,
-                    'name' => 'PUBL_has_DFGA',
+                    'id'    => 14463,
+                    'name'  => 'PUBL_has_DFGA',
                     'query' => 'data/entities/Publication/linked/PUBL_has_DFGA/%d'
                 ],
             ],
-            Entities::JOURNALS => [
+            Entities::JOURNALS                 => [
                 self::DEFAULT => [
-                    'id' => 3032,
-                    'name' => 'PUBL_has_JOUR',
+                    'id'    => 3032,
+                    'name'  => 'PUBL_has_JOUR',
                     'query' => 'data/entities/Publication/linked/PUBL_has_JOUR/%d'
                 ],
             ],
-            Entities::PEER_REVIEWS => [
+            Entities::PEER_REVIEWS             => [
                 self::DEFAULT => [
-                    'id' => 4527,
-                    'name' => 'PUBL_has_PEER',
+                    'id'    => 4527,
+                    'name'  => 'PUBL_has_PEER',
                     'query' => 'data/entities/Publication/linked/PUBL_has_PEER/%d'
                 ],
             ],
             Entities::PUBLICATION_APPLICATIONS => [
                 self::DEFAULT => [
-                    'id' => 3607,
-                    'name' => 'PUBL_has_a_PUBA',
+                    'id'    => 3607,
+                    'name'  => 'PUBL_has_a_PUBA',
                     'query' => 'data/entities/Publication/linked/PUBL_has_a_PUBA/%d'
                 ],
             ],
             [
-                'id' => 3147,
-                'name' => 'PUBL_has_CARD',
-                'isTree' => false,
+                'id'          => 3147,
+                'name'        => 'PUBL_has_CARD',
+                'isTree'      => false,
                 'description' => '[X] Autoren [KDSF:Pu52]',
-                'query' => 'data/entities/Publication/linked/PUBL_has_CARD/%d'
+                'query'       => 'data/entities/Publication/linked/PUBL_has_CARD/%d'
             ],
             [
-                'id' => 5401,
-                'name' => 'PUBL_has_EVEN',
+                'id'     => 5401,
+                'name'   => 'PUBL_has_EVEN',
                 'isTree' => false,
                 'select' => 'Publication',
-                'where' => 'cfEvent',
-                'query' => 'data/entities/Publication/linked/PUBL_has_EVEN/%d'
+                'where'  => 'cfEvent',
+                'query'  => 'data/entities/Publication/linked/PUBL_has_EVEN/%d'
             ],
             [
-                'id' => 6758,
-                'name' => 'PUBL_has_LANG',
-                'isTree' => false,
+                'id'          => 6758,
+                'name'        => 'PUBL_has_LANG',
+                'isTree'      => false,
                 'description' => '[X] Sprache [KDSF:Pu95]',
-                'select' => 'Publication',
-                'where' => 'cfLang',
-                'query' => 'data/entities/Publication/linked/PUBL_has_LANG/%d'
+                'select'      => 'Publication',
+                'where'       => 'cfLang',
+                'query'       => 'data/entities/Publication/linked/PUBL_has_LANG/%d'
             ],
             [
-                'id' => 6896,
-                'name' => 'PUBL_has_PUBL',
-                'isTree' => false,
+                'id'          => 6896,
+                'name'        => 'PUBL_has_PUBL',
+                'isTree'      => false,
                 'description' => 'Relation to depict the relation of a publication that is part of a book to the book itself',
-                'select' => 'Publication',
-                'where' => 'Publication',
-                'query' => 'data/entities/Publication/linked/PUBL_has_PUBL/%d'
+                'select'      => 'Publication',
+                'where'       => 'Publication',
+                'query'       => 'data/entities/Publication/linked/PUBL_has_PUBL/%d'
             ],
             [
-                'id' => 6965,
-                'name' => 'PUBL_has_DDC',
-                'isTree' => false,
+                'id'          => 6965,
+                'name'        => 'PUBL_has_DDC',
+                'isTree'      => false,
                 'description' => 'PUBL_has_DDC',
-                'select' => 'Publication',
-                'where' => 'DDC',
-                'query' => 'data/entities/Publication/linked/PUBL_has_DDC/%d'
+                'select'      => 'Publication',
+                'where'       => 'DDC',
+                'query'       => 'data/entities/Publication/linked/PUBL_has_DDC/%d'
             ],
             [
-                'id' => 7149,
-                'name' => 'PUBL_has_rej_CARD',
-                'isTree' => false,
+                'id'          => 7149,
+                'name'        => 'PUBL_has_rej_CARD',
+                'isTree'      => false,
                 'description' => '[X] Abgelehnte Anfragen',
-                'select' => 'Publication',
-                'where' => 'Card',
-                'query' => 'data/entities/Publication/linked/PUBL_has_rej_CARD/%d'
+                'select'      => 'Publication',
+                'where'       => 'Card',
+                'query'       => 'data/entities/Publication/linked/PUBL_has_rej_CARD/%d'
             ],
             [
-                'id' => 3446,
-                'name' => 'PUBL_has_FILE',
-                'isTree' => false,
+                'id'          => 3446,
+                'name'        => 'PUBL_has_FILE',
+                'isTree'      => false,
                 'description' => '[X] To handle full texts for publications (or similar files for different publication or output types).',
-                'select' => 'Publication',
-                'where' => 'File',
-                'query' => 'data/entities/Publication/linked/PUBL_has_FILE/%d'
+                'select'      => 'Publication',
+                'where'       => 'File',
+                'query'       => 'data/entities/Publication/linked/PUBL_has_FILE/%d'
             ],
             [
-                'id' => 7425,
-                'name' => 'PUBL_has_COUN',
+                'id'     => 7425,
+                'name'   => 'PUBL_has_COUN',
                 'isTree' => false,
                 'select' => 'Publication',
-                'where' => 'Country',
-                'query' => 'data/entities/Publication/linked/PUBL_has_COUN/%d'
+                'where'  => 'Country',
+                'query'  => 'data/entities/Publication/linked/PUBL_has_COUN/%d'
             ],
             [
-                'id' => 7448,
-                'name' => 'PUBL_has_ISIA',
+                'id'     => 7448,
+                'name'   => 'PUBL_has_ISIA',
                 'isTree' => false,
                 'select' => 'Publication',
-                'where' => 'ISISubjCat',
-                'query' => 'data/entities/Publication/linked/PUBL_has_ISIA/%d'
+                'where'  => 'ISISubjCat',
+                'query'  => 'data/entities/Publication/linked/PUBL_has_ISIA/%d'
             ],
             [
-                'id' => 13474,
-                'name' => 'PUBL_has_PAPL',
+                'id'     => 13474,
+                'name'   => 'PUBL_has_PAPL',
                 'isTree' => false,
                 'select' => 'Publication',
-                'where' => 'Project application',
-                'query' => 'data/entities/Publication/linked/PUBL_has_PAPL/%d'
+                'where'  => 'Project application',
+                'query'  => 'data/entities/Publication/linked/PUBL_has_PAPL/%d'
             ],
             [
-                'id' => 13566,
-                'name' => 'PUBL_has_CENT',
+                'id'     => 13566,
+                'name'   => 'PUBL_has_CENT',
                 'isTree' => false,
                 'select' => 'Publication',
-                'where' => 'Centrum',
-                'query' => 'data/entities/Publication/linked/PUBL_has_CENT/%d'
+                'where'  => 'Centrum',
+                'query'  => 'data/entities/Publication/linked/PUBL_has_CENT/%d'
             ],
             [
-                'id' => 13589,
-                'name' => 'PUBL_has_RENE',
+                'id'     => 13589,
+                'name'   => 'PUBL_has_RENE',
                 'isTree' => false,
                 'select' => 'Publication',
-                'where' => 'researchNetwork',
-                'query' => 'data/entities/Publication/linked/PUBL_has_RENE/%d'
+                'where'  => 'researchNetwork',
+                'query'  => 'data/entities/Publication/linked/PUBL_has_RENE/%d'
             ],
             [
-                'id' => 14440,
-                'name' => 'PUBL_has_STAT',
+                'id'     => 14440,
+                'name'   => 'PUBL_has_STAT',
                 'isTree' => false,
                 'select' => 'Publication',
-                'where' => 'StatisticsArea',
-                'query' => 'data/entities/Publication/linked/PUBL_has_STAT/%d'
+                'where'  => 'StatisticsArea',
+                'query'  => 'data/entities/Publication/linked/PUBL_has_STAT/%d'
             ],
             [
-                'id' => 15291,
-                'name' => 'PUBL_has_FOSP',
+                'id'     => 15291,
+                'name'   => 'PUBL_has_FOSP',
                 'isTree' => false,
                 'select' => 'Publication',
-                'where' => 'Forschungsschwerpunkt',
-                'query' => 'data/entities/Publication/linked/PUBL_has_FOSP/%d'
+                'where'  => 'Forschungsschwerpunkt',
+                'query'  => 'data/entities/Publication/linked/PUBL_has_FOSP/%d'
             ],
             [
-                'id' => 15314,
-                'name' => 'PUBL_has_PICT',
-                'isTree' => false,
+                'id'          => 15314,
+                'name'        => 'PUBL_has_PICT',
+                'isTree'      => false,
                 'description' => 'Pictures related to publications',
-                'select' => 'Publication',
-                'where' => 'Picture',
-                'query' => 'data/entities/Publication/linked/PUBL_has_PICT/%d'
+                'select'      => 'Publication',
+                'where'       => 'Picture',
+                'query'       => 'data/entities/Publication/linked/PUBL_has_PICT/%d'
             ],
             [
-                'id' => 2245713,
-                'name' => 'PUBL_has_EXTO',
-                'isTree' => false,
+                'id'          => 2245713,
+                'name'        => 'PUBL_has_EXTO',
+                'isTree'      => false,
                 'description' => '[X] Externe Organisationen',
-                'select' => 'Publication',
-                'where' => 'externalOrganisation',
-                'query' => 'data/entities/Publication/linked/PUBL_has_EXTO/%d'
+                'select'      => 'Publication',
+                'where'       => 'externalOrganisation',
+                'query'       => 'data/entities/Publication/linked/PUBL_has_EXTO/%d'
             ],
             /*
             [
@@ -321,8 +321,8 @@ class Associations
 
         Entities::TASKS => [
             Entities::FILES => [
-                'name' => 'TASK_has_FILE',
-                'id' => 3676,
+                'name'  => 'TASK_has_FILE',
+                'id'    => 3676,
                 'query' => 'data/entities/Task/linked/TASK_has_FILE/%d'
             ],
             /*
@@ -415,7 +415,8 @@ class Associations
         if (empty($target)) {
             echo "<pre>The target entity has not been specified.</pre>";
             return $default;
-        } elseif (empty($filter)) {
+        }
+        elseif (empty($filter)) {
             echo "<pre>The filter entity has not been specified.</pre>";
             return $default;
         }
@@ -424,12 +425,13 @@ class Associations
         if (empty(Entities::ENTITIES[$target])) {
             echo "<pre>No entity has been registered for the target index $target.</pre>";
             return $default;
-        } elseif (empty(Entities::ENTITIES[$filter])) {
+        }
+        elseif (empty(Entities::ENTITIES[$filter])) {
             echo "<pre>No entity has been registered for the filter index $filter.</pre>";
             return $default;
         }
 
-        $tag     = Application::getTag();
+        $tag     = Application::tag();
         $plural  = 'plural_' . $tag;
         $filters = Entities::ENTITIES[$filter][$plural];
         $targets = Entities::ENTITIES[$target][$plural];
@@ -437,7 +439,8 @@ class Associations
         if (empty(self::TARGETS[$target])) {
             echo "<pre>No associations have been registered for $targets ($target).</pre>";
             return $default;
-        } elseif (empty(self::TARGETS[$target][$filter])) {
+        }
+        elseif (empty(self::TARGETS[$target][$filter])) {
             echo "<pre>$targets have no registered associations to $filters ($filter).</pre>";
             return $default;
         }
@@ -446,21 +449,24 @@ class Associations
             if (!class_exists($filters)) {
                 echo "<pre>The $filters class does not exist within the current namespace.</pre>";
                 return $default;
-            } elseif (empty($filters::filters[$extended])) {
+            }
+            elseif (empty($filters::filters[$extended])) {
                 echo "<pre>The $filters class has not registered an extended filter at the index $extended.</pre>";
                 return $default;
             }
 
             $extFilter = 'filter_' . $tag;
             $extFilter = $filters::filters[$extended][$extFilter];
-        } else {
+        }
+        else {
             $extFilter = 'Default';
         }
 
         if (empty(self::TARGETS[$target][$filter][$extended])) {
             echo "<pre>The extended filter $extFilter ($extended) has not been registered in the $targets > $filters context.</pre>";
             return $default;
-        } elseif (empty(self::TARGETS[$target][$filter][$extended][$value])) {
+        }
+        elseif (empty(self::TARGETS[$target][$filter][$extended][$value])) {
             echo "<pre>The extended filter $extFilter ($extended) in the $targets > $filters context is invalid.</pre>";
             return $default;
         }

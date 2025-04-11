@@ -82,7 +82,7 @@ class Roles extends ListModel
         $groups = $db->quoteName('g.id', 'groups');
         $groups = 'COUNT(' . implode(') AS ', explode(' AS ', $groups));
         $query  = $db->getQuery(true);
-        $tag    = Application::getTag();
+        $tag    = Application::tag();
 
         //'COUNT(' . $db->quoteName('id') . ')'
 

@@ -67,7 +67,7 @@ class Groups extends ListModel
         // Create a new query object.
         $db    = $this->getDatabase();
         $query = $db->getQuery(true);
-        $tag   = Application::getTag();
+        $tag   = Application::tag();
 
         $id       = 'DISTINCT ' . $db->quoteName('g.id', 'id');
         $groupID  = $db->quoteName('g.id');
