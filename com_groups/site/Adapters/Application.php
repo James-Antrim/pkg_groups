@@ -56,6 +56,15 @@ class Application
     }
 
     /**
+     * Shortcuts container access.
+     * @return Container
+     */
+    public static function container(): Container
+    {
+        return Factory::getContainer();
+    }
+
+    /**
      * Determines whether the view was called from a dynamic context
      * @return bool true if the view was called dynamically, otherwise false
      */
@@ -121,20 +130,11 @@ class Application
 
     /**
      * Shortcuts container access.
-     * @return Container
-     */
-    public static function getContainer(): Container
-    {
-        return Factory::getContainer();
-    }
-
-    /**
-     * Shortcuts container access.
      * @return DatabaseDriver
      */
     public static function getDB(): DatabaseDriver
     {
-        return self::getContainer()->get('DatabaseDriver');
+        return self::container()->get('DatabaseDriver');
     }
 
     /**
@@ -216,7 +216,7 @@ class Application
     public static function getUser(int|string $userID = 0): User
     {
         /** @var UserFactory $userFactory */
-        $userFactory = self::getContainer()->get(UserFactoryInterface::class);
+        $userFactory = self::container()->get(UserFactoryInterface::class);
 
         // Get a specific user.
         if ($userID) {
