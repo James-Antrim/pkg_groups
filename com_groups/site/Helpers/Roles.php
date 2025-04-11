@@ -25,7 +25,7 @@ class Roles implements Selectable
      */
     public static function getAll(): array
     {
-        $db     = Application::getDB();
+        $db     = Application::database();
         $query  = $db->getQuery(true);
         $plural = $db->quoteName('plural_' . Application::getTag());
         $roles  = $db->quoteName('#__groups_roles');
@@ -46,14 +46,14 @@ class Roles implements Selectable
     /**
      * @inheritDoc
      *
-     * @param bool $bound whether the role must already be associated
+     * @param   bool  $bound  whether the role must already be associated
      */
     public static function getOptions(bool $associated = true): array
     {
         $plural    = 'plural_' . Application::getTag();
         $options   = [];
         $options[] = (object) [
-            'text' => Text::_('GROUPS_NONE_MEMBER'),
+            'text'  => Text::_('GROUPS_NONE_MEMBER'),
             'value' => ''
         ];
 
@@ -63,7 +63,7 @@ class Roles implements Selectable
             }
 
             $options[] = (object) [
-                'text' => $role->$plural,
+                'text'  => $role->$plural,
                 'value' => $roleID
             ];
         }

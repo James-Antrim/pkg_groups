@@ -25,74 +25,79 @@ class Users
     // Pending state comes into effect through user interaction with the login component.
     public const activatedStates = [
         self::ACTIVATED => [
-            'class' => 'publish',
+            'class'  => 'publish',
             'column' => 'activated',
-            'task' => '',
-            'tip' => 'GROUPS_TOGGLE_TIP_USER_ACTIVATED'
+            'task'   => '',
+            'tip'    => 'GROUPS_TOGGLE_TIP_USER_ACTIVATED'
         ],
-        self::PENDING => [
-            'class' => 'unpublish',
+        self::PENDING   => [
+            'class'  => 'unpublish',
             'column' => 'activated',
-            'task' => 'activate',
-            'tip' => 'GROUPS_TOGGLE_TIP_USER_PENDING'
-        ]];
+            'task'   => 'activate',
+            'tip'    => 'GROUPS_TOGGLE_TIP_USER_PENDING'
+        ]
+    ];
 
     // Display semantic is reversed
     public const blockedStates = [
-        self::BLOCKED => [
-            'class' => 'unpublish',
+        self::BLOCKED   => [
+            'class'  => 'unpublish',
             'column' => 'block',
-            'task' => 'unblock',
-            'tip' => 'GROUPS_TOGGLE_TIP_USER_BLOCKED'
+            'task'   => 'unblock',
+            'tip'    => 'GROUPS_TOGGLE_TIP_USER_BLOCKED'
         ],
         self::UNBLOCKED => [
-            'class' => 'publish',
+            'class'  => 'publish',
             'column' => 'block',
-            'task' => 'block',
-            'tip' => 'GROUPS_TOGGLE_TIP_USER_UNBLOCKED'
-        ]];
+            'task'   => 'block',
+            'tip'    => 'GROUPS_TOGGLE_TIP_USER_UNBLOCKED'
+        ]
+    ];
 
     public const contentStates = [
-        self::ENABLED => [
-            'class' => 'publish',
+        self::ENABLED  => [
+            'class'  => 'publish',
             'column' => 'content',
-            'task' => 'disableContent',
-            'tip' => 'GROUPS_TOGGLE_TIP_CONTENTS_ENABLED'
+            'task'   => 'disableContent',
+            'tip'    => 'GROUPS_TOGGLE_TIP_CONTENTS_ENABLED'
         ],
         self::DISABLED => [
-            'class' => 'unpublish',
+            'class'  => 'unpublish',
             'column' => 'content',
-            'task' => 'enableContent',
-            'tip' => 'GROUPS_TOGGLE_TIP_CONTENTS_DISABLED'
-        ]];
+            'task'   => 'enableContent',
+            'tip'    => 'GROUPS_TOGGLE_TIP_CONTENTS_DISABLED'
+        ]
+    ];
 
     public const editingStates = [
-        self::ENABLED => [
-            'class' => 'publish',
+        self::ENABLED  => [
+            'class'  => 'publish',
             'column' => 'editing',
-            'task' => 'disableEditing',
-            'tip' => 'GROUPS_TOGGLE_TIP_EDITING_ENABLED'
+            'task'   => 'disableEditing',
+            'tip'    => 'GROUPS_TOGGLE_TIP_EDITING_ENABLED'
         ],
         self::DISABLED => [
-            'class' => 'unpublish',
+            'class'  => 'unpublish',
             'column' => 'editing',
-            'task' => 'enableEditing',
-            'tip' => 'GROUPS_TOGGLE_TIP_EDITING_DISABLED'
-        ]];
+            'task'   => 'enableEditing',
+            'tip'    => 'GROUPS_TOGGLE_TIP_EDITING_DISABLED'
+        ]
+    ];
 
     public const publishedStates = [
-        self::PUBLISHED => [
-            'class' => 'publish',
+        self::PUBLISHED   => [
+            'class'  => 'publish',
             'column' => 'published',
-            'task' => 'unpublish',
-            'tip' => 'GROUPS_TOGGLE_TIP_PROFILE_PUBLISHED'
+            'task'   => 'unpublish',
+            'tip'    => 'GROUPS_TOGGLE_TIP_PROFILE_PUBLISHED'
         ],
         self::UNPUBLISHED => [
-            'class' => 'unpublish',
+            'class'  => 'unpublish',
             'column' => 'published',
-            'task' => 'publish',
-            'tip' => 'GROUPS_TOGGLE_TIP_PROFILE_UNPUBLISHED'
-        ]];
+            'task'   => 'publish',
+            'tip'    => 'GROUPS_TOGGLE_TIP_PROFILE_UNPUBLISHED'
+        ]
+    ];
 
     public static function createAlias(int $accountID, string $identifier): string
     {
@@ -101,7 +106,7 @@ class Users
         $alias = Text::filter($alias);
         $alias = str_replace(' ', '-', $alias);
 
-        $db    = Application::getDB();
+        $db    = Application::database();
         $id    = $db->quoteName('id');
         $query = $db->getQuery(true);
         $query->select($id)
@@ -129,8 +134,9 @@ class Users
 
     /**
      * Gets the value of a table state property.
-     * @param int $personID
-     * @param string $property
+     *
+     * @param   int     $personID
+     * @param   string  $property
      *
      * @return bool
      */

@@ -55,23 +55,23 @@ class Groups implements Selectable
     /**
      * Gets the view levels associated with the group.
      *
-     * @param int $groupID the id of the group to get levels for
+     * @param   int  $groupID  the id of the group to get levels for
      *
      * @return array [id => title]
      */
     public static function getLevels(int $groupID): array
     {
-        $group = UserGroupsHelper::getInstance()->get($groupID);
+        $group    = UserGroupsHelper::getInstance()->get($groupID);
         $groupIDs = $group->path;
 
-        $db = Application::getDB();
-        $id = $db->quoteName('id');
-        $rules = $db->quoteName('rules');
-        $title = $db->quoteName('title');
+        $db     = Application::database();
+        $id     = $db->quoteName('id');
+        $rules  = $db->quoteName('rules');
+        $title  = $db->quoteName('title');
         $levels = $db->quoteName('#__viewlevels');
 
-        $query = $db->getQuery(true);
-        $regex = $query->concatenate(["'[,\\\\[]'", ':groupID', "'[,\\\\]]'"]);
+        $query  = $db->getQuery(true);
+        $regex  = $query->concatenate(["'[,\\\\[]'", ':groupID', "'[,\\\\]]'"]);
         $return = [];
         $query->select([$id, $title])->from($levels)->where("$rules REGEXP $regex");
 
@@ -83,7 +83,8 @@ class Groups implements Selectable
             if ($results = $db->loadAssocList('id', 'title')) {
                 $return += $results;
             }
-        } while ($groupIDs);
+        }
+        while ($groupIDs);
 
         asort($return);
 
@@ -109,10 +110,10 @@ class Groups implements Selectable
         foreach (self::getAll() as $groupID => $group) {
             $disabled = (!$allowDefault and in_array($groupID, self::DEFAULT)) ? 'disabled' : '';
 
-            $options[] = (object)[
+            $options[] = (object) [
                 'disable' => $disabled,
-                'text' => self::getPrefix($group->level) . $group->title,
-                'value' => $group->id
+                'text'    => self::getPrefix($group->level) . $group->title,
+                'value'   => $group->id
             ];
         }
 
@@ -122,7 +123,7 @@ class Groups implements Selectable
     /**
      * Gets the prefix for hierarchical list displays.
      *
-     * @param int $level the nested level of the group
+     * @param   int  $level  the nested level of the group
      *
      * @return string the prefix to display
      *
@@ -140,16 +141,16 @@ class Groups implements Selectable
     /**
      * Gets the roles associated with the group.
      *
-     * @param int $groupID the id of the group to get roles for
+     * @param   int  $groupID  the id of the group to get roles for
      *
      * @return array [id => name]
      */
     public static function getRoles(int $groupID): array
     {
         $tag = Application::getTag();
-        $db = Application::getDB();
+        $db  = Application::database();
 
-        $roleID = $db->quoteName("r.id");
+        $roleID     = $db->quoteName("r.id");
         $condition1 = $db->quoteName("ra.roleID") . " = $roleID";
         $condition2 = $db->quoteName("m.id") . ' = ' . $db->quoteName("ra.mapID");
 

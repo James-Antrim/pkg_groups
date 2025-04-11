@@ -51,10 +51,10 @@ class Migration
     /**
      * Provides standard preparation for attributes.
      *
-     * @param array  $data  the migrated data to be saved to the attributes table
-     * @param array  $map   the map of the deprecated attribute ids to the new attribute ids
-     * @param string $label the label for the migrated attribute
-     * @param int    $oldID the id of the deprecated attribute entry
+     * @param   array   $data   the migrated data to be saved to the attributes table
+     * @param   array   $map    the map of the deprecated attribute ids to the new attribute ids
+     * @param   string  $label  the label for the migrated attribute
+     * @param   int     $oldID  the id of the deprecated attribute entry
      *
      * @return bool true if an existing migration of the attribute exists, otherwise false
      */
@@ -83,7 +83,7 @@ class Migration
      */
     private static function attributes(): array
     {
-        $db  = Application::getDB();
+        $db  = Application::database();
         $map = [];
 
         $query         = $db->getQuery(true);
@@ -94,40 +94,40 @@ class Migration
         // Basic attributes (forenames and surnames have already been migrated to the entry)
         if ($oldAttributes = $db->loadObjectList('label')) {
             $labelMap = [
-                'Aktuell' => self::CURRENT,
-                'Anschrift' => self::ADDRESS,
-                'Arbeitsgebiete' => self::ACTIVITIES,
-                'Besondere Funktion' => self::DUTIES,
-                'Bild' => self::PICTURE,
-                'Büro' => self::OFFICE,
-                'Email' => self::EMAIL1,
-                'E-Mail 2' => self::EMAIL2,
-                'E-Mail-2' => self::EMAIL2,
-                'Email2' => self::EMAIL2,
-                'Fax' => self::FAX1,
-                'Fachgebiet' => self::FIELDS,
-                'Fachgebiete' => self::FIELDS,
-                'Forschungsgebiete' => self::RESEARCH_FIELDS,
-                'Funktionen' => self::DUTIES,
-                'Homepage' => self::LINKS,
-                'Namenszusatz (nach)' => self::SUPPLEMENT_POST,
-                'Namenszusatz (vor)' => self::SUPPLEMENT_PRE,
-                'Profilbild' => self::PICTURE,
-                'Raum' => self::OFFICE,
-                'Sprechstunde' => self::HOURS,
-                'Sprechstunden' => self::HOURS,
-                'Sprechzeiten' => self::HOURS,
-                'Telefon' => self::PHONE1,
-                'Telefon 2' => self::PHONE2,
-                'Veranstaltungen' => self::CLASSES,
-                'Web' => self::URL,
-                'Webseite' => self::URL,
+                'Aktuell'               => self::CURRENT,
+                'Anschrift'             => self::ADDRESS,
+                'Arbeitsgebiete'        => self::ACTIVITIES,
+                'Besondere Funktion'    => self::DUTIES,
+                'Bild'                  => self::PICTURE,
+                'Büro'                  => self::OFFICE,
+                'Email'                 => self::EMAIL1,
+                'E-Mail 2'              => self::EMAIL2,
+                'E-Mail-2'              => self::EMAIL2,
+                'Email2'                => self::EMAIL2,
+                'Fax'                   => self::FAX1,
+                'Fachgebiet'            => self::FIELDS,
+                'Fachgebiete'           => self::FIELDS,
+                'Forschungsgebiete'     => self::RESEARCH_FIELDS,
+                'Funktionen'            => self::DUTIES,
+                'Homepage'              => self::LINKS,
+                'Namenszusatz (nach)'   => self::SUPPLEMENT_POST,
+                'Namenszusatz (vor)'    => self::SUPPLEMENT_PRE,
+                'Profilbild'            => self::PICTURE,
+                'Raum'                  => self::OFFICE,
+                'Sprechstunde'          => self::HOURS,
+                'Sprechstunden'         => self::HOURS,
+                'Sprechzeiten'          => self::HOURS,
+                'Telefon'               => self::PHONE1,
+                'Telefon 2'             => self::PHONE2,
+                'Veranstaltungen'       => self::CLASSES,
+                'Web'                   => self::URL,
+                'Webseite'              => self::URL,
                 'Weitere Informationen' => self::INFORMATION,
                 'Weitere-Informationen' => self::INFORMATION,
-                'weiteres Fax' => self::FAX2,
-                'weiteres Telefon' => self::PHONE2,
-                'Weiterführende Links' => self::LINKS,
-                'Zur Person' => self::ABOUT_ME
+                'weiteres Fax'          => self::FAX2,
+                'weiteres Telefon'      => self::PHONE2,
+                'Weiterführende Links'  => self::LINKS,
+                'Zur Person'            => self::ABOUT_ME
             ];
 
             foreach ($labelMap as $label => $newAttributeID) {
@@ -346,7 +346,7 @@ class Migration
      */
     private static function groups(): void
     {
-        $db    = Application::getDB();
+        $db    = Application::database();
         $query = $db->getQuery(true);
         $query->insert($db->quoteName('#__groups_groups'))
             ->columns([$db->quoteName('id'), $db->quoteName('name_de'), $db->quoteName('name_en')])
@@ -411,13 +411,13 @@ class Migration
     /**
      * Migrates the person attribute mappings and values to the new table.
      *
-     * @param array $map
+     * @param   array  $map
      *
      * @return void
      */
     private static function personAttributes(array $map): void
     {
-        $db      = Application::getDB();
+        $db      = Application::database();
         $oldKeys = array_keys($map);
 
         $query = $db->getQuery(true);
@@ -467,7 +467,7 @@ class Migration
      */
     private static function profiles(): void
     {
-        $db = Application::getDB();
+        $db = Application::database();
 
         $query = $db->getQuery(true);
         $query->select('*')->from($db->quoteName('#__thm_groups_profiles'));
@@ -518,13 +518,13 @@ class Migration
     /**
      * Migrates the role associations table.
      *
-     * @param array $rMap an array mapping the existing roles table to the new one
+     * @param   array  $rMap  an array mapping the existing roles table to the new one
      *
      * @return void
      */
     private static function roleAssociations(array $rMap): void
     {
-        $db = Application::getDB();
+        $db = Application::database();
 
         $condition1 = $db->quoteName('ra.id') . ' = ' . $db->quoteName('pa.role_associationID');
         $condition2 = $db->quoteName('r.id') . ' = ' . $db->quoteName('ra.roleID');
@@ -574,7 +574,7 @@ class Migration
      */
     private static function roles(): array
     {
-        $db  = Application::getDB();
+        $db  = Application::database();
         $map = [];
 
         $query = $db->getQuery(true);
@@ -639,13 +639,13 @@ class Migration
 
             // Non-standard/additional roles
             $migrant = [
-                'name_de' => $thmName,
-                'name_en' => $thmName,
+                'name_de'   => $thmName,
+                'name_en'   => $thmName,
                 'plural_de' => $thmName,
                 'plural_en' => $thmName,
 
                 // Ordering has no default value, will be set correctly in the next portion of the function.
-                'ordering' => 0
+                'ordering'  => 0
             ];
 
             $table->save($migrant);
@@ -679,14 +679,14 @@ class Migration
     /**
      * Migrates the person attribute mappings and values to the new table.
      *
-     * @param array $aMap a map of old attribute ids to new attribute ids
-     * @param array $tMap a map of old template ids to new template ids
+     * @param   array  $aMap  a map of old attribute ids to new attribute ids
+     * @param   array  $tMap  a map of old template ids to new template ids
      *
      * @return void
      */
     private static function templateAttributes(array $aMap, array $tMap): void
     {
-        $db      = Application::getDB();
+        $db      = Application::database();
         $oldKeys = array_keys($aMap);
 
         $query = $db->getQuery(true);
@@ -725,7 +725,7 @@ class Migration
      */
     private static function templates(): array
     {
-        $db  = Application::getDB();
+        $db  = Application::database();
         $map = [];
 
         $query = $db->getQuery(true);

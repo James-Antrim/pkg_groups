@@ -82,7 +82,7 @@ class Template extends FormController
      */
     protected function zeroColumn(string $table, string $column): bool
     {
-        $db = Application::getDB();
+        $db = Application::database();
 
         // Perform one query to set the column values to 0 instead of two for search and replace
         $query = $db->getQuery(true)

@@ -126,7 +126,7 @@ class Form extends Base
 
             // Instantiate the form.
             $factory = new FormFactory();
-            $factory->setDatabase(Application::getDB());
+            $factory->setDatabase(Application::database());
             $forms[$name] = $factory->createForm($name, $options);
 
             // Load the data.

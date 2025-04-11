@@ -36,39 +36,41 @@ class Attributes implements Selectable
     public const SHOWN = 1, HIDDEN = 0;
 
     public const showIconStates = [
-        self::SHOWN => [
-            'class' => 'publish',
+        self::SHOWN  => [
+            'class'  => 'publish',
             'column' => 'showIcon',
-            'task' => 'hideIcon',
-            'tip' => 'GROUPS_TOGGLE_TIP_SHOWN'
+            'task'   => 'hideIcon',
+            'tip'    => 'GROUPS_TOGGLE_TIP_SHOWN'
         ],
         self::HIDDEN => [
-            'class' => 'unpublish',
+            'class'  => 'unpublish',
             'column' => 'showIcon',
-            'task' => 'showIcon',
-            'tip' => 'GROUPS_TOGGLE_TIP_HIDDEN'
-        ]];
+            'task'   => 'showIcon',
+            'tip'    => 'GROUPS_TOGGLE_TIP_HIDDEN'
+        ]
+    ];
 
     public const showLabelStates = [
-        self::SHOWN => [
-            'class' => 'publish',
+        self::SHOWN  => [
+            'class'  => 'publish',
             'column' => 'showLabel',
-            'task' => 'hideLabel',
-            'tip' => 'GROUPS_TOGGLE_TIP_SHOWN'
+            'task'   => 'hideLabel',
+            'tip'    => 'GROUPS_TOGGLE_TIP_SHOWN'
         ],
         self::HIDDEN => [
-            'class' => 'unpublish',
+            'class'  => 'unpublish',
             'column' => 'showLabel',
-            'task' => 'showLabel',
-            'tip' => 'GROUPS_TOGGLE_TIP_HIDDEN'
-        ]];
+            'task'   => 'showLabel',
+            'tip'    => 'GROUPS_TOGGLE_TIP_HIDDEN'
+        ]
+    ];
 
     /**
      * @inheritDoc
      */
     public static function getAll(): array
     {
-        $db         = Application::getDB();
+        $db         = Application::database();
         $query      = $db->getQuery(true);
         $label      = $db->quoteName('label_' . Application::getTag());
         $attributes = $db->quoteName('#__groups_attributes');
@@ -97,7 +99,7 @@ class Attributes implements Selectable
         foreach (self::getAll() as $attributeID => $attribute) {
 
             $options[] = (object) [
-                'text' => $attribute->$label,
+                'text'  => $attribute->$label,
                 'value' => $attributeID
             ];
         }
@@ -113,7 +115,7 @@ class Attributes implements Selectable
     {
         $unlabeled = [Types::IMAGE, Types::SUPPLEMENT];
 
-        $db    = Application::getDB();
+        $db    = Application::database();
         $query = $db->getQuery(true);
         $query->select($db->quoteName('id'))
             ->from($db->quoteName('#__groups_attributes'))

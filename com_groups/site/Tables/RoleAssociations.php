@@ -40,7 +40,7 @@ class RoleAssociations extends Table
      */
     public function __construct(DatabaseInterface $dbo = null)
     {
-        $dbo = $dbo ?? Application::getDB();
+        $dbo = $dbo ?? Application::database();
 
         /** @var DatabaseDriver $dbo */
         parent::__construct('#__groups_role_associations', 'id', $dbo);
@@ -49,8 +49,8 @@ class RoleAssociations extends Table
     /**
      * Gets the id of the association for the given group and role ids.
      *
-     * @param int $mapID
-     * @param int $roleID
+     * @param   int  $mapID
+     * @param   int  $roleID
      *
      * @return int|null the id if existent, otherwise null
      */

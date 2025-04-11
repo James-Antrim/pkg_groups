@@ -70,7 +70,7 @@ class Group extends FormController
          * The group => level association is saved as a JSON string in rules. As a consequence every level has to be
          * iterated; deprecated associations have to be sought and removed, requested associations have to be added.
          */
-        $db    = Application::getDB();
+        $db    = Application::database();
         $query = $db->getQuery(true);
         $query->select($db->quoteName('id'))->from($db->quoteName('#__viewlevels'));
         $db->setQuery($query);

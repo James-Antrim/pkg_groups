@@ -23,13 +23,13 @@ class RoleAssociations
     /**
      * Gets the ids of the associated roles
      *
-     * @param int $groupID the id of the group
+     * @param   int  $groupID  the id of the group
      *
      * @return int[] the associated groups in the form assocID => roleID
      */
     public static function byGroupID(int $groupID): array
     {
-        $db        = Application::getDB();
+        $db        = Application::database();
         $condition = $db->quoteName('m.id') . ' = ' . $db->quoteName('ra.mapID');
 
         $query = $db->getQuery(true);
@@ -45,13 +45,13 @@ class RoleAssociations
     /**
      * Gets the ids of the associated groups
      *
-     * @param int $roleID the id of the role
+     * @param   int  $roleID  the id of the role
      *
      * @return int[] the associated groups in the form assocID => groupID
      */
     public static function byRoleID(int $roleID): array
     {
-        $db        = Application::getDB();
+        $db        = Application::database();
         $query     = $db->getQuery(true);
         $ras       = $db->quoteName('#__groups_role_associations');
         $rIDColumn = $db->quoteName('roleID');

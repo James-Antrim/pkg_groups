@@ -40,7 +40,7 @@ class Database
      */
     public static function array(): array
     {
-        $dbo = Application::getDB();
+        $dbo = Application::database();
         try {
             $result = $dbo->loadAssoc();
 
@@ -69,7 +69,7 @@ class Database
      */
     public static function arrays(string $key = '', string $column = ''): array
     {
-        $dbo = Application::getDB();
+        $dbo = Application::database();
         try {
             $result = $dbo->loadAssocList($key, $column);
 
@@ -108,7 +108,7 @@ class Database
      */
     public static function column(int $offset = 0): array
     {
-        $dbo = Application::getDB();
+        $dbo = Application::database();
         try {
             $result = $dbo->loadColumn($offset);
 
@@ -128,7 +128,7 @@ class Database
      */
     public static function execute(): bool
     {
-        $dbo = Application::getDB();
+        $dbo = Application::database();
         try {
             return $dbo->execute();
         }
@@ -151,7 +151,7 @@ class Database
      */
     public static function insertObject(string $table, object &$object, string $key = 'id'): bool
     {
-        $dbo = Application::getDB();
+        $dbo = Application::database();
 
         try {
             return $dbo->insertObject($table, $object, $key);
@@ -241,7 +241,7 @@ class Database
      */
     public static function nullDate(): string
     {
-        $dbo = Application::getDB();
+        $dbo = Application::database();
 
         return $dbo->getNullDate();
     }
@@ -255,7 +255,7 @@ class Database
      */
     public static function object(string $class = 'stdClass'): stdClass
     {
-        $dbo = Application::getDB();
+        $dbo = Application::database();
         try {
             $result = $dbo->loadObject($class);
 
@@ -282,7 +282,7 @@ class Database
      */
     public static function objects(string $key = '', string $class = 'stdClass'): array
     {
-        $dbo = Application::getDB();
+        $dbo = Application::database();
         try {
             $result = $dbo->loadObjectList($key, $class);
 
@@ -375,7 +375,7 @@ class Database
      */
     public static function qn(array|string $name, array|string $alias = null): array|string
     {
-        return Application::getDB()->quoteName($name, $alias);
+        return Application::database()->quoteName($name, $alias);
     }
 
     /**
@@ -387,7 +387,7 @@ class Database
      */
     public static function query(bool $new = true): DatabaseQuery
     {
-        $dbo = Application::getDB();
+        $dbo = Application::database();
 
         return $dbo->getQuery($new);
     }
@@ -403,7 +403,7 @@ class Database
      */
     public static function quote(array|string $term, bool $escape = true): array|string
     {
-        return Application::getDB()->quote($term, $escape);
+        return Application::database()->quote($term, $escape);
     }
 
     /**
@@ -415,7 +415,7 @@ class Database
      */
     public static function result(mixed $default = null): mixed
     {
-        $dbo = Application::getDB();
+        $dbo = Application::database();
         try {
             $result = $dbo->loadResult();
 
@@ -440,7 +440,7 @@ class Database
      */
     public static function set(string|DatabaseQuery $query, int $offset = 0, int $limit = 0): void
     {
-        Application::getDB()->setQuery($query, $offset, $limit);
+        Application::database()->setQuery($query, $offset, $limit);
     }
 
     /**

@@ -28,14 +28,14 @@ class Integration
 
     private const HEADERS = [
         'attributes' => 'Converis-attribute-definition: ALL',
-        'links' => 'Converis-linkentity-references: true'
+        'links'      => 'Converis-linkentity-references: true'
     ];
 
     private const CONFIGURATIONS = [
         self::ASSOCIATION_CONFIGURATIONS => 'config/linkentities',
-        self::ENTITY_CONFIGURATIONS => 'config/entities',
-        self::SPECIFIC_ASSOCIATION => 'config/linkentities/',
-        self::SPECIFIC_ENTITY => 'config/entities/'
+        self::ENTITY_CONFIGURATIONS      => 'config/entities',
+        self::SPECIFIC_ASSOCIATION       => 'config/linkentities/',
+        self::SPECIFIC_ENTITY            => 'config/entities/'
     ];
 
     public static function fillIDs(): void
@@ -82,8 +82,8 @@ class Integration
     /**
      * Retrieves a single record from the converis API
      *
-     * @param CurlHandle $curl the curl handle used to communicate with the API
-     * @param string     $url  the url of the API and any relevant parameters
+     * @param   CurlHandle  $curl  the curl handle used to communicate with the API
+     * @param   string      $url   the url of the API and any relevant parameters
      *
      * @return stdClass|null
      */
@@ -101,9 +101,9 @@ class Integration
     /**
      * Retrieves multiple records from the converis API.
      *
-     * @param CurlHandle $curl  the curl handle used to communicate with the API
-     * @param string     $url   the url of the API and any relevant parameters unrelated to pagination
-     * @param bool       $break whether the process should stop at a break point or continue
+     * @param   CurlHandle  $curl   the curl handle used to communicate with the API
+     * @param   string      $url    the url of the API and any relevant parameters unrelated to pagination
+     * @param   bool        $break  whether the process should stop at a break point or continue
      *
      * @return array the JSON decoded records delivered by the API
      */
@@ -119,7 +119,8 @@ class Integration
             if (!str_ends_with($url, '&')) {
                 $url .= '&';
             }
-        } else {
+        }
+        else {
             $url .= '?';
         }
 
@@ -155,7 +156,8 @@ class Integration
             $end   = $set->nrRecordsAll;
 
             $records = array_merge($records, $set->data);
-        } while ($start <= $end);
+        }
+        while ($start <= $end);
 
         return $records;
     }
@@ -194,7 +196,9 @@ class Integration
         curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
         foreach ($IDMap as $converisID) {
-            if ($converisID !== 2483544) continue;
+            if ($converisID !== 2483544) {
+                continue;
+            }
             $thisURL = $url . sprintf($cardURL, $converisID);
             $cards   = self::getRecords($curl, $thisURL);
             echo "<pre>" . print_r($cards, true) . "</pre>";
@@ -213,7 +217,7 @@ class Integration
 
     private static function getUsers(bool $resolved): array
     {
-        $db        = Application::getDB();
+        $db        = Application::database();
         $condition = $db->quoteName('m.user_id') . ' = ' . $db->quoteName('u.id');
         $query     = $db->getQuery(true);
 

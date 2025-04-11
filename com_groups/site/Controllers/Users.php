@@ -426,7 +426,7 @@ class Users extends ListController
         // Joomla overwrites 0 with '' somewhere if store is called on the users table.
         unset($users);
 
-        $db = Application::getDB();
+        $db = Application::database();
 
         $query = $db->getQuery(true)
             ->update($db->quoteName('#__users'))

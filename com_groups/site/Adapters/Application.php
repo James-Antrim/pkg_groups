@@ -65,6 +65,15 @@ class Application
     }
 
     /**
+     * Shortcuts container access.
+     * @return DatabaseDriver
+     */
+    public static function database(): DatabaseDriver
+    {
+        return self::container()->get('DatabaseDriver');
+    }
+
+    /**
      * Determines whether the view was called from a dynamic context
      * @return bool true if the view was called dynamically, otherwise false
      */
@@ -126,15 +135,6 @@ class Application
         $lastItem = array_pop($nsParts);
 
         return empty($lastItem) ? 'Groups' : $lastItem;
-    }
-
-    /**
-     * Shortcuts container access.
-     * @return DatabaseDriver
-     */
-    public static function getDB(): DatabaseDriver
-    {
-        return self::container()->get('DatabaseDriver');
     }
 
     /**

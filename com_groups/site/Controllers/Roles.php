@@ -50,7 +50,7 @@ class Roles extends ListController
             }
         }
 
-        $db    = Application::getDB();
+        $db    = Application::database();
         $query = $db->getQuery(true);
         $query->select($db->quoteName('id'))
             ->from($db->quoteName('#__groups_roles'))

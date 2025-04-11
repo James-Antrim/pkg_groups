@@ -21,7 +21,7 @@ trait Persistent
      */
     public static function getMax(string $table, string $column, array $filters = []): mixed
     {
-        $db     = Application::getDB();
+        $db     = Application::database();
         $query  = $db->getQuery(true);
         $column = $db->quoteName($column);
         $query->select("MAX($column)")->from($db->quoteName("#__groups_$table"));

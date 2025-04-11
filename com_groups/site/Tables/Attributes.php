@@ -88,7 +88,7 @@ class Attributes extends Table
      */
     public function __construct(DatabaseInterface $dbo = null)
     {
-        $dbo = $dbo ?? Application::getDB();
+        $dbo = $dbo ?? Application::database();
 
         /** @var DatabaseDriver $dbo */
         parent::__construct('#__groups_attributes', 'id', $dbo);
@@ -97,7 +97,7 @@ class Attributes extends Table
     /**
      * Gets the localized entry name.
      *
-     * @param int $id
+     * @param   int  $id
      *
      * @return string     *
      */
