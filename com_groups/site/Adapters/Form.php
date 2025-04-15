@@ -11,7 +11,7 @@
 namespace THM\Groups\Adapters;
 
 use InvalidArgumentException;
-use Joomla\CMS\Form\{Form as Base, FormField, FormHelper};
+use Joomla\CMS\Form\{Form as Core, FormField, FormHelper};
 use Joomla\Database\DatabaseAwareInterface;
 use RuntimeException;
 use SimpleXMLElement;
@@ -20,7 +20,7 @@ use SimpleXMLElement;
  * @inheritDoc
  * Adapts the Form to load properly namespaced fields.
  */
-class Form extends Base
+class Form extends Core
 {
     /**
      * @inheritDoc
@@ -131,12 +131,14 @@ class Form extends Base
 
             // Load the data.
             if (str_starts_with($data, '<')) {
-                if (!$forms[$name]->load($data, $replace, $xpath)) {
+                $loaded = $forms[$name]->load($data, $replace, $xpath);
+                if (!$loaded) {
                     throw new RuntimeException(sprintf('%s() could not load form', __METHOD__));
                 }
             }
             else {
-                if (!$forms[$name]->loadFile($data, $replace, $xpath)) {
+                $loaded = $forms[$name]->loadFile($data, $replace, $xpath);
+                if (!$loaded) {
                     throw new RuntimeException(sprintf('%s() could not load file', __METHOD__));
                 }
             }
@@ -160,5 +162,16 @@ class Form extends Base
         $field->setDatabase($this->getDatabase());
 
         return $field;
+    }
+
+    /**
+     * Gets the view specific portion of the form name.
+     *
+     * @return string
+     */
+    public function view(): string
+    {
+        $contextParts = explode('.', $this->getName());
+        return $contextParts[1];
     }
 }
