@@ -11,7 +11,7 @@
 namespace THM\Groups\Adapters;
 
 use Joomla\Filter\InputFilter;
-use Joomla\Input\Input as Base;
+use Joomla\Input\Input as Core;
 use Joomla\Registry\Registry;
 use Joomla\Utilities\ArrayHelper;
 
@@ -20,9 +20,14 @@ use Joomla\Utilities\ArrayHelper;
  */
 class Input
 {
+    public const NO = 0, NONE = -1, YES = 1;
+
+    // (File) Formats
+    public const HTML = 'html', ICS = 'ics', JSON = 'json', PDF = 'pdf', XLS = 'xls';// XML = 'xml';
+
     private static InputFilter $filter;
     private static Registry $filterItems;
-    private static Base $input;
+    private static Core $input;
     private static Registry $listItems;
     private static Registry $params;
 
@@ -56,11 +61,40 @@ class Input
             return $value;
         }
 
+        if ($filterItems = self::getFilterItems() and $value = $filterItems->get($property)) {
+            return $value;
+        }
+
+        if ($listItems = self::getListItems() and $value = $listItems->get($property)) {
+            return $value;
+        }
+
         if ($value = self::getParams()->get($property)) {
             return $value;
         }
 
         return null;
+    }
+
+    /**
+     * Accessor for the format parameter and document type. Joomla handles them redundantly internally leading to format
+     * overwrites to html if the document type is not explicitly set.
+     *
+     * @param   string  $format
+     *
+     * @return string
+     */
+    public static function format(string $format = ''): string
+    {
+        $document  = Application::document();
+        $supported = ['html', 'json', 'pdf', 'vcf', 'xls', 'xml'];
+
+        if ($format and in_array($format, $supported)) {
+            self::set('format', $format);
+            return Document::type($format);
+        }
+
+        return $document->getType();
     }
 
     /**
@@ -110,11 +144,7 @@ class Input
      */
     public static function getController(): string
     {
-        if ($controller = self::getCMD('controller')) {
-            return $controller;
-        }
-
-        return self::getView();
+        return (string) self::getInput()->get('controller') ?: self::getView();
     }
 
     /**
@@ -127,15 +157,11 @@ class Input
      */
     public static function getCMD(string $property, string $default = ''): string
     {
-        if ($value = self::find($property)) {
-            return self::filter($value, 'cmd');
-        }
-
-        return self::filter($default, 'cmd');
+        return ($value = self::find($property)) ? self::filter($value, 'cmd') : self::filter($default, 'cmd');
     }
 
     /**
-     * Returns the application's input object.
+     * Retrieves an id value from a filter or list selection box.
      *
      * @param   string  $resource  the name of the resource upon which the ids being sought reference
      * @param   int     $default   the default value
@@ -144,9 +170,15 @@ class Input
      */
     public static function getFilterID(string $resource, int $default = 0): int
     {
-        $filterIDs = self::getFilterIDs($resource);
+        if ($value = self::getFilterItems()->get($resource, false)) {
+            return (int) $value;
+        }
 
-        return empty($filterIDs) ? $default : $filterIDs[0];
+        if ($value = self::getListItems()->get($resource, false)) {
+            return (int) $value;
+        }
+
+        return $default;
     }
 
     /**
@@ -205,21 +237,23 @@ class Input
     }
 
     /**
-     * The file format of the document to be displayed.
-     * @return string defaults to 'HTML'
+     * Retrieves the specified parameter.
+     *
+     * @param   string  $property  Name of the property to get.
+     * @param   float   $default   Default value to return if variable does not exist.
+     *
+     * @return float
      */
-    public static function getFormat(): string
+    public static function getFloat(string $property, float $default = 0.0): float
     {
-        $document  = Application::document();
-        $supported = ['HTML', 'JSON', 'VCF'];
-        $format    = self::getCMD('format', strtoupper($document->getType()));
+        $value = self::find($property);
 
-        if (!in_array($format, $supported)) {
-            self::set('format', 'HTML');
-            $format = 'HTML';
+        // Better plausibility test for this type whose value can also be 0 on purpose and otherwise evaluate to false.
+        if (is_numeric($value)) {
+            return self::filter($value, 'float');
         }
 
-        return $format;
+        return self::filter($default, 'float');
     }
 
     /**
@@ -228,7 +262,7 @@ class Input
      */
     public static function getID(): int
     {
-        return self::getInt('id');
+        return (int) self::getInput()->get('id', 0, 'int');
     }
 
     /**
@@ -248,14 +282,20 @@ class Input
     /**
      * Retrieves the specified parameter.
      *
-     * @param   string  $property  Name of the property to get.
-     * @param   int     $default   Default value to return if variable does not exist.
+     * @param   string  $property  Name of the property to get
+     * @param   int     $default   Default value to return if variable does not exist
+     * @param   string  $method    Explicit method where the value should be
      *
      * @return int
      */
-    public static function getInt(string $property, int $default = 0): int
+    public static function getInt(string $property, int $default = 0, string $method = ''): int
     {
-        $value = self::find($property);
+        if ($method) {
+            $value = self::getInput()->$method->get($property, $default, 'raw');
+        }
+        else {
+            $value = self::find($property);
+        }
 
         // Better plausibility test for this type whose value can also be 0 on purpose and otherwise evaluate to false.
         if (is_numeric($value)) {
@@ -279,9 +319,9 @@ class Input
 
     /**
      * Returns the application's input object.
-     * @return Base
+     * @return Core
      */
-    public static function getInput(): Base
+    public static function getInput(): Core
     {
         if (empty(self::$input)) {
             self::$input = Application::instance()->input;
@@ -326,7 +366,8 @@ class Input
      */
     public static function getReferrer(): string
     {
-        return self::getInput()->server->getString('HTTP_REFERER');
+        // The command filter removes syntax elements from the URL
+        return (string) self::getInput()->server->get('HTTP_REFERER', null, 'string');
     }
 
     /**
@@ -334,7 +375,7 @@ class Input
      *
      * @param   int  $default  the default value
      *
-     * @return int the selected id
+     * @return int
      */
     public static function getSelectedID(int $default = 0): int
     {
@@ -345,12 +386,12 @@ class Input
 
     /**
      * Returns the selected resource ids.
-     * @return int[] the selected ids
+     * @return int[]
      */
     public static function getSelectedIDs(): array
     {
         // List Views
-        if ($selectedIDs = self::getIntCollection('cid')) {
+        if ($selectedIDs = self::resourceIDs('cid')) {
             return $selectedIDs;
         }
 
@@ -392,7 +433,7 @@ class Input
      */
     public static function getTask(): string
     {
-        return self::getCMD('task', 'display');
+        return (string) self::getInput()->get('task', 'display');
     }
 
     /**
@@ -401,7 +442,16 @@ class Input
      */
     public static function getView(): string
     {
-        return self::getCMD('view');
+        return (string) self::getInput()->get('view');
+    }
+
+    /**
+     * Retrieves the layout parameter.
+     * @return string
+     */
+    public static function layout(): string
+    {
+        return (string) self::getInput()->get('layout');
     }
 
     /**
@@ -429,6 +479,44 @@ class Input
     }
 
     /**
+     * Gets the selected resources as an array.
+     *
+     * @param   string  $field
+     *
+     * @return int[]
+     */
+    public static function resourceIDs(string $field): array
+    {
+        $alt   = str_ends_with($field, 's') ? substr($field, -1) : $field . 's';
+        $value = self::find($field) ?? self::find($alt);
+
+        // Null (not found) and zero (invalid)
+        if (!$value) {
+            return [];
+        }
+
+        if (is_array($value)) {
+            return array_filter($value, 'intval');
+        }
+
+        if (is_int($value)) {
+            return [$value];
+        }
+
+        // Unsupported type
+        if (!is_string($value)) {
+            return [];
+        }
+
+        if (is_numeric($value)) {
+            return [(int) $value];
+        }
+
+        // Array represented as CS values
+        return array_filter(explode(',', $value), 'intval');
+    }
+
+    /**
      * Sets an input property with a value.
      *
      * @param   string  $property  the name of the property to set
@@ -446,5 +534,35 @@ class Input
         }
 
         self::getInput()->set($property, $value);
+    }
+
+    /**
+     * Ensures the requested value is valid and returns the default value if not.
+     *
+     * @param   string    $field   the field with the cmd value
+     * @param   string[]  $values  the values to validate against
+     *
+     * @return string
+     */
+    public static function validCMD(string $field, array $values): string
+    {
+        $value = Input::getCMD($field);
+
+        return in_array($value, $values) ? $value : $values['default'];
+    }
+
+    /**
+     * Ensures the requested value is valid and returns the default value if not.
+     *
+     * @param   string  $field   the field with the int value
+     * @param   int[]   $values  the values to validate against
+     *
+     * @return int
+     */
+    public static function validInt(string $field, array $values): int
+    {
+        $value = self::getInt($field);
+
+        return in_array($value, $values) ? $value : 0;
     }
 }

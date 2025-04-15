@@ -122,7 +122,7 @@ class MVCFactory extends Base
      */
     public function createView($name, $prefix = '', $type = 'HTML', array $config = [])
     {
-        $format = Input::getFormat();
+        $format = strtoupper(Input::format());
         $name   = preg_replace('/[^A-Z0-9_]/i', '', $name);
         $view   = "THM\Groups\Views\\$format\\$name";
         $view   = new $view($config);

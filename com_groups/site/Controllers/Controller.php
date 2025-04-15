@@ -69,7 +69,7 @@ class Controller extends BaseController
      */
     public function display($cachable = false, $urlparams = []): BaseController
     {
-        $format = Input::getFormat();
+        $format = strtoupper(Input::format());
         $view   = $this->input->get('view', 'Start');
 
         if (!class_exists("\\THM\\Groups\\Views\\$format\\$view")) {
