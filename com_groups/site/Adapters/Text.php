@@ -59,7 +59,7 @@ class Text extends Base
         HTML::_('behavior.core');
 
         // Update Joomla.Text script options
-        Document::addScriptOptions('joomla.jtext', static::$strings, false);
+        Document::scriptLocalizations('joomla.jtext', static::$strings, false);
 
         return static::getScriptStrings();
     }

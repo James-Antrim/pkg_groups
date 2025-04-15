@@ -21,7 +21,6 @@ use Joomla\CMS\WebAsset\WebAssetManager;
  */
 class Document
 {
-
     /**
      * Gets the path for the given file and type.
      *
@@ -38,55 +37,6 @@ class Document
     }
 
     /**
-     * Adds a linked script to the page.
-     *
-     * @param   string  $url  the script URL
-     *
-     * @return  HtmlDocument instance of $this to allow chaining
-     * @deprecated 5.0 Use WebAssetManager
-     */
-    public static function addScript(string $url): HtmlDocument
-    {
-        /** @var HtmlDocument $document */
-        $document = Application::document();
-
-        return $document->addScript($url);
-    }
-
-    /**
-     * Add script variables for localizations.
-     *
-     * @param   string        $key            key for addressing the localizations in script files
-     * @param   array|string  $localizations  localization(s)
-     * @param   bool          $merge          true if the localizations should be merged with existing
-     *
-     * @return  HtmlDocument instance of $this to allow chaining
-     */
-    public static function addScriptOptions(string $key, array|string $localizations, bool $merge = true): HtmlDocument
-    {
-        /** @var HtmlDocument $document */
-        $document = Application::document();
-
-        return $document->addScriptOptions($key, $localizations, $merge);
-    }
-
-    /**
-     * Adds a linked stylesheet to the page
-     *
-     * @param   string  $url  the style sheet URL
-     *
-     * @return  HtmlDocument instance of $this to allow chaining
-     * @deprecated 5.0 Use WebAssetManager
-     */
-    public static function addStyleSheet(string $url): HtmlDocument
-    {
-        /** @var HtmlDocument $document */
-        $document = Application::document();
-
-        return $document->addStyleSheet($url);
-    }
-
-    /**
      * Wraps the new standard access method to retrieve a toolbar.
      *
      * @param   string  $name
@@ -99,6 +49,37 @@ class Document
         $document = Application::document();
 
         return $document->getToolbar($name);
+    }
+
+    /**
+     * Adds a script to a page.
+     *
+     * @param   string  $file  the file name
+     *
+     * @return void
+     */
+    public static function script(string $file = ''): void
+    {
+        if ($path = self::getPath($file, 'js')) {
+            self::webAssetManager()->registerAndUseScript("gps.$file", $path);
+        }
+    }
+
+    /**
+     * Add script variables for localizations.
+     *
+     * @param   string        $key            key for addressing the localizations in script files
+     * @param   array|string  $localizations  localization(s)
+     * @param   bool          $merge          true if the localizations should be merged with existing
+     *
+     * @return  HtmlDocument instance of $this to allow chaining
+     */
+    public static function scriptLocalizations(string $key, array|string $localizations, bool $merge = true): HtmlDocument
+    {
+        /** @var HtmlDocument $document */
+        $document = Application::document();
+
+        return $document->addScriptOptions($key, $localizations, $merge);
     }
 
     /**
@@ -144,6 +125,29 @@ class Document
         if ($path = self::getPath($file, 'css')) {
             self::webAssetManager()->registerAndUseStyle("oz.$file", $path);
         }
+    }
+
+    /**
+     * Wrapper for document type property accessors.
+     *
+     * @param   string  $type  the optional type to set the document to.
+     *
+     * @return string
+     */
+    public static function type(string $type = ''): string
+    {
+        $document = Application::document();
+
+        /**
+         * The Joomla\CMS\Document\Document _type property is public. Function use is to future-proof it should they
+         * decide to remove the underscore prefix.
+         */
+
+        if ($type) {
+            $document->setType($type);
+        }
+
+        return $document->getType();
     }
 
     /**
