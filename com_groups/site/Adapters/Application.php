@@ -13,7 +13,7 @@ namespace THM\Groups\Adapters;
 use Exception;
 use Joomla\CMS\Application\{CMSApplication, CMSApplicationInterface, WebApplication};
 use Joomla\CMS\{Component\ComponentHelper, Document\Document, Factory, Language\Language};
-use Joomla\CMS\{Menu\MenuItem, Session\Session, Uri\Uri};
+use Joomla\CMS\{Menu\MenuItem, Plugin\PluginHelper, Session\Session, Uri\Uri};
 use Joomla\CMS\Extension\{ComponentInterface, ExtensionHelper};
 use Joomla\CMS\User\{User, UserFactory, UserFactoryInterface};
 use Joomla\Database\DatabaseDriver;
@@ -197,117 +197,6 @@ class Application
     }
 
     /**
-     * Gets the name of an object's class without its namespace.
-     *
-     * @param   object|string  $object  the object whose namespace free name is requested or the fq name of the class to be
-     *                                  loaded
-     *
-     * @return string the name of the class without its namespace
-     */
-    public static function getClass(object|string $object): string
-    {
-        $fqName   = is_string($object) ? $object : get_class($object);
-        $nsParts  = explode('\\', $fqName);
-        $lastItem = array_pop($nsParts);
-
-        return empty($lastItem) ? 'Groups' : $lastItem;
-    }
-
-    /**
-     * Method to get the application language object.
-     * @return  Language  The language object
-     */
-    public static function getLanguage(): Language
-    {
-        return self::instance()->getLanguage();
-    }
-
-    /**
-     * Gets the parameter object for the component
-     *
-     * @param   string  $component  the component name.
-     *
-     * @return  Registry
-     */
-    public static function getParams(string $component = 'com_groups'): Registry
-    {
-        return ComponentHelper::getParams($component);
-    }
-
-    /**
-     * Gets the session from the application container.
-     * @return Session
-     */
-    public static function getSession(): Session
-    {
-        return self::instance()->getSession();
-    }
-
-    /**
-     * Gets a user object (specified or current).
-     *
-     * @param   int|string  $userID  the user identifier (id or name)
-     *
-     * @return User
-     */
-    public static function getUser(int|string $userID = 0): User
-    {
-        /** @var UserFactory $userFactory */
-        $userFactory = self::container()->get(UserFactoryInterface::class);
-
-        // Get a specific user.
-        if ($userID) {
-            return is_int($userID) ? $userFactory->loadUserById($userID) : $userFactory->loadUserByUsername($userID);
-        }
-
-        $current = self::instance()->getIdentity();
-
-        // Enforce type consistency, by overwriting the potential null from getIdentity.
-        return $current ?: $userFactory->loadUserById(0);
-    }
-
-    /**
-     * Gets the user's state's property value.
-     *
-     * @param   string  $property  the property name
-     * @param   mixed   $default   the optional default value
-     *
-     * @return  mixed  the property value or null
-     * @see CMSApplication::getUserState()
-     */
-    public static function getUserState(string $property, mixed $default = null): mixed
-    {
-        /** @var CMSApplication $app */
-        $app = self::instance();
-
-        return $app->getUserState($property, $default);
-    }
-
-    /**
-     * Gets the property value from the state, overwriting the value from the request if available.
-     *
-     * @param   string  $property  the property name
-     * @param   string  $request   the name of the property as passed in a request.
-     * @param   mixed   $default   the optional default value
-     * @param   string  $type      the optional name of the type filter to use on the variable
-     *
-     * @return  mixed  The request user state.
-     * @see CMSApplication::getUserStateFromRequest(), InputFilter::clean()
-     */
-    public static function getUserRequestState(
-        string $property,
-        string $request,
-        mixed $default = null,
-        string $type = 'none'
-    ): mixed
-    {
-        /** @var CMSApplication $app */
-        $app = self::instance();
-
-        return $app->getUserStateFromRequest($property, $request, $default, $type);
-    }
-
-    /**
      * Performs handling for joomla's internal errors not handled by joomla.
      *
      * @param   Exception  $exception  the joomla internal error being thrown instead of handled
@@ -340,6 +229,15 @@ class Application
         }
 
         return $application;
+    }
+
+    /**
+     * Method to get the application language object.
+     * @return  Language  The language object
+     */
+    public static function language(): Language
+    {
+        return self::instance()->getLanguage();
     }
 
     /**
@@ -390,6 +288,35 @@ class Application
     }
 
     /**
+     * Gets the parameter object for the component
+     *
+     * @param   string  $extension  the component name.
+     *
+     * @return  Registry
+     */
+    public static function parameters(string $extension = 'com_groups'): Registry
+    {
+        if (str_starts_with($extension, 'plg_')) {
+            return self::pluginParameters(str_replace('plg_', '', $extension));
+        }
+        return ComponentHelper::getParams($extension);
+    }
+
+    /**
+     * Function gets plugin parameters analogous to ComponentHelper.
+     *
+     * @param   string  $plugin
+     *
+     * @return Registry
+     */
+    private static function pluginParameters(string $plugin): Registry
+    {
+        [$type, $element] = explode('_', $plugin, 2);
+        $plugin = PluginHelper::getPlugin($type, $element);
+        return new Registry($plugin->params);
+    }
+
+    /**
      * Redirect to another URL.
      *
      * @param   string  $url     The URL to redirect to. Can only be http/https URL
@@ -407,6 +334,15 @@ class Application
     }
 
     /**
+     * Gets the session from the application container.
+     * @return Session
+     */
+    public static function session(): Session
+    {
+        return self::instance()->getSession();
+    }
+
+    /**
      * Gets the language portion of the localization tag.
      * @return string
      */
@@ -415,5 +351,110 @@ class Application
         $language = self::instance()->getLanguage();
 
         return explode('-', $language->getTag())[0];
+    }
+
+    /**
+     * Resolves the upper case class name for the given string.
+     *
+     * @param   string  $name  the name of the class to resolve
+     *
+     * @return string
+     */
+    public static function ucClass(string $name = ''): string
+    {
+        $name = empty($name) ? Input::getView() : $name;
+        $name = preg_replace('/[^A-Z0-9_]/i', '', $name);
+
+        // First letter UC assume already correct
+        if (ctype_upper($name[0])) {
+            return $name;
+        }
+
+        return match ($name) {
+            // Compound nouns
+            'templateattributes' => 'TemplateAttributes',
+            default => ucfirst($name),
+        };
+    }
+
+    /**
+     * Gets the name of an object's class without its namespace.
+     *
+     * @param   object|string  $object  the object whose namespace free name is requested or the fq name of the class to be
+     *                                  loaded
+     *
+     * @return string the name of the class without its namespace
+     */
+    public static function uqClass(object|string $object): string
+    {
+        $fqName   = is_string($object) ? $object : get_class($object);
+        $nsParts  = explode('\\', $fqName);
+        $lastItem = array_pop($nsParts);
+
+        return empty($lastItem) ? 'Groups' : $lastItem;
+    }
+
+    /**
+     * Gets a user object (specified or current).
+     *
+     * @param   int|string  $userID  the user identifier (id or name)
+     *
+     * @return User
+     */
+    public static function user(int|string $userID = 0): User
+    {
+        /** @var UserFactory $userFactory */
+        $userFactory = self::container()->get(UserFactoryInterface::class);
+
+        // Get a specific user.
+        if ($userID) {
+            return is_int($userID) ? $userFactory->loadUserById($userID) : $userFactory->loadUserByUsername($userID);
+        }
+
+        $current = self::instance()->getIdentity();
+
+        // Enforce type consistency, by overwriting the potential null from getIdentity.
+        return $current ?: $userFactory->loadUserById(0);
+    }
+
+    /**
+     * Gets the property value from the state, overwriting the value from the request if available.
+     *
+     * @param   string  $property  the property name
+     * @param   string  $request   the name of the property as passed in a request.
+     * @param   mixed   $default   the optional default value
+     * @param   string  $type      the optional name of the type filter to use on the variable
+     *
+     * @return  mixed  The request user state.
+     * @see CMSApplication::getUserStateFromRequest(), InputFilter::clean()
+     */
+    public static function userRequestState(
+        string $property,
+        string $request,
+        mixed $default = null,
+        string $type = 'none'
+    ): mixed
+    {
+        /** @var CMSApplication $app */
+        $app = self::instance();
+
+        return $app->getUserStateFromRequest($property, $request, $default, $type);
+    }
+
+    /**
+     * Gets the user's state's property value.
+     *
+     * @param   string  $property  the property name
+     * @param   mixed   $default   the optional default value
+     *
+     * @return  mixed  the property value or null
+     * @see CMSApplication::getUserState()
+     */
+    public static function userState(string $property, mixed $default = null): mixed
+    {
+        /** @var CMSApplication $app */
+        $app = self::instance();
+
+        return $app->getUserState($property, $default);
     }
 }

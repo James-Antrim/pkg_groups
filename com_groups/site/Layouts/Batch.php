@@ -19,7 +19,7 @@ class Batch
     /**
      * Generates the HTML to be used as the body of the batch modal.
      *
-     * @param ListView $view
+     * @param   ListView  $view
      *
      * @return string
      */
@@ -37,7 +37,7 @@ class Batch
     /**
      * Generates the HTML to be used as the footer of the batch modal.
      *
-     * @param ListView $view
+     * @param   ListView  $view
      *
      * @return string
      */
@@ -47,9 +47,9 @@ class Batch
 
         $resets = [];
         foreach ($view->filterForm->getGroup('batch') as $field) {
-            $default = $field->getAttribute('default');
-            $default = is_null($default) ? '' : $default;
-            $fieldID = $field->__get('id');
+            $default  = $field->getAttribute('default');
+            $default  = is_null($default) ? '' : $default;
+            $fieldID  = $field->__get('id');
             $resets[] = "document.ElementById('$fieldID').value='$default';";
         }
         $onClick = implode('', $resets);
@@ -60,7 +60,7 @@ class Batch
         $reset = str_replace('XTEXTX', Text::_('GROUPS_CLOSE'), $reset);
         $reset = str_replace('XTYPEX', 'button', $reset);
 
-        $onClick = "Joomla.submitbutton('" . Application::getClass($view) . ".batch');return false;";
+        $onClick = "Joomla.submitbutton('" . Application::uqClass($view) . ".batch');return false;";
 
         $submit = str_replace('XCLASSX', 'btn btn-success', $template);
         $submit = str_replace('XEXTRAX', '', $submit);

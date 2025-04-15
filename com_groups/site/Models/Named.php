@@ -45,7 +45,7 @@ trait Named
     public function getName(): string
     {
         if (empty($this->name) or empty($this->option)) {
-            $this->name   = Application::getClass($this);
+            $this->name   = Application::uqClass($this);
             $this->option = 'com_groups';
         }
 

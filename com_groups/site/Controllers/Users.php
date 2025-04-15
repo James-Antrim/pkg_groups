@@ -105,7 +105,7 @@ class Users extends ListController
         $this->checkToken();
         $this->authorize();
 
-        $user  = Application::getUser();
+        $user  = Application::user();
         $super = $user->get('isRoot');
 
         $batchItems  = Input::getBatchItems();
@@ -208,7 +208,7 @@ class Users extends ListController
         /** @var CMSApplication $app */
         $app         = Application::instance();
         $selectedIDs = Input::getSelectedIDs();
-        $user        = Application::getUser();
+        $user        = Application::user();
         $super       = $user->get('isRoot');
 
         $selected = count($selectedIDs);
@@ -332,7 +332,7 @@ class Users extends ListController
      */
     private function filterSelected(array $selectedIDs): array
     {
-        if (!$userID = Application::getUser()->id) {
+        if (!$userID = Application::user()->id) {
             Application::error(401);
         }
 
@@ -453,7 +453,7 @@ class Users extends ListController
         $app         = Application::instance();
         $block       = $value === true;
         $selectedIDs = Input::getSelectedIDs();
-        $user        = Application::getUser();
+        $user        = Application::user();
         $super       = $user->get('isRoot');
 
         $selected = count($selectedIDs);

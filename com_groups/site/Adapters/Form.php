@@ -68,7 +68,7 @@ class Form extends Base
             $default = (string) ($element['default'] ? $element['default'] : $element->default);
 
             if (($translate = $element['translate_default']) && ((string) $translate === 'true' || (string) $translate === '1')) {
-                $lang = Application::getLanguage();
+                $lang = Application::language();
 
                 if ($lang->hasKey($default)) {
                     $debug   = $lang->setDebug(false);

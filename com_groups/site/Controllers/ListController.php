@@ -122,7 +122,7 @@ abstract class ListController extends Controller
         }
 
         if ($autoRedirect) {
-            $view = Application::getClass($this);
+            $view = Application::uqClass($this);
             $this->setRedirect("$this->baseURL&view=$view");
         }
     }

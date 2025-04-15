@@ -185,7 +185,7 @@ class Groups extends ListModel
     protected function populateState($ordering = 'ug.lft', $direction = 'asc'): void
     {
         // Load the parameters.
-        $params = Application::getParams('com_users')->merge(Application::getParams());
+        $params = Application::parameters('com_users')->merge(Application::parameters());
         $this->setState('params', $params);
 
         // List state information.

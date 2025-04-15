@@ -377,7 +377,7 @@ class Migration
     public static function migrate(): void
     {
         //Integration::getTestResults();
-        $session = Application::getSession();
+        $session = Application::session();
 
         if (!$session->get('com_groups.migrated.groups')) {
             self::groups();

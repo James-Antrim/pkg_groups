@@ -20,7 +20,7 @@ class Can
     /**
      * Checks whether the user has access to administrate the component.
      *
-     * @param string $context the context in which access is being checked
+     * @param   string  $context  the context in which access is being checked
      *
      * @return bool true if the user has 'admin' access, otherwise false
      */
@@ -32,7 +32,7 @@ class Can
     /**
      * Checks whether the user has access to perform batch processing on component resources.
      *
-     * @param string $context the context in which access is being checked
+     * @param   string  $context  the context in which access is being checked
      *
      * @return bool true if the user has 'create' access, otherwise false
      */
@@ -50,7 +50,7 @@ class Can
     /**
      * Checks whether the user has access to change resource states.
      *
-     * @param string $context the context in which access is being checked
+     * @param   string  $context  the context in which access is being checked
      *
      * @return bool true if the user has 'create' access, otherwise false
      */
@@ -71,7 +71,7 @@ class Can
     /**
      * Checks whether the user has access to create component resources.
      *
-     * @param string $context the context in which access is being checked
+     * @param   string  $context  the context in which access is being checked
      *
      * @return bool
      */
@@ -83,7 +83,7 @@ class Can
     /**
      * Checks whether the user has access to debug the users component.
      *
-     * @param string $context the context in which access is being checked
+     * @param   string  $context  the context in which access is being checked
      *
      * @return bool
      */
@@ -95,7 +95,7 @@ class Can
     /**
      * Checks whether the user has access to delete component resources.
      *
-     * @param string $context the context in which access is being checked
+     * @param   string  $context  the context in which access is being checked
      *
      * @return bool
      */
@@ -107,7 +107,7 @@ class Can
     /**
      * Checks whether the user has access to create component resources.
      *
-     * @param string $context the context in which access is being checked
+     * @param   string  $context  the context in which access is being checked
      *
      * @return bool
      */
@@ -119,13 +119,13 @@ class Can
     /**
      * Checks whether the user against which access rights are being checked is the current user.
      *
-     * @param int $id
+     * @param   int  $id
      *
      * @return bool
      */
     public static function identity(int $id = 0): bool
     {
-        return ($id and Application::getUser()->id === $id);
+        return ($id and Application::user()->id === $id);
     }
 
     /**
@@ -158,8 +158,8 @@ class Can
     /**
      * Check whether the user has the access required to save the resource.
      *
-     * @param int    $id      the id of the resource to save
-     * @param string $context the context in which access is being checked
+     * @param   int     $id       the id of the resource to save
+     * @param   string  $context  the context in which access is being checked
      *
      * @return bool
      */
@@ -171,7 +171,7 @@ class Can
     /**
      * Check whether the user has the access required to save a person as a resource.
      *
-     * @param int $id
+     * @param   int  $id
      *
      * @return bool
      */
@@ -183,7 +183,7 @@ class Can
     /**
      * Checks whether the user has viewing access to the view.
      *
-     * @param string $view
+     * @param   string  $view
      *
      * @return bool
      */

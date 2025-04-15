@@ -196,7 +196,7 @@ class Input
     {
         if (empty(self::$filterItems)) {
             $view     = self::getView();
-            $previous = Application::getSession()->get('registry')->get("com_groups.$view.filter", []);
+            $previous = Application::session()->get('registry')->get("com_groups.$view.filter", []);
 
             self::$filterItems = new Registry(self::getArray('filter', $previous));
         }
@@ -298,7 +298,7 @@ class Input
     {
         if (empty(self::$listItems)) {
             $view            = self::getView();
-            $previous        = Application::getSession()->get('registry')->get("com_groups.$view.list", []);
+            $previous        = Application::session()->get('registry')->get("com_groups.$view.list", []);
             self::$listItems = new Registry(self::getArray('list', $previous));
         }
 
@@ -314,7 +314,7 @@ class Input
         if (empty(self::$params)) {
             $app          = Application::instance();
             self::$params = method_exists($app, 'getParams') ?
-                $app->getParams() : Application::getParams();
+                $app->getParams() : Application::parameters();
         }
 
         return self::$params;
