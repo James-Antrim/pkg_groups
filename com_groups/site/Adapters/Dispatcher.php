@@ -21,19 +21,13 @@ use THM\Groups\Controllers\Controller;
  */
 class Dispatcher extends ComponentDispatcher
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected $mvcFactory;
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected $option = 'com_groups';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function dispatch(): void
     {
         // Check component access permission
@@ -84,9 +78,7 @@ class Dispatcher extends ComponentDispatcher
         }
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function getController(string $name, string $client = '', array $config = []): BaseController
     {
         // Set up the client
@@ -100,5 +92,13 @@ class Dispatcher extends ComponentDispatcher
             $this->app,
             $this->input
         );
+    }
+
+    /** @inheritDoc */
+    protected function loadLanguage(): void
+    {
+        // Load common and local language files.
+        $this->app->getLanguage()->load($this->option);
+        $this->app->getLanguage()->load($this->option, JPATH_ADMINISTRATOR . '/components/com_groups');
     }
 }
