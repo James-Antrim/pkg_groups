@@ -108,6 +108,25 @@ class HTML extends HTMLHelper
     }
 
     /**
+     * Generates a string containing property information for an HTML element to be output
+     *
+     * @param   mixed &$element  the element being processed
+     *
+     * @return string the HTML attribute output for the item
+     */
+    public static function properties(array &$element): string
+    {
+        $return = '';
+
+        if (!empty($element['properties']) and is_array($element['properties'])) {
+            $return = ArrayHelper::toString($element['properties']);
+        }
+        unset($element['properties']);
+
+        return $return;
+    }
+
+    /**
      * Generates an HTML selection list.
      *
      * @param   string            $name        the field name.
@@ -116,6 +135,7 @@ class HTML extends HTMLHelper
      * @param   array             $properties  additional HTML properties for the select tag
      * @param   string            $textKey     name of the name column when working directly with table rows
      * @param   string            $valueKey    name of the value column when working directly with table rows
+     * @param   bool|string       $id          the optional id for the select box
      *
      * @return  string
      */
@@ -125,7 +145,8 @@ class HTML extends HTMLHelper
         array|int|string $selected = [],
         array $properties = [],
         string $textKey = 'text',
-        string $valueKey = 'value'
+        string $valueKey = 'value',
+        bool|string $id = false
     ): string
     {
         /**
@@ -134,7 +155,7 @@ class HTML extends HTMLHelper
          */
         $selected = gettype($selected) === 'integer' ? (string) $selected : $selected;
 
-        return Select::genericlist($options, $name, $properties, $valueKey, $textKey, $selected, false, true);
+        return Select::genericlist($options, $name, $properties, $valueKey, $textKey, $selected, $id, true);
     }
 
     /**
@@ -228,7 +249,6 @@ class HTML extends HTMLHelper
             $properties['target'] = '_blank';
         }
 
-        $content = Text::_($content);
         $url     = $url ?: '#';
         $content = self::link($url, $content, $properties);
         $tip     = "<div role=\"tooltip\" id=\"$context\">" . Text::_($tip) . '</div>';
