@@ -11,6 +11,7 @@
 namespace THM\Groups\Layouts;
 
 use Joomla\CMS\Language\Text;
+use Joomla\Utilities\ArrayHelper;
 use THM\Groups\Adapters\{Application, HTML};
 use THM\Groups\Views\HTML\ListView;
 
@@ -59,7 +60,7 @@ class ListItem
 
         ?>
         <td class="text-center d-none d-md-table-cell">
-            <span <?php echo HTML::toString($attributes); ?>>
+            <span <?php echo ArrayHelper::toString($attributes); ?>>
                 <span class="icon-ellipsis-v"></span>
             </span>
             <?php if ($item->access and $enabled) : ?>
@@ -132,7 +133,7 @@ class ListItem
         $value = $item->$column ?? '';
 
         if (is_array($value)) {
-            $properties = HTML::toString($value['properties']);
+            $properties = HTML::properties($value);
             $value      = $value['value'];
         }
         else {
@@ -161,7 +162,7 @@ class ListItem
                     $lProperties['target'] = '_blank';
                 }
 
-                $linkOpen  = '<a ' . HTML::toString($lProperties) . '>';
+                $linkOpen  = '<a ' . ArrayHelper::toString($lProperties) . '>';
                 $linkClose = '</a>';
             }
         }

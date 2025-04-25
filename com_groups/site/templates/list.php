@@ -8,10 +8,8 @@
  * @link        www.thm.de
  */
 
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Session\Session;
+use Joomla\CMS\{HTML\HTMLHelper, Language\Text, Router\Route, Session\Session};
+use Joomla\Utilities\ArrayHelper;
 use THM\Groups\Adapters\{Application, HTML};
 use THM\Groups\Layouts;
 use THM\Groups\Views\HTML\ListView;
@@ -34,7 +32,7 @@ if ($dragEnabled) {
         'data-nested'    => 'false',
         'data-url'       => $draggableURL
     ];
-    $dragProperties = HTML::toString($dragProperties);
+    $dragProperties = ArrayHelper::toString($dragProperties);
 }
 
 if ($this->todo) {

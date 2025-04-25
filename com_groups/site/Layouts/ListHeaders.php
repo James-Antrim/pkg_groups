@@ -11,6 +11,7 @@
 namespace THM\Groups\Layouts;
 
 use Joomla\CMS\Language\Text;
+use Joomla\Utilities\ArrayHelper;
 use THM\Groups\Adapters\HTML;
 use THM\Groups\Views\HTML\ListView;
 
@@ -94,7 +95,7 @@ class ListHeaders
     private static function sort(array $properties, string $title, string $column, string $orderBy, string $direction): void
     {
         ?>
-        <th <?php echo HTML::toString($properties); ?>>
+        <th <?php echo ArrayHelper::toString($properties); ?>>
             <?php echo HTML::sort($title, $column, $direction, $orderBy); ?>
         </th>
         <?php
@@ -109,7 +110,7 @@ class ListHeaders
     private static function text(array $properties, string $title = ''): void
     {
         ?>
-        <th <?php echo HTML::toString($properties); ?>>
+        <th <?php echo ArrayHelper::toString($properties); ?>>
             <?php echo Text::_($title); ?>
         </th>
         <?php

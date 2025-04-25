@@ -255,17 +255,4 @@ class HTML extends HTMLHelper
 
         return $content . $tip;
     }
-
-    /**
-     * Converts an array $property => $value to a string for use in HTML tags.
-     *
-     * @param   array  $array  the properties and their values
-     *
-     * @return string
-     * @see ArrayHelper::toString()
-     */
-    public static function toString(array $array): string
-    {
-        return ArrayHelper::toString($array);
-    }
 }
