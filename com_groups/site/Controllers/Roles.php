@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Controllers;
 
-use THM\Groups\Adapters\{Application, Input};
+use THM\Groups\Adapters\{Application, Database as DB, Input};
 use THM\Groups\Tables\Roles as Table;
 
 class Roles extends ListController
@@ -50,15 +50,13 @@ class Roles extends ListController
             }
         }
 
-        $db    = Application::database();
-        $query = $db->getQuery(true);
-        $query->select($db->quoteName('id'))
-            ->from($db->quoteName('#__groups_roles'))
-            ->order($db->quoteName('ordering'));
-        $db->setQuery($query);
+        $query = DB::query();
+        $query->select(DB::qn('id'))
+            ->from(DB::qn('#__groups_roles'))
+            ->order(DB::qn('ordering'));
+        DB::set($query);
 
-        $results  = $db->loadColumn();
-        $results  = Input::formatIDValues($results);
+        $results  = DB::integers();
         $ordering = 1;
 
         foreach ($results as $roleID) {

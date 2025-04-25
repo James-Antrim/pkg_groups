@@ -30,7 +30,7 @@ class Group extends FormController
             'name_en'    => Input::getString('name_en'),
             'title'      => Input::getString('title'),
             'parent_id'  => Input::getInt('parent_id'),
-            'viewLevels' => Input::getIntCollection('viewLevels')
+            'viewLevels' => Input::resourceIDs('viewLevels')
         ];
 
     }

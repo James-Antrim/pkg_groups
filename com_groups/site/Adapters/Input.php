@@ -13,7 +13,6 @@ namespace THM\Groups\Adapters;
 use Joomla\Filter\InputFilter;
 use Joomla\Input\Input as Core;
 use Joomla\Registry\Registry;
-use Joomla\Utilities\ArrayHelper;
 
 /**
  * Class provides generalized functions useful for several component files.
@@ -23,7 +22,7 @@ class Input
     public const NO = 0, NONE = -1, YES = 1;
 
     // (File) Formats
-    public const HTML = 'html', ICS = 'ics', JSON = 'json', PDF = 'pdf', XLS = 'xls';// XML = 'xml';
+    public const HTML = 'html', JSON = 'json', VCF = 'vcf';
 
     private static InputFilter $filter;
     private static Registry $filterItems;
@@ -87,7 +86,7 @@ class Input
     public static function format(string $format = ''): string
     {
         $document  = Application::document();
-        $supported = ['html', 'json', 'pdf', 'vcf', 'xls', 'xml'];
+        $supported = ['html', 'json', 'vcf'];
 
         if ($format and in_array($format, $supported)) {
             self::set('format', $format);
@@ -182,45 +181,6 @@ class Input
     }
 
     /**
-     * Returns the application's input object.
-     *
-     * @param   string  $resource  the name of the resource upon which the ids being sought reference
-     *
-     * @return int[] the filter ids
-     */
-    public static function getFilterIDs(string $resource): array
-    {
-        $filterItems = self::getFilterItems();
-        $listItems   = self::getListItems();
-
-        $pluralIndex = "{$resource}IDs";
-
-        if ($values = $filterItems->get($pluralIndex, false)) {
-            return self::formatIDValues($values);
-        }
-
-        if ($values = $listItems->get($pluralIndex, false)) {
-            return self::formatIDValues($values);
-        }
-
-        $singularIndex = "{$resource}ID";
-
-        if ($value = $filterItems->get($singularIndex, false)) {
-            $values = [$value];
-
-            return self::formatIDValues($values);
-        }
-
-        if ($value = $listItems->get($singularIndex, false)) {
-            $values = [$value];
-
-            return self::formatIDValues($values);
-        }
-
-        return [];
-    }
-
-    /**
      * Retrieves the filter items from the request and creates a registry with the data.
      * @return Registry
      */
@@ -257,26 +217,21 @@ class Input
     }
 
     /**
+     * Retrieves form data / POST.
+     * @return array
+     */
+    public static function getFormItems(): array
+    {
+        return self::getInput()->post->getArray();
+    }
+
+    /**
      * Retrieves the id parameter.
      * @return int
      */
     public static function getID(): int
     {
         return (int) self::getInput()->get('id', 0, 'int');
-    }
-
-    /**
-     * Retrieves the id parameter.
-     *
-     * @param   string  $name  the input field name at which the value should be found
-     *
-     * @return int[] the ids
-     */
-    public static function getIntCollection(string $name): array
-    {
-        $collection = self::getArray($name);
-
-        return self::formatIDValues($collection);
     }
 
     /**
@@ -452,30 +407,6 @@ class Input
     public static function layout(): string
     {
         return (string) self::getInput()->get('layout');
-    }
-
-    /**
-     * Resolves a comma separated list of id values to an array of id values.
-     *
-     * @param   array|string  $idValues  the id values as an array or string
-     *
-     * @return int[] the id values, empty if the values were invalid or the input was not an array or a string
-     */
-    public static function formatIDValues(array|string &$idValues): array
-    {
-        if (is_string($idValues)) {
-            $idValues = explode(',', $idValues);
-        }
-        elseif (is_array($idValues) and count($idValues) === 1 and preg_match('/^(\d+,)*\d+$/', $idValues[0]) !== -1) {
-            $idValues = explode(',', $idValues[0]);
-        }
-        elseif (!is_array($idValues)) {
-            $idValues = [];
-        }
-
-        $idValues = ArrayHelper::toInteger($idValues);
-
-        return array_filter($idValues);
     }
 
     /**
