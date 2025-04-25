@@ -28,17 +28,19 @@ class TemplateAttributes extends Attributed
     {
         $referrer = Input::getReferrer();
         if ($args = Input::getArray('args') and count($args) === 2) {
-            list($templateID, $attributeID) = $args;
+            [$templateID, $attributeID] = $args;
             $data  = ['attributeID' => $attributeID, 'templateID' => $templateID];
             $table = new Table();
             if ($table->load($data)) {
-                Application::message('GROUPS_ENTRY_EXISTS', Application::NOTICE);
-            } else {
+                Application::message('GROUPS_EXISTS', Application::NOTICE);
+            }
+            else {
                 $data['ordering'] = Helper::getMaxOrdering('template_attributes', ['templateID' => $templateID]) + 1;
                 if ($table->save($data)) {
-                    Application::message('GROUPS_ENTRY_SAVED');
-                } else {
-                    Application::message('GROUPS_ENTRY_FAILED', Application::ERROR);
+                    Application::message('GROUPS_SAVED');
+                }
+                else {
+                    Application::message('GROUPS_FAILED', Application::ERROR);
                 }
             }
         }
@@ -73,7 +75,8 @@ class TemplateAttributes extends Attributed
 
             if (in_array($attributeID, AH::PROTECTED)) {
                 $table->ordering = 0;
-            } else {
+            }
+            else {
                 $table->ordering = $ordering;
                 $ordering++;
             }
