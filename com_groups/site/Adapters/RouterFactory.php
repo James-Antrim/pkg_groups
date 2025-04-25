@@ -1,7 +1,7 @@
 <?php
 /**
- * @package     Organizer
- * @extension   pkg_organizer
+ * @package     Groups
+ * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2025 TH Mittelhessen
  * @license     GNU GPL v.3

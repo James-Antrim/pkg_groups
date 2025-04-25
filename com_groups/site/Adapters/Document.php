@@ -31,7 +31,7 @@ class Document
      */
     private static function getPath(string $file, string $type): string
     {
-        $path = "components/com_organizer/$type/$file.$type";
+        $path = "components/com_groups/$type/$file.$type";
 
         return file_exists(JPATH_ROOT . "/$path") ? $path : '';
     }
