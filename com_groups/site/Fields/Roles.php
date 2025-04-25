@@ -29,7 +29,7 @@ class Roles extends ListField
     {
         $defaultOptions = parent::getOptions();
         $associated     = (bool) $this->getAttribute('associated', true);
-        $options        = Helper::getOptions($associated);
+        $options        = Helper::options($associated);
 
         return array_merge($defaultOptions, $options);
     }

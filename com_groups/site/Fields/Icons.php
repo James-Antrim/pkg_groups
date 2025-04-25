@@ -47,7 +47,7 @@ class Icons extends ListField
     protected function getOptions(): array
     {
         $default = parent::getOptions();
-        $options = Helper::getOptions();
+        $options = Helper::options();
 
         return array_merge($default, $options);
     }

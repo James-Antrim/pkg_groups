@@ -34,69 +34,69 @@ class Types implements Selectable
         SUPPLEMENT = 11;
 
     public const TYPES = [
-        self::ADDRESS => [
-            'icon' => 'location',
-            'input' => 'GROUPS_FORM_TEMPLATE',
-            'name' => 'GROUPS_ADDRESS',
+        self::ADDRESS    => [
+            'icon'   => 'location',
+            'input'  => 'GROUPS_FORM_TEMPLATE',
+            'name'   => 'GROUPS_ADDRESS',
             'output' => 'GROUPS_FORMATTED_TEXT'
         ],
-        self::BUTTON => [
-            'icon' => '',
-            'input' => 'GROUPS_URL_FIELD',
-            'name' => 'GROUPS_MEDIA_BUTTON',
+        self::BUTTON     => [
+            'icon'   => '',
+            'input'  => 'GROUPS_URL_FIELD',
+            'name'   => 'GROUPS_MEDIA_BUTTON',
             'output' => 'GROUPS_MEDIA_BUTTON'
         ],
-        self::DATE => [
-            'icon' => 'calendar',
-            'input' => 'GROUPS_DATE_FIELD',
-            'name' => 'GROUPS_DATE',
+        self::DATE       => [
+            'icon'   => 'calendar',
+            'input'  => 'GROUPS_DATE_FIELD',
+            'name'   => 'GROUPS_DATE',
             'output' => 'GROUPS_DATE'
         ],
-        self::EMAIL => [
-            'hint' => 'maxine.mustermann@fb.thm.de',
-            'icon' => 'envelope',
-            'input' => 'GROUPS_EMAIL_FIELD',
-            'name' => 'GROUPS_EMAIL',
+        self::EMAIL      => [
+            'hint'   => 'maxine.mustermann@fb.thm.de',
+            'icon'   => 'envelope',
+            'input'  => 'GROUPS_EMAIL_FIELD',
+            'name'   => 'GROUPS_EMAIL',
             'output' => 'GROUPS_LINKED_EMAIL'
         ],
-        self::HOURS => [
-            'icon' => 'comment',
-            'input' => 'GROUPS_FORM_TEMPLATE',
-            'name' => 'GROUPS_HOURS_TYPE',
+        self::HOURS      => [
+            'icon'   => 'comment',
+            'input'  => 'GROUPS_FORM_TEMPLATE',
+            'name'   => 'GROUPS_HOURS_TYPE',
             'output' => 'GROUPS_FORMATTED_TEXT'
         ],
-        self::HTML => [
+        self::HTML       => [
             'buttons' => 0,
-            'icon' => '',
-            'input' => 'GROUPS_EDITOR_FIELD',
-            'name' => 'GROUPS_HTML_TYPE',
-            'output' => 'GROUPS_HTML_TYPE'
+            'icon'    => '',
+            'input'   => 'GROUPS_EDITOR_FIELD',
+            'name'    => 'GROUPS_HTML_TYPE',
+            'output'  => 'GROUPS_HTML_TYPE'
         ],
-        self::IMAGE => [
-            'icon' => '',
-            'input' => 'GROUPS_IMAGE_FIELD',
-            'name' => 'GROUPS_IMAGE',
+        self::IMAGE      => [
+            'icon'   => '',
+            'input'  => 'GROUPS_IMAGE_FIELD',
+            'name'   => 'GROUPS_IMAGE',
             'output' => 'GROUPS_IMAGE'
         ],
-        self::LIST => [
-            'icon' => '',
-            'input' => 'GROUPS_LIST_FORM',
-            'name' => 'GROUPS_LINK_LIST',
+        self::LIST       => [
+            'icon'   => '',
+            'input'  => 'GROUPS_LIST_FORM',
+            'name'   => 'GROUPS_LINK_LIST',
             'output' => 'GROUPS_LINK_LIST'
         ],
-        self::PHONE => [
-            'icon' => 'phone',
-            'input' => 'GROUPS_PHONE_FIELD',
-            'name' => 'GROUPS_PHONE_NUMBER',
-            'hint' => 'TODO',
+        self::PHONE      => [
+            'icon'    => 'phone',
+            'input'   => 'GROUPS_PHONE_FIELD',
+            'name'    => 'GROUPS_PHONE_NUMBER',
+            'hint'    => 'TODO',
             'pattern' => '^(\+[\d]+ ?)?( ?((\(0?[\d]*\))|(0?[\d]+(\/| \/)?)))?(([ \-]|[\d]+)+)$',
-            'output' => 'GROUPS_LINKED_TELEPHONE'
+            'output'  => 'GROUPS_LINKED_TELEPHONE'
         ],
         self::SUPPLEMENT => [
-            'icon' => '',
-            'hint' => '',
+            'icon'  => '',
+            'hint'  => '',
             'input' => 'GROUPS_TEXT_FIELD',
-            'name' => 'GROUPS_SUPPLEMENT',
+            'name'  => 'GROUPS_SUPPLEMENT',
 
             /**
              * DE: Der Namenszusatz/akademische Grad ist ungültig. Namenszusätze dürfen nur aus Buchstaben, Leerzeichen, Kommata, Punkte, Runde Klammer, Minus Zeichen und &dagger; bestehen.
@@ -104,13 +104,13 @@ class Types implements Selectable
              */
 
             'message' => 'GROUPS_SUPPLEMENT_MESSAGE',
-            'output' => 'GROUPS_SUPPLEMENT',
+            'output'  => 'GROUPS_SUPPLEMENT',
             'pattern' => '^[A-ZÀ-ÖØ-Þa-zß-ÿ ,.\\\\-()†]+$'
         ],
-        self::TEXT => [
-            'icon' => '',
-            'input' => 'GROUPS_FORM_TEMPLATE',
-            'name' => 'GROUPS_LINK_TEXT',
+        self::TEXT       => [
+            'icon'   => '',
+            'input'  => 'GROUPS_FORM_TEMPLATE',
+            'name'   => 'GROUPS_LINK_TEXT',
             'output' => 'GROUPS_LINK_TEXT'
         ]
     ];
@@ -118,7 +118,26 @@ class Types implements Selectable
     /**
      * @inheritDoc
      */
-    public static function getAll(): array
+    public static function options(): array
+    {
+        $options = [];
+
+        foreach (self::resources() as $type) {
+            $options[$type->name] = (object) [
+                'text'  => $type->name,
+                'value' => $type->id
+            ];
+        }
+
+        ksort($options);
+
+        return $options;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function resources(): array
     {
         $return = [];
 
@@ -134,24 +153,5 @@ class Types implements Selectable
         }
 
         return $return;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getOptions(): array
-    {
-        $options = [];
-
-        foreach (self::getAll() as $type) {
-            $options[$type->name] = (object) [
-                'text' => $type->name,
-                'value' => $type->id
-            ];
-        }
-
-        ksort($options);
-
-        return $options;
     }
 }

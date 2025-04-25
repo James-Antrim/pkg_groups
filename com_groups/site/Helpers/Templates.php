@@ -25,60 +25,63 @@ class Templates implements Selectable
 
     public const CARDS = [
         self::DEFAULT => [
-            'class' => 'publish',
+            'class'  => 'publish',
             'column' => 'cards',
-            'task' => '',
-            'tip' => 'GROUPS_TOGGLE_TIP_DEFAULT_CARDS_CONTEXT'
+            'task'   => '',
+            'tip'    => 'GROUPS_TOGGLE_TIP_DEFAULT_CARDS_CONTEXT'
         ],
-        self::NOT => [
-            'class' => 'unpublish',
+        self::NOT     => [
+            'class'  => 'unpublish',
             'column' => 'cards',
-            'task' => 'defaultCard',
-            'tip' => 'GROUPS_TOGGLE_TIP_NOT_DEFAULT_CARDS_CONTEXT'
-        ]];
+            'task'   => 'defaultCard',
+            'tip'    => 'GROUPS_TOGGLE_TIP_NOT_DEFAULT_CARDS_CONTEXT'
+        ]
+    ];
 
     public const ROLES = [
         self::DEFAULT => [
-            'class' => 'publish',
+            'class'  => 'publish',
             'column' => 'roles',
-            'task' => 'hideRoles',
-            'tip' => 'GROUPS_TOGGLE_TIP_ROLES_SHOWN'
+            'task'   => 'hideRoles',
+            'tip'    => 'GROUPS_TOGGLE_TIP_ROLES_SHOWN'
         ],
-        self::NOT => [
-            'class' => 'unpublish',
+        self::NOT     => [
+            'class'  => 'unpublish',
             'column' => 'roles',
-            'task' => 'showRoles',
-            'tip' => 'GROUPS_TOGGLE_TIP_ROLES_HIDDEN'
-        ]];
+            'task'   => 'showRoles',
+            'tip'    => 'GROUPS_TOGGLE_TIP_ROLES_HIDDEN'
+        ]
+    ];
 
     public const VCARDS = [
         self::DEFAULT => [
-            'class' => 'publish',
+            'class'  => 'publish',
             'column' => 'vcard',
-            'task' => '',
-            'tip' => 'GROUPS_TOGGLE_TIP_DEFAULT_VCARDS_CONTEXT'
+            'task'   => '',
+            'tip'    => 'GROUPS_TOGGLE_TIP_DEFAULT_VCARDS_CONTEXT'
         ],
-        self::NOT => [
-            'class' => 'unpublish',
+        self::NOT     => [
+            'class'  => 'unpublish',
             'column' => 'vcard',
-            'task' => 'defaultVCard',
-            'tip' => 'GROUPS_TOGGLE_TIP_NOT_DEFAULT_VCARDS_CONTEXT'
-        ]];
+            'task'   => 'defaultVCard',
+            'tip'    => 'GROUPS_TOGGLE_TIP_NOT_DEFAULT_VCARDS_CONTEXT'
+        ]
+    ];
 
     /**
      * @inheritDoc
+     *
+     * @param   bool  $bound  whether the role must already be associated
      */
-    public static function getAll(): array
+    public static function options(bool $associated = true): array
     {
         return [];
     }
 
     /**
      * @inheritDoc
-     *
-     * @param bool $bound whether the role must already be associated
      */
-    public static function getOptions(bool $associated = true): array
+    public static function resources(): array
     {
         return [];
     }

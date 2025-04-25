@@ -93,7 +93,7 @@ class TemplateAttributes extends ListView
             $associatedIDs[] = $association->attributeID;
         }
 
-        $all    = AH::getAll();
+        $all    = AH::resources();
         $allIDs = array_keys($all);
 
         if (!$availableIDs = array_diff($allIDs, $associatedIDs)) {

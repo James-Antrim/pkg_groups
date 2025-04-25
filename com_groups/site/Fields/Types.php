@@ -18,18 +18,18 @@ use THM\Groups\Helpers\Types as Helper;
  */
 class Types extends ListField
 {
-	protected $type = 'Types';
+    protected $type = 'Types';
 
-	/**
-	 * Method to get the group options.
-	 *
-	 * @return  array  the group option objects
-	 */
-	protected function getOptions(): array
-	{
-		$defaultOptions = parent::getOptions();
-		$options        = Helper::getOptions();
+    /**
+     * Method to get the group options.
+     *
+     * @return  array  the group option objects
+     */
+    protected function getOptions(): array
+    {
+        $defaultOptions = parent::getOptions();
+        $options        = Helper::options();
 
-		return array_merge($defaultOptions, $options);
-	}
+        return array_merge($defaultOptions, $options);
+    }
 }

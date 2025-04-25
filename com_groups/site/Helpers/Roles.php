@@ -22,8 +22,36 @@ class Roles implements Selectable
 
     /**
      * @inheritDoc
+     *
+     * @param   bool  $bound  whether the role must already be associated
      */
-    public static function getAll(): array
+    public static function options(bool $associated = true): array
+    {
+        $plural    = 'plural_' . Application::tag();
+        $options   = [];
+        $options[] = (object) [
+            'text'  => Text::_('GROUPS_NONE_MEMBER'),
+            'value' => ''
+        ];
+
+        foreach (self::resources() as $roleID => $role) {
+            if ($associated and empty($role->groups)) {
+                continue;
+            }
+
+            $options[] = (object) [
+                'text'  => $role->$plural,
+                'value' => $roleID
+            ];
+        }
+
+        return $options;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function resources(): array
     {
         $db     = Application::database();
         $query  = $db->getQuery(true);
@@ -41,33 +69,5 @@ class Roles implements Selectable
         }
 
         return $roles;
-    }
-
-    /**
-     * @inheritDoc
-     *
-     * @param   bool  $bound  whether the role must already be associated
-     */
-    public static function getOptions(bool $associated = true): array
-    {
-        $plural    = 'plural_' . Application::tag();
-        $options   = [];
-        $options[] = (object) [
-            'text'  => Text::_('GROUPS_NONE_MEMBER'),
-            'value' => ''
-        ];
-
-        foreach (self::getAll() as $roleID => $role) {
-            if ($associated and empty($role->groups)) {
-                continue;
-            }
-
-            $options[] = (object) [
-                'text'  => $role->$plural,
-                'value' => $roleID
-            ];
-        }
-
-        return $options;
     }
 }

@@ -66,9 +66,46 @@ class Attributes implements Selectable
     ];
 
     /**
+     * Retrieves the ids of attributes which are of unlabeled types.
+     * @return array
+     */
+    public static function getUnlabeled(): array
+    {
+        $unlabeled = [Types::IMAGE, Types::SUPPLEMENT];
+
+        $db    = Application::database();
+        $query = $db->getQuery(true);
+        $query->select($db->quoteName('id'))
+            ->from($db->quoteName('#__groups_attributes'))
+            ->whereIn($db->quoteName('typeID'), $unlabeled);
+        $db->setQuery($query);
+
+        return $db->loadColumn();
+    }
+
+    /**
      * @inheritDoc
      */
-    public static function getAll(): array
+    public static function options(): array
+    {
+        $label   = 'label_' . Application::tag();
+        $options = [];
+
+        foreach (self::resources() as $attributeID => $attribute) {
+
+            $options[] = (object) [
+                'text'  => $attribute->$label,
+                'value' => $attributeID
+            ];
+        }
+
+        return $options;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function resources(): array
     {
         $db         = Application::database();
         $query      = $db->getQuery(true);
@@ -86,42 +123,5 @@ class Attributes implements Selectable
         }
 
         return $attributes;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getOptions(): array
-    {
-        $label   = 'label_' . Application::tag();
-        $options = [];
-
-        foreach (self::getAll() as $attributeID => $attribute) {
-
-            $options[] = (object) [
-                'text'  => $attribute->$label,
-                'value' => $attributeID
-            ];
-        }
-
-        return $options;
-    }
-
-    /**
-     * Retrieves the ids of attributes which are of unlabeled types.
-     * @return array
-     */
-    public static function getUnlabeled(): array
-    {
-        $unlabeled = [Types::IMAGE, Types::SUPPLEMENT];
-
-        $db    = Application::database();
-        $query = $db->getQuery(true);
-        $query->select($db->quoteName('id'))
-            ->from($db->quoteName('#__groups_attributes'))
-            ->whereIn($db->quoteName('typeID'), $unlabeled);
-        $db->setQuery($query);
-
-        return $db->loadColumn();
     }
 }

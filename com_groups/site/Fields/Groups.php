@@ -28,8 +28,8 @@ class Groups extends ListField
     protected function getOptions(): array
     {
         $defaultOptions = parent::getOptions();
-        $allowDefault = (bool)$this->getAttribute('allowDefault');
-        $options = Helper::getOptions($allowDefault);
+        $allowDefault   = (bool) $this->getAttribute('allowDefault');
+        $options        = Helper::options($allowDefault);
 
         return array_merge($defaultOptions, $options);
     }

@@ -10381,15 +10381,7 @@ class Icons implements Selectable
     /**
      * @inheritDoc
      */
-    public static function getAll(): array
-    {
-        return self::ICONS;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function getOptions(): array
+    public static function options(): array
     {
         $contextualized = [];
         $options        = [];
@@ -10420,6 +10412,14 @@ class Icons implements Selectable
         }
 
         return $options;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function resources(): array
+    {
+        return self::ICONS;
     }
 
     /**

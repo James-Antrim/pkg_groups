@@ -14,17 +14,17 @@ use stdClass;
 
 interface Selectable
 {
-	/**
-	 * Returns a list of resource objects.
-	 *
-	 * @return stdClass[]
-	 */
-	public static function getAll(): array;
+    /**
+     * Returns a list of resource options.
+     *
+     * @return stdClass[]
+     */
+    public static function options(): array;
 
-	/**
-	 * Returns a list of resource options.
-	 *
-	 * @return stdClass[]
-	 */
-	public static function getOptions(): array;
+    /**
+     * Returns a list of resource objects.
+     *
+     * @return stdClass[]
+     */
+    public static function resources(): array;
 }

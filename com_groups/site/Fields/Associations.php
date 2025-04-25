@@ -31,22 +31,19 @@ class Associations extends ListField
         $defaultOptions = parent::getOptions();
         $options        = [];
 
-        foreach (Groups::getAll() as $groupID => $group)
-        {
+        foreach (Groups::resources() as $groupID => $group) {
             $prefix    = strip_tags(Groups::getPrefix($group->level));
-            $options[] = (object)[
-                'text' => $prefix . $group->title,
+            $options[] = (object) [
+                'text'  => $prefix . $group->title,
                 'value' => "groupID-$groupID"
             ];
 
             // No role associations (Joomla core groups) or only member role available
-            if (empty($group->roles) or count($group->roles) === 1)
-            {
+            if (empty($group->roles) or count($group->roles) === 1) {
                 continue;
             }
 
-            foreach ($group->roles as $assocID => $roleID)
-            {
+            foreach ($group->roles as $assocID => $roleID) {
                 $prefix = strip_tags(Groups::getPrefix($group->level));
 
                 // Remove &ndash;&nbsp;
@@ -55,8 +52,8 @@ class Associations extends ListField
                 // Add "® "
                 $prefix .= '&#8942;&nbsp;&nbsp;&nbsp;&reg;&nbsp;';
 
-                $options[] = (object)[
-                    'text' => $prefix . Roles::getName($roleID) . " ($group->title)",
+                $options[] = (object) [
+                    'text'  => $prefix . Roles::getName($roleID) . " ($group->title)",
                     'value' => "assocID-$assocID"
                 ];
             }
