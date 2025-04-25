@@ -23,6 +23,13 @@ use THM\Groups\Adapters\{Application, Input, FormFactory, MVCFactory};
 abstract class EditModel extends FormModel
 {
     /**
+     * The data representing the resource.
+     *
+     * @var null|object
+     */
+    protected null|object $item = null;
+
+    /**
      * The resource's table class.
      * @var string
      */
@@ -44,30 +51,29 @@ abstract class EditModel extends FormModel
     }
 
     /**
-     * Retrieves a resource record.
-     * @return  CMSObject  Object on success, false on failure.
+     * Retrieves a resource record. Inheriting classes will have to override this function to add table external values.
+     * @return  object  object on success, false on failure.
      */
-    public function getItem(): CMSObject
+    public function getItem(): object
     {
-        $rowID = Input::getSelectedID();
-        $table = $this->getTable();
-        $table->load($rowID);
+        if (!$this->item) {
+            $rowID = Input::getSelectedID();
+            $table = $this->getTable();
+            $table->load($rowID);
+            $properties = $table->getProperties();
 
-        // Convert to the CMSObject before adding other data.
-        $properties = $table->getProperties();
+            $this->item = ArrayHelper::toObject($properties);
+        }
 
-        /** @var CMSObject $item */
-        $item = ArrayHelper::toObject($properties, CMSObject::class);
-
-        return $item;
+        return $this->item;
     }
 
     /**
      * Method to get a table object, load it if necessary.
      *
-     * @param string $name    the table name, unused
-     * @param string $prefix  the class prefix, unused
-     * @param array  $options configuration array for model, unused
+     * @param   string  $name     the table name, unused
+     * @param   string  $prefix   the class prefix, unused
+     * @param   array   $options  configuration array for model, unused
      *
      * @return  Table  a table object
      */
