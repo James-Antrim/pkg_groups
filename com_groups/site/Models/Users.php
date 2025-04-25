@@ -26,9 +26,7 @@ class Users extends ListModel
 {
     protected string $defaultOrdering = 'surnames, forenames';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct($config = [], MVCFactoryInterface $factory = null)
     {
         Migration::migrate();
@@ -51,9 +49,7 @@ class Users extends ListModel
         parent::__construct($config, $factory);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function filterFilterForm(Form $form): void
     {
         if ($this->state->get('filter.association')) {
@@ -118,9 +114,7 @@ class Users extends ListModel
         return $groups;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function getItems(): array
     {
         $items = parent::getItems();
@@ -136,10 +130,7 @@ class Users extends ListModel
         return $items;
     }
 
-    /**
-     * Build an SQL query to load the list data.
-     * @return  QueryInterface
-     */
+    /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
         $db    = $this->getDatabase();
@@ -348,9 +339,7 @@ class Users extends ListModel
         return $data;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function populateState($ordering = null, $direction = null): void
     {
         parent::populateState($ordering, $direction);

@@ -19,9 +19,7 @@ class Attribute extends FormController
 {
     protected string $list = 'Attributes';
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected function prepareData(): array
     {
         $context = Input::getInt('context');

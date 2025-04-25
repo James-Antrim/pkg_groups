@@ -23,9 +23,7 @@ use THM\Groups\Tables\Attributes as AT;
  */
 class TemplateAttributes extends ListView
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function addToolbar(): void
     {
         $templateID = Input::getID();
@@ -47,9 +45,7 @@ class TemplateAttributes extends ListView
         ToolbarHelper::title(TH::getName($templateID), 'fa fa-list-ol');
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
         $attribute = new AT();
@@ -68,9 +64,7 @@ class TemplateAttributes extends ListView
         $item->showLabel = HTML::toggle($index, Helper::showLabelStates[$item->showLabel], 'TemplateAttributes', $neither);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function completeItems(array $options = []): void
     {
         $options = [
@@ -111,9 +105,7 @@ class TemplateAttributes extends ListView
         return $available;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function initializeColumns(): void
     {
         $this->headers = [

@@ -25,9 +25,7 @@ use THM\Groups\Layouts\ListItem;
  */
 class Groups extends ListView
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function addToolbar(): void
     {
         $actions = CoreAccess::getActions('com_users');
@@ -72,9 +70,7 @@ class Groups extends ListView
         parent::addToolbar();
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function display($tpl = null): void
     {
         $this->todo = [
@@ -85,6 +81,7 @@ class Groups extends ListView
         parent::display($tpl);
     }
 
+    /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
         $ugh = UGH::getInstance();
@@ -165,9 +162,7 @@ class Groups extends ListView
         $item->rights = HTML::tip($icon, "rights-tip-$item->id", $tip, [], $link, true);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function initializeColumns(): void
     {
         $this->headers = [

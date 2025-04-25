@@ -48,9 +48,7 @@ class Roles implements Selectable
         return $options;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public static function resources(): array
     {
         $db     = Application::database();

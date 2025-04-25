@@ -34,9 +34,7 @@ class Roles extends ListView
         parent::addToolbar();
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function initializeColumns(): void
     {
         $this->headers = [
@@ -65,9 +63,7 @@ class Roles extends ListView
         }
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
         // Simple resource with no further processing necessary.

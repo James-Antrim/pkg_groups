@@ -23,9 +23,7 @@ use THM\Groups\Layouts\ListItem;
  */
 class Users extends ListView
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function addToolbar(): void
     {
         // Get the toolbar object instance
@@ -120,9 +118,7 @@ class Users extends ListView
         parent::addToolbar();
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
         $item->activated     = HTML::toggle($index, Helper::activatedStates[$item->activated], 'Users');
@@ -137,9 +133,7 @@ class Users extends ListView
         $item->viewLink      = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function display($tpl = null): void
     {
         $this->allowBatch = Can::batchProcess();
@@ -178,9 +172,7 @@ class Users extends ListView
         return implode('<br>', $groups);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function initializeColumns(): void
     {
         // Columns made 'redundant' by filters are left in to allow for display of in column buttons.

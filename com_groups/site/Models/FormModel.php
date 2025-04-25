@@ -51,9 +51,7 @@ abstract class FormModel extends Base
         // Per default no fields are altered
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function getForm($data = array(), $loadData = true): ?FormAlias
     {
         $options = ['control' => '', 'load_data' => $loadData];

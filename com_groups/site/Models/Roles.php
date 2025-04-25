@@ -27,9 +27,7 @@ class Roles extends ListModel
 
     protected string $defaultOrdering = 'ordering';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct($config = [], MVCFactoryInterface $factory = null)
     {
         Migration::migrate();
@@ -44,9 +42,7 @@ class Roles extends ListModel
         parent::__construct($config, $factory);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function getItems(): array
     {
         $items = parent::getItems();
@@ -71,10 +67,7 @@ class Roles extends ListModel
         return $items;
     }
 
-    /**
-     * Build an SQL query to load the list data.
-     * @return  QueryInterface
-     */
+    /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
         // Create a new query object.

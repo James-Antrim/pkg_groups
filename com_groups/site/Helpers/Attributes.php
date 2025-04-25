@@ -83,9 +83,7 @@ class Attributes implements Selectable
         return $db->loadColumn();
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public static function options(): array
     {
         $label   = 'label_' . Application::tag();
@@ -102,9 +100,7 @@ class Attributes implements Selectable
         return $options;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public static function resources(): array
     {
         $db         = Application::database();

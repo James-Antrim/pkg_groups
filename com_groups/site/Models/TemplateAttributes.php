@@ -20,9 +20,7 @@ class TemplateAttributes extends ListModel
 {
     protected string $defaultOrdering = 'ordering';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function getItems(): array
     {
         $items = parent::getItems();
@@ -34,10 +32,7 @@ class TemplateAttributes extends ListModel
         return $items;
     }
 
-    /**
-     * Build an SQL query to load the list data.
-     * @return  QueryInterface
-     */
+    /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
         $db         = $this->getDatabase();

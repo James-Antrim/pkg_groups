@@ -36,9 +36,7 @@ class Templates extends ListView
         parent::addToolbar();
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
         $icon             = HTML::icon('fa fa-list-ol');
@@ -49,9 +47,7 @@ class Templates extends ListView
         $item->vcards     = HTML::toggle($index, Helper::VCARDS[$item->vcards], 'Templates');
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function display($tpl = null): void
     {
         $this->todo = [];
@@ -59,9 +55,7 @@ class Templates extends ListView
         parent::display($tpl);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function initializeColumns(): void
     {
         $this->headers = [

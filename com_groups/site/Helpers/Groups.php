@@ -140,9 +140,7 @@ class Groups implements Selectable
         return UserGroupsHelper::getInstance()->getAll();
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public static function options(bool $allowDefault = false): array
     {
         $options = [];
@@ -160,9 +158,7 @@ class Groups implements Selectable
         return $options;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public static function resources(): array
     {
         $groups = self::getUserGroups();

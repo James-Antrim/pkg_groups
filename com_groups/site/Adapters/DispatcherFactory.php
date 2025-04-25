@@ -37,9 +37,7 @@ class DispatcherFactory implements ComponentDispatcherFactoryInterface
         $this->mvcFactory = $mvcFactory;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function createDispatcher(CMSApplicationInterface $application, Input $input = null): DispatcherInterface
     {
         if ($application->isClient('api')) {

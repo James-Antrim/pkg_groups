@@ -26,9 +26,7 @@ class Groups extends ListModel
 {
     protected string $defaultOrdering = 'ug.lft';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct($config = [], MVCFactoryInterface $factory = null)
     {
         Migration::migrate();
@@ -40,9 +38,7 @@ class Groups extends ListModel
         parent::__construct($config, $factory);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function getItems(): array
     {
         $items    = parent::getItems() ?: [];
@@ -58,10 +54,7 @@ class Groups extends ListModel
         return $items;
     }
 
-    /**
-     * Build an SQL query to load the list data.
-     * @return  QueryInterface
-     */
+    /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
         // Create a new query object.
@@ -179,9 +172,7 @@ class Groups extends ListModel
         $group->blocked = (int) $db->loadResult();
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function populateState($ordering = 'ug.lft', $direction = 'asc'): void
     {
         // Load the parameters.

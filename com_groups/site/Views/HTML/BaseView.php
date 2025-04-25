@@ -25,9 +25,7 @@ abstract class BaseView extends HtmlView
 
     public bool $useCoreUI = true;
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct($config = [])
     {
         parent::__construct($config);
@@ -47,9 +45,7 @@ abstract class BaseView extends HtmlView
         }
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function getLayout(): string
     {
         return $this->layout ?: strtolower($this->_name);

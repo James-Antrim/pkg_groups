@@ -22,9 +22,7 @@ use SimpleXMLElement;
  */
 class Form extends Core
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct($name, array $options = [])
     {
         parent::__construct($name, $options);
@@ -34,9 +32,7 @@ class Form extends Core
         FormHelper::addFormPath(JPATH_SITE . '/components/com_groups/Forms');
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function loadField($element, $group = null, $value = null): DatabaseAwareInterface|FormField|bool
     {
         // Make sure there is a valid SimpleXMLElement.
@@ -108,9 +104,7 @@ class Form extends Core
         return $fields;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public static function getInstance($name, $data = null, $options = [], $replace = true, $xpath = false): Core|Form
     {
         // Reference to array with form instances

@@ -14,14 +14,10 @@ use THM\Groups\Adapters\Application;
 
 class Groups extends ListController
 {
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected string $item = 'Group';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function delete(): void
     {
         Application::message('GROUPS_503');

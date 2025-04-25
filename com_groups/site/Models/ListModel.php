@@ -32,9 +32,7 @@ abstract class ListModel extends Base
     protected int $defaultLimit = 50;
     protected string $defaultOrdering = 'name';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct($config = [], MVCFactoryInterface $factory = null)
     {
         // Preemptively set to avoid unnecessary complications.
@@ -174,9 +172,7 @@ abstract class ListModel extends Base
         return new $fqn();
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function loadForm($name, $source = null, $options = [], $clear = false, $xpath = false): Form
     {
         /** @var Form $form */
@@ -205,9 +201,7 @@ abstract class ListModel extends Base
         return !(($value > 1 or $value < 0));
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function loadFormData()
     {
         // Check the session for previously entered form data.
@@ -262,9 +256,7 @@ abstract class ListModel extends Base
         }
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function populateState($ordering = null, $direction = null): void
     {
         parent::populateState($ordering, $direction);

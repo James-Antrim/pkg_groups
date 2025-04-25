@@ -20,9 +20,7 @@ class Icons extends ListField
 {
     protected $type = 'Icons';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function getInput(): string
     {
         Helper::checkIcons();
@@ -30,9 +28,7 @@ class Icons extends ListField
         return parent::getInput();
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function getLayoutData(): array
     {
         $data          = parent::getLayoutData();
@@ -41,9 +37,7 @@ class Icons extends ListField
         return $data;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function getOptions(): array
     {
         $default = parent::getOptions();

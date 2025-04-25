@@ -90,9 +90,7 @@ class TemplateAttributes extends Attributed
         $this->app->close();
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     public function toggle(string $column, bool $value): void
     {
         $this->checkToken();
@@ -105,9 +103,7 @@ class TemplateAttributes extends Attributed
         $this->farewell($selected, $updated);
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected function farewell(int $selected = 0, int $updated = 0, bool $delete = false, bool $autoRedirect = false): void
     {
         parent::farewell($selected, $updated, $delete, $autoRedirect);

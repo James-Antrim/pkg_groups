@@ -18,9 +18,7 @@ class Date extends FormField
 
     protected $type = 'Date';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function getInput(): string
     {
         $attributes = [

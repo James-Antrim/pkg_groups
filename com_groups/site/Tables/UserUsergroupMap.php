@@ -35,9 +35,7 @@ class UserUsergroupMap extends Table
      */
     public $user_id;
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)
     {
         $dbo = $dbo ?? Application::database();

@@ -15,9 +15,7 @@ use THM\Groups\Tables\Roles as Table;
 
 class Roles extends ListController
 {
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected string $item = 'Role';
 
     /**

@@ -12,9 +12,7 @@ namespace THM\Groups\Views\HTML;
 
 class User extends Form
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function display($tpl = null): void
     {
         $this->todo = [

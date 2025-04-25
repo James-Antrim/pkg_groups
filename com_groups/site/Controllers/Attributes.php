@@ -16,9 +16,7 @@ use THM\Groups\Tables\Attributes as Table;
 
 class Attributes extends Attributed
 {
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected string $item = 'Attribute';
 
     /**
@@ -87,9 +85,7 @@ class Attributes extends Attributed
         $this->app->close();
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected function toggle(string $column, bool $value): void
     {
         $this->checkToken();

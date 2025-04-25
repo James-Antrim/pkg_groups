@@ -45,9 +45,7 @@ class ViewLevels extends ViewLevel
      */
     public $title;
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)
     {
         $dbo = $dbo ?? Application::database();

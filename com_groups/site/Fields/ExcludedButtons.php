@@ -51,9 +51,7 @@ class ExcludedButtons extends ListField
         return array_merge($defaultOptions, $options);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function setup(SimpleXMLElement $element, $value, $group = null): bool
     {
         if (!parent::setup($element, $value, $group)) {

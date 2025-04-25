@@ -27,9 +27,7 @@ class Attributes extends ListModel
 
     protected string $defaultOrdering = 'ordering';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct($config = [], MVCFactoryInterface $factory = null)
     {
         Migration::migrate();
@@ -45,9 +43,7 @@ class Attributes extends ListModel
         parent::__construct($config, $factory);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function getItems(): array
     {
         $items = parent::getItems();
@@ -65,10 +61,7 @@ class Attributes extends ListModel
         return $items;
     }
 
-    /**
-     * Build an SQL query to load the list data.
-     * @return  QueryInterface
-     */
+    /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
         $db    = $this->getDatabase();

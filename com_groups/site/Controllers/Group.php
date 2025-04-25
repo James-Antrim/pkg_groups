@@ -20,9 +20,7 @@ class Group extends FormController
 {
     protected string $list = 'Groups';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function prepareData(): array
     {
         return [
@@ -35,9 +33,7 @@ class Group extends FormController
 
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function store(Table $table, array $data, int $id = 0): int
     {
         $groups = new UserGroups();

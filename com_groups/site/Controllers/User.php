@@ -21,9 +21,7 @@ class User extends FormController
 {
     protected string $list = 'Users';
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected function authorize(): void
     {
         if (!Can::saveUser(Input::getID())) {
@@ -31,9 +29,7 @@ class User extends FormController
         }
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function prepareData(): array
     {
         $forename = Input::getString('forename');
@@ -99,9 +95,7 @@ class User extends FormController
         return $this->store($table, $data, $id);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function store(Table $table, array $data, int $id = 0): int
     {
         if ($id and !$table->load($id)) {

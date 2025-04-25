@@ -15,9 +15,7 @@ namespace THM\Groups\Views\HTML;
  */
 class Attribute extends Form
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function addToolbar(array $buttons = []): void
     {
         $buttons = empty($this->item->id) ? ['save', 'apply', 'save2new'] : ['save', 'apply', 'save2copy', 'save2new'];

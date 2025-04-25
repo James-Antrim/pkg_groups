@@ -78,9 +78,7 @@ abstract class EditModel extends FormModel
         return new $fqn();
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function loadFormData(): ?CMSObject
     {
         return $this->getItem();

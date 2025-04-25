@@ -47,9 +47,7 @@ class TemplateAttributes extends Table
      */
     public $templateID;
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)
     {
         $dbo = $dbo ?? Application::database();

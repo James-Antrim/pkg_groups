@@ -15,9 +15,7 @@ namespace THM\Groups\Models;
  */
 trait Ordered
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function populateState($ordering = null, $direction = null): void
     {
         parent::populateState($ordering, $direction);

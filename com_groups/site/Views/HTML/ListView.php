@@ -51,9 +51,7 @@ abstract class ListView extends Base
         $this->configure();
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected function addToolBar(): void
     {
         // MVC name identity is now the internal standard
@@ -107,9 +105,7 @@ abstract class ListView extends Base
         }
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function display($tpl = null): void
     {
         $this->authorize();
@@ -149,9 +145,7 @@ abstract class ListView extends Base
      */
     abstract protected function initializeColumns(): void;
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function initializeView(): void
     {
         // TODO: check submenu viability

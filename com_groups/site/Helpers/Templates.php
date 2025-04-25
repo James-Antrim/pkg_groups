@@ -78,9 +78,7 @@ class Templates implements Selectable
         return [];
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public static function resources(): array
     {
         return [];

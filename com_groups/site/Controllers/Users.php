@@ -23,9 +23,7 @@ class Users extends ListController
     // The values are redundant, but understandable
     private const ACTIONS = [self::ADD, self::REMOVE, self::RESET, self::STOP];
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected string $item = 'User';
 
     /**

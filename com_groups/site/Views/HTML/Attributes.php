@@ -22,9 +22,7 @@ use THM\Groups\Layouts\ListItem;
  */
 class Attributes extends ListView
 {
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function addToolbar(): void
     {
         // Manage access is a prerequisite for getting this far
@@ -36,9 +34,7 @@ class Attributes extends ListView
         parent::addToolbar();
     }
 
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
         $neither = in_array($item->id, $options['unlabeledIDs']) ? $options['unlabeledTip'] : '';
@@ -58,9 +54,7 @@ class Attributes extends ListView
         $item->showLabel = HTML::toggle($index, Helper::showLabelStates[$item->showLabel], 'Attributes', $neither);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function completeItems(array $options = []): void
     {
         $options = [
@@ -72,9 +66,7 @@ class Attributes extends ListView
         parent::completeItems($options);
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function initializeColumns(): void
     {
         $this->headers = [

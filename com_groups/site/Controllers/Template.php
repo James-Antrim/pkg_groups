@@ -17,14 +17,10 @@ use THM\Groups\Tables\Incremented;
 
 class Template extends FormController
 {
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected string $list = 'Templates';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function prepareData(): array
     {
         return [

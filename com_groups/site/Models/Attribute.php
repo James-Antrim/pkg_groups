@@ -17,9 +17,7 @@ class Attribute extends EditModel
 {
     protected string $tableClass = 'Attributes';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function getForm($data = array(), $loadData = true): ?Form
     {
         if (!$form = parent::getForm($data, $loadData)) {
@@ -35,9 +33,7 @@ class Attribute extends EditModel
         return $form;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function loadFormData(): ?CMSObject
     {
         $item    = $this->getItem();

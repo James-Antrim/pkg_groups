@@ -16,9 +16,7 @@ use THM\Groups\Tables\Templates as Table;
 
 class Templates extends ListController
 {
-    /**
-     * @inheritdoc
-     */
+    /** @inheritDoc */
     protected string $item = 'Template';
 
     /**

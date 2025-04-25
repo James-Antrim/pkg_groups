@@ -20,9 +20,7 @@ class Role extends FormController
 {
     protected string $list = 'Roles';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function prepareData(): array
     {
         return [
@@ -34,9 +32,7 @@ class Role extends FormController
 
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     protected function store(Table $table, array $data, int $id = 0): int
     {
         if ($id and !$table->load($id)) {
