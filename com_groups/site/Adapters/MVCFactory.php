@@ -11,32 +11,18 @@
 namespace THM\Groups\Adapters;
 
 use Exception;
-use Joomla\CMS\Application\CMSApplicationInterface;
-use Joomla\CMS\Form\FormFactoryAwareInterface;
-use Joomla\CMS\MVC\Factory\MVCFactory as Base;
+use Joomla\CMS\{Application\CMSApplicationInterface, Form\FormFactoryAwareInterface};
+use Joomla\CMS\MVC\{Factory\MVCFactory as Core, Model\ModelInterface, View\ViewInterface};
+use Joomla\CMS\Table\Table;
 use Joomla\Event\DispatcherAwareInterface;
-use Joomla\Input\Input as JInput;
+use Joomla\Input\Input as CoreInput;
 use THM\Groups\Controllers\Controller;
 
 /**
  * Factory for MVC Object creation.
  */
-class MVCFactory extends Base
+class MVCFactory extends Core
 {
-    /**
-     * Maps singular model / view names to their corresponding table names.
-     * @var string[]
-     */
-    private array $tableMap = [
-        'Attribute' => 'Attributes',
-        'Category'  => 'Categories',
-        'Group'     => 'Groups',
-        'Profile'   => 'Profiles',
-        'Role'      => 'Roles',
-        'Template'  => 'Templates',
-        'Type'      => 'Types'
-    ];
-
     /**
      * Sets the internal event dispatcher on the given object. Parent has private access. :(
      *
@@ -86,14 +72,18 @@ class MVCFactory extends Base
      * @param   string                   $prefix  The controller prefix
      * @param   array                    $config  The configuration array for the controller
      * @param   CMSApplicationInterface  $app     The app
-     * @param   JInput                   $input   The input
+     * @param   CoreInput                $input   The input
      *
      * @return  Controller
      */
-    public function createController($name, $prefix, array $config, CMSApplicationInterface $app, JInput $input): Controller
+    public function createController($name, $prefix, array $config, CMSApplicationInterface $app, CoreInput $input): Controller
     {
-        $name           = preg_replace('/[^A-Z0-9_]/i', '', $name);
-        $className      = "THM\Groups\Controllers\\$name";
+        $className = 'THM\Groups\Controllers\\' . Application::ucClass($name);
+
+        if (!class_exists($className)) {
+            $className = 'THM\Groups\Controllers\Controller';
+        }
+
         $config['name'] = $name;
         $controller     = new $className($config, $this, $app, $input);
         $this->addDispatcher($controller);
@@ -102,13 +92,10 @@ class MVCFactory extends Base
         return $controller;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function createModel($name, $prefix = '', array $config = [])
+    /** @inheritDoc */
+    public function createModel($name, $prefix = '', array $config = []): ModelInterface
     {
-        $name        = preg_replace('/[^A-Z0-9_]/i', '', $name);
-        $className   = "THM\Groups\Models\\$name";
+        $className   = 'THM\Groups\Models\\' . Application::ucClass($name);
         $formFactory = $this->getFormFactory();
         $model       = new $className($config, $this, $formFactory);
         $this->addDispatcher($model);
@@ -117,14 +104,11 @@ class MVCFactory extends Base
         return $model;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function createView($name, $prefix = '', $type = 'HTML', array $config = [])
+    /** @inheritDoc */
+    public function createView($name, $prefix = '', $type = 'HTML', array $config = []): ViewInterface
     {
         $format = strtoupper(Input::format());
-        $name   = preg_replace('/[^A-Z0-9_]/i', '', $name);
-        $view   = "THM\Groups\Views\\$format\\$name";
+        $view   = "THM\Groups\Views\\$format\\" . Application::ucClass($name);
         $view   = new $view($config);
         $this->addDispatcher($view);
         $this->addFormFactory($view);
@@ -132,16 +116,30 @@ class MVCFactory extends Base
         return $view;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function createTable($name, $prefix = '', array $config = [])
+    /** @inheritDoc */
+    public function createTable($name, $prefix = '', array $config = []): Table
     {
-        // Clean the parameters
-        $name = preg_replace('/[^A-Z0-9_]/i', '', $name);
-        $name = empty($this->tableMap[$name]) ? $name : $this->tableMap[$name];
+        $caller = Application::ucClass($name);
 
-        if (!in_array($name, $this->getTableClasses())) {
+        // Typically class names already in plural, which match table class names
+        if (str_ends_with($caller, 's')) {
+            $singlesWithS = ['NoHint' => 'NoHints'];
+            $table        = array_key_exists($caller, $singlesWithS) ? $singlesWithS[$caller] : $caller;
+        }
+        else {
+            $irregularPlurals = ['Category' => 'Categories'];
+            $table            = array_key_exists($caller, $irregularPlurals) ? $irregularPlurals[$caller] : $caller . 's';
+        }
+
+        $tables = [];
+        foreach (glob(JPATH_SITE . '/components/com_groups/Tables/*') as $file) {
+            $file = str_replace(JPATH_SITE . '/components/com_groups/Tables/', '', $file);
+            if (str_ends_with($file, '.php')) {
+                $tables[] = str_replace('.php', '', $file);
+            }
+        }
+
+        if (!in_array($table, $tables)) {
             Application::error(503);
         }
 
@@ -149,20 +147,5 @@ class MVCFactory extends Base
         $dbo    = array_key_exists('dbo', $config) ? $config['dbo'] : $this->getDatabase();
 
         return new $fqName($dbo);
-    }
-
-    /**
-     * Checks for the available Table classes.
-     * @return array
-     */
-    private function getTableClasses(): array
-    {
-        $tables = [];
-        foreach (glob(JPATH_SITE . '/components/com_groups/Tables/*') as $table) {
-            $table    = str_replace(JPATH_SITE . '/components/com_groups/Tables/', '', $table);
-            $tables[] = str_replace('.php', '', $table);
-        }
-
-        return $tables;
     }
 }
