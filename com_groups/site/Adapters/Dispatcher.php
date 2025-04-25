@@ -18,6 +18,7 @@ use THM\Groups\Controllers\Controller;
 /**
  * @inheritDoc
  * Adjusts the component dispatcher which kept calling for a controller named 'display'.
+ * Adds the singular language path for the component localizations.
  */
 class Dispatcher extends ComponentDispatcher
 {

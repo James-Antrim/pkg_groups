@@ -15,7 +15,6 @@ use Joomla\CMS\Application\{CMSApplication, CMSApplicationInterface, WebApplicat
 use Joomla\CMS\{Component\ComponentHelper, Document\Document, Factory, Language\Language};
 use Joomla\CMS\{Menu\MenuItem, Plugin\PluginHelper, Session\Session, Uri\Uri};
 use Joomla\CMS\Extension\{ComponentInterface, ExtensionHelper};
-use Joomla\CMS\User\{User, UserFactory, UserFactoryInterface};
 use Joomla\Database\DatabaseDriver;
 use Joomla\DI\Container;
 use Joomla\Registry\Registry;
@@ -392,29 +391,6 @@ class Application
         $lastItem = array_pop($nsParts);
 
         return empty($lastItem) ? 'Groups' : $lastItem;
-    }
-
-    /**
-     * Gets a user object (specified or current).
-     *
-     * @param   int|string  $userID  the user identifier (id or name)
-     *
-     * @return User
-     */
-    public static function user(int|string $userID = 0): User
-    {
-        /** @var UserFactory $userFactory */
-        $userFactory = self::container()->get(UserFactoryInterface::class);
-
-        // Get a specific user.
-        if ($userID) {
-            return is_int($userID) ? $userFactory->loadUserById($userID) : $userFactory->loadUserByUsername($userID);
-        }
-
-        $current = self::instance()->getIdentity();
-
-        // Enforce type consistency, by overwriting the potential null from getIdentity.
-        return $current ?: $userFactory->loadUserById(0);
     }
 
     /**

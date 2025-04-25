@@ -111,7 +111,7 @@ class Form extends Core
     /**
      * @inheritDoc
      */
-    public static function getInstance($name, $data = null, $options = [], $replace = true, $xpath = false): Base|Form
+    public static function getInstance($name, $data = null, $options = [], $replace = true, $xpath = false): Core|Form
     {
         // Reference to array with form instances
         $forms = &self::$forms;
