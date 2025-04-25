@@ -13,7 +13,7 @@ namespace THM\Groups\Controllers;
 use Exception;
 use Joomla\CMS\{Application\CMSApplication, Uri\Uri};
 use Joomla\CMS\MVC\{Controller\BaseController, Factory\MVCFactoryInterface};
-use Joomla\Input\Input as JInput;
+use Joomla\Input\Input as CoreInput;
 use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\Can;
 
@@ -28,13 +28,11 @@ class Controller extends BaseController
      */
     protected string $baseURL = '';
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function __construct($config = [],
-        MVCFactoryInterface $factory = null,
+        ?MVCFactoryInterface $factory = null,
         ?CMSApplication $app = null,
-        ?JInput $input = null
+        ?CoreInput $input = null
     )
     {
         $this->baseURL = $this->baseURL ?: Uri::base() . 'index.php?option=com_groups';
@@ -59,7 +57,7 @@ class Controller extends BaseController
     protected function authorizeAJAX(): void
     {
         if (!Can::administrate()) {
-            echo Text::_('GROUPS_403');
+            echo Text::_('403');
             $this->app->close();
         }
     }
@@ -85,13 +83,11 @@ class Controller extends BaseController
         return $valid;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function display($cachable = false, $urlparams = []): BaseController
     {
         $format = strtoupper(Input::format());
-        $view   = $this->input->get('view', 'Start');
+        $view   = Application::ucClass($this->name);
 
         if (!class_exists("\\THM\\Groups\\Views\\$format\\$view")) {
             Application::error(503);
