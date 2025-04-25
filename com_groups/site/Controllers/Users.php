@@ -10,13 +10,10 @@
 
 namespace THM\Groups\Controllers;
 
-use Joomla\CMS\Access\Access;
-use Joomla\CMS\Application\CMSApplication;
-use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\CMS\User\UserHelper;
-use THM\Groups\Adapters\{Application, Input};
-use THM\Groups\Helpers\{Can, Groups};
+use Joomla\CMS\{Access\Access, Application\CMSApplication, Plugin\PluginHelper, User\UserHelper};
 use Joomla\Component\Users\Administrator\Model\UserModel;
+use THM\Groups\Adapters\{Application, Input, User};
+use THM\Groups\Helpers\{Can, Groups};
 use THM\Groups\Tables\{RoleAssociations, Users as UT, UserUsergroupMap as UUGM};
 
 class Users extends ListController
@@ -105,7 +102,7 @@ class Users extends ListController
         $this->checkToken();
         $this->authorize();
 
-        $user  = Application::user();
+        $user  = User::instance();
         $super = $user->get('isRoot');
 
         $batchItems  = Input::getBatchItems();
@@ -208,7 +205,7 @@ class Users extends ListController
         /** @var CMSApplication $app */
         $app         = Application::instance();
         $selectedIDs = Input::getSelectedIDs();
-        $user        = Application::user();
+        $user        = User::instance();
         $super       = $user->get('isRoot');
 
         $selected = count($selectedIDs);
@@ -332,7 +329,7 @@ class Users extends ListController
      */
     private function filterSelected(array $selectedIDs): array
     {
-        if (!$userID = Application::user()->id) {
+        if (!$userID = User::id()) {
             Application::error(401);
         }
 
@@ -453,7 +450,7 @@ class Users extends ListController
         $app         = Application::instance();
         $block       = $value === true;
         $selectedIDs = Input::getSelectedIDs();
-        $user        = Application::user();
+        $user        = User::instance();
         $super       = $user->get('isRoot');
 
         $selected = count($selectedIDs);

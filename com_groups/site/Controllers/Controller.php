@@ -10,9 +10,9 @@
 
 namespace THM\Groups\Controllers;
 
-use Joomla\CMS\Application\CMSApplication;
+use Exception;
+use Joomla\CMS\{Application\CMSApplication, Uri\Uri};
 use Joomla\CMS\MVC\{Controller\BaseController, Factory\MVCFactoryInterface};
-use Joomla\CMS\Uri\Uri;
 use Joomla\Input\Input as JInput;
 use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\Can;
@@ -62,6 +62,27 @@ class Controller extends BaseController
             echo Text::_('GROUPS_403');
             $this->app->close();
         }
+    }
+
+    /**
+     * Checks for a form token in the request. Wraps the parent function to add direct exception handling.
+     *
+     * @param   string  $method    the optional request method in which to look for the token key.
+     * @param   bool    $redirect  whether to implicitly redirect user to the referrer page on failure or simply return false.*
+     *
+     * @return bool
+     */
+    public function checkToken($method = 'post', $redirect = true): bool
+    {
+        $valid = false;
+        try {
+            $valid = parent::checkToken($method, $redirect);
+        }
+        catch (Exception $exception) {
+            Application::handleException($exception);
+        }
+
+        return $valid;
     }
 
     /**

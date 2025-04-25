@@ -12,8 +12,7 @@
 namespace THM\Groups\Helpers;
 
 use Joomla\CMS\Helper\ContentHelper;
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\Input;
+use THM\Groups\Adapters\{Input, User};
 
 class Can
 {
@@ -125,7 +124,7 @@ class Can
      */
     public static function identity(int $id = 0): bool
     {
-        return ($id and Application::user()->id === $id);
+        return ($id and User::id() === $id);
     }
 
     /**
