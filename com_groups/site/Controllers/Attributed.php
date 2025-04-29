@@ -50,14 +50,4 @@ abstract class Attributed extends ListController
     {
         $this->toggle('showLabel', true);
     }
-
-    /**
-     * Toggles a boolean column's value.
-     *
-     * @param string $column
-     * @param bool   $value
-     *
-     * @return void
-     */
-    abstract protected function toggle(string $column, bool $value): void;
 }
