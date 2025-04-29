@@ -43,7 +43,7 @@ class Templates extends ListController
      */
     public function hideRoles(): void
     {
-        $this->toggle(false);
+        $this->toggle('roles', false);
     }
 
     /**
@@ -52,26 +52,7 @@ class Templates extends ListController
      */
     public function showRoles(): void
     {
-        $this->toggle(true);
-    }
-
-    /**
-     * Toggles the role column's value.
-     *
-     * @param bool $value
-     *
-     * @return void
-     */
-    private function toggle(bool $value): void
-    {
-        $this->checkToken();
-        $this->authorize();
-
-        $selectedIDs = Input::getSelectedIDs();
-        $selected    = count($selectedIDs);
-        $updated     = $this->updateBool('roles', $selectedIDs, $value);
-
-        $this->farewell($selected, $updated);
+        $this->toggle('roles', true);
     }
 
     private function toggleUnique(string $column): void
@@ -87,7 +68,8 @@ class Templates extends ListController
 
             if ($this->zeroColumn('templates', $column) and $table->store()) {
                 Application::message('GROUPS_DEFAULT_SET');
-            } else {
+            }
+            else {
                 Application::message('GROUPS_500', Application::ERROR);
             }
         }
