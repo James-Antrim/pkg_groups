@@ -8,7 +8,7 @@
     <creationDate>February 2020</creationDate>
     <copyright>TH Mittelhessen 2020</copyright>
     <license>GNU/GPL v.3</license>
-    <version>3.11.2</version>
+    <version>5.0.0</version>
     <files>
         <filename plugin="thm_groups">thm_groups.php</filename>
     </files>
@@ -21,7 +21,7 @@
     </dependencies>
     <updateservers>
         <server type="extension" priority="1" name="THM Groups Content Plugin Update Site">
-            http://jenkins-ci.mni.thm.de/view/THM%20Control/job/Releases/lastSuccessfulBuild/artifact/updates/plg_thm_groups_content.xml
+            https://jenkins-ci.mni.thm.de/view/THM%20Control/job/Releases/lastSuccessfulBuild/artifact/updates/plg_thm_groups_content.xml
         </server>
     </updateservers>
 </extension>

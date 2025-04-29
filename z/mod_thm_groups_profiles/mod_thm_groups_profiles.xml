@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="module" version="3.*" method="upgrade" client="site">
     <name>mod_thm_groups_profiles</name>
-    <version>3.11.1</version>
+    <version>5.0.0</version>
     <description>MOD_THM_GROUPS_PROFILES_XML_DESCRIPTION</description>
     <creationDate>February 2020</creationDate>
     <authorEmail>james.antrim@mni.thm.de</authorEmail>
@@ -23,21 +23,25 @@
     <config>
         <fields name="params">
             <fieldset name="basic" addfieldpath="/media/com_thm_groups/fields/">
-                <field name="suffix" type="input" default="" label="MOD_THM_GROUPS_PROFILES_SUFFIX" description="MOD_THM_GROUPS_PROFILES_SUFFIX_DESC"/>
-                <field name="showImage" type="radio" class="btn-group btn-group-yesno" default="0" label="MOD_THM_GROUPS_PROFILES_SHOW_IMAGE" description="MOD_THM_GROUPS_PROFILES_SHOW_IMAGE_DESC">
+                <field name="suffix" type="input" default="" label="MOD_THM_GROUPS_PROFILES_SUFFIX"
+                       description="MOD_THM_GROUPS_PROFILES_SUFFIX_DESC"/>
+                <field name="showImage" type="radio" class="btn-group btn-group-yesno" default="0"
+                       label="MOD_THM_GROUPS_PROFILES_SHOW_IMAGE" description="MOD_THM_GROUPS_PROFILES_SHOW_IMAGE_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="showRoles" type="radio" class="btn-group btn-group-yesno" default="0" label="MOD_THM_GROUPS_PROFILES_SHOW_ROLES" description="MOD_THM_GROUPS_PROFILES_SHOW_ROLES_DESC">
+                <field name="showRoles" type="radio" class="btn-group btn-group-yesno" default="0"
+                       label="MOD_THM_GROUPS_PROFILES_SHOW_ROLES" description="MOD_THM_GROUPS_PROFILES_SHOW_ROLES_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="templateID" type="genericlist" valueColumn="id" textColumn="templateName" table="thm_groups_templates" label="MOD_THM_GROUPS_PROFILES_TEMPLATE" default="1" description="MOD_THM_GROUPS_PROFILES_TEMPLATE_DESC">
-
-                </field>
+                <field name="templateID" type="genericlist" valueColumn="id" textColumn="templateName"
+                       table="thm_groups_templates" label="MOD_THM_GROUPS_PROFILES_TEMPLATE" default="1"
+                       description="MOD_THM_GROUPS_PROFILES_TEMPLATE_DESC"/>
             </fieldset>
             <fieldset name="advanced">
-                <field name="moduleclass_sfx" type="textarea" rows="3" label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL" description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC"/>
+                <field name="moduleclass_sfx" type="textarea" rows="3" label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                       description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC"/>
             </fieldset>
         </fields>
     </config>
@@ -46,7 +50,7 @@
     </dependencies>
     <updateservers>
         <server type="extension" priority="1" name="THM Groups Module Profiles Update Site">
-            http://jenkins-ci.mni.thm.de/view/THM%20Control/job/Releases/lastSuccessfulBuild/artifact/updates/mod_thm_groups_profiles.xml
+            https://jenkins-ci.mni.thm.de/view/THM%20Control/job/Releases/lastSuccessfulBuild/artifact/updates/mod_thm_groups_profiles.xml
         </server>
     </updateservers>
 </extension>

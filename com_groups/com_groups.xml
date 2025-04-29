@@ -8,7 +8,7 @@
     <authorUrl>www.thm.de</authorUrl>
     <copyright>TH Mittelhessen 2022</copyright>
     <license>GNU/GPL Version 3</license>
-    <version>1.0.0</version>
+    <version>5.0.0</version>
     <namespace path="src">THM\Groups</namespace>
     <install>
         <sql>
@@ -25,6 +25,7 @@
             <schemapath type="mysql">sql/updates/</schemapath>
         </schemas>
     </update>
+    <scriptfile>script.php</scriptfile>
     <administration>
         <menu link="option=com_groups">Groups</menu>
         <submenu>

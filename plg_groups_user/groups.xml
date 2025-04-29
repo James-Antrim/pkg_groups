@@ -7,7 +7,7 @@
     <creationDate>April 2023</creationDate>
     <copyright>TH Mittelhessen 2023</copyright>
     <licence>GNU GPL v.3</licence>
-    <version>4.0.1</version>
+    <version>5.0.0</version>
     <description>PLG_USER_GROUPS_XML_DESC</description>
     <files>
         <filename plugin="groups">groups.php</filename>

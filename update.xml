@@ -6,12 +6,12 @@
         </description>
         <maintainer>James Antrim</maintainer>
         <maintainerurl>https://www.thm.de/organizer</maintainerurl>
-        <version>4.0.1</version>
+        <version>5.0.0</version>
         <infourl title="THM Homepage">https://www.thm.de/site</infourl>
         <tags>
             <tag>stable</tag>
         </tags>
-        <targetplatform name="joomla" version="4.[0123456789]"/>
+        <targetplatform name="joomla" version="5.[0123456789]"/>
         <php_minimum>8.1</php_minimum>
         <element>com_groups</element>
         <type>component</type>
@@ -28,12 +28,12 @@
         </description>
         <maintainer>James Antrim</maintainer>
         <maintainerurl>https://www.thm.de/organizer</maintainerurl>
-        <version>4.0.1</version>
+        <version>5.0.0</version>
         <infourl title="THM Homepage">https://www.thm.de/site</infourl>
         <tags>
             <tag>stable</tag>
         </tags>
-        <targetplatform name="joomla" version="4.[0123456789]"/>
+        <targetplatform name="joomla" version="5.[0123456789]"/>
         <php_minimum>8.1</php_minimum>
         <element>plg_groups_user</element>
         <type>plugin</type>

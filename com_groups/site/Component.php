@@ -36,7 +36,6 @@ class Component extends MVCComponent implements RouterServiceInterface
     /** @inheritDoc */
     public function createRouter(CMSApplicationInterface $application, AbstractMenu $menu): RouterInterface
     {
-        echo "<pre>246810</pre>";
         return $this->routerFactory->createRouter($application, $menu);
     }
 

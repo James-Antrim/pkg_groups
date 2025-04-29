@@ -8,7 +8,7 @@
     <creationDate>June 2021</creationDate>
     <copyright>TH Mittelhessen 2021</copyright>
     <license>GNU GPL v.3</license>
-    <version>3.11.15</version>
+    <version>5.0.0</version>
     <files>
         <filename plugin="thm_groups">thm_groups.php</filename>
         <filename>GroupsParser.php</filename>

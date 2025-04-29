@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension type="module" version="3.*" client="site" method="upgrade">
     <name>mod_thm_groups_menu</name>
-    <version>3.11.1</version>
+    <version>5.0.0</version>
     <description>MOD_THM_GROUPS_MENU_XML_DESCRIPTION</description>
     <creationDate>February 2020</creationDate>
     <authorEmail>james.antrim@mni.thm.de</authorEmail>
@@ -13,40 +13,38 @@
         <filename module="mod_thm_groups_menu">mod_thm_groups_menu.php</filename>
         <folder>tmpl</folder>
     </files>
-
     <languages folder="language">
         <language tag="de-DE">de-DE/de-DE.mod_thm_groups_menu.ini</language>
         <language tag="de-DE">de-DE/de-DE.mod_thm_groups_menu.sys.ini</language>
         <language tag="en-GB">en-GB/en-GB.mod_thm_groups_menu.ini</language>
         <language tag="en-GB">en-GB/en-GB.mod_thm_groups_menu.sys.ini</language>
     </languages>
-
     <config>
         <fields name="params">
             <fieldset name="basic">
-                <field name="displayedTitle" type="radio" default="module_title" label="MOD_THM_GROUPS_DISPLAYED_TITLE" description="MOD_THM_GROUPS_DISPLAYED_TITLE_DESC">
+                <field name="displayedTitle" type="radio" default="module_title" label="MOD_THM_GROUPS_DISPLAYED_TITLE"
+                       description="MOD_THM_GROUPS_DISPLAYED_TITLE_DESC">
                     <option value="module_title">MOD_THM_GROUPS_MODULE_TITLE</option>
                     <option value="profile_name">MOD_THM_GROUPS_PROFILE_NAME</option>
                 </field>
-                <field name="showTitles" type="radio" class="btn-group btn-group-yesno" default="1" label="MOD_THM_GROUPS_SHOW_TITLES" description="MOD_THM_GROUPS_SHOW_TITLES_DESC">
+                <field name="showTitles" type="radio" class="btn-group btn-group-yesno" default="1"
+                       label="MOD_THM_GROUPS_SHOW_TITLES" description="MOD_THM_GROUPS_SHOW_TITLES_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
             </fieldset>
-
             <fieldset name="advanced">
-                <field name="moduleclass_sfx" type="textarea" rows="3" label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL" description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC"/>
+                <field name="moduleclass_sfx" type="textarea" rows="3" label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                       description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC"/>
             </fieldset>
         </fields>
     </config>
-
     <dependencies>
         <dependency before="true" type="component" minversion="3.9.1">com_thm_groups</dependency>
     </dependencies>
-
     <updateservers>
         <server type="extension" priority="1" name="THM Groups Module Menu Update Site">
-            http://jenkins-ci.mni.thm.de/view/THM%20Control/job/Releases/lastSuccessfulBuild/artifact/updates/mod_thm_groups_menu.xml
+            https://jenkins-ci.mni.thm.de/view/THM%20Control/job/Releases/lastSuccessfulBuild/artifact/updates/mod_thm_groups_menu.xml
         </server>
     </updateservers>
 </extension>
