@@ -11,14 +11,14 @@
 namespace THM\Groups\Models;
 
 use Joomla\CMS\Form\Form;
-use Joomla\CMS\Object\CMSObject;
+use stdClass;
 
 class Attribute extends EditModel
 {
     protected string $tableClass = 'Attributes';
 
     /** @inheritDoc */
-    public function getForm($data = array(), $loadData = true): ?Form
+    public function getForm($data = [], $loadData = true): ?Form
     {
         if (!$form = parent::getForm($data, $loadData)) {
             return $form;
@@ -34,7 +34,7 @@ class Attribute extends EditModel
     }
 
     /** @inheritDoc */
-    protected function loadFormData(): ?CMSObject
+    protected function loadFormData(): ?stdClass
     {
         $item    = $this->getItem();
         $options = empty($item->options) ? [] : json_decode($item->options, true);

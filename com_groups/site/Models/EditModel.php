@@ -11,9 +11,9 @@
 namespace THM\Groups\Models;
 
 use Exception;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
+use stdClass;
 use THM\Groups\Adapters\{Application, Input, FormFactory, MVCFactory};
 
 /**
@@ -85,7 +85,7 @@ abstract class EditModel extends FormModel
     }
 
     /** @inheritDoc */
-    protected function loadFormData(): ?CMSObject
+    protected function loadFormData(): ?stdClass
     {
         return $this->getItem();
     }

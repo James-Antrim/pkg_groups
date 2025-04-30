@@ -11,18 +11,15 @@
 namespace THM\Groups\Models;
 
 use Joomla\CMS\Helper\UserGroupsHelper as UGH;
-use Joomla\CMS\Object\CMSObject;
+use stdClass;
 use THM\Groups\Helpers\Groups as Helper;
 
 class Group extends EditModel
 {
     protected string $tableClass = 'Groups';
 
-    /**
-     * @inheritdoc
-     * @noinspection PhpPossiblePolymorphicInvocationInspection
-     */
-    public function getItem(): CMSObject
+    /** @inheritdoc */
+    public function getItem(): stdClass
     {
         if ($item = parent::getItem()) {
             $groupID          = $item->id;
