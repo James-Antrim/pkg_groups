@@ -12,6 +12,9 @@ namespace THM\Groups\Views\HTML;
 
 use THM\Groups\Views\Named;
 
+/**
+ * Class sets commonly configured view properties.
+ */
 trait Configured
 {
     use Named;
@@ -25,8 +28,6 @@ trait Configured
         $this->_name     = $this->getName();
 
         // Set the default template search path
-        $this->_setPath('helper', $this->_basePath . '/Helpers');
-        $this->_setPath('layout', $this->_basePath . '/Layouts');
         $this->_setPath('template', $this->_basePath . '/templates');
     }
 }

@@ -56,7 +56,7 @@ abstract class ListView extends Base
     {
         // MVC name identity is now the internal standard
         $controller = $this->getName();
-        $this->setTitle(strtoupper($controller));
+        $this->title(strtoupper($controller));
 
         if (Application::backend() and Can::administrate()) {
             $toolbar = Toolbar::getInstance();

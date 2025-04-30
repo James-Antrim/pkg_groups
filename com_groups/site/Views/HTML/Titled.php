@@ -20,37 +20,37 @@ trait Titled
     public string $title = '';
 
     /**
-     * Creates a subtitle element from the term name and the start and end dates of the course.
-     * @return void modifies the course
+     * Creates a subtitle element for the resource.
+     * @return void
      */
-    protected function setSubTitle(): void
+    protected function subTitle(): void
     {
         // Overwritten as necessary.
     }
 
     /**
-     * Adds supplemental information to the display output.
-     * @return void modifies the object property supplement
+     * Adds supplemental information typically related to the context of the resource to its output.
+     * @return void
      */
-    protected function setSupplement(): void
+    protected function supplement(): void
     {
         // Overwritten as necessary.
     }
 
     /**
-     * Prepares the title for standard HTML output.
+     * Prepares the title for standard HTML output. (Localizes)
      *
      * @param   string  $standard     the title to display
      * @param   string  $conditional  the conditional title to display
      *
      * @return void
      */
-    protected function setTitle(string $standard, string $conditional = ''): void
+    protected function title(string $standard, string $conditional = ''): void
     {
         $params = Input::getParams();
 
-        if ($params->get('show_page_heading') and $params->get('page_title')) {
-            $title = $params->get('page_title');
+        if ($params->get('show_page_heading')) {
+            $title = $params->get('page_heading') ?: $params->get('page_title');
         }
         else {
             $title = empty($conditional) ? Text::_($standard) : Text::_($conditional);
