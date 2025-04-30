@@ -8,13 +8,14 @@
     <copyright>TH Mittelhessen 2023</copyright>
     <licence>GNU GPL v.3</licence>
     <version>5.0.0</version>
-    <description>PLG_USER_GROUPS_XML_DESC</description>
+    <description>PLG_USER_GROUPS_DESC</description>
     <files>
+        <folder>language</folder>
         <filename plugin="groups">groups.php</filename>
     </files>
-    <languages>
-        <language tag="de-DE">de-DE/de-DE.plg_user_groups.sys.ini</language>
-        <language tag="en-GB">en-GB/en-GB.plg_user_groups.sys.ini</language>
+    <languages folder="language">
+        <language tag="de-DE">de-DE/plg_user_groups.sys.ini</language>
+        <language tag="en-GB">en-GB/plg_user_groups.sys.ini</language>
     </languages>
     <updateservers>
         <server type="extension" name="Groups User Plugin Update Site" priority="1">

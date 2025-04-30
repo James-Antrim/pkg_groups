@@ -1,7 +1,7 @@
 <?php
 /**
- * @package     Mapped LDAP
- * @extension   plg_mapped_ldap
+ * @package     Groups
+ * @extension   plg_user_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2021 TH Mittelhessen
  * @license     GNU GPL v.3
@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/autoloader.php';
 
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\CMS\Table\Usergroup;
+use Joomla\CMS\Event\Model\AfterSaveEvent;
 use Joomla\Utilities\ArrayHelper;
 use THM\Groups\Helpers\{Groups as GH, Users as UH};
 use THM\Groups\Tables\{Groups as GT, Users as UT};
@@ -47,7 +47,7 @@ class PlgUserGroups extends CMSPlugin
         $groupIDs  = ArrayHelper::toInteger($properties['groups']);
         $displayed = (bool) array_diff($groupIDs, GH::DEFAULT);
 
-        // The person is only associated with default groups and should therefore irrelevant to THM Groups
+        // The person is only associated with default groups and should therefore irrelevant to Groups
         if (!$displayed) {
 
             // Since role associations fk the map table there is no longer any need to delete them.
@@ -84,17 +84,15 @@ class PlgUserGroups extends CMSPlugin
     /**
      * Creates a groups group entry. The current language anchors the default name column.
      *
-     * @param   string     $context     com_users.group
-     * @param   Usergroup  $usergroups  the group table object
-     * @param   bool       $isNew       whether the group is new to the instance
-     * @param   array      $data        the form data
+     * @param   AfterSaveEvent  $event  the event triggered by the dispatcher after saving the user group
      *
      * @return void
      */
-    public function onUserAfterSaveGroup(string $context, Usergroup $usergroups, bool $isNew, array $data): void
+    public function onUserAfterSaveGroup(AfterSaveEvent $event): void
     {
-        $groupID = $usergroups->id;
-        $title   = $usergroups->title;
+        $usergroups = $event->getItem();
+        $groupID    = $usergroups->id;
+        $title      = $usergroups->title;
 
         $group = new GT();
 
