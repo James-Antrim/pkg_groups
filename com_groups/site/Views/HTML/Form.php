@@ -12,7 +12,6 @@ namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Form\Form as FormAlias;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Object\CMSObject;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use THM\Groups\Adapters\{HTML, Input, Toolbar};
@@ -48,13 +47,7 @@ abstract class Form extends BaseView
      */
     public bool $useCoreUI = true;
 
-    /**
-     * Execute and display a template script. Should be sufficient in itself for most inheriting classes.
-     *
-     * @param   string  $tpl  unused
-     *
-     * @return  void
-     */
+    /** @inheritDoc */
     public function display($tpl = null): void
     {
         $this->state = $this->get('State');
