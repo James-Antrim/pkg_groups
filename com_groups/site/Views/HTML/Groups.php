@@ -140,7 +140,7 @@ class Groups extends ListView
         }
 
         if ($item->enabled or $item->blocked) {
-            $link = "index.php?option=com_groups&view=Users&filter[groupID]=$item->id&filter[state]=";
+            $link = "index.php?option=com_groups&view=users&filter[groupID]=$item->id&filter[state]=";
 
             $eLink       = Route::_($link . 1);
             $properties  = ['class' => 'btn btn-success'];

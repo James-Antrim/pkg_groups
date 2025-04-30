@@ -58,7 +58,7 @@ class Attributes extends ListView
     protected function completeItems(array $options = []): void
     {
         $options = [
-            'query'        => 'index.php?option=com_groups&view=Attribute&id=',
+            'query'        => 'index.php?option=com_groups&view=attribute&id=',
             'unlabeledIDs' => Helper::getUnlabeled(),
             'unlabeledTip' => Text::_('TOGGLE_TIP_UNLABELED')
         ];

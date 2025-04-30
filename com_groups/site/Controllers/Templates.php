@@ -74,6 +74,6 @@ class Templates extends ListController
             }
         }
 
-        $this->setRedirect("$this->baseURL&view=Templates");
+        $this->setRedirect("$this->baseURL&view=templates");
     }
 }

@@ -29,12 +29,12 @@
     <administration>
         <menu link="option=com_groups">Groups</menu>
         <submenu>
-            <menu view="Groups">GROUPS_GROUPS</menu>
-            <menu view="Users">GROUPS_USERS</menu>
-            <menu view="Contents">GROUPS_CONTENTS</menu>
-            <menu view="Templates">GROUPS_TEMPLATES</menu>
-            <menu view="Roles">GROUPS_ROLES</menu>
-            <menu view="Attributes">GROUPS_ATTRIBUTES</menu>
+            <menu view="groups">GROUPS_GROUPS</menu>
+            <menu view="users">GROUPS_USERS</menu>
+            <menu view="contents">GROUPS_CONTENTS</menu>
+            <menu view="templates">GROUPS_TEMPLATES</menu>
+            <menu view="roles">GROUPS_ROLES</menu>
+            <menu view="attributes">GROUPS_ATTRIBUTES</menu>
         </submenu>
         <files folder="admin">
             <filename>access.xml</filename>

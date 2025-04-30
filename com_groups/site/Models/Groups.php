@@ -45,7 +45,7 @@ class Groups extends ListModel
         $ugHelper = UGH::getInstance();
 
         foreach ($items as $item) {
-            $item->editLink = Route::_('?option=com_groups&view=Group&id=' . $item->id);
+            $item->editLink = Route::_('?option=com_groups&view=group&id=' . $item->id);
             $ugHelper->populateGroupData($item);
             $this->getUserCounts($item);
         }

@@ -123,7 +123,7 @@ class Users extends ListModel
             // Management access is a prerequisite of accessing this view at all.
             $item->access    = true;
             $item->activated = empty($item->activation);
-            $item->editLink  = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
+            $item->editLink  = Route::_('index.php?option=com_groups&view=profile&id=' . $item->id);
             $item->groups    = $this->getAssocs($item->id);
         }
 

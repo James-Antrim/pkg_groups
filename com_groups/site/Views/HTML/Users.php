@@ -125,12 +125,12 @@ class Users extends ListView
         $item->block         = HTML::toggle($index, Helper::blockedStates[$item->block], 'Users');
         $item->content       = HTML::toggle($index, Helper::contentStates[$item->content], 'Users');
         $item->editing       = HTML::toggle($index, Helper::editingStates[$item->editing], 'Users');
-        $item->editLink      = Route::_('index.php?option=com_groups&view=User&id=' . $item->id);
+        $item->editLink      = Route::_('index.php?option=com_groups&view=user&id=' . $item->id);
         $item->groups        = $this->formatGroups($item->groups);
         $item->lastvisitDate = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
         $item->name          = $item->forenames ? "$item->forenames $item->surnames" : $item->surnames;
         $item->published     = HTML::toggle($index, Helper::publishedStates[$item->published], 'Users');
-        $item->viewLink      = Route::_('index.php?option=com_groups&view=Profile&id=' . $item->id);
+        $item->viewLink      = Route::_('index.php?option=com_groups&view=profile&id=' . $item->id);
     }
 
     /** @inheritDoc */

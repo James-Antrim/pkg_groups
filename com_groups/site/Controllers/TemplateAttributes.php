@@ -53,7 +53,7 @@ class TemplateAttributes extends Attributed
      */
     public function cancel(): void
     {
-        $this->setRedirect("$this->baseURL&view=Templates");
+        $this->setRedirect("$this->baseURL&view=templates");
     }
 
     /**
@@ -112,7 +112,7 @@ class TemplateAttributes extends Attributed
         parse_str($referrer, $params);
 
         $url = $this->baseURL;
-        $url .= empty($params['id']) ? '&view=Templates' : "&view=TemplateAttributes&id={$params['id']}";
+        $url .= empty($params['id']) ? '&view=templates' : "&view=templateattributes&id={$params['id']}";
 
         $this->setRedirect($url);
     }

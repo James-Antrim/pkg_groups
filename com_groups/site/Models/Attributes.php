@@ -51,7 +51,7 @@ class Attributes extends ListModel
         foreach ($items as $item) {
             // Management access is a prerequisite of accessing this view at all.
             $item->access   = true;
-            $item->editLink = Route::_('index.php?option=com_groups&view=Attribute&id=' . $item->id);
+            $item->editLink = Route::_('index.php?option=com_groups&view=attribute&id=' . $item->id);
 
             $type         = Types::TYPES[$item->typeID];
             $item->input  = Text::_($type['input']);

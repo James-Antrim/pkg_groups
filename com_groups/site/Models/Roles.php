@@ -50,7 +50,7 @@ class Roles extends ListModel
         foreach ($items as $item) {
             // Management access is a prerequisite of accessing this view at all.
             $item->access   = true;
-            $item->editLink = Route::_('index.php?option=com_groups&view=Role&id=' . $item->id);
+            $item->editLink = Route::_('index.php?option=com_groups&view=role&id=' . $item->id);
 
             if ($item->groups === 0) {
                 $item->groups = Text::_('GROUPS_NO_GROUPS');
