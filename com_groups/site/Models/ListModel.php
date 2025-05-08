@@ -63,12 +63,11 @@ abstract class ListModel extends Base
             return;
         }
 
-        $value = (int) $value;
-
         // Typical filter names are in the form 'filter.column'
         $column = strpos($name, '.') ? substr($name, strpos($name, '.') + 1) : $name;
-        $column = $this->getDatabase()->quoteName($column);
-        $query->where("$column = $value");
+        $value  = (int) $value;
+
+        $query->where(DB::qc($column, $value));
     }
 
     /**

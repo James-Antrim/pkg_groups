@@ -13,7 +13,7 @@ namespace THM\Groups\Models;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
 use Joomla\Database\QueryInterface;
-use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\{Application, Database as DB};
 use THM\Groups\Tools\Migration;
 
 /**
@@ -53,14 +53,9 @@ class Templates extends ListModel
     /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
-        // Create a new query object.
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true);
+        $query = DB::query();
         $tag   = Application::tag();
-
-        // Select the required fields from the table.
-        $query->select(['*', $db->quoteName("name_$tag", 'name')])->from($db->quoteName('#__groups_templates'));
-
+        $query->select(['*', DB::qn("name_$tag", 'name')])->from(DB::qn('#__groups_templates'));
         $this->orderBy($query);
 
         return $query;

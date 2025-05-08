@@ -10,12 +10,10 @@
 
 namespace THM\Groups\Models;
 
-use Joomla\CMS\Language\Text;
+use Joomla\CMS\{Language\Text, Router\Route};
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use Joomla\CMS\Router\Route;
-use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
-use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\{Application, Database as DB};
 use THM\Groups\Tools\Migration;
 
 /**
@@ -70,54 +68,41 @@ class Roles extends ListModel
     /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
-        // Create a new query object.
-        $db     = $this->getDatabase();
-        $groups = $db->quoteName('g.id', 'groups');
-        $groups = 'COUNT(' . implode(') AS ', explode(' AS ', $groups));
-        $query  = $db->getQuery(true);
+        $groups = 'COUNT(' . implode(') AS ', explode(' AS ', DB::qn('g.id', 'groups')));
         $tag    = Application::tag();
 
-        //'COUNT(' . $db->quoteName('id') . ')'
-
-        // Select the required fields from the table.
-        $query->select([
-            $db->quoteName('r.id'),
-            $db->quoteName('r.ordering'),
-            $db->quoteName("r.name_$tag", 'name'),
-            $db->quoteName("r.plural_$tag", 'plural'),
-            $db->quoteName("g.name_$tag", 'group'),
+        $select = [
+            DB::qn('r.id'),
+            DB::qn('r.ordering'),
+            DB::qn("r.name_$tag", 'name'),
+            DB::qn("r.plural_$tag", 'plural'),
+            DB::qn("g.name_$tag", 'group'),
             $groups
-        ]);
+        ];
+        $query  = DB::query();
+        $query->select($select)->from(DB::qn('#__groups_roles', 'r'))->group(DB::qn('r.id'));
 
-        $assocTable  = $db->quoteName('#__groups_role_associations', 'ra');
-        $assocMapID  = $db->quoteName('ra.mapID');
-        $assocRoleID = $db->quoteName('ra.roleID');
-        $groupsID    = $db->quoteName('g.id');
-        $groupsTable = $db->quoteName('#__groups_groups', 'g');
-        $mapGroupID  = $db->quoteName('uugm.group_id');
-        $mapID       = $db->quoteName('uugm.id');
-        $mapTable    = $db->quoteName('#__user_usergroup_map', 'uugm');
-        $roleID      = $db->quoteName('r.id');
-        $rolesTable  = $db->quoteName('#__groups_roles', 'r');
+        $aConditions = DB::qc('ra.roleID', 'r.id');
+        $aTable      = DB::qn('#__groups_role_associations', 'ra');
+        $groupID     = $this->getState('filter.groupID');
+        $gConditions = DB::qc('g.id', 'uugm.group_id');
+        $gTable      = DB::qn('#__groups_groups', 'g');
+        $mConditions = DB::qn('uugm.id', 'ra.mapID');
+        $mTable      = DB::qn('#__user_usergroup_map', 'uugm');
 
-        $query->from($rolesTable)->group($roleID);
-
-        $groupID = $this->getState('filter.groupID');
         if (is_numeric($groupID) and intval($groupID) > 0) {
-            $groupID = (int) $groupID;
-            $query->join('inner', $assocTable, "$assocRoleID = $roleID")
-                ->join('inner', $mapTable, "$mapID = $assocMapID")
-                ->join('inner', $groupsTable, "$groupsID = $mapGroupID")
-                ->where($groupsID . ' = :groupID')
-                ->bind(':groupID', $groupID, ParameterType::INTEGER);
+            $query->innerJoin($aTable, $aConditions)
+                ->innerJoin($mTable, $mConditions)
+                ->innerJoin($gTable, $gConditions)
+                ->where(DB::qc('g.id', (int) $groupID));
         }
         else {
-            $query->join('left', $assocTable, "$assocRoleID = $roleID")
-                ->join('left', $mapTable, "$mapID = $assocMapID")
-                ->join('left', $groupsTable, "$groupsID = $mapGroupID");
+            $query->leftJoin($aTable, $aConditions)
+                ->leftJoin($mTable, $mConditions)
+                ->leftJoin($gTable, $gConditions);
 
             if (is_numeric($groupID) and intval($groupID) < 0) {
-                $query->where($groupsID . ' IS NULL');
+                $query->where(DB::qn('g.id') . ' IS NULL');
             }
         }
 

@@ -69,7 +69,7 @@ abstract class EditModel extends FormModel
     }
 
     /**
-     * Method to get a table object, load it if necessary.
+     * Method to get a table object.
      *
      * @param   string  $name     the table name, unused
      * @param   string  $prefix   the class prefix, unused

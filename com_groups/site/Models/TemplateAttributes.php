@@ -11,7 +11,7 @@
 namespace THM\Groups\Models;
 
 use Joomla\Database\QueryInterface;
-use THM\Groups\Adapters\Input;
+use THM\Groups\Adapters\{Database as DB, Input};
 
 /**
  * Model class for aggregating available roles data.
@@ -35,13 +35,12 @@ class TemplateAttributes extends ListModel
     /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
-        $db         = $this->getDatabase();
-        $query      = $db->getQuery(true);
+        $query      = DB::query();
         $templateID = Input::getID();
 
         $query->select('*')
-            ->from($db->quoteName('#__groups_template_attributes'))
-            ->where($db->quoteName('templateID') . " = $templateID");
+            ->from(DB::qn('#__groups_template_attributes'))
+            ->where(DB::qc('templateID', $templateID));
         $this->orderBy($query);
 
         return $query;

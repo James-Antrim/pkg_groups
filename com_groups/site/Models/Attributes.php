@@ -12,9 +12,8 @@ namespace THM\Groups\Models;
 
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
-use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
-use THM\Groups\Adapters\{Application, Text};
+use THM\Groups\Adapters\{Application, Database as DB, Text};
 use THM\Groups\Helpers\{Attributes as Helper, Types};
 use THM\Groups\Tools\Migration;
 
@@ -64,48 +63,33 @@ class Attributes extends ListModel
     /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true);
+        $query = DB::query();
         $tag   = Application::tag();
 
-        $query->select([
-            $db->quoteName('a') . '.*',
-            $db->quoteName("a.label_$tag", 'name'),
-            $db->quoteName('vl.title', 'level')
-        ]);
-
-        $attributes = $db->quoteName('#__groups_attributes', 'a');
-        $contextID  = $db->quoteName('a.context');
-        $levelID    = $db->quoteName('vl.id');
-        $lCondition = $db->quoteName('a.viewLevelID') . " = $levelID";
-        $levels     = $db->quoteName('#__viewlevels', 'vl');
-
-        $query->from($attributes)->join('inner', $levels, $lCondition);
+        $query->select([DB::qn('a') . '.*', DB::qn("a.label_$tag", 'name'), DB::qn('vl.title', 'level')])
+            ->from(DB::qn('#__groups_attributes', 'a'))
+            ->innerJoin(DB::qn('#__viewlevels', 'vl'), DB::qc('a.viewLevelID', 'vl.id'));
 
         $contextValue = $this->getState('filter.context');
         $positiveInt  = (is_numeric($contextValue) and $contextValue = (int) $contextValue);
 
         if ($positiveInt and in_array($contextValue, Helper::CONTEXTS)) {
             if ($contextValue === Helper::PERSONS_CONTEXT) {
-                $query->where($contextID . ' != ' . Helper::GROUPS_CONTEXT);
+                $query->where(DB::qc('a.context', Helper::GROUPS_CONTEXT, '!='));
             }
             elseif ($contextValue === Helper::GROUPS_CONTEXT) {
-                $query->where($contextID . ' != ' . Helper::PERSONS_CONTEXT);
+                $query->where(DB::qc('a.context', Helper::PERSONS_CONTEXT, '!='));
             }
         }
 
         $levelValue = $this->getState('filter.levelID');
         if (is_numeric($levelValue) and intval($levelValue) > 0) {
-            $levelValue = (int) $levelValue;
-            $query->where($levelID . ' = :levelID')
-                ->bind(':levelID', $levelValue, ParameterType::INTEGER);
+            $query->where(DB::qc('vl.id', (int) $levelValue));
         }
 
         $typeValue = $this->getState('filter.typeID');
         if (is_numeric($typeValue) and intval($typeValue) > 0) {
-            $typeValue = (int) $typeValue;
-            $query->where($db->quoteName('a.typeID') . ' = :typeID')
-                ->bind(':typeID', $typeValue, ParameterType::INTEGER);
+            $query->where(DB::qc('a.typeID', (int) $typeValue));
         }
 
         $this->orderBy($query);

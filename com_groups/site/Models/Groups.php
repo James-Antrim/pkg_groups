@@ -16,7 +16,7 @@ use Joomla\CMS\Router\Route;
 use Joomla\Database\ParameterType;
 use Joomla\Database\QueryInterface;
 use stdClass;
-use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\{Application, Database as DB};
 use THM\Groups\Tools\Migration;
 
 /**
@@ -57,57 +57,34 @@ class Groups extends ListModel
     /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
-        // Create a new query object.
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true);
-        $tag   = Application::tag();
-
-        $id       = 'DISTINCT ' . $db->quoteName('g.id', 'id');
-        $groupID  = $db->quoteName('g.id');
-        $name     = $db->quoteName("g.name_$tag", 'name');
-        $parentID = $db->quoteName('ug.parent_id');
-        // Select the required fields from the table.
-        $query->select([$id, $name, $parentID]);
-
-        $condition  = $db->quoteName('ug.id') . " = $groupID";
-        $groups     = $db->quoteName('#__groups_groups', 'g');
-        $userGroups = $db->quoteName('#__usergroups', 'ug');
-        $query->from($groups)->join('inner', $userGroups, $condition);
-
-        $gLeft     = $db->quoteName('ug.lft');
-        $gRight    = $db->quoteName('ug.rgt');
-        $parent    = $db->quoteName('#__usergroups', 'p');
-        $pID       = $db->quoteName('p.id');
-        $pLeft     = $db->quoteName('p.lft');
-        $pRight    = $db->quoteName('p.rgt');
-        $condition = "$pLeft < $gLeft AND $gRight < $pRight";
-        $query->join('left', $parent, $condition);
+        $select = ['DISTINCT ' . DB::qn('g.id', 'id'), DB::qn('g.name_' . Application::tag(), 'name'), DB::qn('ug.parent_id')];
+        $query  = DB::query();
+        $query->select($select)
+            ->from(DB::qn('#__groups_groups', 'g'))
+            ->innerJoin(DB::qn('#__groups_groups', 'g'), DB::qc('ug.id', 'g.id'))
+            ->leftJoin(
+                DB::qn('#__usergroups', 'p'),
+                DB::qn('p.lft') . '<' . DB::qn('ug.lft') . ' AND ' . DB::qn('ug.rgt') . '<' . DB::qn('p.rgt')
+            );
 
         if ($filterRoleID = (int) $this->getState('filter.roleID')) {
-            $condition = $db->quoteName('ra.groupID') . " = $groupID";
-            $ra        = $db->quoteName('#__groups_role_associations', 'ra');
-            $roleID    = $db->quoteName('ra.roleID');
+            $condition = DB::qc('ra.groupID', 'g.id');
+            $ra        = DB::qn('#__groups_role_associations', 'ra');
 
             if ($filterRoleID >= 1) {
-                $query->join('inner', $ra, $condition)
-                    ->where("$roleID = :roleID")
-                    ->bind(':roleID', $filterRoleID, ParameterType::INTEGER);
+                $query->innerJoin($ra, $condition)->where(DB::qc('ra.roleID', $filterRoleID));
             }
             else {
-                $query->join('left', $ra, $condition)
-                    ->where("$roleID IS NULL");
+                $query->leftJoin($ra, $condition)->where(DB::qn('ra.roleID') . ' IS NULL');
             }
         }
 
         if ($filterLevelID = (int) $this->getState('filter.levelID')) {
-            $levelID = $db->quoteName('vl.id');
-            $levels  = $db->quoteName('#__viewlevels', 'vl');
-            $regex1  = $query->concatenate(["'[,\\\\[]'", $groupID, "'[,\\\\]]'"]);
-            $regex2  = $query->concatenate(["'[,\\\\[]'", $pID, "'[,\\\\]]'"]);
-            $rules   = $db->quoteName('vl.rules');
-            $query->join('inner', $levels, "$rules REGEXP $regex1 OR $rules REGEXP $regex2")
-                ->where("$levelID = :levelID")
-                ->bind(':levelID', $filterLevelID, ParameterType::INTEGER);
+            $regex1 = $query->concatenate(["'[,\\\\[]'", DB::qn('g.id'), "'[,\\\\]]'"]);
+            $regex2 = $query->concatenate(["'[,\\\\[]'", DB::qn('p.id'), "'[,\\\\]]'"]);
+            $rules  = DB::qn('vl.rules');
+            $query->innerJoin(DB::qn('#__viewlevels', 'vl'), "$rules REGEXP $regex1 OR $rules REGEXP $regex2")
+                ->where(DB::qc('vl.id', $filterLevelID));
         }
 
         // Filter the comments over the search string if set.
@@ -115,17 +92,13 @@ class Groups extends ListModel
 
         if (!empty($search)) {
             if (stripos($search, 'id:') === 0) {
-                $ids = (int) substr($search, 3);
-                $query->where($db->quoteName('g.id') . ' = :id');
-                $query->bind(':id', $ids, ParameterType::INTEGER);
+                $query->where(DB::qc('g.id', (int) substr($search, 3)));
             }
             else {
-                $nameDE = $db->quoteName('g.name_de');
-                $nameEN = $db->quoteName('g.name_en');
-                $search = '%' . trim($search) . '%';
-                $query->where("($nameDE LIKE :title1 OR $nameEN LIKE :title2)")
-                    ->bind(':title1', $search)
-                    ->bind(':title2', $search);
+                $search     = '%' . trim($search) . '%';
+                $conditions = DB::qcs([['g.name_de', $search, 'LIKE', true], ['g.name_en', $search, 'LIKE', true]], 'OR');
+                $conditions = "($conditions)";
+                $query->where($conditions);
             }
         }
 
@@ -144,32 +117,23 @@ class Groups extends ListModel
      */
     private function getUserCounts(stdClass $group): void
     {
-        $db = $this->getDatabase();
-
-        $block      = $db->quoteName('u.block');
-        $map        = $db->quoteName('#__user_usergroup_map', 'map');
-        $mapGroupID = $db->quoteName('map.group_id');
-        $mapUserID  = $db->quoteName('map.user_id');
-        $query      = $db->getQuery(true);
-        $userID     = $db->quoteName('u.id');
-        $users      = $db->quoteName('#__users', 'u');
-
-        $blocked   = 0;
-        $condition = "$userID = $mapUserID";
-        $select    = "COUNT(DISTINCT $mapUserID)";
-
-        // Count the objects in the user group.
-        $query->select($select)->from($map)->join('LEFT', $users, $condition)
-            ->where("$mapGroupID = $group->id")
-            ->where("$block = :blocked")
-            ->group($mapGroupID)
+        $query = DB::query();
+        $query->select('COUNT(DISTINCT ' . DB::qn('map.user_id') . ')')
+            ->from(DB::qn('#__user_usergroup_map', 'map'))
+            ->leftJoin(DB::qn('#__users', 'u'), DB::qc('u.id', 'map.user_id'))
+            ->where(DB::qc('map.group_id', $group->id))
+            ->where(DB::qc('u.block', ':blocked'))
+            ->group(DB::qn('map.group_id'))
             ->bind(':blocked', $blocked, ParameterType::INTEGER);
-        $db->setQuery($query);
+        DB::set($query);
 
-        $group->enabled = (int) $db->loadResult();
+        // All group users
+        $blocked        = 0;
+        $group->enabled = DB::integer();
 
+        // Blocked group users
         $blocked        = 1;
-        $group->blocked = (int) $db->loadResult();
+        $group->blocked = DB::integer();
     }
 
     /** @inheritDoc */

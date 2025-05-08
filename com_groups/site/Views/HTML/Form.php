@@ -12,6 +12,7 @@ namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Form\Form as FormAlias;
 use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\FormView as Core;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use THM\Groups\Adapters\{HTML, Input, Toolbar};
@@ -22,10 +23,12 @@ use THM\Groups\Views\Named;
  * - Overrides/-writes to avoid deprecated code in the platform or promote ease of use
  * - Supplemental functions to extract common code from list models
  */
-abstract class Form extends BaseView
+abstract class Form extends Core
 {
     use Configured;
     use Named;
+    use Tasked;
+    use Titled;
 
     /**
      * The Form object
@@ -60,13 +63,7 @@ abstract class Form extends BaseView
         parent::display($tpl);
     }
 
-    /**
-     * Adds resource related title, cancel/close and eventually help buttons.
-     *
-     * @param   string[]  $buttons  the names of the available button functions
-     *
-     * @return  void adds buttons to the global toolbar object
-     */
+    /** @inheritDoc */
     protected function addToolbar(array $buttons = []): void
     {
         Input::set('hidemainmenu', true);
@@ -89,20 +86,18 @@ abstract class Form extends BaseView
             foreach ($buttons as $button) {
                 switch ($button) {
                     case 'apply':
-                        $applyLabel = $new ? 'GROUPS_CREATE' : 'GROUPS_APPLY';
-                        $saveBar->apply("$controller.apply", $applyLabel);
+                        $saveBar->apply("$controller.apply");
                         break;
                     case 'save':
-                        $saveBar->save("$controller.save", $saveLabel);
+                        $saveBar->save("$controller.save");
                         break;
                     case 'save2copy':
                         if (!$new) {
-                            $saveBar->save2copy("$controller.save2copy", 'GROUPS_SAVE_AS_COPY');
+                            $saveBar->save2copy("$controller.save2copy");
                         }
                         break;
                     case 'save2new':
-                        $newLabel = $new ? 'GROUPS_CREATE_AND_NEW' : 'GROUPS_SAVE_AND_NEW';
-                        $saveBar->save2new("$controller.save2new", $newLabel);
+                        $saveBar->save2new("$controller.save2new");
                         break;
                 }
             }

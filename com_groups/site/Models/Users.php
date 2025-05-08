@@ -10,13 +10,11 @@
 
 namespace THM\Groups\Models;
 
-use Joomla\CMS\Form\Form;
+use Joomla\CMS\{Form\Form, Router\Route};
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
-use Joomla\CMS\Router\Route;
-use Joomla\Database\ParameterType;
-use Joomla\Database\QueryInterface;
+use Joomla\Database\{DatabaseQuery, QueryInterface};
 use stdClass;
-use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\{Application, Database as DB};
 use THM\Groups\Tools\Migration;
 
 /**
@@ -71,32 +69,23 @@ class Users extends ListModel
      */
     private function getAssocs(int $itemID): array
     {
-        $db     = $this->getDatabase();
         $groups = [];
-        $query  = $db->getQuery(true);
+        $query  = DB::query();
         $tag    = Application::tag();
 
-        $jCondition1 = $db->quoteName('map.group_id') . ' = ' . $db->quoteName('g.id');
-        $jCondition2 = $db->quoteName('ra.mapID') . ' = ' . $db->quoteName('map.id');
-        $jCondition3 = $db->quoteName('r.id') . ' = ' . $db->quoteName('ra.roleID');
+        $query->select(DB::qn([
+            ["g.name_$tag", 'g.id', "r.name_$tag", 'r.id', 'map.user_id'],
+            ['group', 'groupID', 'role', 'roleID', 'userID']
+        ]))
+            ->from(DB::qn('#__groups_groups', 'g'))
+            ->innerJoin(DB::qn('#__user_usergroup_map', 'map'), DB::qc('map.group_id', 'g.id'))
+            ->leftJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.mapID', 'map.id'))
+            ->leftJoin(DB::qn('#__groups_roles', 'r'), DB::qc('r.id', 'ra.roleID'))
+            ->where(DB::qc('map.user_id', $itemID));
 
-        $select = [
-            $db->quoteName('g.id', 'groupID'),
-            $db->quoteName("g.name_$tag", 'group'),
-            $db->quoteName('r.id', 'roleID'),
-            $db->quoteName("r.name_$tag", 'role'),
-            $db->quoteName('map.user_id', 'userID')
-        ];
-        $query->select($select)
-            ->from($db->quoteName('#__groups_groups', 'g'))
-            ->join('inner', $db->quoteName('#__user_usergroup_map', 'map'), $jCondition1)
-            ->join('left', $db->quoteName('#__groups_role_associations', 'ra'), $jCondition2)
-            ->join('left', $db->quoteName('#__groups_roles', 'r'), $jCondition3)
-            ->where($db->quoteName('map.user_id') . " = $itemID");
+        DB::set($query);
 
-        $db->setQuery($query);
-
-        foreach ($db->loadAssocList() as $result) {
+        foreach (DB::arrays() as $result) {
             $group   = $result['group'];
             $groupID = $result['groupID'];
             $role    = $result['role'];
@@ -133,54 +122,42 @@ class Users extends ListModel
     /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true);
+        $query = DB::query();
 
         $query->select([
-            $db->quoteName('u') . '.*',
-            'COALESCE(' . $db->quoteName('surnames') . ', ' . $db->quoteName('name') . ') AS ' . $db->quoteName('surnames')
-        ]);
-
-        $userID = $db->quoteName('u.id');
-
-        $query->from($db->quoteName('#__users', 'u'));
+            DB::qn('u') . '.*',
+            'COALESCE(' . DB::qn('surnames') . ', ' . DB::qn('name') . ') AS ' . DB::qn('surnames')
+        ])->from(DB::qn('#__users', 'u'));
 
         $activation = $this->state->get('filter.activation');
 
         if ($this->isBinary($activation)) {
-            $column = $db->quoteName('activation');
+            $column = DB::qn('activation');
 
             if ((int) $activation) {
-                $query->where("($column = '' OR $column = '0')");
+                $restriction = '(' . DB::qcs([['activation', '', '=', true], ['activation', '0', '=', true]], 'OR') . ')';
+                $query->where($restriction);
             }
             else {
-                $query->where("$column != '0'")
-                    ->where($query->length($column) . ' > 0');
+                $query->where(DB::qc('activation', '0', '!=', true))->where($query->length($column) . ' > 0');
             }
         }
 
+        $usersID = DB::qn('u.id');
         if ($association = $this->state->get('filter.association')) {
             [$resource, $id] = explode('-', $association);
 
             switch ($resource) {
                 case 'assocID':
                     if (!empty($id) and $id = (int) $id) {
-                        $assocID     = $db->quoteName('pa.assocID');
-                        $paProfileID = $db->quoteName('pa.userID');
-
-                        $condition = "$paProfileID = $userID";
-                        $query->join('inner', $db->quoteName('#__groups_person_associations', 'pa'), $condition)
-                            ->where("$assocID = $id");
+                        $query->innerJoin(DB::qn('#__groups_person_associations', 'pa'), DB::qc('pa.userID', $usersID))
+                            ->where(DB::qc('pa.assocID', $id));
                     }
                     break;
                 case 'groupID':
                     if (!empty($id) and $id = (int) $id) {
-                        $groupID   = $db->quoteName('uugm.group_id');
-                        $uIDColumn = $db->quoteName('uugm.user_id');
-
-                        $condition = "$uIDColumn = $userID";
-                        $query->join('inner', $db->quoteName('#__user_usergroup_map', 'uugm'), $condition)
-                            ->where("$groupID = $id");
+                        $query->innerJoin(DB::qn('#__user_usergroup_map', 'uugm'), DB::qc('uugm.user_id', $usersID))
+                            ->where(DB::qc('uugm.group_id', $id));
                     }
                     break;
             }
@@ -195,15 +172,9 @@ class Users extends ListModel
                 $predicate = " IS NULL";
             }
 
-            $assocID     = $db->quoteName('pa.assocID');
-            $paProfileID = $db->quoteName('pa.userID');
-            $raID        = $db->quoteName('ra.id');
-
-            $condition1 = "$paProfileID = $userID";
-            $condition2 = "$raID = $assocID";
-            $query->join($join, $db->quoteName('#__groups_profile_associations', 'pa'), $condition1)
-                ->join($join, $db->quoteName('#__groups_role_associations', 'ra'), $condition2)
-                ->where($db->quoteName('ra.id') . $predicate);
+            $query->join($join, DB::qn('#__groups_profile_associations', 'pa'), DB::qc('pa.userID', $usersID))
+                ->join($join, DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.id', 'pa.assocID'))
+                ->where(DB::qn('ra.id') . $predicate);
         }
 
         $this->binaryFilter($query, 'filter.block');
@@ -215,92 +186,26 @@ class Users extends ListModel
 
         if ($search = $this->getState('filter.search')) {
             if (is_numeric($search)) {
-                $query->where($db->quoteName('u.id') . ' = :id')
-                    ->bind(':id', $search, ParameterType::INTEGER);
+                $query->where(DB::qc('u.id', (int) $search));
             }
             else {
-                $search  = '%' . trim($search) . '%';
-                $wherray = [
-                    $db->quoteName('email') . ' LIKE :email',
-                    $db->quoteName('name') . ' LIKE :name',
-                    $db->quoteName('username') . ' LIKE :username',
-                ];
-                $query->where('(' . implode(' OR ', $wherray) . ')')
-                    ->bind(':email', $search)
-                    ->bind(':name', $search)
-                    ->bind(':username', $search);
+                $search     = '%' . trim($search) . '%';
+                $conditions = DB::qcs([
+                    ['email', $search, 'LIKE', true],
+                    ['name', $search, 'LIKE', true],
+                    ['username', $search, 'LIKE', true]
+                ], 'OR');
+                $conditions = "($conditions)";
+                $query->where($conditions);
             }
         }
 
-        $registered = $this->state->get('filter.registered');
-        $visited    = $this->state->get('filter.visited');
+        if ($registered = $this->state->get('filter.registered')) {
+            $this->terminate($query, 'registerDate', $registered);
+        }
 
-        if ($registered or $visited) {
-            $now        = date('\'Y-m-d H:i:s\'');
-            $today      = date('\'Y-m-d 00:00:00\'');
-            $weekAgo    = date('\'Y-m-d 00:00:00\'', strtotime('-1 week'));
-            $monthsAgo1 = date('\'Y-m-d 00:00:00\'', strtotime('-1 month'));
-            $monthsAgo3 = date('\'Y-m-d 00:00:00\'', strtotime('-3 month'));
-            $monthsAgo6 = date('\'Y-m-d 00:00:00\'', strtotime('-6 month'));
-            $yearAgo    = date('\'Y-m-d 00:00:00\'', strtotime('-1 year'));
-
-            if ($registered) {
-                $rColumn = $db->quoteName('registerDate');
-                switch ($registered) {
-                    case 'today':
-                        $query->where("$rColumn BETWEEN $today AND $now");
-                        break;
-                    case 'past_week':
-                        $query->where("$rColumn BETWEEN $weekAgo AND $now");
-                        break;
-                    case 'past_1month':
-                        $query->where("$rColumn BETWEEN $monthsAgo1 AND $now");
-                        break;
-                    case 'past_3month':
-                        $query->where("$rColumn BETWEEN $monthsAgo3 AND $now");
-                        break;
-                    case 'past_6month':
-                        $query->where("$rColumn BETWEEN $monthsAgo6 AND $now");
-                        break;
-                    case 'past_year':
-                        $query->where("$rColumn BETWEEN $yearAgo AND $now");
-                        break;
-                    case 'post_year':
-                        $query->where("$rColumn < $yearAgo");
-                        break;
-                }
-            }
-
-            if ($visited) {
-                $vColumn = $db->quoteName('lastvisitDate');
-                switch ($visited) {
-                    case 'today':
-                        echo 'check?';
-                        $query->where("$vColumn BETWEEN $today AND $now");
-                        break;
-                    case 'past_week':
-                        $query->where("$vColumn BETWEEN $weekAgo AND $now");
-                        break;
-                    case 'past_1month':
-                        $query->where("$vColumn BETWEEN $monthsAgo1 AND $now");
-                        break;
-                    case 'past_3month':
-                        $query->where("$vColumn BETWEEN $monthsAgo3 AND $now");
-                        break;
-                    case 'past_6month':
-                        $query->where("$vColumn BETWEEN $monthsAgo6 AND $now");
-                        break;
-                    case 'past_year':
-                        $query->where("$vColumn BETWEEN $yearAgo AND $now");
-                        break;
-                    case 'post_year':
-                        $query->where("$vColumn < $yearAgo");
-                        break;
-                    case 'never':
-                        $query->where("$vColumn IS NULL");
-                        break;
-                }
-            }
+        if ($visited = $this->state->get('filter.visited')) {
+            $this->terminate($query, 'lastvisitDate', $visited);
         }
 
         $this->orderBy($query);
@@ -358,6 +263,54 @@ class Users extends ListModel
         }
         elseif ($this->state->get('filter.roleID')) {
             $this->state->set('filter.association', '');
+        }
+    }
+
+    /**
+     * Adds a date based filter on a column based on a descriptive value string.
+     *
+     * @param   DatabaseQuery  $query   the query to add the filter to
+     * @param   string         $column  the column to filter against
+     * @param   string         $value   the descriptive value of the filter
+     *
+     * @return void
+     */
+    private function terminate(DatabaseQuery $query, string $column, string $value): void
+    {
+        $column = DB::qn($column);
+        $now    = date('\'Y-m-d H:i:s\'');
+        $then   = date('\'Y-m-d 00:00:00\'', strtotime('-1 year'));
+
+        switch ($value) {
+            case 'today':
+                $then = date('\'Y-m-d 00:00:00\'');
+                $query->where("$column BETWEEN $then AND $now");
+                break;
+            case 'past_week':
+                $then = date('\'Y-m-d 00:00:00\'', strtotime('-1 week'));
+                $query->where("$column BETWEEN $then AND $now");
+                break;
+            case 'past_1month':
+                $then = date('\'Y-m-d 00:00:00\'', strtotime('-1 month'));
+                $query->where("$column BETWEEN $then AND $now");
+                break;
+            case 'past_3month':
+                $then = date('\'Y-m-d 00:00:00\'', strtotime('-3 month'));
+                $query->where("$column BETWEEN $then AND $now");
+                break;
+            case 'past_6month':
+                $then = date('\'Y-m-d 00:00:00\'', strtotime('-6 month'));
+                $query->where("$column BETWEEN $then AND $now");
+                break;
+            case 'past_year':
+                $query->where("$column BETWEEN $then AND $now");
+                break;
+            case 'post_year':
+                $query->where("$column < $then");
+                break;
+            case 'never':
+                $query->where("$column IS NULL");
+                break;
         }
     }
 }
