@@ -55,7 +55,7 @@ class THM_GroupsViewContent_Manager extends THM_GroupsViewList
             JToolBarHelper::unpublishList('content.unfeature', 'COM_THM_GROUPS_UNFEATURE');
         }
 
-        if (THM_GroupsHelperComponent::isAdmin()) {
+        if (Can::administrate()) {
             JToolBarHelper::preferences('com_thm_groups');
         }
 

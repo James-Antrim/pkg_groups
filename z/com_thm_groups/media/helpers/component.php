@@ -11,6 +11,8 @@
  */
 
 // Protected Attributes
+use THM\Groups\Helpers\Can;
+
 define('FORENAME', 1);
 define('SURNAME', 2);
 define('EMAIL_ATTRIBUTE', 4);
@@ -59,7 +61,7 @@ class THM_GroupsHelperComponent
     public static function allowEdit(&$model, $itemID = 0)
     {
         // Admins can edit anything. Department and monitor editing is implicitly covered here.
-        if (self::isAdmin()) {
+        if (Can::administrate()) {
             return true;
         }
 
@@ -169,18 +171,6 @@ class THM_GroupsHelperComponent
         $array = Joomla\Utilities\ArrayHelper::toInteger(array_filter(array_unique($array)));
 
         return $array;
-    }
-
-    /**
-     * Checks whether the user has admin access to the component.
-     *
-     * @return bool true if the user has admin access, otherwise false
-     */
-    public static function isAdmin()
-    {
-        $user = JFactory::getUser();
-
-        return ($user->authorise('core.admin') or $user->authorise('core.admin', 'com_thm_groups'));
     }
 
     /**

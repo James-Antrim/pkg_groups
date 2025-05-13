@@ -80,7 +80,7 @@ class THM_GroupsViewProfile_Manager extends THM_GroupsViewList
 
         $bar->appendButton('Custom', $batch, 'roles');
 
-        if (THM_GroupsHelperComponent::isAdmin()) {
+        if (Can::administrate()) {
             JToolBarHelper::preferences('com_thm_groups');
         }
 
