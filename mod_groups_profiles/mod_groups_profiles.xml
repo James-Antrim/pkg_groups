@@ -8,7 +8,8 @@
     <copyright>TH Mittelhessen 2025</copyright>
     <license>GNU GPL v.3</license>
     <version>5.0.0</version>
-    <description>MOD_GROUPS_PROFILES_DESCRIPTION</description>
+    <description>MOD_GROUPS_PROFILES_DESC</description>
+    <namespace path="src">THM\Module\GroupsProfiles</namespace>
     <files>
         <folder>language</folder>
         <folder module="mod_groups_profiles">services</folder>

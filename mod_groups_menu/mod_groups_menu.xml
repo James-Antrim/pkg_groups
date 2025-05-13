@@ -8,7 +8,8 @@
     <copyright>TH Mittelhessen 2025</copyright>
     <license>GNU GPL v.3</license>
     <version>5.0.0</version>
-    <description>MOD_GROUPS_MENU_DESCRIPTION</description>
+    <description>MOD_GROUPS_MENU_DESC</description>
+    <namespace path="src">THM\Module\GroupsMenu</namespace>
     <files>
         <folder>language</folder>
         <folder module="mod_groups_menu">services</folder>
@@ -19,13 +20,13 @@
     <config>
         <fields name="params">
             <fieldset name="basic">
-                <field name="displayedTitle" type="radio" default="module_title" label="MOD_GROUPS_DISPLAYED_TITLE"
-                       description="MOD_GROUPS_DISPLAYED_TITLE_DESC">
-                    <option value="module_title">MOD_GROUPS_MODULE_TITLE</option>
-                    <option value="profile_name">MOD_GROUPS_PROFILE_NAME</option>
+                <field name="displayedTitle" type="radio" default="module_title" label="MOD_GROUPS_MENU_DISPLAYED_TITLE"
+                       description="MOD_GROUPS_MENU_DISPLAYED_TITLE_DESC">
+                    <option value="module_title">MOD_GROUPS_MENU_MODULE_TITLE</option>
+                    <option value="profile_name">MOD_GROUPS_MENU_PROFILE_NAME</option>
                 </field>
                 <field name="showTitles" type="radio" class="btn-group btn-group-yesno" default="1"
-                       label="MOD_GROUPS_SHOW_TITLES" description="MOD_GROUPS_SHOW_TITLES_DESC">
+                       label="MOD_GROUPS_MENU_SHOW_TITLES" description="MOD_GROUPS_MENU_SHOW_TITLES_DESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
