@@ -18,7 +18,7 @@
     <scriptfile>script.php</scriptfile>
     <config>
         <fields name="params">
-            <fieldset name="basic" addfieldpath="/media/com_thm_groups/fields/">
+            <fieldset name="basic" addfieldpath="/media/com_groups/fields/">
                 <field name="suffix" type="input" default="" label="MOD_GROUPS_PROFILES_SUFFIX"
                        description="MOD_GROUPS_PROFILES_SUFFIX_DESC"/>
                 <field name="showImage" type="radio" class="btn-group btn-group-yesno" default="0"
@@ -31,9 +31,8 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="templateID" type="genericlist" valueColumn="id" textColumn="templateName"
-                       table="thm_groups_templates" label="MOD_GROUPS_PROFILES_TEMPLATE" default="1"
-                       description="MOD_GROUPS_PROFILES_TEMPLATE_DESC"/>
+                <field name="templateID" type="genericlist" valueColumn="id" textColumn="templateName" table="groups_templates"
+                       label="MOD_GROUPS_PROFILES_TEMPLATE" default="1" description="MOD_GROUPS_PROFILES_TEMPLATE_DESC"/>
             </fieldset>
             <fieldset name="advanced">
                 <field name="moduleclass_sfx" type="textarea" rows="3" label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
