@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="module" client="site" method="upgrade">
+    <name>mod_groups_profiles</name>
+    <author>James Antrim</author>
+    <authorEmail>james.antrim@nm.thm.de</authorEmail>
+    <authorUrl>www.thm.de</authorUrl>
+    <creationDate>May 2025</creationDate>
+    <copyright>TH Mittelhessen 2025</copyright>
+    <license>GNU GPL v.3</license>
+    <version>5.0.0</version>
+    <description>MOD_GROUPS_PROFILES_DESCRIPTION</description>
+    <files>
+        <folder>language</folder>
+        <folder module="mod_groups_profiles">services</folder>
+        <folder>src</folder>
+        <folder>tmpl</folder>
+    </files>
+    <scriptfile>script.php</scriptfile>
+    <config>
+        <fields name="params">
+            <fieldset name="basic" addfieldpath="/media/com_thm_groups/fields/">
+                <field name="suffix" type="input" default="" label="MOD_GROUPS_PROFILES_SUFFIX"
+                       description="MOD_GROUPS_PROFILES_SUFFIX_DESC"/>
+                <field name="showImage" type="radio" class="btn-group btn-group-yesno" default="0"
+                       label="MOD_GROUPS_PROFILES_SHOW_IMAGE" description="MOD_GROUPS_PROFILES_SHOW_IMAGE_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="showRoles" type="radio" class="btn-group btn-group-yesno" default="0"
+                       label="MOD_GROUPS_PROFILES_SHOW_ROLES" description="MOD_GROUPS_PROFILES_SHOW_ROLES_DESC">
+                    <option value="1">JYES</option>
+                    <option value="0">JNO</option>
+                </field>
+                <field name="templateID" type="genericlist" valueColumn="id" textColumn="templateName"
+                       table="thm_groups_templates" label="MOD_GROUPS_PROFILES_TEMPLATE" default="1"
+                       description="MOD_GROUPS_PROFILES_TEMPLATE_DESC"/>
+            </fieldset>
+            <fieldset name="advanced">
+                <field name="moduleclass_sfx" type="textarea" rows="3" label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"
+                       description="COM_MODULES_FIELD_MODULECLASS_SFX_DESC"/>
+            </fieldset>
+        </fields>
+    </config>
+    <dependencies>
+        <dependency before="true" type="component" minversion="5.0.0">com_groups</dependency>
+    </dependencies>
+    <updateservers>
+        <server type="extension" name="Groups Component Update Site" priority="1">
+            https://github.com/James-Antrim/pkg_groups/raw/main/update.xml
+        </server>
+    </updateservers>
+</extension>
