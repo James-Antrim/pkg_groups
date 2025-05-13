@@ -85,29 +85,6 @@ class THM_GroupsHelperComponent
     }
 
     /**
-     * Cleans a given collection. Converts to array as necessary. Removes duplicate values. Enforces int type. Removes
-     * 0 value indexes.
-     *
-     * @param   mixed  $array  the collection to be cleaned (array|object)
-     *
-     * @return array the converted array
-     */
-    public static function cleanIntCollection($array)
-    {
-        if (!is_array($array)) {
-            if (!is_object($array)) {
-                return [];
-            }
-
-            $array = Joomla\Utilities\ArrayHelper::fromObject($array);
-        }
-
-        $array = Joomla\Utilities\ArrayHelper::toInteger(array_filter(array_unique($array)));
-
-        return $array;
-    }
-
-    /**
      * Removes empty tags or tags with &nbsp; recursively
      *
      * @param   string  $original  the original text

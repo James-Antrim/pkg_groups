@@ -8,6 +8,7 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Can;
 
 define('PUBLISH', 1);
@@ -413,10 +414,8 @@ class THM_GroupsHelperContent
      */
     public static function publish()
     {
-        $app   = JFactory::getApplication();
-        $input = $app->input;
-
-        $contentIDs = THM_GroupsHelperComponent::cleanIntCollection($input->get('cid', [], 'array'));
+        $app        = JFactory::getApplication();
+        $contentIDs = Input::getSelectedIDs();
 
         if (empty($contentIDs) or empty($contentIDs[0])) {
             return false;
@@ -490,9 +489,8 @@ class THM_GroupsHelperContent
      *
      * @throws Exception
      */
-    public static function saveorder($contentIDs = null, $order = null)
+    public static function saveorder(array $contentIDs, array $order)
     {
-        $contentIDs = THM_GroupsHelperComponent::cleanIntCollection($contentIDs);
         if (empty($contentIDs) or empty(self::canReorder($contentIDs))) {
             return false;
         }
@@ -613,7 +611,7 @@ class THM_GroupsHelperContent
         $app   = JFactory::getApplication();
         $input = $app->input;
 
-        $selectedContent = THM_GroupsHelperComponent::cleanIntCollection($input->get('cid', [], 'array'));
+        $selectedContent = Input::getSelectedIDs();
         $toggleID        = $input->getInt('id', 0);
         $value           = $input->getBool('value', false);
 

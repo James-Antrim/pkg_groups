@@ -7,6 +7,9 @@
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
+
+use THM\Groups\Adapters\Input;
+
 defined('_JEXEC') or die;
 
 /**
@@ -250,7 +253,7 @@ class THM_GroupsController extends JControllerLegacy
         $app = JFactory::getApplication();
         $app->input->set('view', "{$this->resource}_edit");
 
-        $requestedIDs = THM_GroupsHelperComponent::cleanIntCollection($app->input->get('cid', [], 'array'));
+        $requestedIDs = Input::getSelectedIDs();
         $requestedID  = (empty($requestedIDs) or empty($requestedIDs[0])) ?
             $app->input->getInt('id', 0) : $requestedIDs[0];
 
@@ -505,7 +508,7 @@ class THM_GroupsController extends JControllerLegacy
 
         if ($functionAvailable) {
             // Get the input
-            $pks   = THM_GroupsHelperComponent::cleanIntCollection($this->input->get('cid', [], 'array'));
+            $pks   = Input::getSelectedIDs();
             $order = array_keys($pks);
 
             if ($model->saveorder($pks, $order)) {

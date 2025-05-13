@@ -9,6 +9,7 @@
  */
 
 use Joomla\CMS\Log\Log;
+use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Can;
 
 defined('_JEXEC') or die;
@@ -42,7 +43,7 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         $newProfileData  = $app->getUserStateFromRequest('.profiles', 'profiles', [], 'array');
         $requestedAssocs = json_decode(urldecode($app->input->getString('batch-data')), true);
-        $selectedIDs     = THM_GroupsHelperComponent::cleanIntCollection($app->input->get('cid', [], 'array'));
+        $selectedIDs     = Input::getSelectedIDs();
 
         if ($selectedIDs and !empty($requestedAssocs)) {
             return $this->batchRoles($selectedIDs, $requestedAssocs);
@@ -336,7 +337,7 @@ class THM_GroupsModelProfile extends JModelLegacy
             return false;
         }
 
-        $profileIDs = THM_GroupsHelperComponent::cleanIntCollection($app->input->get('cid', [], 'array'));
+        $profileIDs = Input::getSelectedIDs();
         foreach ($profileIDs as $profileID) {
             if (!$this->updateBinaryValue($profileID, 'published', 1)) {
                 return false;
@@ -362,7 +363,7 @@ class THM_GroupsModelProfile extends JModelLegacy
             return false;
         }
 
-        $profileIDs = THM_GroupsHelperComponent::cleanIntCollection($app->input->get('cid', [], 'array'));
+        $profileIDs = Input::getSelectedIDs();
         foreach ($profileIDs as $profileID) {
             if (!$categoryID = THM_GroupsHelperProfiles::getCategoryID($profileID)) {
                 $categoryID = THM_GroupsHelperCategories::create($profileID);
@@ -786,7 +787,7 @@ class THM_GroupsModelProfile extends JModelLegacy
             return false;
         }
 
-        $profileIDs = THM_GroupsHelperComponent::cleanIntCollection($app->input->get('cid', [], 'array'));
+        $profileIDs = Input::getSelectedIDs();
         foreach ($profileIDs as $profileID) {
             if ($categoryID = THM_GroupsHelperProfiles::getCategoryID($profileID)) {
                 $this->updateCategoryPublishing($categoryID, 0);
@@ -819,7 +820,7 @@ class THM_GroupsModelProfile extends JModelLegacy
             return false;
         }
 
-        $profileIDs = THM_GroupsHelperComponent::cleanIntCollection($app->input->get('cid', [], 'array'));
+        $profileIDs = Input::getSelectedIDs();
         foreach ($profileIDs as $profileID) {
             if (!$categoryID = THM_GroupsHelperProfiles::getCategoryID($profileID)) {
                 continue;

@@ -9,6 +9,7 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Can;
 
 defined('_JEXEC') or die;
@@ -43,13 +44,13 @@ class THM_GroupsModelGroup extends JModelLegacy
             return false;
         }
 
-        if (!$roleIDs = THM_GroupsHelperComponent::cleanIntCollection($app->input->get('batch', [], 'array'))) {
+        if (!$roleIDs = Input::resourceIDs('batch')) {
             $app->enqueueMessage(JText::_('COM_THM_GROUPS_NO_ROLE_SELECTED'), 'error');
 
             return false;
         }
 
-        if (!$groupIDs = THM_GroupsHelperComponent::cleanIntCollection($app->input->get('cid', [], 'array'))) {
+        if (!$groupIDs = Input::getSelectedIDs()) {
             $app->enqueueMessage(JText::_('COM_THM_GROUPS_NO_GROUP_SELECTED'), 'error');
 
             return false;

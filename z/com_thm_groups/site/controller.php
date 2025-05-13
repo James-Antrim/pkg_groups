@@ -248,7 +248,7 @@ class THM_GroupsController extends JControllerLegacy
 
         if ($functionAvailable) {
             // Get the input
-            $pks   = THM_GroupsHelperComponent::cleanIntCollection($this->input->get('cid', [], 'array'));
+            $pks   = Input::getSelectedIDs();
             $order = array_keys($pks);
 
             if ($model->saveorder($pks, $order)) {

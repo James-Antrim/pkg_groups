@@ -11,6 +11,8 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Adapters\Input;
+
 defined('_JEXEC') or die;
 
 require_once HELPERS . 'profiles.php';
@@ -38,7 +40,7 @@ class THM_GroupsViewProfile_Edit_View extends JViewLegacy
     public function display($tpl = null)
     {
         $input           = JFactory::getApplication()->input;
-        $selectedIDs     = THM_GroupsHelperComponent::cleanIntCollection($input->get('cid', [], 'array'));
+        $selectedIDs     = Input::getSelectedIDs();
         $this->profileID = $selectedIDs ? $selectedIDs[0] : $input->getInt('profileID', $input->getInt('id', 0));
 
         if (!THM_GroupsHelperProfiles::canEdit($this->profileID)) {
