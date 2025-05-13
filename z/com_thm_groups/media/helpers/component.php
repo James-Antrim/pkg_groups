@@ -11,8 +11,6 @@
  */
 
 // Protected Attributes
-use THM\Groups\Helpers\Can;
-
 define('FORENAME', 1);
 define('SURNAME', 2);
 define('EMAIL_ATTRIBUTE', 4);
@@ -50,70 +48,6 @@ define('IMAGE_PATH', '/images/com_thm_groups/profile/');
  */
 class THM_GroupsHelperComponent
 {
-    /**
-     * Checks access for edit views
-     *
-     * @param   object &$model   the model checking permissions
-     * @param   int     $itemID  the id if the resource to be edited (empty for new entries)
-     *
-     * @return  bool  true if the user can access the edit view, otherwise false
-     */
-    public static function allowEdit(&$model, $itemID = 0)
-    {
-        // Admins can edit anything. Department and monitor editing is implicitly covered here.
-        if (Can::administrate()) {
-            return true;
-        }
-
-        $name = $model->get('name');
-
-        // Views accessible with component create/edit access
-        $resourceEditViews = [
-            'attribute_edit',
-            'attribute_type_edit',
-            'profile_edit',
-            'role_edit',
-            'template_edit'
-        ];
-        if (in_array($name, $resourceEditViews)) {
-            if ((int) $itemID > 0) {
-                return $model->actions->{'core.edit'};
-            }
-
-            return $model->actions->{'core.create'};
-        }
-
-        return false;
-    }
-
-    /**
-     * Calls the appropriate controller
-     *
-     * @param   boolean  $isAdmin  whether the file is being called from the backend
-     *
-     * @return  void
-     * @throws Exception
-     */
-    public static function callController($isAdmin = true)
-    {
-        $basePath = $isAdmin ? JPATH_COMPONENT_ADMINISTRATOR : JPATH_COMPONENT_SITE;
-
-        $handler = explode(".", JFactory::getApplication()->input->getCmd('task', ''));
-
-        if (count($handler) > 1) {
-            $task = $handler[1];
-        }
-        else {
-            $task = $handler[0];
-        }
-
-        /** @noinspection PhpIncludeInspection */
-        require_once $basePath . '/controller.php';
-        $controllerObj = new THM_GroupsController;
-        $controllerObj->execute($task);
-        $controllerObj->redirect();
-    }
-
     /**
      * Clean the cache
      *
