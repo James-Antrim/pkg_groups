@@ -49,50 +49,6 @@ define('IMAGE_PATH', '/images/com_thm_groups/profile/');
 class THM_GroupsHelperComponent
 {
     /**
-     * Configure the Linkbar.
-     *
-     * @param   object &$view  the view context calling the function
-     *
-     * @return void
-     */
-    public static function addSubmenu(&$view)
-    {
-        $thisName = $view->get('name');
-
-        // No submenu creation while editing a resource
-        if (strpos($thisName, 'edit')) {
-            return;
-        }
-
-        $baseURL    = JUri::base() . '?option=com_thm_groups&view=';
-        $viewNames  = [
-            'attribute_type_manager',
-            'attribute_manager',
-            'content_manager',
-            'group_manager',
-            'profile_manager',
-            'role_manager',
-            'template_manager'
-        ];
-        $otherViews = [];
-        foreach ($viewNames as $viewName) {
-            $otherViews[JText::_('COM_THM_GROUPS_' . strtoupper($viewName))]
-                = ['name' => $viewName, 'link' => "$baseURL$viewName"];
-        }
-        ksort($otherViews);
-
-        $component = 'thm_groups';
-        $home      = [JText::_('COM_THM_GROUPS_HOME') => ['name' => $component, 'link' => "$baseURL$component"]];
-        $menuItems = $home + $otherViews;
-
-        foreach ($menuItems as $displayedText => $viewData) {
-            JHtmlSidebar::addEntry($displayedText, $viewData['link'], $thisName == $viewData['name']);
-        }
-
-        $view->sidebar = JHtmlSidebar::render();
-    }
-
-    /**
      * Checks access for edit views
      *
      * @param   object &$model   the model checking permissions
@@ -225,16 +181,6 @@ class THM_GroupsHelperComponent
         $user = JFactory::getUser();
 
         return ($user->authorise('core.admin') or $user->authorise('core.admin', 'com_thm_groups'));
-    }
-
-    /**
-     * Checks whether the user has manage access to the component.
-     *
-     * @return bool true if the user has admin access, otherwise false
-     */
-    public static function isManager()
-    {
-        return (self::isAdmin() or JFactory::getUser()->authorise('core.manage', 'com_thm_groups'));
     }
 
     /**

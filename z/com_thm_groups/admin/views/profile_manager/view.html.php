@@ -9,6 +9,8 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Helpers\Can;
+
 defined('_JEXEC') or die;
 
 require_once HELPERS . 'batch.php';
@@ -33,7 +35,7 @@ class THM_GroupsViewProfile_Manager extends THM_GroupsViewList
      */
     public function display($tpl = null)
     {
-        if (!THM_GroupsHelperComponent::isManager()) {
+        if (!Can::manage()) {
             $exc = new Exception(JText::_('JLIB_RULES_NOT_ALLOWED'), 401);
             JErrorPage::render($exc);
         }

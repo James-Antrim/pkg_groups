@@ -9,6 +9,8 @@
  */
 
 // Added here for calls from plugins
+use THM\Groups\Helpers\Can;
+
 require_once 'component.php';
 require_once 'profiles.php';
 
@@ -27,7 +29,7 @@ class THM_GroupsHelperCategories
      */
     public static function canCreate($categoryID)
     {
-        if (THM_GroupsHelperComponent::isManager()) {
+        if (Can::manage()) {
             return true;
         }
 
@@ -51,7 +53,7 @@ class THM_GroupsHelperCategories
      */
     public static function canEdit($categoryID)
     {
-        if (THM_GroupsHelperComponent::isManager()) {
+        if (Can::manage()) {
             return true;
         }
 

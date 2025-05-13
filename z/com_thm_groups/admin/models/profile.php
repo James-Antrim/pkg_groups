@@ -9,6 +9,7 @@
  */
 
 use Joomla\CMS\Log\Log;
+use THM\Groups\Helpers\Can;
 
 defined('_JEXEC') or die;
 require_once HELPERS . 'content.php';
@@ -33,7 +34,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     {
         $app = JFactory::getApplication();
 
-        if (!THM_GroupsHelperComponent::isManager()) {
+        if (!Can::manage()) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
@@ -108,7 +109,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     {
         $app = JFactory::getApplication();
 
-        if (!THM_GroupsHelperComponent::isManager()) {
+        if (!Can::manage()) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
@@ -250,7 +251,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     {
         $app = JFactory::getApplication();
 
-        if (!THM_GroupsHelperComponent::isManager()) {
+        if (!Can::manage()) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
@@ -329,7 +330,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     {
         $app = JFactory::getApplication();
 
-        if (!THM_GroupsHelperComponent::isManager()) {
+        if (!Can::manage()) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
@@ -355,7 +356,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     {
         $app = JFactory::getApplication();
 
-        if (!THM_GroupsHelperComponent::isManager()) {
+        if (!Can::manage()) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
@@ -668,7 +669,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     {
         $app = JFactory::getApplication();
 
-        if (!THM_GroupsHelperComponent::isManager()) {
+        if (!Can::manage()) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
@@ -779,7 +780,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     {
         $app = JFactory::getApplication();
 
-        if (!THM_GroupsHelperComponent::isManager()) {
+        if (!Can::manage()) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
@@ -812,7 +813,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     {
         $app = JFactory::getApplication();
 
-        if (!THM_GroupsHelperComponent::isManager()) {
+        if (!Can::manage()) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;

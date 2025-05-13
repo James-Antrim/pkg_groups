@@ -8,6 +8,8 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Helpers\Can;
+
 require_once 'attributes.php';
 require_once 'component.php';
 require_once 'groups.php';
@@ -108,7 +110,7 @@ class THM_GroupsHelperProfiles
             return false;
         }
 
-        if (THM_GroupsHelperComponent::isManager()) {
+        if (Can::manage()) {
             return true;
         }
 

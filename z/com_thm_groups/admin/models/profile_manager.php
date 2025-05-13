@@ -8,6 +8,9 @@
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
+
+use THM\Groups\Helpers\Can;
+
 defined('_JEXEC') or die;
 require_once HELPERS . 'profiles.php';
 require_once HELPERS . 'roles.php';
@@ -215,7 +218,7 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
             return $return;
         }
 
-        $canEdit = THM_GroupsHelperComponent::isManager();
+        $canEdit = Can::manage();
         $index   = 0;
         foreach ($items as $key => $item) {
             $url            = "index.php?option=com_thm_groups&view=profile_edit&id=$item->profileID";

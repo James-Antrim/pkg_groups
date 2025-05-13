@@ -8,6 +8,8 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Helpers\Can;
+
 define('PUBLISH', 1);
 define('UNPUBLISH', 0);
 define('ARCHIVE', 2);
@@ -66,7 +68,7 @@ class THM_GroupsHelperContent
      */
     public static function canEdit($contentID)
     {
-        if (THM_GroupsHelperComponent::isManager()) {
+        if (Can::manage()) {
             return true;
         }
 

@@ -9,6 +9,8 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Helpers\Can;
+
 defined('_JEXEC') or die;
 
 require_once HELPERS . 'groups.php';
@@ -28,7 +30,7 @@ class THM_GroupsModelGroup extends JModelLegacy
     {
         $app = JFactory::getApplication();
 
-        if (!THM_GroupsHelperComponent::isManager()) {
+        if (!Can::manage()) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
@@ -93,7 +95,7 @@ class THM_GroupsModelGroup extends JModelLegacy
     {
         $app = JFactory::getApplication();
 
-        if (!THM_GroupsHelperComponent::isManager()) {
+        if (!Can::manage()) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
