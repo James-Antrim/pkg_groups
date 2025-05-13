@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Groups
- * @extension   com_groups
+ * @extension   mod_groups_menu
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2025 TH Mittelhessen
  * @license     GNU GPL v.3
@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Installer\{InstallerAdapter, InstallerScriptInterface};
 use Joomla\CMS\Language\Text;
+use Joomla\Database\DatabaseDriver;
 
 return new class () implements InstallerScriptInterface {
 
@@ -56,10 +57,33 @@ return new class () implements InstallerScriptInterface {
     /** @inheritDoc */
     public function postflight(string $type, InstallerAdapter $adapter): bool
     {
-        //todo: Component settings
-        //todo: Resource migration
-        //todo: File migration
-        //todo: Menu assignments
+        if ($type === 'install') {
+            /** @var DatabaseDriver $db */
+            $db = $adapter->__get('db');
+
+            // Migrate extension settings from old
+            $query = $db->getQuery(true);
+            $query->select($db->qn('params'))->from($db->qn('#__extensions'))
+                ->where($db->qn('name') . ' = ' . $db->q('mod_thm_groups_menu'));
+            $db->setQuery($query);
+
+            if ($params = $db->loadResult()) {
+                $query = $db->getQuery(true);
+                $query->update($db->qn('#__extensions'))
+                    ->set($db->qn('params') . ' = ' . $db->q($params))
+                    ->where($db->qn('name') . ' = ' . $db->q('mod_groups_menu'));
+                $db->setQuery($query);
+                $db->execute();
+            }
+
+            // Module Settings
+            $query = $db->getQuery(true);
+            $query->update($db->qn('#__modules'))
+                ->set($db->qn('module') . ' = ' . $db->q('mod_groups_menu'))
+                ->where($db->qn('module') . ' = ' . $db->q('mod_thm_groups_menu'));
+            $db->setQuery($query);
+            $db->execute();
+        }
 
         return true;
     }
