@@ -50,7 +50,8 @@ class JFormFieldAuthors extends JFormFieldList
 
         try {
             $profiles = $dbo->loadAssocList();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return false;

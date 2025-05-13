@@ -32,9 +32,11 @@ foreach ($this->profiles as $roleAssociations) {
 
             if (empty($groupSpan)) {
                 $header = $roleSpan;
-            } elseif (empty($roleSpan)) {
+            }
+            elseif (empty($roleSpan)) {
                 $header = $groupSpan;
-            } else {
+            }
+            else {
                 $header = "$groupSpan: $roleSpan";
             }
 

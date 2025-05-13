@@ -21,7 +21,7 @@ class Com_THM_GroupsInstallerScript
      * Associate all groups to a user profile with the default member
      * role.
      *
-     * @param int $profileID the profile's id
+     * @param   int  $profileID  the profile's id
      *
      * @return void
      * @throws Exception
@@ -42,7 +42,8 @@ class Com_THM_GroupsInstallerScript
 
         try {
             $assignedGroups = $dbo->loadAssocList();
-        } catch (RuntimeException $exception) {
+        }
+        catch (RuntimeException $exception) {
             JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ERROR'), 'error');
         }
 
@@ -66,7 +67,8 @@ class Com_THM_GroupsInstallerScript
 
             try {
                 $dbo->execute();
-            } catch (RuntimeException $exception) {
+            }
+            catch (RuntimeException $exception) {
                 JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ERROR'), 'error');
             }
         }
@@ -110,7 +112,8 @@ class Com_THM_GroupsInstallerScript
 
         try {
             $users = $dbo->loadAssocList();
-        } catch (RuntimeException $exception) {
+        }
+        catch (RuntimeException $exception) {
             JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ERROR'), 'error');
         }
 
@@ -137,7 +140,8 @@ class Com_THM_GroupsInstallerScript
             try {
                 $dbo->execute();
 
-            } catch (RuntimeException $exception) {
+            }
+            catch (RuntimeException $exception) {
                 JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ERROR'), 'error');
                 $dbo->transactionRollback();
             }
@@ -160,7 +164,8 @@ class Com_THM_GroupsInstallerScript
 
             try {
                 $dbo->execute();
-            } catch (RuntimeException $exception) {
+            }
+            catch (RuntimeException $exception) {
                 JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ERROR'), 'error');
                 $dbo->transactionRollback();
             }
@@ -173,7 +178,7 @@ class Com_THM_GroupsInstallerScript
     /**
      * Deletes a profile which was not mapped to a relevant group
      *
-     * @param int $profileID the id of the profile
+     * @param   int  $profileID  the id of the profile
      *
      * @throws Exception
      */
@@ -187,7 +192,8 @@ class Com_THM_GroupsInstallerScript
 
         try {
             $dbo->execute();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return;
@@ -197,7 +203,7 @@ class Com_THM_GroupsInstallerScript
     /**
      * Get a variable from the manifest file (actually, from the manifest cache).
      *
-     * @param string $name param what you need, for example version
+     * @param   string  $name  param what you need, for example version
      *
      * @return mixed the parameter value at the named index
      */
@@ -248,7 +254,8 @@ class Com_THM_GroupsInstallerScript
 
         if ($type == 'update') {
             $rel = $this->getParam('version') . ' &rArr; ' . $manifestVersion;
-        } elseif ($type == 'install') {
+        }
+        elseif ($type == 'install') {
             $rel = $manifestVersion;
         }
 

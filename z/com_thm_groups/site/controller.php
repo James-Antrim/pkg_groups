@@ -26,7 +26,7 @@ class THM_GroupsController extends JControllerLegacy
     /**
      * Class constructor
      *
-     * @param array $config An optional associative array of configuration settings.
+     * @param   array  $config  An optional associative array of configuration settings.
      *
      * @throws Exception
      */
@@ -56,12 +56,13 @@ class THM_GroupsController extends JControllerLegacy
 
         if ($success) {
             $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_SUCCESS'));
-        } else {
+        }
+        else {
             $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
         }
 
         $params = ['profileID' => $this->profileID, 'view' => 'profile_edit'];
-        $url = THM_GroupsHelperRouter::build($params);
+        $url    = THM_GroupsHelperRouter::build($params);
         $app->redirect($url);
     }
 
@@ -76,7 +77,7 @@ class THM_GroupsController extends JControllerLegacy
         $this->preProcess();
 
         $params = ['profileID' => $this->profileID, 'view' => 'profile'];
-        $url = THM_GroupsHelperRouter::build($params);
+        $url    = THM_GroupsHelperRouter::build($params);
         JFactory::getApplication()->redirect($url);
     }
 
@@ -97,10 +98,12 @@ class THM_GroupsController extends JControllerLegacy
 
             if ($success) {
                 $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_SUCCESS'));
-            } else {
+            }
+            else {
                 $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
             }
-        } else {
+        }
+        else {
             $app->enqueueMessage(JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE'), 'error');
         }
 
@@ -140,7 +143,7 @@ class THM_GroupsController extends JControllerLegacy
 
         if (!THM_GroupsHelperProfiles::canEdit($this->profileID)) {
             JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
-            $isPublished = THM_GroupsHelperProfiles::isPublished($this->profileID);
+            $isPublished  = THM_GroupsHelperProfiles::isPublished($this->profileID);
             $profileAlias = THM_GroupsHelperProfiles::getAlias($this->profileID);
             if ($isPublished and $profileAlias) {
                 $url = THM_GroupsHelperRouter::build(['profileID' => $this->profileID]);
@@ -169,10 +172,12 @@ class THM_GroupsController extends JControllerLegacy
 
             if ($success) {
                 $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_SUCCESS'));
-            } else {
+            }
+            else {
                 $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
             }
-        } else {
+        }
+        else {
             $app->enqueueMessage(JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE'), 'error');
         }
 
@@ -194,13 +199,14 @@ class THM_GroupsController extends JControllerLegacy
         $model   = JModelLegacy::getInstance('profile', 'THM_GroupsModel');
         $success = $model->save();
 
-        $app = JFactory::getApplication();
+        $app    = JFactory::getApplication();
         $params = ['profileID' => $this->profileID];
 
         if ($success) {
             $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_SUCCESS'));
             $params['view'] = 'profile';
-        } else {
+        }
+        else {
             $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
             $params['view'] = 'profile_edit';
         }
@@ -271,10 +277,12 @@ class THM_GroupsController extends JControllerLegacy
 
             if ($success) {
                 $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_SUCCESS'));
-            } else {
+            }
+            else {
                 $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
             }
-        } else {
+        }
+        else {
             $app->enqueueMessage(JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE'), 'error');
         }
 
@@ -299,10 +307,12 @@ class THM_GroupsController extends JControllerLegacy
 
             if ($success) {
                 $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_SUCCESS'));
-            } else {
+            }
+            else {
                 $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
             }
-        } else {
+        }
+        else {
             $app->enqueueMessage(JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE'), 'error');
         }
 

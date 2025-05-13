@@ -59,8 +59,8 @@ class THM_GroupsModelContent extends JModelLegacy
     /**
      * Saves the manually set order of records.
      *
-     * @param   array   $pks   An array of primary key ids.
-     * @param   integer $order +1 or -1
+     * @param   array    $pks    An array of primary key ids.
+     * @param   integer  $order  +1 or -1
      *
      * @return  mixed
      * @throws Exception

@@ -62,7 +62,8 @@ class JFormFieldDisjunctList extends JFormFieldList
             }
 
             return array_merge(parent::getOptions(), $options);
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             return parent::getOptions();
         }
     }
@@ -70,7 +71,7 @@ class JFormFieldDisjunctList extends JFormFieldList
     /**
      * Resolves the textColumns for concatenated values
      *
-     * @param   object &$query the query object
+     * @param   object &$query  the query object
      *
      * @return  string  the string to use for text selection
      */
@@ -90,7 +91,7 @@ class JFormFieldDisjunctList extends JFormFieldList
     /**
      * Resolves the textColumns for concatenated values
      *
-     * @param   object &$query the query object
+     * @param   object &$query  the query object
      *
      * @return  void  sets query object values
      */
@@ -116,7 +117,7 @@ class JFormFieldDisjunctList extends JFormFieldList
     /**
      * Sets the disjunct conditions for the query
      *
-     * @param   object &$query the query object
+     * @param   object &$query  the query object
      *
      * @return  void  sets query object values
      */
@@ -132,6 +133,6 @@ class JFormFieldDisjunctList extends JFormFieldList
 
         $subQuery = JFactory::getDbo()->getQuery(true);
         $subQuery->select("$disjunctValue")->from("#__$disjunctTable");
-        $query->where("$notInColumn NOT IN ( " . (string)$subQuery . " )");
+        $query->where("$notInColumn NOT IN ( " . (string) $subQuery . " )");
     }
 }

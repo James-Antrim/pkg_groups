@@ -18,7 +18,7 @@ class GroupsValidator
     /**
      * Validates the query against the dynamic content parameters
      *
-     * @param array &$query the query parameters
+     * @param   array &$query  the query parameters
      *
      * @return bool|int true if the query has all required parameters, and they are valid, false if the query is invalid,
      *               int 0 if the validity could not be determined due to missing parameters.
@@ -69,14 +69,16 @@ class GroupsValidator
                 $query['view']      = 'content';
 
                 return true;
-            } elseif (!empty($query['profileID']) and THM_GroupsHelperProfiles::getAlias($query['profileID'])) {
+            }
+            elseif (!empty($query['profileID']) and THM_GroupsHelperProfiles::getAlias($query['profileID'])) {
                 $query['view'] = 'profile';
 
                 return true;
             }
 
             return false;
-        } else {
+        }
+        else {
             switch ($query['view']) {
                 case 'content_manager':
                 case 'profile':

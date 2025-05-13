@@ -17,7 +17,7 @@ class THM_GroupsHelperLanguage
     /**
      * Sets the Joomla Language based on input from the language switch
      *
-     * @param string $shortTag the language's short tag for manual requests
+     * @param   string  $shortTag  the language's short tag for manual requests
      *
      * @return JLanguage
      * @throws Exception
@@ -37,7 +37,8 @@ class THM_GroupsHelperLanguage
                     $lang = new JLanguage('en-GB');
                     break;
             }
-        } else {
+        }
+        else {
             $lang = new JLanguage('en-GB');
         }
 
@@ -72,7 +73,7 @@ class THM_GroupsHelperLanguage
             return $requestedTag;
         }
 
-        $menu       = $app->getMenu();
+        $menu = $app->getMenu();
         if (empty($menu) or empty($menu->getActive()) or empty($menu->getActive()->params->get('initialLanguage'))) {
 
             // Called outside of the normal Joomla context.
@@ -91,7 +92,7 @@ class THM_GroupsHelperLanguage
     /**
      * Extends the tag to the regular language constant.
      *
-     * @param string $shortTag the short tag for the language
+     * @param   string  $shortTag  the short tag for the language
      *
      * @return string the longTag
      */

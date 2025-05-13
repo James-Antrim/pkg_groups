@@ -31,7 +31,8 @@ class THM_GroupsHelperBatch
 
         try {
             $options = $dbo->loadObjectList();
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
 
             return [];
@@ -69,7 +70,8 @@ class THM_GroupsHelperBatch
 
         try {
             $groups = $dbo->loadAssocList();
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
 
             return [];
@@ -78,9 +80,9 @@ class THM_GroupsHelperBatch
         $standardGroupIDS = [1, 2, 3, 4, 5, 6, 7, 8];
         $options          = [];
         foreach ($groups as $group) {
-            $label          = str_repeat('- ', $group['level']) . $group['title'];
-            $attribs        = in_array($group['id'], $standardGroupIDS) ? ['disable' => true] : [];
-            $options[]      = JHtml::_('select.option', $group['id'], $label, $attribs);
+            $label     = str_repeat('- ', $group['level']) . $group['title'];
+            $attribs   = in_array($group['id'], $standardGroupIDS) ? ['disable' => true] : [];
+            $options[] = JHtml::_('select.option', $group['id'], $label, $attribs);
         }
 
         return $options;

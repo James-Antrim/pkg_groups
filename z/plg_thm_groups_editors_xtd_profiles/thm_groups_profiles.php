@@ -19,34 +19,34 @@ defined('_JEXEC') or die;
  */
 class PlgButtonTHM_Groups_Profiles extends JPlugin
 {
-	/**
-	 * Load the language file on instantiation.
-	 *
-	 * @var    boolean
-	 * @since  3.1
-	 */
-	protected $autoloadLanguage = true;
+    /**
+     * Load the language file on instantiation.
+     *
+     * @var    boolean
+     * @since  3.1
+     */
+    protected $autoloadLanguage = true;
 
-	/**
-	 * Display the button.
-	 *
-	 * @param   string $name the name of the editor
-	 *
-	 * @return  object  the object modeling the button
-	 */
-	public function onDisplay($name)
-	{
-		JFactory::getLanguage()->load('plg_editors-xtd_thm_groups_profiles');
+    /**
+     * Display the button.
+     *
+     * @param   string  $name  the name of the editor
+     *
+     * @return  object  the object modeling the button
+     */
+    public function onDisplay($name)
+    {
+        JFactory::getLanguage()->load('plg_editors-xtd_thm_groups_profiles');
 
-		// Button
-		$button          = new JObject;
-		$button->modal   = true;
-		$button->class   = 'btn';
-		$button->text    = JText::_('PLG_THM_GROUPS_PROFILES_BUTTON');
-		$button->name    = 'users';
-		$button->link    = "index.php?option=com_thm_groups&view=profile_select&tmpl=component&editor=name";
-		$button->options = "{handler: 'iframe', size:{x:'700', y:'600'}}";
+        // Button
+        $button          = new JObject;
+        $button->modal   = true;
+        $button->class   = 'btn';
+        $button->text    = JText::_('PLG_THM_GROUPS_PROFILES_BUTTON');
+        $button->name    = 'users';
+        $button->link    = "index.php?option=com_thm_groups&view=profile_select&tmpl=component&editor=name";
+        $button->options = "{handler: 'iframe', size:{x:'700', y:'600'}}";
 
-		return $button;
-	}
+        return $button;
+    }
 }

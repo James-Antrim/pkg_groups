@@ -35,7 +35,7 @@ class plgSystemTHM_Groups extends CMSPlugin
     /**
      * Determines whether the given path is a menu alias.
      *
-     * @param string $alias the potential menu alias.
+     * @param   string  $alias  the potential menu alias.
      *
      * @return int int the id of the menu item or 0
      * @throws Exception
@@ -49,7 +49,8 @@ class plgSystemTHM_Groups extends CMSPlugin
 
         try {
             $row = $dbo->loadAssoc();
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             return 0;
         }
 
@@ -79,7 +80,8 @@ class plgSystemTHM_Groups extends CMSPlugin
 
         try {
             $profileID = $dbo->loadResult();
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             $app->enqueueMessage($exc->getMessage(), 'error');
             $app->redirect($defaultURL, 500);
         }
@@ -115,7 +117,8 @@ class plgSystemTHM_Groups extends CMSPlugin
         // Error messages due to false credentials are handled in the login function
         if ($validToken and $username and $password) {
             $app->login(['username' => $username, 'password' => $password]);
-        } elseif (!$validToken) {
+        }
+        elseif (!$validToken) {
             $app->enqueueMessage(Text::_('JINVALID_TOKEN_NOTICE'), 'warning');
         }
 
@@ -172,7 +175,8 @@ class plgSystemTHM_Groups extends CMSPlugin
         $task          = $app->input->get('task', '');
         if ($task and !array_key_exists($task, $relevantTasks)) {
             return;
-        } elseif ($task) {
+        }
+        elseif ($task) {
             $wrapperFunction = $relevantTasks[$task];
             self::$wrapperFunction();
         }
@@ -183,7 +187,8 @@ class plgSystemTHM_Groups extends CMSPlugin
             // Relevant content
             if (THM_GroupsHelperRouter::translateContent($qItems)) {
                 GroupsRedirector::redirect($qItems);
-            } else {
+            }
+            else {
                 return;
             }
         }
@@ -198,7 +203,8 @@ class plgSystemTHM_Groups extends CMSPlugin
         if ($validQuery === false) {
             // The query is flagrantly invalid.
             return;
-        } elseif ($validQuery) {
+        }
+        elseif ($validQuery) {
             if ($sef) {
                 // The query is valid but the formatting requires a redirect.
                 GroupsRedirector::redirect($qItems);
@@ -218,7 +224,8 @@ class plgSystemTHM_Groups extends CMSPlugin
         if ($validPath === false) {
             // The path is flagrantly invalid.
             return;
-        } elseif ($validPath) {
+        }
+        elseif ($validPath) {
             if (!$sef) {
                 // The query is valid but the formatting requires a redirect. Temporary redirect because we want SEF.
                 GroupsRedirector::redirect($query);
@@ -262,7 +269,8 @@ class plgSystemTHM_Groups extends CMSPlugin
         $validLegacyPath = GroupsValidator::validate($query);
         if ($validLegacyPath === false) {
             return;
-        } elseif ($validLegacyPath) {
+        }
+        elseif ($validLegacyPath) {
             $query = array_merge($query, $qItems);
             GroupsRedirector::redirect($query);
         }
@@ -272,7 +280,8 @@ class plgSystemTHM_Groups extends CMSPlugin
         $validJoomlaPath = GroupsValidator::validate($query);
         if ($validJoomlaPath === false) {
             return;
-        } elseif ($validJoomlaPath) {
+        }
+        elseif ($validJoomlaPath) {
             $query = array_merge($query, $qItems);
             GroupsRedirector::redirect($query);
         }
@@ -320,8 +329,8 @@ class plgSystemTHM_Groups extends CMSPlugin
     /**
      * Add parse rule to router.
      *
-     * @param JRouter  &$router JRouter object.
-     * @param JUri     &$uri JUri object.
+     * @param   JRouter  &$router  JRouter object.
+     * @param   JUri     &$uri     JUri object.
      *
      * @return array
      * @throws Exception
@@ -354,7 +363,7 @@ class plgSystemTHM_Groups extends CMSPlugin
     /**
      * Replaces organizer stubs referencing persons via the username with profile links
      *
-     * @param string &$output the output used for the application
+     * @param   string &$output  the output used for the application
      *
      * @return void modifies the output
      * @throws Exception
@@ -386,7 +395,8 @@ class plgSystemTHM_Groups extends CMSPlugin
 
             try {
                 $result = $dbo->loadResult();
-            } catch (Exception $exc) {
+            }
+            catch (Exception $exc) {
                 return;
             }
 

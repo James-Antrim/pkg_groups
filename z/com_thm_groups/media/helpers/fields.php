@@ -17,8 +17,8 @@ class THM_GroupsHelperFields
     /**
      * Configures the form for the relevant field
      *
-     * @param int    $fieldID the id of the field to be configured to
-     * @param object &$form   the form being modified
+     * @param   int     $fieldID  the id of the field to be configured to
+     * @param   object &$form     the form being modified
      *
      * @return void configures the form for the relevant field
      */
@@ -54,8 +54,8 @@ class THM_GroupsHelperFields
     /**
      * Creates an upload/  cropper field for images
      *
-     * @param int   $profileID the id of the profile
-     * @param array $attribute the image attribute
+     * @param   int    $profileID  the id of the profile
+     * @param   array  $attribute  the image attribute
      *
      * @return string the HTML of the cropper field
      * @throws Exception
@@ -79,14 +79,15 @@ class THM_GroupsHelperFields
         $html .= '<div class="image-button-container">';
 
         // Upload / Change
-        $button = '<button type="button" id="' . $attributeID . '_upload" class="btn image-button" ';
+        $button        = '<button type="button" id="' . $attributeID . '_upload" class="btn image-button" ';
         $cropperParams = "'$attributeID', '$profileID',  '$mode'";
-        $button .= 'onclick="bindImageCropper(' . $cropperParams . ');" ';
-        $button .= 'data-toggle="modal" data-target="#modal-' . $attributeID . '">';
+        $button        .= 'onclick="bindImageCropper(' . $cropperParams . ');" ';
+        $button        .= 'data-toggle="modal" data-target="#modal-' . $attributeID . '">';
         if ($hasPicture) {
             $button .= '<span class="icon-edit"></span>';
             $button .= JText::_('COM_THM_GROUPS_IMAGE_BUTTON_CHANGE');
-        } else {
+        }
+        else {
             $button .= '<span class="icon-upload"></span>';
             $button .= JText::_('COM_THM_GROUPS_IMAGE_BUTTON_UPLOAD');
         }
@@ -114,8 +115,8 @@ class THM_GroupsHelperFields
     /**
      * Creates an input for the given attribute value
      *
-     * @param int   $profileID the id of the profile with which the attribute is associated
-     * @param array $attribute the attribute for which to render the input field
+     * @param   int    $profileID  the id of the profile with which the attribute is associated
+     * @param   array  $attribute  the attribute for which to render the input field
      *
      * @return string the HTML of the attribute input
      * @throws Exception
@@ -198,8 +199,8 @@ class THM_GroupsHelperFields
     /**
      * Returns specific field type options optionally mapped with form data
      *
-     * @param int   $fieldID the field type id
-     * @param array $options the input data to be mapped to configured properties
+     * @param   int    $fieldID  the field type id
+     * @param   array  $options  the input data to be mapped to configured properties
      *
      * @return  array the field options set with form values if available
      * @throws Exception
@@ -213,7 +214,8 @@ class THM_GroupsHelperFields
 
         try {
             $fieldOptions = $dbo->loadResult();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];

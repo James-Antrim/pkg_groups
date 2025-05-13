@@ -18,7 +18,7 @@ class THM_GroupsViewProfile_Ajax extends JViewLegacy
     /**
      * loads model data into view context
      *
-     * @param string $tpl the name of the template to be used
+     * @param   string  $tpl  the name of the template to be used
      *
      * @return void
      * @throws Exception

@@ -16,13 +16,13 @@ use \JText as Text;
 $vCardShort = THM_GroupsHelperProfiles::getVCardLink($profileID);
 
 echo '<ul class="menu">';
-$active      = (!empty($view) AND $view == 'profile');
+$active      = (!empty($view) and $view == 'profile');
 $activeClass = $active ? 'active current' : '';
 echo '<li class="' . $activeClass . '">';
 echo Helper::getItem($active, $profileParams, Text::_('MOD_THM_GROUPS_PROFILE')) . $vCardShort;
 echo '</li>';
 if ($contentEnabled and $showAdmin) {
-    $active      = (!empty($view) AND $view == 'content_manager');
+    $active      = (!empty($view) and $view == 'content_manager');
     $activeClass = $active ? 'active current' : '';
     $lastClass   = $contentExists ? '' : ' item-last';
     echo '<li class="' . $activeClass . $lastClass . '">';
@@ -35,7 +35,7 @@ if ($showSubMenu) {
 if ($contentExists) {
     $lastItem = end($contents);
     foreach ($contents as $item) {
-        $active      = (!empty($contentID) AND $item->id == $contentID);
+        $active      = (!empty($contentID) and $item->id == $contentID);
         $activeClass = $active ? 'active current' : '';
         $lastClass   = $item === $lastItem ? ' item-last' : '';
         echo '<li class="' . $activeClass . $lastClass . '">';

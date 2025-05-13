@@ -83,8 +83,8 @@ class THM_GroupsModelGroup extends JModelLegacy
     /**
      * Removes the association of a role to a group. Triggered by the trash icon next to the name of the role in the list.
      *
-     * @param int $roleID  the id of the role to be removed
-     * @param int $groupID the id of the group to be removed
+     * @param   int  $roleID   the id of the role to be removed
+     * @param   int  $groupID  the id of the group to be removed
      *
      * @return bool true if the association was successfully removed, otherwise false
      * @throws Exception
@@ -114,7 +114,8 @@ class THM_GroupsModelGroup extends JModelLegacy
 
         try {
             $success = $this->_db->execute();
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             $app->enqueueMessage($exc->getMessage(), 'error');
 
             return false;

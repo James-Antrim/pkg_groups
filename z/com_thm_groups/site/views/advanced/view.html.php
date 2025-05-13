@@ -36,7 +36,7 @@ class THM_GroupsViewAdvanced extends JViewLegacy
     /**
      * Method to get display
      *
-     * @param   Object $tpl template
+     * @param   Object  $tpl  template
      *
      * @return  void
      * @throws Exception
@@ -79,15 +79,15 @@ class THM_GroupsViewAdvanced extends JViewLegacy
     /**
      * Creates a HTML container with profile information
      *
-     * @param array $profile the basic profile information id, name and roles.
-     * @param bool  $half    whether or not the profile should only take half the row width
+     * @param   array  $profile  the basic profile information id, name and roles.
+     * @param   bool   $half     whether or not the profile should only take half the row width
      *
      * @return string the HTML of the profile container
      * @throws Exception
      */
     public function getProfileContainer($profile, $half)
     {
-        $container = '<div class="profile-containerCLASSX">PROFILEX<div class="clearFix"></div></div>';
+        $container           = '<div class="profile-containerCLASSX">PROFILEX<div class="clearFix"></div></div>';
         $supplementalClasses = '';
 
         if ($half) {
@@ -121,7 +121,7 @@ class THM_GroupsViewAdvanced extends JViewLegacy
     /**
      * Displays rows of profiles
      *
-     * @param array $profiles the profiles to be displayed
+     * @param   array  $profiles  the profiles to be displayed
      *
      * @return void renders HTML
      * @throws Exception

@@ -16,7 +16,7 @@ class THM_GroupsLayoutList
     /**
      * Method to create a list output
      *
-     * @param   object &$view the view context calling the function
+     * @param   object &$view  the view context calling the function
      *
      * @return void
      * @throws Exception
@@ -69,7 +69,7 @@ class THM_GroupsLayoutList
     /**
      * Renders the search input group if set in the filter xml
      *
-     * @param   array &$filters the filters set for the view
+     * @param   array &$filters  the filters set for the view
      *
      * @return  void
      */
@@ -103,7 +103,7 @@ class THM_GroupsLayoutList
     /**
      * Renders the table head
      *
-     * @param   array &$headers an array containing the table headers
+     * @param   array &$headers  an array containing the table headers
      *
      * @return  void
      */
@@ -118,11 +118,13 @@ class THM_GroupsLayoutList
                         $hAttributes .= $hAttribute . '="' . $hAttributeValue . '" ';
                     }
                     echo "<th $hAttributes>";
-                } else {
+                }
+                else {
                     echo "<th>";
                 }
                 echo $header['value'];
-            } else {
+            }
+            else {
                 echo "<th>$header";
             }
             echo "</th>";
@@ -134,8 +136,8 @@ class THM_GroupsLayoutList
     /**
      * Renders the table head
      *
-     * @param   array &$headers an array containing the table headers
-     * @param   array &$filters the filters set for the view
+     * @param   array &$headers  an array containing the table headers
+     * @param   array &$filters  the filters set for the view
      *
      * @return  void
      */
@@ -174,7 +176,7 @@ class THM_GroupsLayoutList
     /**
      * Renders the table head
      *
-     * @param   array &$items an array containing the table headers
+     * @param   array &$items  an array containing the table headers
      *
      * @return  void
      */
@@ -186,7 +188,8 @@ class THM_GroupsLayoutList
                 $bodyAttributes .= $bodyAttribute . '="' . $bodyAttributeValue . '" ';
             }
             echo "<tbody $bodyAttributes>";
-        } else {
+        }
+        else {
             echo '<tbody>';
         }
 
@@ -203,8 +206,8 @@ class THM_GroupsLayoutList
     /**
      * Renders a row
      *
-     * @param   array $row        the row to be displayed
-     * @param   int   &$iteration the current iteration
+     * @param   array  $row        the row to be displayed
+     * @param   int   &$iteration  the current iteration
      *
      * @return  void  outputs HTML
      */
@@ -217,7 +220,8 @@ class THM_GroupsLayoutList
                 $rowAttributes .= $rowAttribute . '="' . $rowAttributeValue . '" ';
             }
             echo "<tr $rowAttributes>";
-        } else {
+        }
+        else {
             // Joomla standard is row0 or row1 for even and odd rows
             echo "<tr class='row" . $iteration % 2 . "'>";
         }
@@ -236,11 +240,13 @@ class THM_GroupsLayoutList
                         $colAttributes .= $colAttribute . '="' . $colAttributeValue . '" ';
                     }
                     echo "<td $colAttributes>";
-                } else {
+                }
+                else {
                     echo "<td>";
                 }
                 echo $column['value'];
-            } else {
+            }
+            else {
                 echo "<td>$column";
             }
             echo "</td>";
@@ -252,7 +258,7 @@ class THM_GroupsLayoutList
     /**
      * Renders the table foot
      *
-     * @param   object &$view the view context calling the function
+     * @param   object &$view  the view context calling the function
      *
      * @return  void
      */
@@ -268,7 +274,7 @@ class THM_GroupsLayoutList
     /**
      * Renders the batch window
      *
-     * @param   object &$view the view context calling the function
+     * @param   object &$view  the view context calling the function
      *
      * @return  void
      */
@@ -286,7 +292,7 @@ class THM_GroupsLayoutList
     /**
      * Renders hidden fields
      *
-     * @param   object &$view the view object
+     * @param   object &$view  the view object
      *
      * @return  void  outputs hidden fields html
      */

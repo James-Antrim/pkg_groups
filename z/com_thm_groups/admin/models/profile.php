@@ -45,7 +45,8 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         if ($selectedIDs and !empty($requestedAssocs)) {
             return $this->batchRoles($selectedIDs, $requestedAssocs);
-        } elseif (!empty($newProfileData['groupIDs']) and !empty($newProfileData['profileIDs'])) {
+        }
+        elseif (!empty($newProfileData['groupIDs']) and !empty($newProfileData['profileIDs'])) {
             return $this->batchProfiles($newProfileData['groupIDs'], $newProfileData['profileIDs']);
         }
 
@@ -57,8 +58,8 @@ class THM_GroupsModelProfile extends JModelLegacy
     /**
      * Associates the profiles with the given groups default group/role association.
      *
-     * @param array $groupIDs the ids of the selected groups
-     * @param array $profileIDs the ids of the selected profiles
+     * @param   array  $groupIDs    the ids of the selected groups
+     * @param   array  $profileIDs  the ids of the selected profiles
      *
      * @return bool
      * @throws Exception
@@ -81,8 +82,8 @@ class THM_GroupsModelProfile extends JModelLegacy
     /**
      * Associates the selected profiles with the selected group/role assocations.
      *
-     * @param array $profileIDs the selected profileIDs
-     * @param array $requestedAssocs the ids of the group/role association with which the profiles should be associated
+     * @param   array  $profileIDs       the selected profileIDs
+     * @param   array  $requestedAssocs  the ids of the group/role association with which the profiles should be associated
      *
      * @return bool
      * @throws Exception
@@ -129,7 +130,8 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         try {
             $success = (bool) $this->_db->execute();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return false;
@@ -151,7 +153,8 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         try {
             $success = (bool) $this->_db->execute();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             $app->enqueueMessage($exception->getMessage(), 'error');
 
             return false;
@@ -171,8 +174,8 @@ class THM_GroupsModelProfile extends JModelLegacy
     /**
      * Deletes the value for a specific profile picture attribute
      *
-     * @param int $profileID the id of the profile with which the picture is associated.
-     * @param int $attributeID the id of the attribute under which the value is stored.
+     * @param   int  $profileID    the id of the profile with which the picture is associated.
+     * @param   int  $attributeID  the id of the attribute under which the value is stored.
      *
      * @return mixed
      * @throws Exception
@@ -198,7 +201,8 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         try {
             $fileName = $this->_db->loadResult();
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             $app->enqueueMessage($exc->getMessage(), 'error');
 
             return false;
@@ -225,7 +229,8 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         try {
             $this->_db->execute();
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             $app->enqueueMessage($exc->getMessage(), 'error');
 
             return false;
@@ -267,7 +272,8 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         try {
             $success = $this->_db->execute();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             $app->enqueueMessage($exception->getMessage(), 'error');
 
             return false;
@@ -279,7 +285,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     /**
      * Returns a list of group assoc ids matching the request data
      *
-     * @param array $requestedAssocs An array with groups and roles
+     * @param   array  $requestedAssocs  An array with groups and roles
      *
      * @return  array with ids
      * @throws Exception
@@ -299,7 +305,8 @@ class THM_GroupsModelProfile extends JModelLegacy
 
                 try {
                     $assocID = $this->_db->loadResult();
-                } catch (Exception $exception) {
+                }
+                catch (Exception $exception) {
                     JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
                     return [];
@@ -485,7 +492,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     /**
      * Updates all profile attribute values and publication statuses.
      *
-     * @param array $formData the submitted form data
+     * @param   array  $formData  the submitted form data
      *
      * @return  bool true on success, otherwise false
      * @throws Exception
@@ -538,7 +545,8 @@ class THM_GroupsModelProfile extends JModelLegacy
 
             try {
                 $success = $this->_db->execute();
-            } catch (Exception $exc) {
+            }
+            catch (Exception $exc) {
                 JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
 
                 return false;
@@ -555,8 +563,8 @@ class THM_GroupsModelProfile extends JModelLegacy
     /**
      * Associates the profile with the given groups/roles
      *
-     * @param array $profileIDs the profile IDs which assignments are being edited
-     * @param array $requestedAssocs an array of groups and roles
+     * @param   array  $profileIDs       the profile IDs which assignments are being edited
+     * @param   array  $requestedAssocs  an array of groups and roles
      *
      * @return  boolean  True on success, false on failure
      * @throws Exception
@@ -608,8 +616,8 @@ class THM_GroupsModelProfile extends JModelLegacy
     /**
      * Maps users to Joomla user groups.
      *
-     * @param array $profileIDs an array with profile ids (joomla user ids)
-     * @param array $batchData an array with groups and roles
+     * @param   array  $profileIDs  an array with profile ids (joomla user ids)
+     * @param   array  $batchData   an array with groups and roles
      *
      * @return bool true on success, otherwise false
      * @throws Exception
@@ -634,11 +642,13 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         try {
             $success = $this->_db->execute();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             // Ignore duplicate entry exception
             if ($exception->getCode() === 1062) {
                 return true;
-            } else {
+            }
+            else {
                 JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
                 return false;
@@ -719,9 +729,9 @@ class THM_GroupsModelProfile extends JModelLegacy
     /**
      * Updates a binary value.
      *
-     * @param int $profileID the profile id
-     * @param string $column the name of the column to update
-     * @param mixed $value the new value to assign
+     * @param   int     $profileID  the profile id
+     * @param   string  $column     the name of the column to update
+     * @param   mixed   $value      the new value to assign
      *
      * @return bool true if the query executed successfully, otherwise false
      * @throws Exception
@@ -735,7 +745,8 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         try {
             return (bool) $this->_db->execute();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return false;
@@ -750,7 +761,8 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         try {
             return (bool) $this->_db->execute();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return false;

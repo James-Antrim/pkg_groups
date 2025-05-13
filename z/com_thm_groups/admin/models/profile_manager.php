@@ -26,7 +26,7 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
     /**
      * Constructor
      *
-     * @param array $config config array
+     * @param   array  $config  config array
      *
      * @throws Exception
      */
@@ -45,7 +45,7 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
     /**
      * Return groups with roles of a user by ID
      *
-     * @param int profileID the user ID
+     * @param   int profileID the user ID
      *
      * @return  array the association IDs
      * @throws Exception
@@ -69,7 +69,8 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
 
         try {
             $associations = $this->_db->loadAssocList();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];
@@ -81,8 +82,8 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
     /**
      * Generates HTML with links for disassociation of groups/roles with the user being iterated
      *
-     * @param int  $profileID the id of the user being iterated
-     * @param bool $canEdit   whether or not the user is authorized to edit associations
+     * @param   int   $profileID  the id of the user being iterated
+     * @param   bool  $canEdit    whether or not the user is authorized to edit associations
      *
      * @return  string the HTML output
      * @throws Exception
@@ -114,7 +115,8 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
             // If there is only one role in group, don't show delete icon
             if (count($roles) == 1) {
                 $groupRoles[] = $roles[0];
-            } else {
+            }
+            else {
                 $roleIDs          = explode(', ', $association['roleID']);
                 $specificRoleLink = str_replace('GROUPID', $association['groupID'], $rawRoleLink);
                 $specificRoleLink = str_replace('GROUPNAME', $groupName, $specificRoleLink);
@@ -131,7 +133,8 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
                         $groupRoles[] = str_replace('ROLENAME', $role,
                             str_replace('ROLEID', $roleIDs[$index], $specificRoleLink));
 
-                    } else {
+                    }
+                    else {
                         $groupRoles[] = $role;
                     }
 
@@ -144,7 +147,8 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
                 // If the user is only in one group, do not allow the removal of the association in this component.
                 if (count(JFactory::getUser($profileID)->groups) === 1) {
                     $groupLink = "<strong>$groupName</strong> : ";
-                } else {
+                }
+                else {
                     $groupLink = str_replace('GROUPID', $association['groupID'], $rawGroupLink);
                     $groupLink = str_replace('GROUPNAME', $groupName, $groupLink);
                 }

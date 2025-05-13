@@ -17,7 +17,7 @@ class THM_GroupsLayoutEdit_Basic
     /**
      * Method to create a form output based solely on the xml configuration.
      *
-     * @param   object &$view the view context calling the function
+     * @param   object &$view  the view context calling the function
      *
      * @return void
      */

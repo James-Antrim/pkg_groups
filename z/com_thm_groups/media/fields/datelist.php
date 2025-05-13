@@ -56,7 +56,8 @@ class JFormFieldDateList extends JFormFieldList
             }
 
             return array_merge(parent::getOptions(), $options);
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             return parent::getOptions();
         }
     }
@@ -64,7 +65,7 @@ class JFormFieldDateList extends JFormFieldList
     /**
      * Resolves the textColumns for concatenated values
      *
-     * @param   object &$query the query object
+     * @param   object &$query  the query object
      *
      * @return  void modifies the query object
      */

@@ -47,7 +47,8 @@ class JFormFieldRoleFilter extends JFormFieldList
 
         try {
             $roles = $dbo->loadAssocList();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return $defaultOptions;

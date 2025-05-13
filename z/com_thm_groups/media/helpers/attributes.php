@@ -21,8 +21,8 @@ class THM_GroupsHelperAttributes
     /**
      * Configures the form for the relevant attribute type
      *
-     * @param int    $attributeID the id of the attribute to be configured to
-     * @param object &$form       the form being modified
+     * @param   int     $attributeID  the id of the attribute to be configured to
+     * @param   object &$form         the form being modified
      *
      * @return void configures the form for the relevant field
      * @throws Exception
@@ -44,7 +44,7 @@ class THM_GroupsHelperAttributes
         }
 
         // The surname is always required.
-        if ($attributeID == SURNAME OR $attributeID == EMAIL_ATTRIBUTE) {
+        if ($attributeID == SURNAME or $attributeID == EMAIL_ATTRIBUTE) {
             $form->setFieldAttribute('required', 'readonly', 'true');
         }
 
@@ -76,9 +76,9 @@ class THM_GroupsHelperAttributes
     /**
      * Retrieves a single attribute
      *
-     * @param int  $attributeID the attribute to be retrieved
-     * @param int  $profileID   the id of the profile as necessary
-     * @param bool $published   whether the profile attribute must be published
+     * @param   int   $attributeID  the attribute to be retrieved
+     * @param   int   $profileID    the id of the profile as necessary
+     * @param   bool  $published    whether the profile attribute must be published
      *
      * @return array the attribute information
      * @throws Exception
@@ -107,13 +107,14 @@ class THM_GroupsHelperAttributes
         $subQuery = $dbo->getQuery(true);
         $subQuery->select("title")->from("#__viewlevels AS vl2")->where("vl2.id = 1");
 
-        $query->select('(' . (string)$subQuery . ') AS defaultLevel');
+        $query->select('(' . (string) $subQuery . ') AS defaultLevel');
 
         $dbo->setQuery($query);
 
         try {
             $attribute = $dbo->loadAssoc();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];
@@ -131,8 +132,8 @@ class THM_GroupsHelperAttributes
     /**
      * Gets all attribute ids optionally ordered by their ordering property
      *
-     * @param bool $restrictions
-     * @param int  $templateID the id of the template with which attributes must be associated
+     * @param   bool  $restrictions
+     * @param   int   $templateID  the id of the template with which attributes must be associated
      *
      * @return array the attribute ids
      * @throws Exception
@@ -152,7 +153,8 @@ class THM_GroupsHelperAttributes
             if ($templateID) {
                 $query->innerJoin('#__thm_groups_template_attributes AS ta ON ta.attributeID = a.id');
                 $query->where("ta.published = '1'")->where("ta.templateID = '$templateID'")->order('ta.ordering');
-            } else {
+            }
+            else {
                 $query->where("a.published = '1'");
             }
         }
@@ -165,7 +167,8 @@ class THM_GroupsHelperAttributes
 
         try {
             $attributeIDs = $dbo->loadColumn();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];
@@ -177,7 +180,7 @@ class THM_GroupsHelperAttributes
     /**
      * Retrieves the ID of the field type associated with the abstract attribute
      *
-     * @param int $attributeID the id of the attribute
+     * @param   int  $attributeID  the id of the attribute
      *
      * @return int the id of the field type associated with the abstract attribute
      *
@@ -191,12 +194,13 @@ class THM_GroupsHelperAttributes
         $query
             ->select('typeID')
             ->from('#__thm_groups_attributes')
-            ->where('id = ' . (int)$attributeID);
+            ->where('id = ' . (int) $attributeID);
         $dbo->setQuery($query);
 
         try {
             $result = $dbo->loadResult();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return false;
@@ -213,8 +217,8 @@ class THM_GroupsHelperAttributes
      *
      * @return mixed|string
      *
-     * @since version
      * @throws Exception
+     * @since version
      */
     public static function getDisplay($attribute, $suppress)
     {
@@ -223,10 +227,12 @@ class THM_GroupsHelperAttributes
         if ($attribute['typeID'] == IMAGE) {
             $html  = str_replace('DISPLAYTYPE', 'image', $html);
             $label = '';
-        } else {
+        }
+        else {
             if ($attribute['typeID'] == HTML) {
                 $html = str_replace('DISPLAYTYPE', 'html', $html);
-            } else {
+            }
+            else {
                 $html = str_replace('DISPLAYTYPE', 'wrap', $html);
             }
 
@@ -237,13 +243,16 @@ class THM_GroupsHelperAttributes
 
         if (empty($label)) {
             $contents = str_replace('LABELTYPE', 'no-label', $contents);
-        } elseif (empty(strip_tags($label))) {
+        }
+        elseif (empty(strip_tags($label))) {
             $contents = str_replace('LABELTYPE', 'iconed', $contents);
-        } else {
+        }
+        else {
             $visibleLength = strlen(strip_tags($label));
             if ($visibleLength > 10) {
                 $contents = str_replace('LABELTYPE', 'break', $contents);
-            } else {
+            }
+            else {
                 $contents = str_replace('LABELTYPE', 'labeled', $contents);
             }
         }
@@ -260,9 +269,9 @@ class THM_GroupsHelperAttributes
     /**
      * Retrieves an image attribute
      *
-     * @param array $attribute   the attribute
-     * @param int   $profileID   the profileID
-     * @param int   $attributeID the attributeID
+     * @param   array  $attribute    the attribute
+     * @param   int    $profileID    the profileID
+     * @param   int    $attributeID  the attributeID
      *
      * @return string the image HTML
      * @throws Exception
@@ -271,7 +280,8 @@ class THM_GroupsHelperAttributes
     {
         if (!empty($attribute) and !empty($attribute['value'])) {
             $value = $attribute['value'];
-        } elseif (!empty($profileID) and !empty($attributeID)) {
+        }
+        elseif (!empty($profileID) and !empty($attributeID)) {
             $dbo   = JFactory::getDbo();
             $query = $dbo->getQuery(true);
             $query->select('value')
@@ -282,13 +292,15 @@ class THM_GroupsHelperAttributes
 
             try {
                 $value = $dbo->loadResult();
-            } catch (Exception $exception) {
+            }
+            catch (Exception $exception) {
                 JFactory::getApplication()->enqueueMessage($exception->getMessage($exception->getMessage()), 'error');
 
                 return '';
             }
 
-        } else {
+        }
+        else {
             return '';
         }
 
@@ -316,8 +328,8 @@ class THM_GroupsHelperAttributes
     /**
      * Creates an input aggregate for the given attribute
      *
-     * @param int $attributeID the id of the attribute filled by the input
-     * @param int $profileID   the id of the profile with which the attribute is associated
+     * @param   int  $attributeID  the id of the attribute filled by the input
+     * @param   int  $profileID    the id of the profile with which the attribute is associated
      *
      * @return string the HTML of the attribute input aggregate
      * @throws Exception
@@ -345,7 +357,8 @@ class THM_GroupsHelperAttributes
             else {
                 $controlLabel = str_replace('XXXX', $label . $supplement, $controlLabel);
             }
-        } else {
+        }
+        else {
             $controlLabel = str_replace('XXXX', $label, $controlLabel);
         }
 
@@ -363,8 +376,8 @@ class THM_GroupsHelperAttributes
     /**
      * Creates a label for an attribute
      *
-     * @param array $attribute the attribute to be labeled
-     * @param bool  $form      whether or not the label will be displayed in the profile edit form
+     * @param   array  $attribute  the attribute to be labeled
+     * @param   bool   $form       whether or not the label will be displayed in the profile edit form
      *
      * @return string the html for the label
      */
@@ -380,16 +393,19 @@ class THM_GroupsHelperAttributes
         if ($form) {
             $html .= '<label id="jform_' . $attribute['id'] . '-lbl" for="jform_' . $attribute['id'] . '_value" aria-invalid="false">';
             $html .= $label . '</label >';
-        } else {
-            $showIcon = (!empty($attribute['icon']) AND !empty($attribute['showIcon']));
+        }
+        else {
+            $showIcon = (!empty($attribute['icon']) and !empty($attribute['showIcon']));
             if ($showIcon) {
                 $html .= '<div class="attribute-label">';
                 $html .= '<span class="' . $attribute['icon'] . '" title="' . $label . '"></span>';
                 $html .= '</div>';
-            } elseif ($attribute['showLabel']) {
+            }
+            elseif ($attribute['showLabel']) {
                 if ($attribute['fieldID'] == HTML) {
                     $html .= '<h3>' . JText::_($attribute['label']) . '</h3>';
-                } else {
+                }
+                else {
                     $html .= '<div class="attribute-label">' . JText::_($attribute['label']) . '</div>';
                 }
             }
@@ -401,7 +417,7 @@ class THM_GroupsHelperAttributes
     /**
      * Returns specific field type options mapped with attribute type data and optionally mapped with form data
      *
-     * @param int $attributeID the attribute id
+     * @param   int  $attributeID  the attribute id
      *
      * @return  array the field options set with form values if available
      * @throws Exception
@@ -415,7 +431,8 @@ class THM_GroupsHelperAttributes
 
         try {
             $options = $dbo->loadResult();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];
@@ -432,8 +449,8 @@ class THM_GroupsHelperAttributes
     /**
      * Creates a checkbox for the published status of the attribute being iterated
      *
-     * @param array $attribute the attribute for which the publish checkbox is to be displayed
-     * @param bool  $inline    whether or not the attribute is text based
+     * @param   array  $attribute  the attribute for which the publish checkbox is to be displayed
+     * @param   bool   $inline     whether or not the attribute is text based
      *
      * @return  string  the HTML checkbox output
      */
@@ -459,20 +476,21 @@ class THM_GroupsHelperAttributes
     /**
      * Creates the container for the attribute value
      *
-     * @param array $attribute the profile attribute being iterated
-     * @param bool  $suppress  whether or not lengthy text should be initially hidden.
+     * @param   array  $attribute  the profile attribute being iterated
+     * @param   bool   $suppress   whether or not lengthy text should be initially hidden.
      *
      * @return string the HTML for the value container
      * @throws Exception
      */
     private static function getValueDisplay($attribute, $suppress = true)
     {
-        $columns = (int)JFactory::getApplication()->getParams()->get('columns');
+        $columns = (int) JFactory::getApplication()->getParams()->get('columns');
 
         // Advanced view or module
         if (!empty($columns)) {
             $maxLength = $columns === 2 ? 28 : 50;
-        } else {
+        }
+        else {
             $maxLength = 20;
         }
         $suppressionTemplate = '<div class="hasTooltip suppress" title="TIPVALUE">DISPLAYVALUE</div>';
@@ -506,7 +524,8 @@ class THM_GroupsHelperAttributes
                     $html = '<span class="toggled-text-link">' . JText::_('COM_THM_GROUPS_ACTION_DISPLAY') . '</span>';
                     $html .= '</div>';
                     $html .= '<div class="toggled-text-container" style="display:none;">' . $value;
-                } else {
+                }
+                else {
                     $html = $value;
                 }
 
@@ -558,8 +577,8 @@ class THM_GroupsHelperAttributes
     /**
      * Creates the HTML for the display of the attribute view level
      *
-     * @param array $attribute the attribute for which to display the view level
-     * @param bool  $inline    whether or not the attribute is text based
+     * @param   array  $attribute  the attribute for which to display the view level
+     * @param   bool   $inline     whether or not the attribute is text based
      *
      * @return string the html of the view level display
      */
@@ -570,7 +589,8 @@ class THM_GroupsHelperAttributes
         $html  .= JText::_('COM_THM_GROUPS_VIEW_LEVEL') . ': ';
         if (empty($attribute['viewLevel']) or $attribute['viewLevel'] == $attribute['defaultLevel']) {
             $html .= '<span class="public-access">' . $attribute['defaultLevel'] . '</span>';
-        } else {
+        }
+        else {
             $html .= '<span class="restricted-access">' . $attribute['viewLevel'] . '</span>';
         }
         $html .= '</div>';

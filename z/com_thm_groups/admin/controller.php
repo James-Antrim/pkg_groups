@@ -19,7 +19,7 @@ class THM_GroupsController extends JControllerLegacy
     /**
      * Class constructor
      *
-     * @param array $config An optional associative array of configuration settings.
+     * @param   array  $config  An optional associative array of configuration settings.
      *
      * @throws Exception
      */
@@ -66,11 +66,13 @@ class THM_GroupsController extends JControllerLegacy
             if (!empty($savedID)) {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -101,11 +103,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_BATCH_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_BATCH_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -132,11 +136,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_DELETE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_DELETE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -182,11 +188,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_DELETE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_DELETE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -214,11 +222,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -266,11 +276,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -299,11 +311,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -331,11 +345,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -363,11 +379,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -401,12 +419,14 @@ class THM_GroupsController extends JControllerLegacy
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
                 $type = 'message';
                 $app->input->set('id', $newID);
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
                 $type = 'error';
                 $app->input->set('id', $existingID);
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -434,11 +454,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -512,11 +534,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -547,11 +571,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }
@@ -579,11 +605,13 @@ class THM_GroupsController extends JControllerLegacy
             if ($success) {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
                 $type = 'message';
-            } else {
+            }
+            else {
                 $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
                 $type = 'error';
             }
-        } else {
+        }
+        else {
             $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
             $type = 'error';
         }

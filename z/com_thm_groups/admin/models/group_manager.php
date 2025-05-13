@@ -117,8 +117,8 @@ class THM_GroupsModelGroup_Manager extends THM_GroupsModelList
     /**
      * populates State
      *
-     * @param   null $ordering  ?
-     * @param   null $direction ?
+     * @param   null  $ordering   ?
+     * @param   null  $direction  ?
      *
      * @return void
      * @throws Exception
@@ -141,7 +141,7 @@ class THM_GroupsModelGroup_Manager extends THM_GroupsModelList
     /**
      * Returns all roles of a group
      *
-     * @param   int $groupID An id of the group
+     * @param   int  $groupID  An id of the group
      *
      * @return  string     A string with all roles comma separated
      * @throws Exception
@@ -161,7 +161,8 @@ class THM_GroupsModelGroup_Manager extends THM_GroupsModelList
 
         try {
             $roles = $this->_db->loadObjectList();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return '';
@@ -178,7 +179,8 @@ class THM_GroupsModelGroup_Manager extends THM_GroupsModelList
                     $url = "index.php?option=com_thm_groups&view=role_edit&cid[]=$role->id";
 
                     $return[] = "<a href=$url>" . $role->name . "</a> " . $deleteBtn;
-                } else {
+                }
+                else {
                     $return[] = $role->name;
                 }
             }

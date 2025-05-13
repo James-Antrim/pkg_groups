@@ -22,7 +22,7 @@ class THM_GroupsHelperProfilesModule
     /**
      * Parses the text of the accessed article for THM Groups Members hooks.
      *
-     * @param   int $articleID the id of the article to be parsed
+     * @param   int  $articleID  the id of the article to be parsed
      *
      * @return mixed array of parameters if successful, otherwise false
      * @throws Exception
@@ -38,7 +38,7 @@ class THM_GroupsHelperProfilesModule
     /**
      * Parse the text of a content category for THM Groups Members hooks.
      *
-     * @param   int $categoryID the id of the category to be parsed
+     * @param   int  $categoryID  the id of the category to be parsed
      *
      * @return mixed array of parameters if successful, otherwise false
      */
@@ -56,7 +56,7 @@ class THM_GroupsHelperProfilesModule
     /**
      * Searches text for THM Groups Members hooks.
      *
-     * @param   string $text the text to be searched
+     * @param   string  $text  the text to be searched
      *
      * @return  mixed array if hooks were found, otherwise false
      */
@@ -78,7 +78,7 @@ class THM_GroupsHelperProfilesModule
                 continue;
             }
 
-            list($key, $value) = explode('=', $hook);
+            [$key, $value] = explode('=', $hook);
 
             $possibleValues = explode(',', $value);
 
@@ -87,7 +87,8 @@ class THM_GroupsHelperProfilesModule
             } // Only one value is allowed for profile and group parameters
             elseif ($key == 'pid' or $key == 'templateIDs' or $key == 'templateID') {
                 $parameters['templateID'] = $possibleValues[0];
-            } elseif ($key == 'gid' or $key == 'groupIDs' or $key == 'groupID') {
+            }
+            elseif ($key == 'gid' or $key == 'groupIDs' or $key == 'groupID') {
                 $parameters['groupID'] = $possibleValues[0];
             }
         }
@@ -98,8 +99,8 @@ class THM_GroupsHelperProfilesModule
     /**
      * Parses matches found in the article or category text in order to extract useful parameters
      *
-     * @param   array  $dynamicParams an array with dynamic parameter values
-     * @param   object $moduleParams  the module parameters
+     * @param   array   $dynamicParams  an array with dynamic parameter values
+     * @param   object  $moduleParams   the module parameters
      *
      * @return  array the profileID of the profiles to display
      */
@@ -121,11 +122,11 @@ class THM_GroupsHelperProfilesModule
             }
 
             $profileIDs = [];
-            $assocIDs = THM_GroupsHelperGroups::getRoleAssocIDs($dynamicParams['groupID']);
+            $assocIDs   = THM_GroupsHelperGroups::getRoleAssocIDs($dynamicParams['groupID']);
             foreach ($assocIDs as $assocID) {
-                $roleProfileIDs = THM_GroupsHelperGroups::getProfileIDsByAssoc($assocID);
+                $roleProfileIDs    = THM_GroupsHelperGroups::getProfileIDsByAssoc($assocID);
                 $sortedProfilesIDs = self::sortProfiles($roleProfileIDs);
-                $profileIDs = array_merge($profileIDs, $sortedProfilesIDs);
+                $profileIDs        = array_merge($profileIDs, $sortedProfilesIDs);
             }
             return $profileIDs;
         }
@@ -136,15 +137,16 @@ class THM_GroupsHelperProfilesModule
     /**
      * Sorts the profiles according to the surnames and forenames of the profiles.
      *
-     * @param array $profiles the profiles to be sorted
+     * @param   array  $profiles  the profiles to be sorted
      *
      * @return array the sorted profiles
      */
-    private static function sortProfiles($profiles) {
+    private static function sortProfiles($profiles)
+    {
 
         $profiles = array_flip($profiles);
         foreach (array_keys($profiles) as $profileID) {
-            $name = THM_GroupsHelperProfiles::getLNFName($profileID);
+            $name                 = THM_GroupsHelperProfiles::getLNFName($profileID);
             $profiles[$profileID] = $name;
         }
         asort($profiles);

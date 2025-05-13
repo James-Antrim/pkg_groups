@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 defined('_JEXEC') or die;
-$name = THM_GroupsHelperProfiles::getDisplayName($this->profileID, true);
+$name    = THM_GroupsHelperProfiles::getDisplayName($this->profileID, true);
 $profile = THM_GroupsHelperProfiles::getDisplay($this->profileID);
 ?>
 <div class="toolbar">

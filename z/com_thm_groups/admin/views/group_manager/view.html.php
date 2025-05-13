@@ -28,7 +28,7 @@ class THM_GroupsViewGroup_Manager extends THM_GroupsViewList
     /**
      * Execute and display a view script.
      *
-     * @param   string $tpl The name of the layout file to parse; automatically searches through the layout paths.
+     * @param   string  $tpl  The name of the layout file to parse; automatically searches through the layout paths.
      *
      * @return void
      * @throws Exception
@@ -48,7 +48,7 @@ class THM_GroupsViewGroup_Manager extends THM_GroupsViewList
             return $role->value != MEMBER;
         }
 
-        $this->roles    = array_filter(THM_GroupsHelperBatch::getRoles(), 'filterMemberRole');
+        $this->roles = array_filter(THM_GroupsHelperBatch::getRoles(), 'filterMemberRole');
 
         parent::display($tpl);
     }

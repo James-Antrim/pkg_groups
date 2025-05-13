@@ -21,8 +21,8 @@ class THM_GroupsHelperRouter
     /**
      * Method to build the displayed URL
      *
-     * @param array $params   the parameters used to build internal links
-     * @param bool  $asString true if the url should be functional, false if an array of segments
+     * @param   array  $params    the parameters used to build internal links
+     * @param   bool   $asString  true if the url should be functional, false if an array of segments
      *
      * @return mixed string if the URL should be complete, otherwise an array of terms to use in the URL
      * @throws Exception
@@ -37,7 +37,8 @@ class THM_GroupsHelperRouter
         $params['profileAlias'] = THM_GroupsHelperProfiles::getAlias($params['profileID']);
         if (empty($params['profileAlias'])) {
             return $default;
-        } elseif (empty($params['view'])) {
+        }
+        elseif (empty($params['view'])) {
             $params['view'] = 'profile';
         }
 
@@ -48,8 +49,8 @@ class THM_GroupsHelperRouter
     /**
      * Method to build the displayed raw URL
      *
-     * @param array $params   the parameters used to build internal links
-     * @param bool  $complete true if the url should be functional, false if an array of segments
+     * @param   array  $params    the parameters used to build internal links
+     * @param   bool   $complete  true if the url should be functional, false if an array of segments
      *
      * @return mixed string if the URL should be complete, otherwise an array of terms to use in the URL
      * @throws Exception
@@ -57,14 +58,15 @@ class THM_GroupsHelperRouter
     private static function buildRawURL($params, $complete)
     {
         $invalidContent = (empty($params['id']) or empty(THM_GroupsHelperContent::getAlias($params['id'])));
-        if ($params['view'] === 'content' AND $invalidContent) {
+        if ($params['view'] === 'content' and $invalidContent) {
             $params['view'] = 'profile';
         }
 
         $query = ['option' => 'com_thm_groups', 'view' => $params['view'], 'profileID' => $params['profileID']];
         if ($query['view'] === 'content') {
             $query['id'] = $params['id'];
-        } elseif ($query['view'] === 'profile' AND !empty($params['format'])) {
+        }
+        elseif ($query['view'] === 'profile' and !empty($params['format'])) {
             $query['format'] = $params['format'];
         }
 
@@ -74,8 +76,8 @@ class THM_GroupsHelperRouter
     /**
      * Method to build the displayed SEF URL
      *
-     * @param array $params   the parameters used to build internal links
-     * @param bool  $complete true if the url should be functional, false if an array of segments
+     * @param   array  $params    the parameters used to build internal links
+     * @param   bool   $complete  true if the url should be functional, false if an array of segments
      *
      * @return mixed string if the URL should be complete, otherwise an array of terms to use in the URL
      * @throws Exception
@@ -113,7 +115,7 @@ class THM_GroupsHelperRouter
     /**
      * Attempts to resolve a URL path to a menu item
      *
-     * @param string $possibleMenuPath the path string to check against
+     * @param   string  $possibleMenuPath  the path string to check against
      *
      * @return array the id, title and url of the menu item on success, otherwise empty
      * @throws Exception
@@ -130,7 +132,8 @@ class THM_GroupsHelperRouter
 
         try {
             $menu = $dbo->loadAssoc();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];
@@ -142,7 +145,7 @@ class THM_GroupsHelperRouter
     /**
      * Retrieves the path items free of masked subdomains, query items, extension coding, the word index, and empty items.
      *
-     * @param string $url the URL to be parsed into path items.
+     * @param   string  $url  the URL to be parsed into path items.
      *
      * @return array the relevant items in the url path
      */
@@ -200,15 +203,18 @@ class THM_GroupsHelperRouter
                 $referrerURL  = $session->get('referrerUrl', '', 'thm_groups');
                 if (empty($referrerName) or empty($referrerURL)) {
                     $pathway->addItem(JText::_('COM_THM_GROUPS_HOME'), URI::base());
-                } else {
+                }
+                else {
                     $pathway->addItem($referrerName, $referrerURL);
                 }
-            } else {
+            }
+            else {
                 $possibleMenuPath = implode('/', $pathItems);
                 $menu             = self::getMenuByPath($possibleMenuPath);
                 if (empty($menu)) {
                     $pathway->addItem(JText::_('COM_THM_GROUPS_HOME'), URI::base());
-                } else {
+                }
+                else {
                     $session->set('referrerName', $menu['title'], 'thm_groups');
                     $session->set('referrerUrl', $menu['URL'], 'thm_groups');
                     $pathway->addItem($menu['title'], $menu['URL']);
@@ -216,13 +222,15 @@ class THM_GroupsHelperRouter
             }
 
             $pathway->addItem($profileName, $profileURL);
-        } else {
+        }
+        else {
 
             $referrerName = $session->get('referrerName', '', 'thm_groups');
             $referrerURL  = $session->get('referrerUrl', '', 'thm_groups');
             if (empty($referrerName) or empty($referrerURL)) {
                 $pathway->addItem(JText::_('COM_THM_GROUPS_HOME'), URI::base());
-            } else {
+            }
+            else {
                 $pathway->addItem($referrerName, $referrerURL);
             }
 
@@ -235,110 +243,92 @@ class THM_GroupsHelperRouter
         }
     }
 
-	/**
-	 * Translates content parameters into Groups parameters as relevant.
-	 *
-	 * @param $query
-	 *
-	 * @return bool
-	 * @throws Exception
-	 */
-	public static function translateContent(&$query)
-	{
-		$relevantViews = ['article', 'category'];
-		if (!empty($query['view']) and !in_array($query['view'], $relevantViews))
-		{
-			return false;
-		}
+    /**
+     * Translates content parameters into Groups parameters as relevant.
+     *
+     * @param $query
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public static function translateContent(&$query)
+    {
+        $relevantViews = ['article', 'category'];
+        if (!empty($query['view']) and !in_array($query['view'], $relevantViews)) {
+            return false;
+        }
 
-		if (empty($query['view']) or $query['view'] === 'article')
-		{
-			if (!empty($query['catid']))
-			{
-				if (is_numeric($query['catid']))
-				{
-					$profileID = THM_GroupsHelperContent::resolve($query['catid']);
-				}
-				elseif (preg_match('/^(\d+)/', $query['catid'], $matches))
-				{
-					// true for root, false for irrelevant, otherwise profileID
-					$profileID = THM_GroupsHelperCategories::resolve($matches[0]);
-				}
-			}
-			if (!empty($query['a_id']) or !empty($query['id']))
-			{
-				$tmpID = empty($query['a_id']) ? $query['id'] : $query['a_id'];
-				if (is_numeric($tmpID))
-				{
-					$contentID = THM_GroupsHelperContent::resolve($tmpID);
-				}
-				elseif (preg_match('/^(\d+)/', $tmpID, $matches))
-				{
-					//0 or contentID
-					$contentID = THM_GroupsHelperContent::resolve($matches[0]);
-				}
-			}
+        if (empty($query['view']) or $query['view'] === 'article') {
+            if (!empty($query['catid'])) {
+                if (is_numeric($query['catid'])) {
+                    $profileID = THM_GroupsHelperContent::resolve($query['catid']);
+                }
+                elseif (preg_match('/^(\d+)/', $query['catid'], $matches)) {
+                    // true for root, false for irrelevant, otherwise profileID
+                    $profileID = THM_GroupsHelperCategories::resolve($matches[0]);
+                }
+            }
+            if (!empty($query['a_id']) or !empty($query['id'])) {
+                $tmpID = empty($query['a_id']) ? $query['id'] : $query['a_id'];
+                if (is_numeric($tmpID)) {
+                    $contentID = THM_GroupsHelperContent::resolve($tmpID);
+                }
+                elseif (preg_match('/^(\d+)/', $tmpID, $matches)) {
+                    //0 or contentID
+                    $contentID = THM_GroupsHelperContent::resolve($matches[0]);
+                }
+            }
 
-			if (empty($profileID) and empty($contentID))
-			{
-				return false;
-			}
-			elseif ($contentID)
-			{
-				$query['id']        = $contentID;
-				$query['profileID'] = THM_GroupsHelperContent::getProfileID($contentID);
-				$query['view']      = 'content';
-				unset($query['catid']);
-			}
-			elseif ($profileID and $profileID === true)
-			{
-				$query['search'] = '';
-				$query['view']   = 'overview';
-				unset($query['id']);
-			}
-			else
-			{
-				$query['profileID'] = $profileID;
-				$query['view']      = 'profile';
-				unset($query['id']);
-			}
-			$query['option'] = 'com_thm_groups';
-			unset($query['a_id'], $query['catid'], $query['lang'], $query['layout']);
+            if (empty($profileID) and empty($contentID)) {
+                return false;
+            }
+            elseif ($contentID) {
+                $query['id']        = $contentID;
+                $query['profileID'] = THM_GroupsHelperContent::getProfileID($contentID);
+                $query['view']      = 'content';
+                unset($query['catid']);
+            }
+            elseif ($profileID and $profileID === true) {
+                $query['search'] = '';
+                $query['view']   = 'overview';
+                unset($query['id']);
+            }
+            else {
+                $query['profileID'] = $profileID;
+                $query['view']      = 'profile';
+                unset($query['id']);
+            }
+            $query['option'] = 'com_thm_groups';
+            unset($query['a_id'], $query['catid'], $query['lang'], $query['layout']);
 
-			return true;
-		}
+            return true;
+        }
 
-		if (!empty($query['id']))
-		{
-			if (is_numeric($query['id']))
-			{
-				$profileID = THM_GroupsHelperCategories::resolve($query['id']);
-			}
-			elseif (preg_match('/^(\d+)/', $query['id'], $matches))
-			{
-				// true for root, false for irrelevant, otherwise profileID
-				$profileID = THM_GroupsHelperCategories::getProfileID($matches[0]);
-			}
-		}
+        if (!empty($query['id'])) {
+            if (is_numeric($query['id'])) {
+                $profileID = THM_GroupsHelperCategories::resolve($query['id']);
+            }
+            elseif (preg_match('/^(\d+)/', $query['id'], $matches)) {
+                // true for root, false for irrelevant, otherwise profileID
+                $profileID = THM_GroupsHelperCategories::getProfileID($matches[0]);
+            }
+        }
 
 
-		if (empty($profileID))
-		{
-			return false;
-		}
-		elseif ($profileID and $profileID === true)
-		{
-			$query['search'] = '';
-			$query['view']   = 'overview';
-		}
-		else
-		{
-			$query['profileID'] = $profileID;
-			$query['view']      = 'profile';
-		}
-		$query['option'] = 'com_thm_groups';
-		unset($query['a_id'], $query['id'], $query['lang'], $query['layout']);
+        if (empty($profileID)) {
+            return false;
+        }
+        elseif ($profileID and $profileID === true) {
+            $query['search'] = '';
+            $query['view']   = 'overview';
+        }
+        else {
+            $query['profileID'] = $profileID;
+            $query['view']      = 'profile';
+        }
+        $query['option'] = 'com_thm_groups';
+        unset($query['a_id'], $query['id'], $query['lang'], $query['layout']);
 
-		return true;
-	}
+        return true;
+    }
 }

@@ -18,7 +18,8 @@ echo '<div id="advanced-container" class="advanced-container row-fluid">';
 
 if ($this->params->get('sort', ALPHASORT)) {
     $this->renderRows($this->profiles);
-} else {
+}
+else {
     echo $this->loadTemplate('roles');
 }
 

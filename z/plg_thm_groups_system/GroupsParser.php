@@ -20,7 +20,7 @@ class GroupsParser
     /**
      * Checks whether the second last path item to a groups profile item
      *
-     * @param string $possibleCategory the path segment being checked
+     * @param   string  $possibleCategory  the path segment being checked
      *
      * @return array the query items which could be resolved
      * @throws Exception
@@ -50,7 +50,7 @@ class GroupsParser
     /**
      * Checks whether the path items provide the information required for dynamic linking via legacy configurations
      *
-     * @param array $pathItems the segments of the path
+     * @param   array  $pathItems  the segments of the path
      *
      * @return array the parsed attributes
      * @throws Exception
@@ -121,7 +121,8 @@ class GroupsParser
                     break;
 
             }
-        } else {
+        }
+        else {
             $return['profileID'] = THM_GroupsHelperProfiles::resolve($secondLastItem);
             $return['id']        = THM_GroupsHelperContent::resolve($lastItem);
 
@@ -139,7 +140,7 @@ class GroupsParser
     /**
      * Checks whether the segments provide the information required for dynamic linking from groups to groups
      *
-     * @param array &$pathItems the segments of the path
+     * @param   array &$pathItems  the segments of the path
      *
      * @return array the query
      * @throws Exception
@@ -164,35 +165,41 @@ class GroupsParser
             // No unfiltered listing right now
             //$query['search'] = '';
             //$query['view']   = 'overview';
-        } elseif ($secondLastItem === Text::_('COM_THM_GROUPS_DISAMBIGUATION_ALIAS')) {
+        }
+        elseif ($secondLastItem === Text::_('COM_THM_GROUPS_DISAMBIGUATION_ALIAS')) {
             $query['search'] = $lastItem;
             $query['view']   = 'overview';
-        } elseif ($lastItem === Text::_('COM_THM_GROUPS_CONTENT_MANAGER_ALIAS')) {
+        }
+        elseif ($lastItem === Text::_('COM_THM_GROUPS_CONTENT_MANAGER_ALIAS')) {
             $profileID = THM_GroupsHelperProfiles::getProfileIDByAlias($secondLastItem);
             if (!empty($profileID)) {
                 $query['view']      = 'content_manager';
                 $query['profileID'] = $profileID;
             }
-        } elseif ($lastItem === Text::_('COM_THM_GROUPS_EDIT_ALIAS')) {
+        }
+        elseif ($lastItem === Text::_('COM_THM_GROUPS_EDIT_ALIAS')) {
             $profileID = THM_GroupsHelperProfiles::getProfileIDByAlias($secondLastItem);
             if (!empty($profileID)) {
                 $query['view']      = 'profile_edit';
                 $query['profileID'] = $profileID;
             }
-        } elseif ($lastItem === 'vcf' or $lastItem === 'json') {
+        }
+        elseif ($lastItem === 'vcf' or $lastItem === 'json') {
             $profileID = THM_GroupsHelperProfiles::getProfileIDByAlias($secondLastItem);
             if (!empty($profileID)) {
                 $query['view']      = 'profile';
                 $query['profileID'] = $profileID;
                 $query['format']    = $lastItem;
             }
-        } elseif (empty($secondLastItem)) {
+        }
+        elseif (empty($secondLastItem)) {
             $profileID = THM_GroupsHelperProfiles::getProfileIDByAlias($lastItem);
             if (!empty($profileID)) {
                 $query['view']      = 'profile';
                 $query['profileID'] = $profileID;
             }
-        } else {
+        }
+        else {
             $profileID = THM_GroupsHelperProfiles::getProfileIDByAlias($secondLastItem);
             if (!empty($profileID)) {
                 if (is_numeric($profileID)) {
@@ -200,7 +207,8 @@ class GroupsParser
                     $contentID          = THM_GroupsHelperContent::getIDByAlias($lastItem, $profileID);
                     if (empty($contentID)) {
                         $query['view'] = 'profile';
-                    } else {
+                    }
+                    else {
                         $query['view'] = 'content';
                         $query['id']   = $contentID;
                     }
@@ -227,7 +235,7 @@ class GroupsParser
      * Checks whether the segments provide the information required for dynamic linking from groups to groups using the
      * links as joomla would have created them with the old router.
      *
-     * @param array &$pathItems the segments of the path
+     * @param   array &$pathItems  the segments of the path
      *
      * @return array the query
      * @throws Exception
@@ -243,24 +251,29 @@ class GroupsParser
             if ($secondLastItem === 'profile_edit' or $secondLastItem === 'content_manager') {
                 $query['profileID'] = THM_GroupsHelperProfiles::resolve($lastItem);
                 $query['view']      = $secondLastItem;
-            } elseif ($profileID = THM_GroupsHelperProfiles::resolve($secondLastItem)) {
+            }
+            elseif ($profileID = THM_GroupsHelperProfiles::resolve($secondLastItem)) {
                 if ($contentID = THM_GroupsHelperContent::resolve($lastItem, $profileID)) {
                     $query['id']   = $contentID;
                     $query['view'] = 'content';
-                } else {
+                }
+                else {
                     $query['view'] = 'profile';
                 }
                 $query['profileID'] = $profileID;
-            } elseif ($profileID = THM_GroupsHelperCategories::resolve($secondLastItem)) {
+            }
+            elseif ($profileID = THM_GroupsHelperCategories::resolve($secondLastItem)) {
                 if ($profileID === true) {
                     // Second last is Groups root category
                     $query['profileID'] = THM_GroupsHelperCategories::resolve($lastItem);
                     $query['view']      = 'profile';
-                } else {
+                }
+                else {
                     if ($contentID = THM_GroupsHelperContent::resolve($lastItem, $profileID)) {
                         $query['id']   = $contentID;
                         $query['view'] = 'content';
-                    } else {
+                    }
+                    else {
                         $query['view'] = 'profile';
                     }
                     $query['profileID'] = $profileID;
@@ -280,21 +293,25 @@ class GroupsParser
         if ($searchProfileID and is_numeric($searchProfileID)) {
             $query['profileID'] = $searchProfileID;
             $query['view']      = 'profile';
-        } elseif ($categoryProfileID = THM_GroupsHelperCategories::resolve($lastItem)) {
+        }
+        elseif ($categoryProfileID = THM_GroupsHelperCategories::resolve($lastItem)) {
             if ($categoryProfileID === true) {
                 $query['search'] = '';
                 $query['view']   = 'overview';
-            } else {
+            }
+            else {
                 $query['profileID'] = $categoryProfileID;
                 $query['view']      = 'profile';
             }
-        } elseif ($contentID = THM_GroupsHelperContent::resolve($lastItem)) {
+        }
+        elseif ($contentID = THM_GroupsHelperContent::resolve($lastItem)) {
             if ($profileID = THM_GroupsHelperContent::isAssociated($contentID)) {
                 $query['id']        = $contentID;
                 $query['profileID'] = $profileID;
                 $query['view']      = 'content';
             }
-        } elseif ($searchProfileID and is_string($searchProfileID)) {
+        }
+        elseif ($searchProfileID and is_string($searchProfileID)) {
             $query['search'] = $searchProfileID;
             $query['view']   = 'overview';
         }

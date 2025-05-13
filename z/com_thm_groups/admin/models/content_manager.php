@@ -26,11 +26,11 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
     /**
      * Constructor.
      *
-     * @param   array $config An optional associative array of configuration settings.
+     * @param   array  $config  An optional associative array of configuration settings.
      *
      * @throws Exception
      */
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         parent::__construct($config);
 
@@ -80,13 +80,14 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
         $featured = $this->getState('filter.featured');
         if (isset($featured) and $featured == '0') {
             $query->where("(pContent.featured = '0' OR pContent.featured IS NULL)");
-        } elseif ($featured == '1') {
+        }
+        elseif ($featured == '1') {
             $query->where("pContent.featured = '1'");
         }
 
         $state = $this->getState('filter.status');
         if (is_numeric($state)) {
-            $query->where('content.state = ' . (int)$state);
+            $query->where('content.state = ' . (int) $state);
         }
 
         $this->setOrdering($query);
@@ -108,7 +109,8 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
 
         if (!empty($rootCategory)) {
             $items = parent::getItems();
-        } else {
+        }
+        else {
             JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ROOT_CATEGORY_NOT_CONFIGURED'),
                 'notice');
 
@@ -134,7 +136,8 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
 
             if (!$canEdit) {
                 $iconClass = ' inactive';
-            } elseif (!$orderingActive) {
+            }
+            elseif (!$orderingActive) {
                 $iconClass = ' inactive tip-top hasTooltip';
             }
 
@@ -156,7 +159,8 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
                 $url               = JRoute::_("index.php?option=com_content&task=article.edit&id={$item->id}");
                 $return[$index][1] = JHtml::link($url, $item->title, ['target' => '_blank']);
                 $return[$index][1] .= " <span class=\"icon-edit\"></span>";
-            } else {
+            }
+            else {
                 $return[$index][1] = $item->title;
             }
 

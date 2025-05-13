@@ -36,7 +36,8 @@ class JFormFieldGroup extends JFormFieldList
 
         try {
             $groups = $dbo->loadAssocList();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];
@@ -47,12 +48,13 @@ class JFormFieldGroup extends JFormFieldList
             return [];
         }
 
-        $plugin = (bool)$this->getAttribute('plugin', false);
+        $plugin = (bool) $this->getAttribute('plugin', false);
 
         if ($plugin) {
             $noTemplates = ['value' => '', 'text' => JText::_('COM_THM_GROUPS_GROUP_FILTER')];
             array_unshift($groups, $noTemplates);
-        } else {
+        }
+        else {
             $noTemplates = ['value' => -1, 'text' => JText::_('JNONE')];
             array_unshift($groups, $noTemplates);
 

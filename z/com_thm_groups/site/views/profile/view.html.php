@@ -27,7 +27,7 @@ class THM_GroupsViewProfile extends JViewLegacy
     /**
      * Method to get display
      *
-     * @param   Object $tpl template
+     * @param   Object  $tpl  template
      *
      * @return void
      * @throws Exception

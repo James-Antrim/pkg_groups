@@ -51,7 +51,7 @@ class THM_GroupsHelperComponent
     /**
      * Configure the Linkbar.
      *
-     * @param object &$view the view context calling the function
+     * @param   object &$view  the view context calling the function
      *
      * @return void
      */
@@ -95,8 +95,8 @@ class THM_GroupsHelperComponent
     /**
      * Checks access for edit views
      *
-     * @param object &$model the model checking permissions
-     * @param int $itemID the id if the resource to be edited (empty for new entries)
+     * @param   object &$model   the model checking permissions
+     * @param   int     $itemID  the id if the resource to be edited (empty for new entries)
      *
      * @return  bool  true if the user can access the edit view, otherwise false
      */
@@ -131,7 +131,7 @@ class THM_GroupsHelperComponent
     /**
      * Calls the appropriate controller
      *
-     * @param boolean $isAdmin whether the file is being called from the backend
+     * @param   boolean  $isAdmin  whether the file is being called from the backend
      *
      * @return  void
      * @throws Exception
@@ -144,7 +144,8 @@ class THM_GroupsHelperComponent
 
         if (count($handler) > 1) {
             $task = $handler[1];
-        } else {
+        }
+        else {
             $task = $handler[0];
         }
 
@@ -167,21 +168,23 @@ class THM_GroupsHelperComponent
 
         $options = [
             'defaultgroup' => 'com_thm_groups',
-            'cachebase' => JFactory::getApplication()->isClient('administrator') ?
+            'cachebase'    => JFactory::getApplication()->isClient('administrator') ?
                 JPATH_ADMINISTRATOR . '/cache' : $conf->get('cache_path', JPATH_SITE . '/cache'),
-            'result' => true,
+            'result'       => true,
         ];
 
         try {
             $cache = JCache::getInstance('callback', $options);
             $cache->clean();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             $options['result'] = false;
         }
         // Set the clean cache event
         if (isset($conf['event_clean_cache'])) {
             $event = $conf['event_clean_cache'];
-        } else {
+        }
+        else {
             $event = 'onContentCleanCache';
         }
 
@@ -193,7 +196,7 @@ class THM_GroupsHelperComponent
      * Cleans a given collection. Converts to array as necessary. Removes duplicate values. Enforces int type. Removes
      * 0 value indexes.
      *
-     * @param mixed $array the collection to be cleaned (array|object)
+     * @param   mixed  $array  the collection to be cleaned (array|object)
      *
      * @return array the converted array
      */
@@ -237,7 +240,7 @@ class THM_GroupsHelperComponent
     /**
      * Removes empty tags or tags with &nbsp; recursively
      *
-     * @param string $original the original text
+     * @param   string  $original  the original text
      *
      * @return string the text without empty tags
      */

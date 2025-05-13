@@ -18,8 +18,8 @@ class THM_GroupsHelperGroups
     /**
      * Associates a role with a given group, ignoring existing associations with the given role
      *
-     * @param int   $roleID  the id of the role to be associated
-     * @param array $groupID the group with which the role ist to be associated
+     * @param   int    $roleID   the id of the role to be associated
+     * @param   array  $groupID  the group with which the role ist to be associated
      *
      * @return bool true on success, otherwise false
      * @throws Exception
@@ -42,7 +42,8 @@ class THM_GroupsHelperGroups
 
         try {
             $dbo->execute();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return 0;
@@ -54,7 +55,7 @@ class THM_GroupsHelperGroups
     /**
      * Gets the name of the usergroup requested
      *
-     * @param int $groupID the id of the usergroup
+     * @param   int  $groupID  the id of the usergroup
      *
      * @return string the group's title on success, otherwise empty
      * @throws Exception
@@ -68,7 +69,8 @@ class THM_GroupsHelperGroups
 
         try {
             $title = $dbo->loadResult();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return '';
@@ -80,7 +82,7 @@ class THM_GroupsHelperGroups
     /**
      * Retrieves profileIDs for the given group.
      *
-     * @param int $groupID the id of the group
+     * @param   int  $groupID  the id of the group
      *
      * @return  array the profile ids for the given group, grouped by role id
      * @throws Exception
@@ -103,7 +105,8 @@ class THM_GroupsHelperGroups
 
         try {
             $profileIDs = $dbo->loadColumn();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];
@@ -115,7 +118,7 @@ class THM_GroupsHelperGroups
     /**
      * Retrieves profileIDs for the given group -> role association.
      *
-     * @param int $assocID the id of the group -> role association
+     * @param   int  $assocID  the id of the group -> role association
      *
      * @return  array the profile ids for the given association
      * @throws Exception
@@ -138,7 +141,8 @@ class THM_GroupsHelperGroups
 
         try {
             $profileIDs = $dbo->loadColumn();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];
@@ -150,7 +154,7 @@ class THM_GroupsHelperGroups
     /**
      * Get the ids of the role associations for a particular group ordered by the role ordering indexed by the roleID
      *
-     * @param int $groupID the group id
+     * @param   int  $groupID  the group id
      *
      * @return array the roleID => assocID
      * @throws Exception
@@ -168,7 +172,8 @@ class THM_GroupsHelperGroups
 
         try {
             $associations = $dbo->loadAssocList();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];
@@ -189,7 +194,7 @@ class THM_GroupsHelperGroups
     /**
      * Get the roles associated with a group
      *
-     * @param int $groupID the group id
+     * @param   int  $groupID  the group id
      *
      * @return array the associated roles
      * @throws Exception
@@ -203,7 +208,8 @@ class THM_GroupsHelperGroups
 
         try {
             $roleIDs = $dbo->loadColumn();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];
@@ -215,7 +221,7 @@ class THM_GroupsHelperGroups
     /**
      * Gets the number of profiles associated with a given group
      *
-     * @param int $groupID GroupID
+     * @param   int  $groupID  GroupID
      *
      * @return  int  the number of profiles associated with the group
      * @throws Exception
@@ -235,7 +241,8 @@ class THM_GroupsHelperGroups
 
         try {
             return $dbo->loadResult();
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
 
             return 0;

@@ -24,7 +24,7 @@ class THM_GroupsHelperMenu
     /**
      * Checks whether personal content is activated for the given profile
      *
-     * @param   int $profileID the profile id
+     * @param   int  $profileID  the profile id
      *
      * @return  bool  true if enabled, otherwise false
      * @throws Exception
@@ -39,7 +39,8 @@ class THM_GroupsHelperMenu
 
         try {
             $result = $dbo->loadResult();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             Factory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return false;
@@ -51,14 +52,14 @@ class THM_GroupsHelperMenu
     /**
      * Returns published content information for the profile's content category.
      *
-     * @param   int $profileID the id of the profile
+     * @param   int  $profileID  the id of the profile
      *
      * @return    array  an array of table row objects
      * @throws Exception
      */
     public static function getContent($profileID)
     {
-	    $categoryID = THM_GroupsHelperCategories::getIDByProfileID($profileID);
+        $categoryID = THM_GroupsHelperCategories::getIDByProfileID($profileID);
         // Load the parameters
         $dbo        = Factory::getDBO();
         $date       = Factory::getDate();
@@ -79,7 +80,8 @@ class THM_GroupsHelperMenu
 
         try {
             $contents = $dbo->loadObjectList();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             Factory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];
@@ -91,9 +93,9 @@ class THM_GroupsHelperMenu
     /**
      * Creates a list item with a link
      *
-     * @param bool   $active whether or not the link is currently active
-     * @param array  $params the parameters used to generate the link
-     * @param string $text   the text to be displayed in the link
+     * @param   bool    $active  whether or not the link is currently active
+     * @param   array   $params  the parameters used to generate the link
+     * @param   string  $text    the text to be displayed in the link
      *
      * @return string the HTML for the list item
      */

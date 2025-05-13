@@ -21,7 +21,7 @@ class THM_GroupsViewContent_Manager extends THM_GroupsViewList
     /**
      * Method to get display
      *
-     * @param   Object $tpl template
+     * @param   Object  $tpl  template
      *
      * @return void
      */

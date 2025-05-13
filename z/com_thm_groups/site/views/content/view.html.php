@@ -37,7 +37,7 @@ class THM_GroupsViewContent extends JViewLegacy
     /**
      * Method to get display
      *
-     * @param   Object $tpl template
+     * @param   Object  $tpl  template
      *
      * @return void
      * @throws Exception
@@ -73,14 +73,14 @@ class THM_GroupsViewContent extends JViewLegacy
 
         $this->params = $this->state->get('params');
         $active       = $app->getMenu()->getActive();
-        $temp         = clone ($this->params);
+        $temp         = clone($this->params);
 
         // Check to see which parameters should take priority
         if ($active) {
             $currentLink = $active->link;
 
             // If the current view is the active item and an article view for this article, then the menu item params take priority
-            if (strpos($currentLink, 'view=article') && (strpos($currentLink, '&id=' . (string)$item->id))) {
+            if (strpos($currentLink, 'view=article') && (strpos($currentLink, '&id=' . (string) $item->id))) {
                 // $item->params are the article params, $temp are the menu item params
                 // Merge so that the menu item params take priority
                 $item->params->merge($temp);
@@ -89,7 +89,8 @@ class THM_GroupsViewContent extends JViewLegacy
                 if (isset($active->query['layout'])) {
                     $this->setLayout($active->query['layout']);
                 }
-            } else {
+            }
+            else {
                 // Current view is not a single article, so the article params take priority here
                 // Merge the menu item params with the article params so that the article params take priority
                 $temp->merge($item->params);
@@ -101,7 +102,8 @@ class THM_GroupsViewContent extends JViewLegacy
                     $this->setLayout($layout);
                 }
             }
-        } else {
+        }
+        else {
             // Merge so that article params take priority
             $temp->merge($item->params);
             $item->params = $temp;
@@ -123,9 +125,11 @@ class THM_GroupsViewContent extends JViewLegacy
 
         if ($item->params->get('show_intro', '1') == '1') {
             $item->text = $item->introtext . ' ' . $item->fulltext;
-        } elseif ($item->fulltext) {
+        }
+        elseif ($item->fulltext) {
             $item->text = $item->fulltext;
-        } else {
+        }
+        else {
             $item->text = $item->introtext;
         }
 
@@ -157,13 +161,15 @@ class THM_GroupsViewContent extends JViewLegacy
 
         if ($this->item->metadesc) {
             $this->document->setDescription($this->item->metadesc);
-        } elseif (!$this->item->metadesc && $this->params->get('menu-meta_description')) {
+        }
+        elseif (!$this->item->metadesc && $this->params->get('menu-meta_description')) {
             $this->document->setDescription($this->params->get('menu-meta_description'));
         }
 
         if ($this->item->metakey) {
             $this->document->setMetadata('keywords', $this->item->metakey);
-        } elseif (!$this->item->metakey && $this->params->get('menu-meta_keywords')) {
+        }
+        elseif (!$this->item->metakey && $this->params->get('menu-meta_keywords')) {
             $this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
         }
 
@@ -189,7 +195,8 @@ class THM_GroupsViewContent extends JViewLegacy
             $pageTitle         .= JText::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM',
                 $this->state->get('list.offset') + 1);
             $this->document->setTitle($pageTitle);
-        } else {
+        }
+        else {
             $this->document->setTitle($this->item->title);
         }
 
@@ -205,7 +212,7 @@ class THM_GroupsViewContent extends JViewLegacy
     /**
      * Initiates triggers for content plugins and handles the results.
      *
-     * @param int $pageNo the number of the page being displayed
+     * @param   int  $pageNo  the number of the page being displayed
      */
     private function triggerPlugins($pageNo)
     {

@@ -20,7 +20,7 @@ class THM_GroupsViewProfile_Select extends JViewLegacy
     /**
      * Method to create a list output
      *
-     * @param   string $tpl The name of the template file to parse; automatically searches through the template paths.
+     * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
      *
      * @return void
      */
@@ -28,7 +28,7 @@ class THM_GroupsViewProfile_Select extends JViewLegacy
     {
         JHtml::_('bootstrap.tooltip');
         JHtml::_('jquery.ui', ['core', 'sortable']);
-        $rootURI   = JUri::root();
+        $rootURI  = JUri::root();
         $document = JFactory::getDocument();
         $document->addStyleSheet($rootURI . 'media/jui/css/icomoon.css');
         $document->addStyleSheet($rootURI . 'media/jui/css/sortablelist.css');

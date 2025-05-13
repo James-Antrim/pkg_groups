@@ -22,7 +22,7 @@ class THM_GroupsModelContent_Manager extends JModelList
     /**
      * Constructor
      *
-     * @param   array $config config array
+     * @param   array  $config  config array
      *
      * @throws Exception
      */
@@ -73,8 +73,8 @@ class THM_GroupsModelContent_Manager extends JModelList
     /**
      * Overwrites the JModelList populateState function
      *
-     * @param   string $ordering  the column by which the table is should be ordered
-     * @param   string $direction the direction in which this column should be ordered
+     * @param   string  $ordering   the column by which the table is should be ordered
+     * @param   string  $direction  the direction in which this column should be ordered
      *
      * @return  void  sets object state variables
      */

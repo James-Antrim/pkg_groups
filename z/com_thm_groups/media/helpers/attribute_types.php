@@ -18,9 +18,9 @@ class THM_GroupsHelperAttribute_Types
     /**
      * Configures the form for the relevant attribute type
      *
-     * @param int    $typeID the id of the attribute type to be configured to
-     * @param object &$form  the form being modified
-     * @param bool   $inTypeForm whether or not the function was called from the type form context
+     * @param   int     $typeID      the id of the attribute type to be configured to
+     * @param   object &$form        the form being modified
+     * @param   bool    $inTypeForm  whether or not the function was called from the type form context
      *
      * @return void configures the form for the relevant field
      * @throws Exception
@@ -63,7 +63,7 @@ class THM_GroupsHelperAttribute_Types
     /**
      * Retrieves the ID of the field type associated with the abstract attribute
      *
-     * @param int $typeID the id of the abstract attribute
+     * @param   int  $typeID  the id of the abstract attribute
      *
      * @return int the id of the field type associated with the abstract attribute
      *
@@ -77,12 +77,13 @@ class THM_GroupsHelperAttribute_Types
         $query
             ->select('fieldID')
             ->from('#__thm_groups_attribute_types')
-            ->where('id = ' . (int)$typeID);
+            ->where('id = ' . (int) $typeID);
         $dbo->setQuery($query);
 
         try {
             $result = $dbo->loadResult();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return false;
@@ -94,8 +95,8 @@ class THM_GroupsHelperAttribute_Types
     /**
      * Returns specific field type options mapped with attribute type data and optionally mapped with form data
      *
-     * @param int   $typeID  the attribute type id
-     * @param array $options the options to be mapped from user input
+     * @param   int    $typeID   the attribute type id
+     * @param   array  $options  the options to be mapped from user input
      *
      * @return  array the field options set with form values if available
      * @throws Exception
@@ -109,7 +110,8 @@ class THM_GroupsHelperAttribute_Types
 
         try {
             $atOptions = $dbo->loadResult();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];

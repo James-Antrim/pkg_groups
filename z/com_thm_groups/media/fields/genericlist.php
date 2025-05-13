@@ -60,7 +60,8 @@ class JFormFieldGenericList extends JFormFieldList
             $this->setValueParameters($options);
 
             return array_merge(parent::getOptions(), $options);
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             return parent::getOptions();
         }
     }
@@ -68,7 +69,7 @@ class JFormFieldGenericList extends JFormFieldList
     /**
      * Resolves the textColumns for concatenated values
      *
-     * @param   object &$query the query object
+     * @param   object &$query  the query object
      *
      * @return  string  the string to use for text selection
      * @throws Exception
@@ -98,7 +99,7 @@ class JFormFieldGenericList extends JFormFieldList
     /**
      * Resolves the textColumns for concatenated values
      *
-     * @param   object &$query the query object
+     * @param   object &$query  the query object
      *
      * @return  void modifies the query object
      */
@@ -121,7 +122,7 @@ class JFormFieldGenericList extends JFormFieldList
     /**
      * Applies restrictions
      *
-     * @param   object &$query the query object
+     * @param   object &$query  the query object
      *
      * @return  void modifies the query object
      */
@@ -132,7 +133,7 @@ class JFormFieldGenericList extends JFormFieldList
             return;
         }
 
-        $restrictions    = explode(';', $whereParameters);
+        $restrictions = explode(';', $whereParameters);
         if (empty($restrictions)) {
             return;
         }
@@ -145,7 +146,7 @@ class JFormFieldGenericList extends JFormFieldList
     /**
      * Sets value oriented parameters from component settings
      *
-     * @param   array &$options the input options
+     * @param   array &$options  the input options
      *
      * @return  void  sets option values
      * @throws Exception

@@ -34,7 +34,8 @@ class GroupsRedirector
         if (JFactory::getConfig()->get('sef', 1)) {
             $code = 308;
             self::redirectSEF($query, $code, $msg, $msgType, $url);
-        } else {
+        }
+        else {
             $code = 301;
             $url  .= '?';
             self::redirectRaw($query, $code, $msg, $msgType, $url);
@@ -54,11 +55,11 @@ class GroupsRedirector
     /**
      * Sets parameters used for a raw redirect URL
      *
-     * @param array $query the parameters used for building the URL
-     * @param int     &$code the http status code to use on redirection
-     * @param string  &$msg the message to display on redirection
-     * @param string  &$msgType the message style to use for displaying the message
-     * @param string  &$url the url to redirect to
+     * @param   array    $query    the parameters used for building the URL
+     * @param   int     &$code     the http status code to use on redirection
+     * @param   string  &$msg      the message to display on redirection
+     * @param   string  &$msgType  the message style to use for displaying the message
+     * @param   string  &$url      the url to redirect to
      *
      * @return void modifies the parameters code, msg, msgType and url
      */
@@ -80,11 +81,11 @@ class GroupsRedirector
     /**
      * Sets parameters used for a SEF redirect URL
      *
-     * @param array $query the parameters used for building the URL
-     * @param int     &$code the http status code to use on redirection
-     * @param string  &$msg the message to display on redirection
-     * @param string  &$msgType the message style to use for displaying the message
-     * @param string  &$url the url to redirect to
+     * @param   array    $query    the parameters used for building the URL
+     * @param   int     &$code     the http status code to use on redirection
+     * @param   string  &$msg      the message to display on redirection
+     * @param   string  &$msgType  the message style to use for displaying the message
+     * @param   string  &$url      the url to redirect to
      *
      * @return void modifies the parameters code, msg, msgType and url
      * @throws Exception

@@ -54,7 +54,8 @@ class JFormFieldLocalizedList extends JFormFieldList
             }
 
             return array_merge(parent::getOptions(), $options);
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
 
             return parent::getOptions();
@@ -64,7 +65,7 @@ class JFormFieldLocalizedList extends JFormFieldList
     /**
      * Resolves the textColumns for concatenated values
      *
-     * @param   object &$query the query object
+     * @param   object &$query  the query object
      *
      * @return  void modifies the query object
      */

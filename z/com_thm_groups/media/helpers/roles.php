@@ -16,9 +16,9 @@ class THM_GroupsHelperRoles
     /**
      * Retrieves the id of a specific group/role association.
      *
-     * @param int    $roleID     the id of the role
-     * @param int    $resourceID the id of the resource with which the role is associated
-     * @param string $resource   the context of
+     * @param   int     $roleID      the id of the role
+     * @param   int     $resourceID  the id of the resource with which the role is associated
+     * @param   string  $resource    the context of
      *
      * @return int the id of the association on success, otherwise 0
      * @throws Exception
@@ -33,11 +33,13 @@ class THM_GroupsHelperRoles
             $query->from('#__thm_groups_role_associations')
                 ->where("groupID = '$resourceID'")
                 ->where("roleID = '$roleID'");
-        } elseif ($resource === 'profile') {
+        }
+        elseif ($resource === 'profile') {
             $query->from('#__thm_groups_profile_associations')
                 ->where("profileID = '$resourceID'")
                 ->where("role_associationID = '$roleID'");
-        } else {
+        }
+        else {
             return 0;
         }
 
@@ -45,7 +47,8 @@ class THM_GroupsHelperRoles
 
         try {
             $result = $dbo->loadResult();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return 0;
@@ -57,8 +60,8 @@ class THM_GroupsHelperRoles
     /**
      * Retrieves the name of the role by means of its association with a group.
      *
-     * @param int  $assocID the id of the group -> role association
-     * @param bool $block   whether redundant roles ('Mitglied') should be blocked
+     * @param   int   $assocID  the id of the group -> role association
+     * @param   bool  $block    whether redundant roles ('Mitglied') should be blocked
      *
      * @return  string the name of the role referenced in the association
      * @throws Exception
@@ -78,7 +81,8 @@ class THM_GroupsHelperRoles
 
         try {
             $role = $dbo->loadAssoc();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return '';
@@ -93,8 +97,8 @@ class THM_GroupsHelperRoles
     /**
      * Retrieves a comma separated list of roles associated with both the group and the profile
      *
-     * @param int $profileID the id of the profile
-     * @param int $groupID   the id of the group
+     * @param   int  $profileID  the id of the profile
+     * @param   int  $groupID    the id of the group
      *
      * @return string a comma seperated list of roles
      * @throws Exception
@@ -117,7 +121,8 @@ class THM_GroupsHelperRoles
 
         try {
             $roles = $dbo->loadColumn();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return '';
@@ -129,7 +134,7 @@ class THM_GroupsHelperRoles
     /**
      * Retrieves profileIDs for the given group/role association.
      *
-     * @param int $assocID the id of the group/role association
+     * @param   int  $assocID  the id of the group/role association
      *
      * @return  array the profile ids for the given association
      * @throws Exception
@@ -152,7 +157,8 @@ class THM_GroupsHelperRoles
 
         try {
             $profileIDs = $dbo->loadColumn();
-        } catch (Exception $exception) {
+        }
+        catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return [];

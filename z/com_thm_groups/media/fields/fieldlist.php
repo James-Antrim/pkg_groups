@@ -44,11 +44,12 @@ class JFormFieldFieldList extends JFormFieldList
 
         try {
             $fields = $dbo->loadAssocList();
-        } catch (Exception $exc) {
+        }
+        catch (Exception $exc) {
             return parent::getOptions();
         }
 
-        $options   = [];
+        $options = [];
         foreach ($fields as $field) {
 
             $options[$field['text']] = JHtml::_('select.option', $field['value'], $field['text']);

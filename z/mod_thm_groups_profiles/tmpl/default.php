@@ -8,7 +8,7 @@
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
-$extraClasses = !empty($params['showImage'])? ' with-image' : '';
+$extraClasses = !empty($params['showImage']) ? ' with-image' : '';
 foreach ($profileIDs as $profileID) {
     echo '<div class="profile-container' . $extraClasses . '">';
     echo THM_GroupsHelperProfiles::getNameContainer($profileID, true);
