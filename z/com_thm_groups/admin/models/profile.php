@@ -242,49 +242,6 @@ class THM_GroupsModelProfile extends JModelLegacy
     }
 
     /**
-     * Deletes one user role from a group
-     *
-     * @return bool
-     *
-     * @throws Exception
-     */
-    public function deleteRoleAssociation()
-    {
-        $app = JFactory::getApplication();
-
-        if (!Can::manage()) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
-
-            return false;
-        }
-
-        $groupID   = $app->input->getInt('groupID', 0);
-        $profileID = $app->input->getInt('profileID', 0);
-        $roleID    = $app->input->getInt('roleID', 0);
-
-        $idToDelete = THM_GroupsHelperRoles::getAssocID($roleID, $groupID, 'group');
-
-        $query = $this->_db->getQuery(true);
-
-        $query
-            ->delete('#__thm_groups_profile_associations')
-            ->where("profileID = '$profileID' AND role_associationID = '$idToDelete'");
-
-        $this->_db->setQuery($query);
-
-        try {
-            $success = $this->_db->execute();
-        }
-        catch (Exception $exception) {
-            $app->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        return empty($success) ? false : true;
-    }
-
-    /**
      * Returns a list of group assoc ids matching the request data
      *
      * @param   array  $requestedAssocs  An array with groups and roles

@@ -4,7 +4,9 @@
         <field name="groupID" type="Groups" label="GROUPS_GROUP" allowDefault="1">
             <option value="">GROUPS_NO_GROUP</option>
         </field>
-        <field name="roleID" type="Roles" label="GROUPS_ROLE" associated="0"></field>
+        <field name="roleID" type="Roles" label="GROUPS_ROLE" associated="0">
+            <option value="">GROUPS_NO_ROLE/option>
+        </field>
         <field name="action" type="radio" label="GROUPS_ASSOCIATION_ACTION">
             <option value="">GROUPS_NO_ACTION</option>
             <option value="1">GROUPS_ADD</option>

@@ -12,13 +12,17 @@ namespace THM\Groups\Controllers;
 
 use Joomla\CMS\{Access\Access, Application\CMSApplication, Plugin\PluginHelper, User\UserHelper};
 use Joomla\Component\Users\Administrator\Model\UserModel;
-use THM\Groups\Adapters\{Application, Input, User};
+use THM\Groups\Adapters\{Application, Database as DB, Dispatcher, Input, User};
 use THM\Groups\Helpers\{Can, Groups};
 use THM\Groups\Tables\{RoleAssociations, Users as UT, UserUsergroupMap as UUGM};
 
 class Users extends ListController
 {
-    private const ADD = 1, RESET = 1, REMOVE = 0, STOP = 0;
+    // Add or remove a group / role association.
+    private const ADD = 1, REMOVE = 0;
+
+    // Reset the selected user, or stop the reset process.
+    private const RESET = 1, STOP = 0;
 
     // The values are redundant, but understandable
     private const ACTIONS = [self::ADD, self::REMOVE, self::RESET, self::STOP];
@@ -93,6 +97,9 @@ class Users extends ListController
     }
 
     /**
+     * Batch processing allows user assignment to or removal from groups/roles as well as password resetting as in the
+     * users component.
+     *
      * @return void
      */
     public function batch(): void
@@ -105,7 +112,9 @@ class Users extends ListController
 
         $batchItems  = Input::getBatchItems();
         $selectedIDs = Input::getSelectedIDs();
-        $selected    = count($selectedIDs);
+
+        // Will always have a non-zero value if the Joomla UI was used.
+        $selected = count($selectedIDs);
 
         $actionValue = $batchItems->get('action');
         $batchMap    = false;
@@ -242,6 +251,72 @@ class Users extends ListController
         }
 
         $this->farewell($selected, $deleted, true);
+    }
+
+    /**
+     * Removes user assigment to a particular group. The groupID parameter is used because it requires fewer actions to perform
+     * access checks.
+     * - User must be currently assigned to multiple groups.
+     * - Only a super-user can remove a user from a super-user group.
+     * @return void
+     */
+    public function disassociateGroup(): void
+    {
+        $this->checkToken();
+        $this->authorize();
+        $selectedID = Input::getSelectedID();
+        $updated    = 0;
+
+        /**
+         * First argument is the groupID in this context.
+         * @see Dispatcher::dispatch()
+         */
+        $groupID = Input::getArray('args') ? Input::getArray('args')[0] : 0;
+
+        // Not a super-user group or the current user is a super-user.
+        if ($groupID and (!Access::checkGroup($groupID, 'core.admin') or Access::check(User::id(), 'core.admin'))) {
+            $query = DB::query();
+            $query->select('COUNT(*)')
+                ->from(DB::qn('#__user_usergroup_map', 'uugm'))
+                ->where(DB::qc('user_id', $selectedID));
+            DB::set($query);
+
+            if ($count = DB::integer() and $count > 1) {
+                $map = new UUGM();
+                if ($map->load(['group_id' => $groupID, 'user_id' => $selectedID]) and $map->delete()) {
+                    $updated = 1;
+                }
+            }
+        }
+
+        // Technically a deletion, but it's the deletion of an association not a resource.
+        $this->farewell(0, $updated);
+    }
+
+    /**
+     * Disassociates the user from the given role.
+     * @return void
+     */
+    public function disassociateRole(): void
+    {
+        $this->checkToken();
+        $this->authorize();
+        $selectedID = Input::getSelectedID();
+        $updated    = 0;
+
+        /**
+         * First argument is the groupID in this context.
+         * @see Dispatcher::dispatch()
+         */
+        if (Input::getArray('args') and $id = Input::getArray('args')[0]) {
+            $ra = new RoleAssociations();
+            if ($ra->delete($id)) {
+                $updated = 1;
+            }
+        }
+
+        // Technically a deletion, but it's the deletion of an association not a resource.
+        $this->farewell(0, $updated);
     }
 
     /**

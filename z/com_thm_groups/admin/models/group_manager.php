@@ -82,7 +82,7 @@ class THM_GroupsModelGroup_Manager extends THM_GroupsModelList
                 JHtml::_('link', $url, $item->title, ['target' => '_blank']) : $item->title;
 
             $return[$index][1] = "$levelIndicator $groupText";
-            $return[$index][2] = $this->getRoles($item->id);
+            $return[$index][2] = '';//Formerly getRoles
             $return[$index][3] = $item->members;
 
             $index++;
@@ -136,57 +136,6 @@ class THM_GroupsModelGroup_Manager extends THM_GroupsModelList
         $this->setState('filter.search', $search);
 
         parent::populateState("ug1.lft", "ASC");
-    }
-
-    /**
-     * Returns all roles of a group
-     *
-     * @param   int  $groupID  An id of the group
-     *
-     * @return  string     A string with all roles comma separated
-     * @throws Exception
-     */
-    private function getRoles($groupID)
-    {
-        $query = $this->_db->getQuery(true);
-
-        $query
-            ->select('DISTINCT(role.id), role.name')
-            ->from('#__thm_groups_roles AS role ')
-            ->innerJoin('#__thm_groups_role_associations AS roleAssoc ON role.id = roleAssoc.roleID')
-            ->where("roleAssoc.groupID = '$groupID'")
-            ->order('role.name ASC');
-
-        $this->_db->setQuery($query);
-
-        try {
-            $roles = $this->_db->loadObjectList();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return '';
-        }
-
-        $deleteIcon = '<span class="icon-trash"></span>';
-
-        $return = [];
-        if (!empty($roles)) {
-            foreach ($roles as $role) {
-                if ($role->id != 1) {
-                    $deleteBtn = '<a onclick="deleteRoleAssociation(' . $groupID . ',' . $role->id . ')">' . $deleteIcon . '</a>';
-
-                    $url = "index.php?option=com_thm_groups&view=role_edit&cid[]=$role->id";
-
-                    $return[] = "<a href=$url>" . $role->name . "</a> " . $deleteBtn;
-                }
-                else {
-                    $return[] = $role->name;
-                }
-            }
-        }
-
-        return implode(',<br /> ', $return);
     }
 
     /**

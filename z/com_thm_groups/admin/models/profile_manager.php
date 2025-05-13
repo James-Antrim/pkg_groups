@@ -100,14 +100,18 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
         $deleteRoleParameters = "GROUPID,ROLEID,$profileID";
         $roleTitle            = JText::_('COM_THM_GROUPS_GROUP') . ": GROUPNAME - ";
         $roleTitle            .= JText::_('COM_THM_GROUPS_ROLE') . ": ROLENAME::" . JText::_('COM_THM_GROUPS_REMOVE_ROLE');
-        $rawRoleLink          = '<a onclick="deleteRoleAssociation(' . $deleteRoleParameters . ');" ';
-        $rawRoleLink          .= 'title="' . $roleTitle . '" class="hasTooltip">' . $deleteIcon . '</a>ROLENAME';
+
+        // this should be reworked with dynamic task setting like toggle $roleAssocID
+        $rawRoleLink = '<a onclick="disassociateRole(' . $deleteRoleParameters . ');" ';
+        $rawRoleLink .= 'title="' . $roleTitle . '" class="hasTooltip">' . $deleteIcon . '</a>ROLENAME';
 
         $deleteGroupParameters = "'profile',GROUPID,$profileID";
         $groupTitle            = JText::_('COM_THM_GROUPS_GROUP') . ": GROUPNAME::" . JText::_('COM_THM_GROUPS_REMOVE_ALL_ROLES');
-        $rawGroupLink          = '<a onclick="deleteGroupAssociation(' . $deleteGroupParameters . ');" ';
-        $rawGroupLink          .= 'title="' . $groupTitle . '" class="hasTooltip">' . $deleteIcon;
-        $rawGroupLink          .= '</a><strong>GROUPNAME</strong> : ';
+
+        // this should be reworked with dynamic task setting like toggle cb$id and $groupID
+        $rawGroupLink = '<a onclick="disassociateGroup(' . $deleteGroupParameters . ');" ';
+        $rawGroupLink .= 'title="' . $groupTitle . '" class="hasTooltip">' . $deleteIcon;
+        $rawGroupLink .= '</a><strong>GROUPNAME</strong> : ';
 
         foreach ($associations as $association) {
 
