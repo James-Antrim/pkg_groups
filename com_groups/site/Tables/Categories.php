@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @package     Groups
  * @extension   com_groups
@@ -12,8 +11,7 @@
 namespace THM\Groups\Tables;
 
 use Joomla\CMS\Table\Table;
-use Joomla\Database\DatabaseDriver;
-use Joomla\Database\DatabaseInterface;
+use Joomla\Database\{DatabaseDriver, DatabaseInterface};
 use THM\Groups\Adapters\Application;
 
 /**
@@ -21,12 +19,26 @@ use THM\Groups\Adapters\Application;
  */
 class Categories extends Table
 {
+    use Incremented;
+
+    /**
+     * INT(11) NOT NULL
+     * @var int
+     */
+    public int $categoryID;
+
+    /**
+     * INT(11) NOT NULL
+     * @var int
+     */
+    public int $userID;
+
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)
     {
         $dbo = $dbo ?? Application::database();
 
         /** @var DatabaseDriver $dbo */
-        parent::__construct('#__thm_groups_categories', 'id', $dbo);
+        parent::__construct('#__groups_categories', 'id', $dbo);
     }
 }

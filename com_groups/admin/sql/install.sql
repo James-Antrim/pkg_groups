@@ -1,6 +1,5 @@
 #region Creation
-CREATE TABLE IF NOT EXISTS `#__groups_attributes`
-(
+CREATE TABLE IF NOT EXISTS `#__groups_attributes` (
     `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `label_de`    VARCHAR(100)        NOT NULL,
     `label_en`    VARCHAR(100)        NOT NULL,
@@ -20,10 +19,20 @@ CREATE TABLE IF NOT EXISTS `#__groups_attributes`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `#__groups_categories` (
+    `id`         INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `categoryID` INT(11)          NOT NULL COMMENT 'Signed because of categories table \'id\' fk.',
+    `userID`     INT(11)          NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `entry` (`categoryID`, `userID`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
 #todo integrate with usergroups?
 # no unique keys for groups which may have the same name in different contexts.
-CREATE TABLE IF NOT EXISTS `#__groups_groups`
-(
+CREATE TABLE IF NOT EXISTS `#__groups_groups` (
     `id`      INT(10) UNSIGNED NOT NULL,
     `name_de` VARCHAR(100)     NOT NULL,
     `name_en` VARCHAR(100)     NOT NULL,
@@ -33,8 +42,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_groups`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_profile_attributes`
-(
+CREATE TABLE IF NOT EXISTS `#__groups_profile_attributes` (
     `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `attributeID` INT(11) UNSIGNED    NOT NULL,
     `userID`      INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
@@ -47,8 +55,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_profile_attributes`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_role_associations`
-(
+CREATE TABLE IF NOT EXISTS `#__groups_role_associations` (
     `id`     INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `mapID`  INT(11) UNSIGNED NOT NULL,
     `roleID` INT(11) UNSIGNED NOT NULL,
@@ -59,8 +66,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_role_associations`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_roles`
-(
+CREATE TABLE IF NOT EXISTS `#__groups_roles` (
     `id`        INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
     `name_de`   VARCHAR(100)     NOT NULL,
     `name_en`   VARCHAR(100)     NOT NULL,
@@ -75,8 +81,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_roles`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_template_attributes`
-(
+CREATE TABLE IF NOT EXISTS `#__groups_template_attributes` (
     `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `templateID`  INT(11) UNSIGNED    NOT NULL,
     `attributeID` INT(11) UNSIGNED    NOT NULL,
@@ -89,8 +94,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_template_attributes`
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_templates`
-(
+CREATE TABLE IF NOT EXISTS `#__groups_templates` (
     `id`      INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `name_de` VARCHAR(100)        NOT NULL,
     `name_en` VARCHAR(100)        NOT NULL,
@@ -229,12 +233,15 @@ VALUES (@cards, @prefix, 0),
 INSERT INTO `#__groups_templates` (`id`, `name_de`, `name_en`, `cards`, `roles`, `vcards`)
 VALUES (1, 'Cards', 'Cards', 1, 1, 0),
        (2, 'VCards', 'VCards', 0, 1, 1);
-
 #endregion
 
 #region Reference
 ALTER TABLE `#__groups_attributes`
     ADD CONSTRAINT `fk_attributes_viewLevelID` FOREIGN KEY (`viewLevelID`) REFERENCES `#__viewlevels` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `#__groups_categories`
+    ADD CONSTRAINT `fk_categories_categoryID` FOREIGN KEY (`categoryID`) REFERENCES `#__categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    ADD CONSTRAINT `fk_categories_userID` FOREIGN KEY (`userID`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `#__groups_groups`
     ADD CONSTRAINT `fk_groups_groupID` FOREIGN KEY (`id`) REFERENCES `#__usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -258,5 +265,4 @@ ALTER TABLE `#__groups_template_attributes`
     ADD CONSTRAINT `fk_tattribs_attributeID` FOREIGN KEY (`attributeID`) REFERENCES `#__groups_attributes` (`id`)
         ON UPDATE CASCADE
         ON DELETE CASCADE;
-
 #endregion
