@@ -12,7 +12,7 @@ namespace THM\Groups\Tools;
 
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
-use THM\Groups\Adapters\{Application, Text};
+use THM\Groups\Adapters\{Application, Database as DB, Text};
 use THM\Groups\Helpers\{Attributes, Groups, Types};
 use THM\Groups\Tables;
 
@@ -83,16 +83,14 @@ class Migration
      */
     private static function attributes(): array
     {
-        $db  = Application::database();
-        $map = [];
-
-        $query         = $db->getQuery(true);
-        $oldAttributes = $db->quoteName('#__thm_groups_attributes');
+        $map           = [];
+        $query         = DB::query();
+        $oldAttributes = DB::qn('#__thm_groups_attributes');
         $query->select('*')->from($oldAttributes);
-        $db->setQuery($query);
+        DB::set($query);
 
         // Basic attributes (forenames and surnames have already been migrated to the entry)
-        if ($oldAttributes = $db->loadObjectList('label')) {
+        if ($oldAttributes = DB::objects('label')) {
             $labelMap = [
                 'Aktuell'               => self::CURRENT,
                 'Anschrift'             => self::ADDRESS,
@@ -342,14 +340,36 @@ class Migration
     }
 
     /**
+     * Migrates the THM Groups category => user associations to the new component table.
+     * @return void
+     */
+    private static function categories(): void
+    {
+        $query = DB::query();
+        $query->select(DB::qn(['id', 'profileID'], ['categoryID', 'userID']))
+            ->from(DB::qn('#__thm_groups_categories'));
+        DB::set($query);
+
+        foreach (DB::arrays() as $result) {
+            $table = new Tables\Categories();
+
+            // Already there
+            if ($table->load($result)) {
+                continue;
+            }
+
+            $table->save($result);
+        }
+    }
+
+    /**
      * Migrates the existing store of usergroups to groups.
      */
     private static function groups(): void
     {
-        $db    = Application::database();
-        $query = $db->getQuery(true);
-        $query->insert($db->quoteName('#__groups_groups'))
-            ->columns([$db->quoteName('id'), $db->quoteName('name_de'), $db->quoteName('name_en')])
+        $query = DB::query();
+        $query->insert(DB::qn('#__groups_groups'))
+            ->columns([DB::qn('id'), DB::qn('name_de'), DB::qn('name_en')])
             ->values(":id, :name_de, :name_en")
             ->bind(':id', $groupID, ParameterType::INTEGER)
             ->bind(':name_de', $name)
@@ -366,8 +386,8 @@ class Migration
 
             $name = $group->title;
 
-            $db->setQuery($query);
-            $db->execute();
+            DB::set($query);
+            DB::execute();
         }
     }
 
@@ -378,6 +398,11 @@ class Migration
     {
         //Integration::getTestResults();
         $session = Application::session();
+
+        if (!$session->get('com_groups.migrated.categories')) {
+            self::categories();
+            $session->set('com_groups.migrated.categories', true);
+        }
 
         if (!$session->get('com_groups.migrated.groups')) {
             self::groups();
@@ -417,16 +442,14 @@ class Migration
      */
     private static function personAttributes(array $map): void
     {
-        $db      = Application::database();
         $oldKeys = array_keys($map);
-
-        $query = $db->getQuery(true);
+        $query   = DB::query();
         $query->select('*')
-            ->from($db->quoteName('#__thm_groups_profile_attributes'))
-            ->whereIn($db->quoteName('attributeID'), $oldKeys);
-        $db->setQuery($query);
+            ->from(DB::qn('#__thm_groups_profile_attributes'))
+            ->whereIn(DB::qn('attributeID'), $oldKeys);
+        DB::set($query);
 
-        if (!$pas = $db->loadObjectList()) {
+        if (!$pas = DB::objects()) {
             return;
         }
 
@@ -467,30 +490,24 @@ class Migration
      */
     private static function profiles(): void
     {
-        $db = Application::database();
-
-        $query = $db->getQuery(true);
-        $query->select('*')->from($db->quoteName('#__thm_groups_profiles'));
-        $db->setQuery($query);
+        $query = DB::query();
+        $query->select('*')->from(DB::qn('#__thm_groups_profiles'));
+        DB::set($query);
 
         // No existing data
-        if (!$profiles = $db->loadObjectList('id')) {
+        if (!$profiles = DB::objects('id')) {
             return;
         }
 
-        $fnAID = $db->quoteName('fn.attributeID');
-        $fnPID = $db->quoteName('fn.profileID');
-        $snAID = $db->quoteName('sn.attributeID');
-        $snPID = $db->quoteName('sn.profileID');
-        $query = $db->getQuery(true);
-        $query->select([$db->quoteName('sn.value', 'surnames'), $db->quoteName('fn.value', 'forenames')])
-            ->from($db->quoteName('#__thm_groups_profile_attributes', 'sn'))
-            ->join('left', $db->quoteName('#__thm_groups_profile_attributes', 'fn'), "$fnPID = $snPID")
-            ->where([
-                "$fnAID = " . self::FORENAMES,
-                "$snAID = " . self::SURNAMES,
-                "$snPID = :profileID"
-            ])
+        $query = DB::query();
+        $query->select([DB::qn('sn.value', 'surnames'), DB::qn('fn.value', 'forenames')])
+            ->from(DB::qn('#__thm_groups_profile_attributes', 'sn'))
+            ->join('left', DB::qn('#__thm_groups_profile_attributes', 'fn'), DB::qc('fn.profileID', 'sn.profileID'))
+            ->where(DB::qcs([
+                ['fn.attributeID', self::FORENAMES],
+                ['sn.attributeID', self::SURNAMES],
+                ['sn.profileID', ':profileID']
+            ]))
             ->bind(':profileID', $profileID);
 
         foreach ($profiles as $profileID => $profile) {
@@ -505,8 +522,8 @@ class Migration
             $user->editing   = $profile->canEdit ?? false;
             $user->published = $profile->published ?? false;
 
-            $db->setQuery($query);
-            if ($names = $db->loadAssoc()) {
+            DB::set($query);
+            if ($names = DB::array()) {
                 $user->surnames  = $names['surnames'];
                 $user->forenames = $names['forenames'];
             }
@@ -524,21 +541,16 @@ class Migration
      */
     private static function roleAssociations(array $rMap): void
     {
-        $db = Application::database();
-
-        $condition1 = $db->quoteName('ra.id') . ' = ' . $db->quoteName('pa.role_associationID');
-        $condition2 = $db->quoteName('r.id') . ' = ' . $db->quoteName('ra.roleID');
-
-        $query = $db->getQuery(true);
-        $query->select([$db->quoteName('pa.profileID'), $db->quoteName('ra.groupID'), $db->quoteName('ra.roleID')])
-            ->from($db->quoteName('#__thm_groups_profile_associations', 'pa'))
-            ->join('inner', $db->quoteName('#__thm_groups_role_associations', 'ra'), $condition1)
-            ->join('inner', $db->quoteName('#__thm_groups_roles', 'r'), $condition2)
-            ->where($db->quoteName('r.name') . " != 'Mitglied'");
-        $db->setQuery($query);
+        $query = DB::query();
+        $query->select([DB::qn('pa.profileID'), DB::qn('ra.groupID'), DB::qn('ra.roleID')])
+            ->from(DB::qn('#__thm_groups_profile_associations', 'pa'))
+            ->innerJoin(DB::qn('#__thm_groups_role_associations', 'ra'), DB::qc('ra.id', 'pa.role_associationID'))
+            ->innerJoin(DB::qn('#__thm_groups_roles', 'r'), DB::qc('r.id', 'ra.roleID'))
+            ->where(DB::qc('r.name', 'Mitglied', '!=', true));
+        DB::set($query);
 
         // rMap has to be filled for this to return results
-        if ($assocs = $db->loadObjectList()) {
+        if ($assocs = DB::objects()) {
             foreach ($assocs as $assoc) {
                 // Mapping to standard groups is not valid
                 if (in_array($assoc->groupID, Groups::DEFAULT)) {
@@ -574,25 +586,22 @@ class Migration
      */
     private static function roles(): array
     {
-        $db  = Application::database();
-        $map = [];
-
-        $query = $db->getQuery(true);
-        $query->select('*')->from($db->quoteName('#__thm_groups_roles'));
-        $db->setQuery($query);
+        $map   = [];
+        $query = DB::query();
+        $query->select('*')->from(DB::qn('#__thm_groups_roles'));
+        DB::set($query);
 
         // No existing data
-        if (!$oldRoles = $db->loadObjectList()) {
+        if (!$oldRoles = DB::objects()) {
             return $map;
         }
 
-        $nameDE = $db->quoteName('name_de');
-
         // Create a prepared statement to find roles based on their name.
-        $query = $db->getQuery(true);
-        $query->select($db->quoteName('id'))
-            ->from($db->quoteName('#__groups_roles'))
-            ->where("$nameDE LIKE :thmName");
+        $query = DB::query();
+        $query->select(DB::qn('id'))
+            ->from(DB::qn('#__groups_roles'))
+            ->where(DB::qc('name_de', ':thmName', 'LIKE'))
+            ->bind(':thmName', $name);
 
         $oldOrdering = [];
 
@@ -629,10 +638,9 @@ class Migration
 
             //  German gender changes (+:in/:innen)
             $name = trim($thmName) . '%';
-            $query->bind(':thmName', $name);
-            $db->setQuery($query);
+            DB::set($query);
 
-            if ($groupsID = $db->loadResult()) {
+            if ($groupsID = DB::integer()) {
                 $map[$oldID] = $groupsID;
                 continue;
             }
@@ -686,19 +694,17 @@ class Migration
      */
     private static function templateAttributes(array $aMap, array $tMap): void
     {
-        $db      = Application::database();
         $oldKeys = array_keys($aMap);
-
-        $query = $db->getQuery(true);
+        $query   = DB::query();
         $query->select('*')
-            ->from($db->quoteName('#__thm_groups_template_attributes'))
+            ->from(DB::qn('#__thm_groups_template_attributes'))
             // only those attributes which have been migrated
-            ->whereIn($db->quoteName('attributeID'), $oldKeys)
+            ->whereIn(DB::qn('attributeID'), $oldKeys)
             // only those associations which were actually used
-            ->where($db->quoteName('published') . ' = 1');
-        $db->setQuery($query);
+            ->where(DB::qc('published', 1));
+        DB::set($query);
 
-        if (!$tas = $db->loadObjectList()) {
+        if (!$tas = DB::objects()) {
             return;
         }
 
@@ -725,15 +731,13 @@ class Migration
      */
     private static function templates(): array
     {
-        $db  = Application::database();
-        $map = [];
-
-        $query = $db->getQuery(true);
-        $query->select('*')->from($db->quoteName('#__thm_groups_templates'));
-        $db->setQuery($query);
+        $map   = [];
+        $query = DB::query();
+        $query->select('*')->from(DB::qn('#__thm_groups_templates'));
+        DB::set($query);
 
         // No existing data
-        if (!$oldTemplates = $db->loadObjectList()) {
+        if (!$oldTemplates = DB::objects()) {
             return $map;
         }
 

@@ -10,7 +10,6 @@
 
 namespace THM\Groups\Tables;
 
-use Joomla\CMS\Table\Table;
 use Joomla\Database\{DatabaseDriver, DatabaseInterface};
 use THM\Groups\Adapters\Application;
 
@@ -19,8 +18,6 @@ use THM\Groups\Adapters\Application;
  */
 class Categories extends Table
 {
-    use Incremented;
-
     /**
      * INT(11) NOT NULL
      * @var int
@@ -39,6 +36,6 @@ class Categories extends Table
         $dbo = $dbo ?? Application::database();
 
         /** @var DatabaseDriver $dbo */
-        parent::__construct('#__groups_categories', 'id', $dbo);
+        parent::__construct('#__groups_categories', 'categoryID', $dbo);
     }
 }
