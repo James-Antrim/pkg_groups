@@ -61,7 +61,7 @@ class Groups extends ListModel
         $query  = DB::query();
         $query->select($select)
             ->from(DB::qn('#__groups_groups', 'g'))
-            ->innerJoin(DB::qn('#__groups_groups', 'g'), DB::qc('ug.id', 'g.id'))
+            ->innerJoin(DB::qn('#__usergroups', 'ug'), DB::qc('ug.id', 'g.id'))
             ->leftJoin(
                 DB::qn('#__usergroups', 'p'),
                 DB::qn('p.lft') . '<' . DB::qn('ug.lft') . ' AND ' . DB::qn('ug.rgt') . '<' . DB::qn('p.rgt')
