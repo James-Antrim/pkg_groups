@@ -22,6 +22,9 @@ use THM\Groups\Helpers\Can;
  */
 class Controller extends BaseController
 {
+    //todo: see if and when the clean cache function which joomla uses in various models should be implemented and used.
+    //todo: in either case i'm removing if from the deprecated component helper with this commit.
+
     /**
      * The URL to redirection into this component.
      * @var string

@@ -410,6 +410,27 @@ class Input
     }
 
     /**
+     * Removes tags without visual output from an HTML markup string.
+     *
+     * @param   string  $original
+     *
+     * @return string
+     */
+    public static function removeEmptyTags(string $original): string
+    {
+        $pattern = "/<[^\/>]*>([\s|\&nbsp;]?)*<\/[^>]*>/";
+        $cleaned = preg_replace($pattern, '', $original);
+
+        // If the text remains unchanged there is no more to be done => bubble up
+        if ($original === $cleaned) {
+            return $original;
+        }
+
+        // There could still be further empty tags which encased the original empties.
+        return self::removeEmptyTags($cleaned);
+    }
+
+    /**
      * Gets the selected resources as an array.
      *
      * @param   string  $field
