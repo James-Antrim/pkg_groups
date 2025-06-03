@@ -8,7 +8,8 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Helpers\Can;
+use THM\Groups\Adapters\{Database as DB, Text};
+use THM\Groups\Helpers\{Can, Users};
 
 require_once 'attributes.php';
 require_once 'component.php';
@@ -95,48 +96,6 @@ class THM_GroupsHelperProfiles
     }
 
     /**
-     * Method to check if the current user can edit the profile
-     *
-     * @param   int  $profileID  the id of the profile user
-     *
-     * @return  boolean  true if the current user is authorized to edit the profile, otherwise false
-     * @throws Exception
-     */
-    public static function canEdit($profileID)
-    {
-        $user = JFactory::getUser();
-
-        if (empty($user->id)) {
-            return false;
-        }
-
-        if (Can::manage()) {
-            return true;
-        }
-
-        $params = JComponentHelper::getParams('com_thm_groups');
-        if (!$params->get('editownprofile', 0) or empty($profileID) or $user->id != $profileID) {
-            return false;
-        }
-
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('canEdit')->from('#__thm_groups_profiles')->where("id = $profileID");
-        $dbo->setQuery($query);
-
-        try {
-            $canEdit = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        return empty($canEdit) ? false : true;
-    }
-
-    /**
      * Corrects missing group associations caused by missing event triggers from batch processing in com_user.
      *
      * @return void if an exception occurs it is handled as such
@@ -220,33 +179,6 @@ class THM_GroupsHelperProfiles
                 self::associateRole($missingAssoc['profileID'], $missingAssoc['assocID']);
             }
         }
-    }
-
-    /**
-     * Checks whether the given user profile is present and published
-     *
-     * @param   int  $profileID  the profile id
-     *
-     * @return  bool  true if the profile exists and is published
-     * @throws Exception
-     */
-    public static function contentEnabled($profileID)
-    {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('contentEnabled')->from('#__thm_groups_profiles')->where("id = $profileID");
-        $dbo->setQuery($query);
-
-        try {
-            $contentEnabled = $dbo->loadResult();
-        }
-        catch (Exception $exc) {
-            JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
-
-            return false;
-        }
-
-        return (bool) $contentEnabled;
     }
 
     /**
@@ -348,77 +280,6 @@ class THM_GroupsHelperProfiles
         }
 
         return $success;
-    }
-
-    /**
-     * Gets the alias for the given profile id
-     *
-     * @param   int  $profileID  the id of the given profile
-     *
-     * @return string an url friendly string with the profile's names
-     *
-     * @throws Exception
-     */
-    public static function getAlias($profileID)
-    {
-        if (empty($profileID)) {
-            return '';
-        }
-
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-
-        $query->select('alias')->from('#__thm_groups_profiles')->where("id = $profileID");
-        $dbo->setQuery($query);
-
-        try {
-            $alias = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return '';
-        }
-
-        if (empty($alias)) {
-            if (self::setAlias($profileID)) {
-                return self::getAlias($profileID);
-            }
-
-            return '';
-        }
-
-        return $alias;
-    }
-
-    /**
-     * Determines whether a category entry exists for a user or group.
-     *
-     * @param   int  $profileID  the user id to check against groups categories
-     *
-     * @return  int  the id of the category associated with the profile
-     * @throws Exception
-     */
-    public static function getCategoryID($profileID)
-    {
-        $dbo   = JFactory::getDBO();
-        $query = $dbo->getQuery(true);
-        $query->select('cc.id')
-            ->from('#__categories AS cc')
-            ->innerJoin('#__thm_groups_categories AS gc ON gc.id = cc.id')
-            ->where("profileID = $profileID");
-        $dbo->setQuery($query);
-
-        try {
-            $result = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        return empty($result) ? 0 : $result;
     }
 
     /**
@@ -636,95 +497,6 @@ class THM_GroupsHelperProfiles
     /**
      * Retrieves the id of the profile associated with the given alias.
      *
-     * @param   string  $alias  the given profile alias
-     *
-     * @return mixed int the profile id on distinct success, string if multiple profiles were found inconclusively,
-     * otherwise 0
-     *
-     * @throws Exception
-     */
-    public static function getProfileIDByAlias($alias)
-    {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('DISTINCT id')
-            ->from('#__thm_groups_profiles')
-            ->where('alias = ' . $dbo->quote($alias));
-
-        $dbo->setQuery($query);
-
-        try {
-            $profileID = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return 0;
-        }
-
-        return empty($profileID) ? self::getProfileIDByNames($alias) : $profileID;
-    }
-
-    /**
-     * Gets the most plausible profile id for a given set of 'names'.
-     *
-     * @param   string  $originalNames  the names used to identify the profile
-     *
-     * @return int the profile id if found, otherwise 0
-     *
-     * @throws Exception
-     */
-    public static function getProfileIDByNames($originalNames)
-    {
-        $dbo        = JFactory::getDbo();
-        $aliasQuery = $dbo->getQuery(true);
-
-        // Serves as a basis for existing and non-existing aliases
-        $tlNames      = THM_GroupsHelperComponent::transliterate($originalNames);
-        $cleanedNames = THM_GroupsHelperComponent::filterText($tlNames);
-        $names        = explode(' ', $cleanedNames);
-
-        $aliasQuery->select('DISTINCT id, alias')->from('#__thm_groups_profiles')->where('published = 1');
-        $dbo->setQuery($aliasQuery);
-
-        try {
-            $profiles = $dbo->loadAssocList();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return 0;
-        }
-
-        $profileIDs = [];
-        foreach ($profiles as $profile) {
-            if (empty($profile['alias'])) {
-                continue;
-            }
-
-            $found        = true;
-            $profileNames = explode('-', $profile['alias']);
-            foreach ($names as $name) {
-                $found = ($found and in_array($name, $profileNames));
-            }
-            if ($found) {
-                $profileIDs[] = $profile['id'];
-            }
-        }
-
-        if (count($profileIDs) > 1) {
-            return implode('-', $names);
-        }
-        elseif (count($profileIDs) === 1) {
-            return $profileIDs[0];
-        }
-
-        return 0;
-    }
-
-    /**
-     * Retrieves the id of the profile associated with the given alias.
-     *
      * @param   string  $username  the username
      *
      * @return mixed int the profile id on distinct success, string if multiple profiles were found inconclusively,
@@ -857,33 +629,6 @@ class THM_GroupsHelperProfiles
     }
 
     /**
-     * Checks whether the given user profile is present and published
-     *
-     * @param   int  $profileID  the profile id
-     *
-     * @return  bool  true if the profile exists and is published
-     * @throws Exception
-     */
-    public static function isPublished($profileID)
-    {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('published')->from('#__thm_groups_profiles')->where("id = $profileID");
-        $dbo->setQuery($query);
-
-        try {
-            $published = $dbo->loadResult();
-        }
-        catch (Exception $exc) {
-            JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
-
-            return false;
-        }
-
-        return (bool) $published;
-    }
-
-    /**
      * Parses the given string to check for a valid profile
      *
      * @param   string  $potentialProfile  the segment being checked
@@ -905,18 +650,18 @@ class THM_GroupsHelperProfiles
             $potentialAlias = $matches[2];
         }
 
-        if (!empty($profileID) and !empty($potentialAlias) and $profileID != self::getProfileIDByAlias($potentialAlias)) {
+        if (!empty($profileID) and !empty($potentialAlias) and $profileID != Users::idByAlias($potentialAlias)) {
             return 0;
         }
 
         $potentialAlias = empty($potentialAlias) ? $potentialProfile : $potentialAlias;
         if (empty($profileID) or !is_numeric($profileID)) {
-            $profileID = self::getProfileIDByAlias($potentialAlias);
+            $profileID = Users::idByAlias($potentialAlias);
         }
 
         if ($profileID and is_numeric($profileID)) {
             if (is_numeric($profileID)) {
-                return self::isPublished($profileID) ? $profileID : 0;
+                return Users::published($profileID) ? $profileID : 0;
             } // Disambiguation necessary
             elseif (is_string($profileID)) {
                 return $profileID;
@@ -987,81 +732,18 @@ class THM_GroupsHelperProfiles
      *
      * @throws Exception
      */
-    public static function setAlias($profileID)
+    public static function setAlias(int $profileID): bool
     {
-        $dbo         = JFactory::getDbo();
-        $searchQuery = $dbo->getQuery(true);
-        $searchQuery->select('DISTINCT sn.value AS surname, fn.value AS forename')
-            ->from('#__thm_groups_profile_attributes AS sn')
-            ->innerJoin('#__thm_groups_profile_attributes AS fn ON sn.profileID = fn.profileID')
-            ->where("sn.profileID = $profileID")
-            ->where("sn.attributeID = '2'")
-            ->where("fn.attributeID = '1'");
-        $dbo->setQuery($searchQuery);
+        $forenames = Users::forenames($profileID);
+        $surnames  = Users::surnames($profileID);
 
-        try {
-            $names = $dbo->loadAssoc();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
+        $names = $forenames ? $surnames : "$forenames $surnames";
+        $alias = Users::createAlias($profileID, $names);
 
-            return false;
-        }
+        $query = DB::query();
+        $query->update(DB::qn('#__users'))->set(DB::qc('alias', $alias, '=', true))->where(DB::qc('id', $profileID));
+        DB::set($query);
 
-        if (empty($names)) {
-            return false;
-        }
-
-        $alias = empty($names['forename']) ? $names['surname'] : "{$names['forename']}-{$names['surname']}";
-        $alias = THM_GroupsHelperComponent::trim($alias);
-        $alias = THM_GroupsHelperComponent::transliterate($alias);
-        $alias = THM_GroupsHelperComponent::filterText($alias);
-        $alias = str_replace(' ', '-', $alias);
-
-        // Check for an existing alias which matches the base alias for the profile and react. (duplicate names)
-        $initial = true;
-        $number  = 1;
-        while (true) {
-            $tempAlias   = $initial ? $alias : "$alias-$number";
-            $uniqueQuery = $dbo->getQuery(true);
-            $uniqueQuery->select('id')
-                ->from('#__thm_groups_profiles')
-                ->where("alias = '$tempAlias'")
-                ->where("id != $profileID");
-            $dbo->setQuery($uniqueQuery);
-
-            try {
-                $existingID = $dbo->loadAssoc();
-            }
-            catch (Exception $exception) {
-                JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-                return false;
-            }
-
-            if (empty($existingID)) {
-                $alias = $tempAlias;
-                break;
-            }
-            else {
-                $initial = false;
-                $number++;
-            }
-        }
-
-        $updateQuery = $dbo->getQuery(true);
-        $updateQuery->update('#__thm_groups_profiles')->set("alias = '$alias'")->where("id = $profileID");
-        $dbo->setQuery($updateQuery);
-
-        try {
-            $success = $dbo->execute();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        return empty($success) ? false : true;
+        return DB::execute();
     }
 }

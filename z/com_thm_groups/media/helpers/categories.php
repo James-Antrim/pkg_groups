@@ -9,7 +9,7 @@
  */
 
 // Added here for calls from plugins
-use THM\Groups\Helpers\Can;
+use THM\Groups\Helpers\{Can, Users};
 
 require_once 'component.php';
 require_once 'profiles.php';
@@ -37,8 +37,8 @@ class THM_GroupsHelperCategories
         $canCreate      = $user->authorise('core.create', 'com_content.category.' . $categoryID);
         $profileID      = self::getProfileID($categoryID);
         $isOwn          = $profileID === $user->id;
-        $isPublished    = THM_GroupsHelperProfiles::isPublished($profileID);
-        $contentEnabled = THM_GroupsHelperProfiles::contentEnabled($profileID);
+        $isPublished    = Users::published($profileID);
+        $contentEnabled = Users::content($profileID);
 
         return ($canCreate and $isOwn and $isPublished and $contentEnabled);
     }
@@ -65,8 +65,8 @@ class THM_GroupsHelperCategories
 
         // Irregardless of configuration only administrators and content owners should be able to edit
         $editEnabled    = (($canEdit or $canEditOwn) and $isOwn);
-        $isPublished    = THM_GroupsHelperProfiles::isPublished($profileID);
-        $contentEnabled = THM_GroupsHelperProfiles::contentEnabled($profileID);
+        $isPublished    = Users::published($profileID);
+        $contentEnabled = Users::content($profileID);
         $profileEnabled = ($isPublished and $contentEnabled);
 
         return ($editEnabled and $profileEnabled);
@@ -126,7 +126,7 @@ class THM_GroupsHelperCategories
             return false;
         }
 
-        $alias    = THM_GroupsHelperProfiles::getAlias($profileID);
+        $alias    = Users::alias($profileID);
         $category = JTable::getInstance('Category', 'JTable');
 
         $category->title           = THM_GroupsHelperProfiles::getDisplayName($profileID);
@@ -156,7 +156,7 @@ class THM_GroupsHelperCategories
      */
     public static function getIDByProfileID($profileID)
     {
-        $contentEnabled = THM_GroupsHelperProfiles::contentEnabled($profileID);
+        $contentEnabled = Users::content($profileID);
 
         if (!$contentEnabled) {
             return 0;
@@ -228,7 +228,7 @@ class THM_GroupsHelperCategories
             return 0;
         }
 
-        $profileAlias = THM_GroupsHelperProfiles::getAlias($results['profileID']);
+        $profileAlias = Users::alias($results['profileID']);
 
         // Category information is already set correctly
         if ($results['alias'] === $profileAlias and $results['path'] === $profileAlias) {

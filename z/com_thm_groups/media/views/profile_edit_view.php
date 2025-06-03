@@ -12,6 +12,7 @@
  */
 
 use THM\Groups\Adapters\Input;
+use THM\Groups\Helpers\Users;
 
 defined('_JEXEC') or die;
 
@@ -43,7 +44,7 @@ class THM_GroupsViewProfile_Edit_View extends JViewLegacy
         $selectedIDs     = Input::getSelectedIDs();
         $this->profileID = $selectedIDs ? $selectedIDs[0] : $input->getInt('profileID', $input->getInt('id', 0));
 
-        if (!THM_GroupsHelperProfiles::canEdit($this->profileID)) {
+        if (!Users::editing($this->profileID)) {
             $exc = new Exception(JText::_('JLIB_RULES_NOT_ALLOWED'), 401);
             JErrorPage::render($exc);
         }

@@ -7,6 +7,9 @@
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
+
+use THM\Groups\Adapters\Text;
+
 defined('_JEXEC') or die;
 require_once HELPERS . 'groups.php';
 require_once HELPERS . 'profiles.php';
@@ -52,11 +55,11 @@ class THM_GroupsModelOverview extends JModelLegacy
         }
 
         if ($search) {
-            $search = THM_GroupsHelperComponent::trim($search);
+            $search = Text::trim($search);
 
             if (!empty('search')) {
-                $search      = THM_GroupsHelperComponent::transliterate($search);
-                $search      = THM_GroupsHelperComponent::filterText($search);
+                $search      = Text::transliterate($search);
+                $search      = Text::filter($search);
                 $searchTerms = explode('-', $search);
                 $query->where("p.alias LIKE '%" . implode("%' AND p.alias LIKE '%", $searchTerms) . "%'");
             }

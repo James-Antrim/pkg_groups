@@ -12,6 +12,7 @@ require_once 'content.php';
 require_once 'profiles.php';
 
 use \Joomla\CMS\Uri\Uri as URI;
+use THM\Groups\Helpers\Users;
 
 /**
  * Class providing helper functions for batch select options
@@ -34,7 +35,7 @@ class THM_GroupsHelperRouter
             return $default;
         }
 
-        $params['profileAlias'] = THM_GroupsHelperProfiles::getAlias($params['profileID']);
+        $params['profileAlias'] = Users::alias($params['profileID']);
         if (empty($params['profileAlias'])) {
             return $default;
         }
@@ -194,7 +195,7 @@ class THM_GroupsHelperRouter
 
         if (empty($contentID)) {
 
-            $profileAlias = THM_GroupsHelperProfiles::getAlias($profileID);
+            $profileAlias = Users::alias($profileID);
             $pathItems    = self::getPathItems($app->input->server->getString('HTTP_REFERER'));
 
             // Redirect back from a profile dependent item.

@@ -10,6 +10,8 @@
 
 defined('_JEXEC') or die;
 
+use THM\Groups\Helpers\Users;
+
 require_once HELPERS . 'profiles.php';
 require_once HELPERS . 'router.php';
 
@@ -35,14 +37,14 @@ class THM_GroupsViewProfile extends JViewLegacy
     public function display($tpl = null)
     {
         $this->profileID = JFactory::getApplication()->input->getint('profileID', 0);
-        $published       = empty($this->profileID) ? false : THM_GroupsHelperProfiles::isPublished($this->profileID);
+        $published       = empty($this->profileID) ? false : Users::published($this->profileID);
 
         if (!$published) {
             $exc = new Exception(JText::_('COM_THM_GROUPS_PROFILE_NOT_FOUND'), '404');
             JErrorPage::render($exc);
         }
 
-        $this->canEdit = THM_GroupsHelperProfiles::canEdit($this->profileID);
+        $this->canEdit = Users::editing($this->profileID);
 
         THM_GroupsHelperRouter::setPathway();
         $this->modifyDocument();

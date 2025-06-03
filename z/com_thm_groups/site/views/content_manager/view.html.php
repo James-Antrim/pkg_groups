@@ -11,6 +11,8 @@
 // No direct access to this file
 defined('_JEXEC') or die;
 
+use THM\Groups\Helpers\Users;
+
 require_once HELPERS . 'content.php';
 require_once HELPERS . 'profiles.php';
 
@@ -48,13 +50,13 @@ class THM_GroupsViewContent_Manager extends JViewLegacy
     {
         $user            = JFactory::getUser();
         $this->profileID = JFactory::getApplication()->input->getInt('profileID', $user->id);
-        if (empty($this->profileID) or !THM_GroupsHelperProfiles::isPublished($this->profileID)) {
+        if (empty($this->profileID) or !Users::published($this->profileID)) {
             $exc = new Exception(JText::_('COM_THM_GROUPS_PROFILE_NOT_FOUND'), '404');
             JErrorPage::render($exc);
         }
 
         $this->categoryID = THM_GroupsHelperCategories::getIDByProfileID($this->profileID);
-        $contentEnabled   = THM_GroupsHelperProfiles::contentEnabled($this->profileID);
+        $contentEnabled   = Users::content($this->profileID);
         if (empty($this->categoryID) or empty($contentEnabled)) {
             $exc = new Exception(JText::_('COM_THM_GROUPS_ERROR_412'), '412');
             JErrorPage::render($exc);

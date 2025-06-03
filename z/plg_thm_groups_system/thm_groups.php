@@ -22,6 +22,7 @@ require_once 'GroupsValidator.php';
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
+use THM\Groups\Helpers\Users;
 
 /**
  * Class tries to resolve teacher stub calls from thm organizer to thm groups profiles.
@@ -237,7 +238,7 @@ class plgSystemTHM_Groups extends CMSPlugin
                 case 'content_manager':
                 case 'profile':
                 case 'profile_edit':
-                    $profileAlias = THM_GroupsHelperProfiles::getAlias($query['profileID']);
+                    $profileAlias = Users::alias($query['profileID']);
                     if (!in_array($profileAlias, $pItems)) {
                         GroupsRedirector::redirect($query);
                     }

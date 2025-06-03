@@ -8,6 +8,8 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Helpers\Users;
+
 defined('_JEXEC') or die;
 
 require_once HELPERS . 'profiles.php';
@@ -29,7 +31,7 @@ class THM_GroupsViewProfile extends JViewLegacy
     public function display($tpl = null)
     {
         $profileID = JFactory::getApplication()->input->getint('profileID', 0);
-        $published = empty($profileID) ? false : THM_GroupsHelperProfiles::isPublished($profileID);
+        $published = empty($profileID) ? false : Users::published($profileID);
 
         if (!$published) {
             $exc = new Exception(JText::_('COM_THM_GROUPS_PROFILE_NOT_FOUND'), '404');

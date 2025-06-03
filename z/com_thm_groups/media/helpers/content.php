@@ -9,7 +9,7 @@
  */
 
 use THM\Groups\Adapters\Input;
-use THM\Groups\Helpers\Can;
+use THM\Groups\Helpers\{Can, Users};
 
 define('PUBLISH', 1);
 define('UNPUBLISH', 0);
@@ -81,8 +81,8 @@ class THM_GroupsHelperContent
 
         // Irregardless of configuration only administrators and content owners should be able to edit
         $editEnabled    = (($canEdit or $canEditOwn) and $isOwn);
-        $isPublished    = THM_GroupsHelperProfiles::isPublished($profileID);
-        $contentEnabled = THM_GroupsHelperProfiles::contentEnabled($profileID);
+        $isPublished    = Users::published($profileID);
+        $contentEnabled = Users::content($profileID);
         $profileEnabled = ($isPublished and $contentEnabled);
 
         return ($editEnabled and $profileEnabled);

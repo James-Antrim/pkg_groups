@@ -18,6 +18,7 @@ require_once JPATH_ROOT . '/media/com_thm_groups/helpers/router.php';
 use \Joomla\CMS\Factory as Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 use \JText as Text;
+use THM\Groups\Helpers\Users;
 
 $input     = Factory::getApplication()->input;
 $profileID = $input->get('profileID');
@@ -31,7 +32,7 @@ if (!empty($profileID)) {
 
     $contentExists = !empty($contents);
     $view          = $input->get('view');
-    $showAdmin     = THM_GroupsHelperProfiles::canEdit($profileID);
+    $showAdmin     = Users::editing($profileID);
     $showSubMenu   = false;
 
     $isOwner        = Factory::getUser()->id == $profileID;

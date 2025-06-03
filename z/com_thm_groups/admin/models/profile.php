@@ -10,7 +10,7 @@
 
 use Joomla\CMS\Log\Log;
 use THM\Groups\Adapters\Input;
-use THM\Groups\Helpers\Can;
+use THM\Groups\Helpers\{Can, Users};
 
 defined('_JEXEC') or die;
 require_once HELPERS . 'content.php';
@@ -188,7 +188,7 @@ class THM_GroupsModelProfile extends JModelLegacy
         $profileID   = $app->input->getInt('profileID', $profileID);
         $attributeID = $app->input->getString('attributeID', $attributeID);
 
-        if (!THM_GroupsHelperProfiles::canEdit($profileID)) {
+        if (!Users::editing($profileID)) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
@@ -322,11 +322,11 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         $profileIDs = Input::getSelectedIDs();
         foreach ($profileIDs as $profileID) {
-            if (!$categoryID = THM_GroupsHelperProfiles::getCategoryID($profileID)) {
+            if (!$categoryID = Users::categoryID($profileID)) {
                 $categoryID = THM_GroupsHelperCategories::create($profileID);
             }
 
-            if (!THM_GroupsHelperProfiles::isPublished($profileID)) {
+            if (!Users::published($profileID)) {
                 return false;
             }
 
@@ -355,7 +355,7 @@ class THM_GroupsModelProfile extends JModelLegacy
         // Ensuring int will fail access checks on manipulated ids.
         $profileID = $data['profileID'];
 
-        if (!THM_GroupsHelperProfiles::canEdit($profileID)) {
+        if (!Users::editing($profileID)) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
@@ -395,7 +395,7 @@ class THM_GroupsModelProfile extends JModelLegacy
         $input     = $app->input;
         $profileID = $input->getInt('profileID');
 
-        if (!THM_GroupsHelperProfiles::canEdit($profileID)) {
+        if (!Users::editing($profileID)) {
             $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
@@ -647,11 +647,11 @@ class THM_GroupsModelProfile extends JModelLegacy
                 return $this->updateBinaryValue($profileID, 'canEdit', $value);
             case 'contentEnabled':
 
-                if (!$categoryID = THM_GroupsHelperProfiles::getCategoryID($profileID)) {
+                if (!$categoryID = Users::categoryID($profileID)) {
                     $categoryID = THM_GroupsHelperCategories::create($profileID);
                 }
 
-                if (!THM_GroupsHelperProfiles::isPublished($profileID)) {
+                if (!Users::published($profileID)) {
                     return false;
                 }
 
@@ -672,7 +672,7 @@ class THM_GroupsModelProfile extends JModelLegacy
                     return $this->updateBinaryValue($profileID, 'published', 1);
                 }
 
-                if ($categoryID = THM_GroupsHelperProfiles::getCategoryID($profileID)) {
+                if ($categoryID = Users::categoryID($profileID)) {
                     $this->updateCategoryPublishing($categoryID, 0);
                 }
 
@@ -746,7 +746,7 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         $profileIDs = Input::getSelectedIDs();
         foreach ($profileIDs as $profileID) {
-            if ($categoryID = THM_GroupsHelperProfiles::getCategoryID($profileID)) {
+            if ($categoryID = Users::categoryID($profileID)) {
                 $this->updateCategoryPublishing($categoryID, 0);
             }
 
@@ -779,7 +779,7 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         $profileIDs = Input::getSelectedIDs();
         foreach ($profileIDs as $profileID) {
-            if (!$categoryID = THM_GroupsHelperProfiles::getCategoryID($profileID)) {
+            if (!$categoryID = Users::categoryID($profileID)) {
                 continue;
             }
 

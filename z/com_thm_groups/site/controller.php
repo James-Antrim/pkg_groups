@@ -9,6 +9,9 @@
  */
 defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
+
+use THM\Groups\Helpers\Users;
+
 require_once HELPERS . 'profiles.php';
 
 /**
@@ -141,10 +144,10 @@ class THM_GroupsController extends JControllerLegacy
 
         $this->profileID = $data['profileID'];
 
-        if (!THM_GroupsHelperProfiles::canEdit($this->profileID)) {
+        if (!Users::editing($this->profileID)) {
             JFactory::getApplication()->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
-            $isPublished  = THM_GroupsHelperProfiles::isPublished($this->profileID);
-            $profileAlias = THM_GroupsHelperProfiles::getAlias($this->profileID);
+            $isPublished  = Users::published($this->profileID);
+            $profileAlias = Users::alias($this->profileID);
             if ($isPublished and $profileAlias) {
                 $url = THM_GroupsHelperRouter::build(['profileID' => $this->profileID]);
                 JFactory::getApplication()->redirect($url);
