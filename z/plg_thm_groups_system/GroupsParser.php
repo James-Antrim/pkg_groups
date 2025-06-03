@@ -14,6 +14,7 @@ require_once JPATH_ROOT . '/media/com_thm_groups/helpers/categories.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
 
 use Joomla\CMS\Language\Text;
+use THM\Groups\Helpers\Users;
 
 class GroupsParser
 {
@@ -35,11 +36,11 @@ class GroupsParser
         $profileID = THM_GroupsHelperCategories::getProfileID($cParams[1]);
 
         // The profile ID does not match the paired alias.
-        if ($profileID != THM_GroupsHelperProfiles::getProfileIDByAlias($cParams[2])) {
+        if ($profileID != Users::idByAlias($cParams[2])) {
             return $query;
         }
 
-        if (THM_GroupsHelperProfiles::isPublished($profileID)) {
+        if (Users::published($profileID)) {
             $query['profileID'] = $profileID;
             $query['view']      = 'profile';
         }
@@ -171,21 +172,21 @@ class GroupsParser
             $query['view']   = 'overview';
         }
         elseif ($lastItem === Text::_('COM_THM_GROUPS_CONTENT_MANAGER_ALIAS')) {
-            $profileID = THM_GroupsHelperProfiles::getProfileIDByAlias($secondLastItem);
+            $profileID = Users::idByAlias($secondLastItem);
             if (!empty($profileID)) {
                 $query['view']      = 'content_manager';
                 $query['profileID'] = $profileID;
             }
         }
         elseif ($lastItem === Text::_('COM_THM_GROUPS_EDIT_ALIAS')) {
-            $profileID = THM_GroupsHelperProfiles::getProfileIDByAlias($secondLastItem);
+            $profileID = Users::idByAlias($secondLastItem);
             if (!empty($profileID)) {
                 $query['view']      = 'profile_edit';
                 $query['profileID'] = $profileID;
             }
         }
         elseif ($lastItem === 'vcf' or $lastItem === 'json') {
-            $profileID = THM_GroupsHelperProfiles::getProfileIDByAlias($secondLastItem);
+            $profileID = Users::idByAlias($secondLastItem);
             if (!empty($profileID)) {
                 $query['view']      = 'profile';
                 $query['profileID'] = $profileID;
@@ -193,25 +194,23 @@ class GroupsParser
             }
         }
         elseif (empty($secondLastItem)) {
-            $profileID = THM_GroupsHelperProfiles::getProfileIDByAlias($lastItem);
+            $profileID = Users::idByAlias($lastItem);
             if (!empty($profileID)) {
                 $query['view']      = 'profile';
                 $query['profileID'] = $profileID;
             }
         }
         else {
-            $profileID = THM_GroupsHelperProfiles::getProfileIDByAlias($secondLastItem);
+            $profileID = Users::idByAlias($secondLastItem);
             if (!empty($profileID)) {
-                if (is_numeric($profileID)) {
-                    $query['profileID'] = $profileID;
-                    $contentID          = THM_GroupsHelperContent::getIDByAlias($lastItem, $profileID);
-                    if (empty($contentID)) {
-                        $query['view'] = 'profile';
-                    }
-                    else {
-                        $query['view'] = 'content';
-                        $query['id']   = $contentID;
-                    }
+                $query['profileID'] = $profileID;
+                $contentID          = THM_GroupsHelperContent::getIDByAlias($lastItem, $profileID);
+                if (empty($contentID)) {
+                    $query['view'] = 'profile';
+                }
+                else {
+                    $query['view'] = 'content';
+                    $query['id']   = $contentID;
                 }
             }
         }
@@ -287,8 +286,6 @@ class GroupsParser
             return $query;
         }
 
-        // This should be empty
-        $query           = [];
         $searchProfileID = THM_GroupsHelperProfiles::resolve($lastItem);
         if ($searchProfileID and is_numeric($searchProfileID)) {
             $query['profileID'] = $searchProfileID;

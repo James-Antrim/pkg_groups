@@ -10,9 +10,13 @@
 
 namespace THM\Groups\Helpers;
 
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\Text;
+use THM\Groups\Adapters\{Application, Database as DB, Input, Text, User as Account};
+use THM\Groups\Tables\{Categories, Users as Table};
+use THM\Groups\Tools\Cohesion;
 
+/**
+ * Accessor class for user and profile data.
+ */
 class Users
 {
     use Persistent;
@@ -53,6 +57,14 @@ class Users
             'tip'    => 'GROUPS_TOGGLE_TIP_USER_UNBLOCKED'
         ]
     ];
+
+    // Attributes protected because of their special display in various templates
+    /*public const PROTECTED = [
+        self::EMAIL,
+        self::IMAGE,
+        self::SUPPLEMENT_POST,
+        self::SUPPLEMENT_PRE
+    ];*/
 
     public const contentStates = [
         self::ENABLED  => [
@@ -99,9 +111,71 @@ class Users
         ]
     ];
 
-    public static function createAlias(int $accountID, string $identifier): string
+    /**
+     * Returns the user's alias.
+     *
+     * @param   int  $userID
+     *
+     * @return string
+     */
+    public static function alias(int $userID): string
     {
-        $alias = Text::trim($identifier);
+        return (string) self::get($userID, 'alias');
+    }
+
+    /**
+     * Returns the id of the category associated with the user.
+     *
+     * @param   int  $userID
+     *
+     * @return int
+     */
+    public static function categoryID(int $userID): int
+    {
+        $table = new Categories();
+        if ($table->load(['userID' => $userID])) {
+            return $table->categoryID;
+        }
+
+        return 0;
+    }
+
+    /**
+     * Returns the user's content status.
+     *
+     * @param   int  $userID
+     *
+     * @return bool
+     */
+    public static function content(int $userID): bool
+    {
+        if (!$accountID = Account::id()) {
+            return false;
+        }
+
+        if (Can::manage('com_content')) {
+            return true;
+        }
+
+        // Global restriction or content to be edited does not belong to the user.
+        if (!Input::getParams()->get('content') or $accountID != $userID) {
+            return false;
+        }
+
+        return (bool) self::get($userID, 'content');
+    }
+
+    /**
+     * Creates an alias based on the user's fore- and surnames.
+     *
+     * @param   int     $userID  the user's id
+     * @param   string  $names   the user's names
+     *
+     * @return string
+     */
+    public static function createAlias(int $userID, string $names): string
+    {
+        $alias = Text::trim($names);
         $alias = Text::transliterate($alias);
         $alias = Text::filter($alias);
         $alias = str_replace(' ', '-', $alias);
@@ -111,7 +185,7 @@ class Users
         $query = $db->getQuery(true);
         $query->select($id)
             ->from($db->quoteName('#__users'))
-            ->where("$id != $accountID")
+            ->where("$id != $userID")
             ->where($db->quoteName('alias') . " = :alias")
             ->bind(':alias', $currentAlias);
 
@@ -133,22 +207,162 @@ class Users
     }
 
     /**
-     * Gets the value of a table state property.
+     * Gets the value of a table property.
      *
      * @param   int     $personID
      * @param   string  $property
      *
-     * @return bool
+     * @return mixed
      */
-    public static function get(int $personID, string $property): bool
+    public static function get(int $personID, string $property): mixed
     {
-        $account = self::getTable();
-        $account->load($personID);
-
-        if (property_exists($account, $property) and is_bool($account->$$property)) {
-            return $account->$$property;
+        /** @var Table $table */
+        $table = self::getTable();
+        if (!$table->load($personID)) {
+            return null;
         }
 
-        return false;
+        // Forenames are allowed to be empty
+        if (in_array($property, ['alias', 'surnames']) and empty($table->$property)) {
+
+            if (empty($table->username)) {
+                Application::error(500);
+            }
+
+            [$table->surnames, $table->forenames] = Cohesion::parseNames($table->name);
+            $table->alias = self::createAlias($table->id, "$table->forenames $table->surnames");
+            $table->store();
+        }
+
+        if (property_exists($table, $property)) {
+            return $table->$property;
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the user's editing status.
+     *
+     * @param   int  $userID
+     *
+     * @return bool
+     */
+    public static function editing(int $userID): bool
+    {
+        if (!$accountID = Account::id()) {
+            return false;
+        }
+
+        if (Can::manage()) {
+            return true;
+        }
+
+        // Global restriction or account to be edited does not belong to the user.
+        if (!Input::getParams()->get('profiles') or $accountID != $userID) {
+            return false;
+        }
+
+        // User specific restriction
+        return (bool) self::get($userID, 'editing');
+    }
+
+    /**
+     * Returns the user's forenames.
+     *
+     * @param   int  $userID
+     *
+     * @return string
+     */
+    public static function forenames(int $userID): string
+    {
+        return (string) self::get($userID, 'forenames');
+    }
+
+    /**
+     * Returns the id of the user assigned the given alias.
+     *
+     * @param   string  $alias
+     *
+     * @return int
+     */
+    public static function idByAlias(string $alias): int
+    {
+        /** @var Table $table */
+        $table = self::getTable();
+
+        if ($table->load(['alias' => $alias])) {
+            return $table->id;
+        }
+
+        return self::idByNames($alias);
+    }
+
+    /**
+     * Returns the id of the user approximated by the given names. If multiple users approximate the terms an 'alias' is returned
+     * for disambiguation generation.
+     *
+     * @param   string  $qParts
+     *
+     * @return int|string
+     */
+    public static function idByNames(string $qParts): int|string
+    {
+        $query = DB::query();
+        $query->select(DB::qn('alias'))
+            ->from(DB::qn('#__users'))
+            ->where(DB::qcs([['published', 1], ['alias', '', '!=', true]]))
+            ->where(DB::qn('alias') . ' IS NOT NULL');
+        DB::set($query);
+
+        if (!$users = DB::arrays()) {
+            return 0;
+        }
+
+        $qParts = Text::transliterate($qParts);
+        $qParts = Text::filter($qParts);
+        $qParts = explode(' ', $qParts);
+
+        $userIDs = [];
+        foreach ($users as $user) {
+            $found  = true;
+            $aParts = explode('-', $user['alias']);
+            foreach ($qParts as $qPart) {
+                $found = ($found and in_array($qPart, $aParts));
+            }
+            if ($found) {
+                $userIDs[] = $user['id'];
+            }
+        }
+
+        if (empty($userIDs)) {
+            return 0;
+        }
+
+        return count($userIDs) > 1 ? implode('-', $qParts) : reset($userIDs);
+    }
+
+    /**
+     * Returns the user's published status.
+     *
+     * @param   int  $userID
+     *
+     * @return bool
+     */
+    public static function published(int $userID): bool
+    {
+        return (bool) self::get($userID, 'published');
+    }
+
+    /**
+     * Returns the user's surnames.
+     *
+     * @param   int  $userID
+     *
+     * @return string
+     */
+    public static function surnames(int $userID): string
+    {
+        return (string) self::get($userID, 'forenames');
     }
 }

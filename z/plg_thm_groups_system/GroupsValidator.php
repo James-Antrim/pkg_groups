@@ -10,6 +10,8 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Helpers\Users;
+
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/profiles.php';
 
@@ -24,7 +26,7 @@ class GroupsValidator
      *               int 0 if the validity could not be determined due to missing parameters.
      * @throws Exception
      */
-    public static function validate(array &$query)
+    public static function validate(array &$query): bool|int
     {
         if (!$query) {
             return 0;
@@ -39,13 +41,10 @@ class GroupsValidator
                     if (empty($query['view'])) {
                         return false;
                     }
-                    switch ($query['view']) {
-                        case 'article' :
-                        case 'category' :
-                            return 0;
-                        default:
-                            return false;
-                    }
+                    return match ($query['view']) {
+                        'article', 'category' => 0,
+                        default => false,
+                    };
                 default:
                     return false;
             }
@@ -70,7 +69,7 @@ class GroupsValidator
 
                 return true;
             }
-            elseif (!empty($query['profileID']) and THM_GroupsHelperProfiles::getAlias($query['profileID'])) {
+            elseif (!empty($query['profileID']) and Users::alias($query['profileID'])) {
                 $query['view'] = 'profile';
 
                 return true;
@@ -96,7 +95,7 @@ class GroupsValidator
                     }
 
                     // Success
-                    if (THM_GroupsHelperProfiles::getAlias($query['profileID'])) {
+                    if (Users::alias($query['profileID'])) {
                         return true;
                     }
 

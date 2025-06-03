@@ -15,8 +15,10 @@ defined('_JEXEC') or die;
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/profiles.php';
 
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
+use THM\Groups\Helpers\Users;
 
 class GroupsRedirector
 {
@@ -25,7 +27,7 @@ class GroupsRedirector
      *
      * @throws Exception
      */
-    public static function redirect($query)
+    public static function redirect($query): void
     {
         $msg     = '';
         $msgType = 'message';
@@ -43,6 +45,7 @@ class GroupsRedirector
 
         http_response_code($code);
 
+        /** @var CMSApplication $app */
         $app = JFactory::getApplication();
 
         if ($msg) {
@@ -63,7 +66,7 @@ class GroupsRedirector
      *
      * @return void modifies the parameters code, msg, msgType and url
      */
-    private static function redirectRaw(array $query, int &$code, string &$msg, string &$msgType, string &$url)
+    private static function redirectRaw(array $query, int &$code, string &$msg, string &$msgType, string &$url): void
     {
         unset($query['lang']);
         ksort($query);
@@ -90,12 +93,12 @@ class GroupsRedirector
      * @return void modifies the parameters code, msg, msgType and url
      * @throws Exception
      */
-    private static function redirectSEF(array $query, int &$code, string &$msg, string &$msgType, string &$url)
+    private static function redirectSEF(array $query, int &$code, string &$msg, string &$msgType, string &$url): void
     {
         $lang = JFactory::getLanguage();
         $lang->load('com_thm_groups');
         $pathParts    = [];
-        $profileAlias = empty($query['profileID']) ? '' : THM_GroupsHelperProfiles::getAlias($query['profileID']);
+        $profileAlias = empty($query['profileID']) ? '' : Users::alias($query['profileID']);
 
         switch ($query['view']) {
             case 'content':
