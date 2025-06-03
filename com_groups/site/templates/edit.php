@@ -10,12 +10,11 @@
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Router\Route;
 use THM\Groups\Adapters\{Application, HTML, Input, Text};
-use THM\Groups\Views\HTML\Form;
+use THM\Groups\Views\HTML\FormView;
 
-/** @var Form $this */
+/** @var FormView $this */
 
 // Core behaviour scripts
 $wa = Application::document()->getWebAssetManager();
@@ -31,13 +30,7 @@ $return         = $input->getBase64('return');
 $tabs   = $this->form->getFieldsets();
 $tabbed = count($this->form->getFieldsets()) > 1;
 
-if ($this->todo) {
-    echo '<ul>';
-    foreach ($this->todo as $todo) {
-        echo "<li>$todo</li>";
-    }
-    echo '</ul>';
-}
+$this->renderTasks();
 ?>
 <form action="<?php echo Route::_('index.php?option=com_groups'); ?>"
       aria-label="<?php echo $ariaLabel; ?>"
@@ -48,18 +41,20 @@ if ($this->todo) {
       name="adminForm">
     <div class="main-card">
         <?php if ($tabbed): ?>
-            <?php echo HTMLHelper::_('uitab.startTabSet', 'myTab',
-                ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
+            <?php echo HTML::_('uitab.startTabSet', 'myTab', ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
             <?php foreach ($tabs as $name => $tab): ?>
-                <?php echo HTMLHelper::_('uitab.addTab', 'myTab', $tab->name, Text::_($tab->label)); ?>
+                <?php if (!$this->form->getFieldset($name)) {
+                    continue;
+                } ?>
+                <?php echo HTML::_('uitab.addTab', 'myTab', $tab->name, Text::_($tab->label)); ?>
                 <fieldset class="options-form">
                     <div class="form-grid">
                         <?php echo $this->form->renderFieldset($name); ?>
                     </div>
                 </fieldset>
-                <?php echo HTMLHelper::_('uitab.endTab'); ?>
+                <?php echo HTML::_('uitab.endTab'); ?>
             <?php endforeach; ?>
-            <?php echo HTMLHelper::_('uitab.endTabSet'); ?>
+            <?php echo HTML::_('uitab.endTabSet'); ?>
         <?php else: ?>
             <fieldset class="options-form">
                 <div class="form-grid">
@@ -67,7 +62,7 @@ if ($this->todo) {
                 </div>
             </fieldset>
         <?php endif; ?>
-        <input type="hidden" name="task" value="">
+        <input type="hidden" name="task" value="<?php echo $this->defaultTask; ?>">
         <input type="hidden" name="return" value="<?php echo $return; ?>">
         <input type="hidden" name="forcedLanguage" value="<?php echo $forcedLanguage; ?>">
         <?php echo HTML::token(); ?>

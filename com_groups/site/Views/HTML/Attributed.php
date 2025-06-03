@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-namespace THM\Organizer\Views\HTML;
+namespace THM\Groups\Views\HTML;
 
 /**
  * Handles code common for HTML output of resource attributes.

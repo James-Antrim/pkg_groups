@@ -10,10 +10,10 @@
 
 namespace THM\Groups\Views\HTML;
 
-class Group extends Form
+class Group extends FormView
 {
     /** @inheritDoc */
-    protected function addToolbar(array $buttons = []): void
+    protected function addToolbar(array $buttons = [], string $constant = ''): void
     {
         $buttons = empty($this->item->id) ? ['save', 'apply', 'save2new'] : ['save', 'apply', 'save2copy', 'save2new'];
         parent::addToolbar($buttons);

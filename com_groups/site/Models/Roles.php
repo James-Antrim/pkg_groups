@@ -87,7 +87,7 @@ class Roles extends ListModel
         $groupID     = $this->getState('filter.groupID');
         $gConditions = DB::qc('g.id', 'uugm.group_id');
         $gTable      = DB::qn('#__groups_groups', 'g');
-        $mConditions = DB::qn('uugm.id', 'ra.mapID');
+        $mConditions = DB::qc('uugm.id', 'ra.mapID');
         $mTable      = DB::qn('#__user_usergroup_map', 'uugm');
 
         if (is_numeric($groupID) and intval($groupID) > 0) {
