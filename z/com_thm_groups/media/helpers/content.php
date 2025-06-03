@@ -16,8 +16,6 @@ define('UNPUBLISH', 0);
 define('ARCHIVE', 2);
 define('TRASH', -2);
 require_once 'categories.php';
-// Added here for calls from plugins
-require_once 'component.php';
 
 /**
  * Class providing helper functions for batch select options
@@ -535,9 +533,6 @@ class THM_GroupsHelperContent
             $table->load($cond[0]);
             $table->reorder($cond[1]);
         }
-
-        // Clear the component's cache
-        THM_GroupsHelperComponent::cleanCache();
 
         return true;
     }

@@ -12,7 +12,6 @@ use THM\Groups\Adapters\{Database as DB, Text};
 use THM\Groups\Helpers\{Can, Users};
 
 require_once 'attributes.php';
-require_once 'component.php';
 require_once 'groups.php';
 require_once 'router.php';
 require_once JPATH_ROOT . '/administrator/components/com_thm_groups/tables/profiles.php';

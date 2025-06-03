@@ -8,9 +8,9 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Adapters\Input;
+
 require_once 'attribute_types.php';
-// Added here for calls from plugins
-require_once 'component.php';
 require_once 'fields.php';
 
 /**
@@ -516,7 +516,7 @@ class THM_GroupsHelperAttributes
 
             case HTML:
 
-                $value = THM_GroupsHelperComponent::removeEmptyTags($attribute['value']);
+                $value = Input::removeEmptyTags($attribute['value']);
                 $value = trim(htmlspecialchars_decode($value));
 
                 // The closing div for the toggled container is added later to ensure that the toggle label doesn't move

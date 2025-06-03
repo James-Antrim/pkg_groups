@@ -485,7 +485,7 @@ class THM_GroupsModelProfile extends JModelLegacy
                 return false;
             }
 
-            $cleanedValue = THM_GroupsHelperComponent::removeEmptyTags($rawValue);
+            $cleanedValue = Input::removeEmptyTags($rawValue);
 
 
             $query = $this->_db->getQuery(true);
