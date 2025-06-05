@@ -12,7 +12,6 @@ namespace THM\Groups\Helpers;
 
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text, User as Account};
 use THM\Groups\Tables\{Categories, Users as Table};
-use THM\Groups\Tools\Cohesion;
 
 /**
  * Accessor class for user and profile data.
@@ -229,7 +228,7 @@ class Users
                 Application::error(500);
             }
 
-            [$table->surnames, $table->forenames] = Cohesion::parseNames($table->name);
+            [$table->surnames, $table->forenames] = self::parseNames($table->name);
             $table->alias = self::createAlias($table->id, "$table->forenames $table->surnames");
             $table->store();
         }
@@ -340,6 +339,53 @@ class Users
         }
 
         return count($userIDs) > 1 ? implode('-', $qParts) : reset($userIDs);
+    }
+
+    /**
+     * Parses the user account name to try and derive fore- and surnames from it.
+     *
+     * @param   string  $accountName  the name column of the users table entry
+     *
+     * @return array [surnames, forenames]
+     */
+    public static function parseNames(string $accountName): array
+    {
+        // Replace non-alphabetical characters
+        $name = preg_replace('/[^A-ZÀ-ÖØ-Þa-zß-ÿ\p{N}_.\-\']/', ' ', $accountName);
+
+        // Replace superfluous whitespace
+        $name = preg_replace('/ +/', ' ', $name);
+        $name = trim($name);
+
+        $fragments = array_filter(explode(" ", $name));
+
+        $surnames = array_pop($fragments);
+
+        // Resolve any supplemental prefix to the surnames
+        $prefix = '';
+
+        // The next fragment consists solely of lower case letters indicating a preposition
+        while (preg_match('/^[a-zß-ÿ]+$/', end($fragments))) {
+            $prefix = array_pop($fragments);
+
+            // Prepend positive results
+            $surnames = "$prefix $surnames";
+        }
+
+        // These prepositions indicate that the previous fragments were a locality and a further surname exists
+        if (in_array($prefix, ['zu', 'zum'])) {
+            $surnames = array_pop($fragments) . " $surnames";
+
+            // Check for further prepositions
+            while (preg_match('/^[a-zß-ÿ]+$/', end($fragments))) {
+                $surnames = array_pop($fragments) . " $surnames";
+            }
+        }
+
+        // Anything left is evaluated as collection of forenames
+        $forenames = $fragments ? implode(" ", $fragments) : '';
+
+        return [$surnames, $forenames];
     }
 
     /**

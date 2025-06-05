@@ -18,7 +18,6 @@ use Joomla\Utilities\ArrayHelper;
 use THM\Groups\Helpers\{Groups as GH, Users as UH};
 use THM\Groups\Tables\{Groups as GT, Users as UT};
 use THM\Groups\Adapters\Application;
-use THM\Groups\Tools\Cohesion;
 
 /**
  * Groups User Plugin
@@ -64,11 +63,8 @@ class PlgUserGroups extends CMSPlugin
         $updated = false;
 
         if (empty($user->surnames)) {
-            [$surnames, $forenames] = Cohesion::parseNames($user->name);
-
-            $user->forenames = $forenames;
-            $user->surnames  = $surnames;
-            $updated         = true;
+            [$user->surnames, $user->forenames] = UH::parseNames($user->name);
+            $updated = true;
         }
 
         if (empty($user->alias) or $updated) {
