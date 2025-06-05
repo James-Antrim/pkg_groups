@@ -259,7 +259,7 @@ class Users
         }
 
         // Global restriction or account to be edited does not belong to the user.
-        if (!Input::getParams()->get('profiles') or $accountID != $userID) {
+        if (!Input::getParams()->get('profile-management') or $accountID != $userID) {
             return false;
         }
 

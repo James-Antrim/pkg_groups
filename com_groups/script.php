@@ -57,6 +57,8 @@ return new class () implements InstallerScriptInterface {
     public function postflight(string $type, InstallerAdapter $adapter): bool
     {
         //todo: Component settings
+        //todo: -editownprofile => profile-management
+        //todo: -enabled => profile-content
         //todo: Resource migration
         //todo: File migration
         //todo: Menu assignments

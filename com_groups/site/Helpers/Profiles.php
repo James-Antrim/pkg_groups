@@ -12,13 +12,5 @@ namespace THM\Groups\Helpers;
 
 class Profiles
 {
-    // Attributes protected because of their special display in various templates
-    /*public const PROTECTED = [
-        self::EMAIL,
-        self::FIRST_NAME,
-        self::IMAGE,
-        self::NAME,
-        self::SUPPLEMENT_POST,
-        self::SUPPLEMENT_PRE
-    ];*/
+    public const CENTRALIZED = 0, DECENTRALIZED = 1, DISABLED = 0, ENABLED = 1;
 }

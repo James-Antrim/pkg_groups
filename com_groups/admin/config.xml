@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <fieldset name="general" label="GROUPS_FEATURES" description="GROUPS_FEATURES_DESC">
-        <field name="profiles" type="list" label="GROUPS_PROFILE_MANAGEMENT" description="GROUPS_PROFILE_MANAGEMENT_DESC">
+        <field name="automatic-publishing" type="list" label="GROUPS_AUTOMATIC_PROFILE_PUBLISHING" default="1">
+            <option value="0">GROUPS_DISABLED</option>
+            <option value="1">GROUPS_ENABLED</option>
+        </field>
+        <field name="profile-management" type="list" label="GROUPS_PROFILE_MANAGEMENT" default="1">
             <option value="0">GROUPS_CENTRALIZED</option>
             <option value="1">GROUPS_DECENTRALIZED</option>
         </field>
-        <field name="content" type="list" label="GROUPS_CONTENT_ENABLED" description="GROUPS_CONTENT_ENABLED_DESC">
+        <field name="profile-content" type="list" label="GROUPS_PROFILE_CONTENT" default="0">
             <option value="0">GROUPS_DISABLED</option>
             <option value="1">GROUPS_ENABLED</option>
         </field>
