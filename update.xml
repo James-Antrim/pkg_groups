@@ -12,7 +12,7 @@
             <tag>stable</tag>
         </tags>
         <targetplatform name="joomla" version="5.[0123456789]"/>
-        <php_minimum>8.1</php_minimum>
+        <php_minimum>8.2</php_minimum>
         <element>com_groups</element>
         <type>component</type>
         <downloads>

@@ -21,6 +21,8 @@ use THM\Groups\Adapters\Application;
  */
 class Users extends User
 {
+    use Published;
+
     /**
      * VARCHAR(100) NOT NULL DEFAULT ''
      * @var string
@@ -133,12 +135,6 @@ class Users extends User
      * @var string
      */
     public $password;
-
-    /**
-     * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
-     * @var bool
-     */
-    public $published;
 
     /**
      * DATETIME NOT NULL

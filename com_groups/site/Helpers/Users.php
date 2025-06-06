@@ -19,11 +19,11 @@ use THM\Groups\Tables\{Categories, Users as Table};
 class Users
 {
     use Persistent;
+    use Published;
 
     public const ACTIVATED = true, PENDING = false;
     public const ENABLED = 1, DISABLED = 0;
     public const BLOCKED = 1, UNBLOCKED = 0;
-    public const PUBLISHED = 1, UNPUBLISHED = 0;
 
     // Pending state comes into effect through user interaction with the login component.
     public const activatedStates = [

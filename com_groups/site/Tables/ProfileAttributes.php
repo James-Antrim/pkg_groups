@@ -22,17 +22,13 @@ use THM\Groups\Adapters\Application;
 class ProfileAttributes extends Table
 {
     use Incremented;
+    use Published;
 
     /**
      * INT(11) UNSIGNED NOT NULL (fk_pAttribs_attributeID -> groups_attributes.id)
      * @var int
      */
     public $attributeID;
-
-    /**
-     * @var bool TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
-     */
-    public $published;
 
     /**
      * INT(11) NOT NULL (fk_pAttribs_personID -> persons.id -> fk: users.id)
