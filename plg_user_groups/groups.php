@@ -15,6 +15,7 @@ require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/autoloader.p
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Event\Model\AfterSaveEvent;
 use Joomla\Utilities\ArrayHelper;
+use THM\Groups\Controllers\Profile as Controller;
 use THM\Groups\Helpers\{Groups as GH, Users as UH};
 use THM\Groups\Tables\{Groups as GT, Users as UT};
 use THM\Groups\Adapters\Application;
@@ -24,8 +25,6 @@ use THM\Groups\Adapters\Application;
  */
 class PlgUserGroups extends CMSPlugin
 {
-    private const NO = false;
-
     /**
      * Method fills user related table information.
      *
@@ -53,27 +52,16 @@ class PlgUserGroups extends CMSPlugin
 
             // If the person is no longer associated with a displayable group unpublish their profile.
             if ($user->published) {
-                $user->published = self::NO;
+                $user->published = UH::UNPUBLISHED;
                 $user->store();
             }
 
             return;
         }
 
-        $updated = false;
-
         if (empty($user->surnames)) {
-            [$user->surnames, $user->forenames] = UH::parseNames($user->name);
-            $updated = true;
-        }
-
-        if (empty($user->alias) or $updated) {
-            $user->alias = UH::createAlias($user->id, "$user->forenames $user->surnames");
-            $updated     = true;
-        }
-
-        if ($updated) {
-            $user->store();
+            $controller = new Controller();
+            $controller->create($user->id);
         }
     }
 

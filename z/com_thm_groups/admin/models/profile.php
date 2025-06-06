@@ -9,8 +9,8 @@
  */
 
 use Joomla\CMS\Log\Log;
-use THM\Groups\Adapters\Input;
-use THM\Groups\Helpers\{Can, Users};
+use THM\Groups\Adapters\{Application, Database as DB, Input};
+use THM\Groups\Helpers\{Attributes, Can, Users};
 
 defined('_JEXEC') or die;
 require_once HELPERS . 'content.php';
@@ -36,7 +36,7 @@ class THM_GroupsModelProfile extends JModelLegacy
         $app = JFactory::getApplication();
 
         if (!Can::manage()) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
             return false;
         }
@@ -52,7 +52,7 @@ class THM_GroupsModelProfile extends JModelLegacy
             return $this->batchProfiles($newProfileData['groupIDs'], $newProfileData['profileIDs']);
         }
 
-        $app->enqueueMessage(JText::_('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION'), 'error');
+        Application::message('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION', Application::ERROR);
 
         return false;
     }
@@ -82,7 +82,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     }
 
     /**
-     * Associates the selected profiles with the selected group/role assocations.
+     * Associates the selected profiles with the selected group/role associations.
      *
      * @param   array  $profileIDs       the selected profileIDs
      * @param   array  $requestedAssocs  the ids of the group/role association with which the profiles should be associated
@@ -100,80 +100,6 @@ class THM_GroupsModelProfile extends JModelLegacy
     }
 
     /**
-     * Deletes user from a group both in Joomla and in THM Groups.
-     *
-     * @return bool
-     *
-     * @throws Exception
-     */
-    public function deleteGroupAssociation()
-    {
-        $app = JFactory::getApplication();
-
-        if (!Can::manage()) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
-
-            return false;
-        }
-
-        $profileID = $app->input->getInt('profileID', 0);
-        $groupID   = $app->input->getInt('groupID', 0);
-
-        if (count(JFactory::getUser($profileID)->groups) < 2) {
-            $app->enqueueMessage(JText::_('COM_THM_GROUPS_CANNOT_DELETE_SOLE_GROUP'), 'error');
-
-            return false;
-        }
-
-        // Allow deletion of Joomla user group association if the user is associated with more than one user group.
-        $joomlaQuery = $this->_db->getQuery(true);
-        $joomlaQuery->delete('#__user_usergroup_map')->where("user_id = $profileID AND group_id = $groupID");
-        $this->_db->setQuery($joomlaQuery);
-
-        try {
-            $success = (bool) $this->_db->execute();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        if (empty($success)) {
-            return false;
-        }
-
-        $profileAssocs    = THM_GroupsHelperProfiles::getRoleAssociations($profileID);
-        $groupAssocs      = THM_GroupsHelperGroups::getRoleAssocIDs($groupID);
-        $disposableAssocs = array_intersect($profileAssocs, $groupAssocs);
-
-        $groupsQuery = $this->_db->getQuery(true);
-        $groupsQuery->delete('#__thm_groups_profile_associations')
-            ->where("role_associationID IN ('" . implode("','", $disposableAssocs) . "')")
-            ->where("profileID = $profileID");
-        $this->_db->setQuery($groupsQuery);
-
-        try {
-            $success = (bool) $this->_db->execute();
-        }
-        catch (Exception $exception) {
-            $app->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        if (empty($success)) {
-            return false;
-        }
-
-        if (!THM_GroupsHelperProfiles::getRoleAssociations($profileID)) {
-            return $this->updateBinaryValue($profileID, 'published', 0);
-        }
-
-        return true;
-    }
-
-    /**
      * Deletes the value for a specific profile picture attribute
      *
      * @param   int  $profileID    the id of the profile with which the picture is associated.
@@ -184,31 +110,21 @@ class THM_GroupsModelProfile extends JModelLegacy
      */
     public function deletePicture($profileID = 0, $attributeID = 0)
     {
-        $app         = JFactory::getApplication();
-        $profileID   = $app->input->getInt('profileID', $profileID);
-        $attributeID = $app->input->getString('attributeID', $attributeID);
+        $profileID   = Input::getInt('profileID', $profileID);
+        $attributeID = Input::getInt('attributeID', $attributeID);
 
         if (!Users::editing($profileID)) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
             return false;
         }
 
-        $selectQuery = $this->_db->getQuery(true);
-        $selectQuery->select('value')
-            ->from('#__thm_groups_profile_attributes')
-            ->where("profileID = '$profileID'")
-            ->where("attributeID = '$attributeID'");
-        $this->_db->setQuery($selectQuery);
-
-        try {
-            $fileName = $this->_db->loadResult();
-        }
-        catch (Exception $exc) {
-            $app->enqueueMessage($exc->getMessage(), 'error');
-
-            return false;
-        }
+        $query = DB::query();
+        $query->select('value')
+            ->from('#__groups_profile_attributes')
+            ->where(DB::qcs([['attributeID', $attributeID], ['profileID', $profileID]]));
+        DB::set($query);
+        $fileName = DB::string();
 
         // Button was pushed although there was no saved picture?
         if (empty($fileName)) {
@@ -220,23 +136,14 @@ class THM_GroupsModelProfile extends JModelLegacy
         }
 
         // Update new picture filename
-        $updateQuery = $this->_db->getQuery(true);
+        $query = DB::query();
 
         // Update the database with new picture information
-        $updateQuery->update('#__thm_groups_profile_attributes')
-            ->set("value = ''")
-            ->where("profileID = '$profileID'")
-            ->where("attributeID = '$attributeID'");
-        $this->_db->setQuery($updateQuery);
-
-        try {
-            $this->_db->execute();
-        }
-        catch (Exception $exc) {
-            $app->enqueueMessage($exc->getMessage(), 'error');
-
-            return false;
-        }
+        $query->update('#__groups_profile_attributes')
+            ->set(DB::qc('value', '', '=', true))
+            ->where(DB::qcs([['attributeID', $attributeID], ['profileID', $profileID]]));
+        DB::set($query);
+        DB::execute();
 
         return true;
     }
@@ -255,22 +162,13 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         foreach ($requestedAssocs as $requestedAssoc) {
             foreach ($requestedAssoc['roles'] as $role) {
-                $query = $this->_db->getQuery(true);
+                $query = DB::query();
                 $query->select('id')
                     ->from('#__thm_groups_role_associations')
                     ->where("groupID = '{$requestedAssoc['id']}'")
                     ->where("roleID = {$role['id']}");
-                $this->_db->setQuery($query);
-
-                try {
-                    $assocID = $this->_db->loadResult();
-                }
-                catch (Exception $exception) {
-                    JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-                    return [];
-                }
-
+                DB::set($query);
+                $assocID          = DB::integer();
                 $assocs[$assocID] = $assocID;
             }
         }
@@ -286,10 +184,8 @@ class THM_GroupsModelProfile extends JModelLegacy
      */
     public function publish()
     {
-        $app = JFactory::getApplication();
-
         if (!Can::manage()) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
             return false;
         }
@@ -312,10 +208,8 @@ class THM_GroupsModelProfile extends JModelLegacy
      */
     public function publishContent()
     {
-        $app = JFactory::getApplication();
-
         if (!Can::manage()) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
             return false;
         }
@@ -356,29 +250,40 @@ class THM_GroupsModelProfile extends JModelLegacy
         $profileID = $data['profileID'];
 
         if (!Users::editing($profileID)) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
             return false;
         }
 
-        $dbo = JFactory::getDbo();
-        $dbo->transactionStart();
-
-        $success = $this->saveValues($data);
-
-        if (!$success) {
-            $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
-            $dbo->transactionRollback();
-
+        if (!$this->saveValues($data)) {
+            Application::message('SAVE_FAIL', Application::ERROR);
             return false;
         }
 
-        THM_GroupsHelperProfiles::setAlias($profileID);
-        $user       = \JFactory::getUser($profileID);
-        $user->name = THM_GroupsHelperProfiles::getDisplayName($profileID);
-        $user->save(true);
+        /**
+         * @todo: Get the fore- and surnames and the published value from the profile form
+         */
+        $forenames = $data['forenames'];
+        $published = $data['published'];
+        $surnames  = $data['surnames'];
+        $names     = $forenames ? $surnames : "$forenames $surnames";
+        $alias     = Users::createAlias($profileID, $names);
 
-        $dbo->transactionCommit();
+        $query = DB::query();
+        $query->update(DB::qn('#__users'))
+            ->set([
+                DB::qc('alias', $alias),
+                DB::qc('forenames', $forenames),
+                DB::qc('name', $names),
+                DB::qc('published', $published),
+                DB::qc('surnames', $surnames),
+            ])
+            ->where(DB::qc('id', $profileID));
+        DB::set($query);
+
+        if (!DB::execute()) {
+            Application::message('500', Application::ERROR);
+        }
 
         return $profileID;
     }
@@ -396,7 +301,7 @@ class THM_GroupsModelProfile extends JModelLegacy
         $profileID = $input->getInt('profileID');
 
         if (!Users::editing($profileID)) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
             return false;
         }
@@ -467,7 +372,7 @@ class THM_GroupsModelProfile extends JModelLegacy
 
             $rawValue = empty(strip_tags(trim($attribute['value']))) ? '' : trim($attribute['value']);
 
-            if (strpos($rawValue, '<script') !== false) {
+            if (str_contains($rawValue, '<script')) {
                 $options = ['text_file' => 'groups_xss_attempts.php', 'text_entry_format' => '{DATETIME}:{MESSAGE}'];
                 Log::addLogger($options, Log::ALL, ['com_thm_groups.XSSAttempts']);
                 $message = "\n\nPerson:\n--------------\n";
@@ -485,33 +390,19 @@ class THM_GroupsModelProfile extends JModelLegacy
                 return false;
             }
 
-            $cleanedValue = Input::removeEmptyTags($rawValue);
+            $value     = DB::quote(Input::removeEmptyTags($rawValue));
+            $published = empty($attribute['published']) ? Attributes::UNPUBLISHED : Attributes::PUBLISHED;
 
+            $query = DB::query();
+            $query->update('#__groups_profile_attributes')
+                ->set([
+                    DB::qc('value', $value),
+                    DB::qc('published', $published),
+                ])
+                ->where(DB::qcs([['attributeID', $attributeID], ['profileID', $profileID]]));
+            DB::set($query);
 
-            $query = $this->_db->getQuery(true);
-            $query->update('#__thm_groups_profile_attributes');
-
-            $value = $this->_db->q($cleanedValue);
-            $query->set("value = $value");
-
-            $published = empty($attribute['published']) ? 0 : 1;
-            $query->set("published = '$published'");
-
-            $query->where("profileID = '$profileID'");
-            $query->where("attributeID = '$attributeID'");
-
-            $this->_db->setQuery($query);
-
-            try {
-                $success = $this->_db->execute();
-            }
-            catch (Exception $exc) {
-                JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
-
-                return false;
-            }
-
-            if (empty($success)) {
+            if (!DB::execute()) {
                 return false;
             }
         }
@@ -583,10 +474,10 @@ class THM_GroupsModelProfile extends JModelLegacy
      */
     private function setJoomlaAssociations($profileIDs, $batchData)
     {
-        $existingQuery = $this->_db->getQuery(true);
+        $existingQuery = DB::query();
         $existingQuery->select('id')->from('#__user_usergroup_map')
             ->where("user_id IN ('" . implode("','", $profileIDs) . "')");
-        $query = $this->_db->getQuery(true);
+        $query = DB::query();
         $query->insert('#__user_usergroup_map')->columns('user_id, group_id');
         $values = [];
 
@@ -597,10 +488,10 @@ class THM_GroupsModelProfile extends JModelLegacy
         }
 
         $query->values($values);
-        $this->_db->setQuery($query);
+        DB::set($query);
 
         try {
-            $success = $this->_db->execute();
+            $success = DB::execute();
         }
         catch (Exception $exception) {
             // Ignore duplicate entry exception
@@ -628,7 +519,7 @@ class THM_GroupsModelProfile extends JModelLegacy
         $app = JFactory::getApplication();
 
         if (!Can::manage()) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
             return false;
         }
@@ -698,12 +589,12 @@ class THM_GroupsModelProfile extends JModelLegacy
     private function updateBinaryValue($profileID, $column, $value)
     {
         $value = empty($value) ? 0 : 1;
-        $query = $this->_db->getQuery(true);
+        $query = DB::query();
         $query->update('#__thm_groups_profiles')->set("$column = $value")->where("id = $profileID");
-        $this->_db->setQuery($query);
+        DB::set($query);
 
         try {
-            return (bool) $this->_db->execute();
+            return DB::bool();
         }
         catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
@@ -714,12 +605,12 @@ class THM_GroupsModelProfile extends JModelLegacy
 
     private function updateCategoryPublishing($categoryID, $value)
     {
-        $query = $this->_db->getQuery(true);
+        $query = DB::query();
         $query->update('#__categories')->set("published = $value")->where("id = $categoryID");
-        $this->_db->setQuery($query);
+        DB::set($query);
 
         try {
-            return (bool) $this->_db->execute();
+            return DB::bool();
         }
         catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
@@ -739,7 +630,7 @@ class THM_GroupsModelProfile extends JModelLegacy
         $app = JFactory::getApplication();
 
         if (!Can::manage()) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
             return false;
         }
@@ -772,7 +663,7 @@ class THM_GroupsModelProfile extends JModelLegacy
         $app = JFactory::getApplication();
 
         if (!Can::manage()) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
             return false;
         }

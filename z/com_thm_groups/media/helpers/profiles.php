@@ -8,8 +8,9 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\{Database as DB, Text};
-use THM\Groups\Helpers\{Can, Users};
+use THM\Groups\Adapters\Text;
+use THM\Groups\Helpers\{Attributes, Types, Users};
+use THM\Groups\Controllers\Profile as Controller;
 
 require_once 'attributes.php';
 require_once 'groups.php';
@@ -70,9 +71,8 @@ class THM_GroupsHelperProfiles
 
         // Profile is new
         if (!$profiles->load($profileID)) {
-            if (!self::createProfile($profileID)) {
-                return false;
-            }
+            $controller = new Controller();
+            $controller->create($profileID);
         }
 
         $dbo   = JFactory::getDbo();
@@ -148,8 +148,9 @@ class THM_GroupsHelperProfiles
         }
 
         if ($missingIDs) {
+            $controller = new Controller();
             foreach ($missingIDs as $missingID) {
-                self::createProfile($missingID);
+                $controller->create($missingID);
             }
         }
 
@@ -181,107 +182,6 @@ class THM_GroupsHelperProfiles
     }
 
     /**
-     * Creates a rudimentary profile based on Joomla user derived attributes.
-     *
-     * @param   int  $profileID  the id of the joomla user which will be identical with the profile id
-     *
-     * @return bool true if the profile was successfully created, otherwise false
-     * @throws Exception
-     */
-    public static function createProfile($profileID)
-    {
-        $user = JFactory::getUser($profileID);
-
-        if (!$user->id) {
-            return false;
-        }
-
-        [$forename, $surname] = self::resolveUserName($user->id, $user->name);
-        $email = $user->email;
-
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->insert("#__thm_groups_profiles")
-            ->columns("id, published, canEdit, contentEnabled")
-            ->values("$profileID, 1, 1, 0");
-        $dbo->setQuery($query);
-
-        try {
-            $dbo->execute();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        if (!self::fillAttributes($profileID, $forename, $surname, $email)) {
-            return false;
-        }
-
-        return self::setAlias($profileID);
-    }
-
-    /**
-     * Sets the standard attribute values which can be derived from Joomla user information.
-     *
-     * @param   int     $profileID  the profile id
-     * @param   string  $forename   the forename
-     * @param   string  $surname    the surname
-     * @param   string  $email      the email
-     *
-     * @return bool true on success, otherwise false
-     * @throws Exception
-     */
-    public static function fillAttributes($profileID, $forename, $surname, $email)
-    {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('DISTINCT id')->from('#__thm_groups_attributes');
-        $dbo->setQuery($query);
-
-        try {
-            $attributeIDs = $dbo->loadColumn();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        $joomlaAttributes = [EMAIL_ATTRIBUTE => $email, FORENAME => $forename, SURNAME => $surname];
-        $success          = true;
-        foreach ($attributeIDs as $attributeID) {
-            $data             = ['attributeID' => $attributeID, 'profileID' => $profileID];
-            $profileAttribute = JTable::getInstance('profile_attributes', 'thm_groupsTable');
-
-            if (empty($joomlaAttributes[$attributeID])) {
-                $value     = '';
-                $published = 0;
-            }
-            else {
-                $value     = $joomlaAttributes[$attributeID];
-                $published = 1;
-            }
-
-            // Profile attribute exists
-            if ($profileAttribute->load($data)) {
-                if ($value) {
-                    $profileAttribute->value = $value;
-                    $success                 = ($success and $profileAttribute->store());
-                }
-            }
-            else {
-                $data['value']     = $value;
-                $data['published'] = $published;
-                $success           = ($success and $profileAttribute->save($data));
-            }
-        }
-
-        return $success;
-    }
-
-    /**
      * Creates the name to be displayed
      *
      * @param   int   $profileID  the user id
@@ -310,15 +210,15 @@ class THM_GroupsHelperProfiles
      *
      * @param   int   $profileID   the id of the profile
      * @param   int   $templateID  the id of the template
-     * @param   bool  $suppress    whether or not to suppress long texts
-     * @param   bool  $showImage   whether or not to suppress image attributes
+     * @param   bool  $suppress    whether to suppress long texts
+     * @param   bool  $showImage   whether to suppress image attributes
      *
      * @return string the HTML of the profile
      * @throws Exception
      */
     public static function getDisplay($profileID, $templateID = 0, $suppress = false, $showImage = true)
     {
-        $preRendered     = [TITLE, FORENAME, SURNAME, POSTTITLE];
+        $preRendered     = [Attributes::SUPPLEMENT_PRE, FORENAME, SURNAME, Attributes::SUPPLEMENT_POST];
         $attributes      = [];
         $imageAttributes = [];
 
@@ -338,7 +238,7 @@ class THM_GroupsHelperProfiles
 
             $renderedAttribute = THM_GroupsHelperAttributes::getDisplay($attribute, $suppress);
 
-            if ($attribute['typeID'] == IMAGE) {
+            if ($attribute['typeID'] == Types::IMAGE) {
                 if ($showImage) {
                     $imageAttributes[$attribute['id']] = $renderedAttribute;
                 }
@@ -349,41 +249,6 @@ class THM_GroupsHelperProfiles
         }
 
         return implode('', $imageAttributes) . implode('', $attributes);
-    }
-
-    /**
-     * Gets the group ids associated with the profile
-     *
-     * @param   int  $profileID  the id of the profile
-     *
-     * @return array the role association ids associated with the profile
-     * @throws Exception
-     */
-    public static function getGroupAssociations($profileID)
-    {
-        if (!$roleAssocIDs = self::getRoleAssociations($profileID)) {
-            return [];
-        }
-
-        $roleAssocIDs = implode(',', $roleAssocIDs);
-
-        $dbo   = JFactory::getDBO();
-        $query = $dbo->getQuery(true);
-        $query->select('DISTINCT groupID')
-            ->from('#__thm_groups_role_associations')
-            ->where("id IN ($roleAssocIDs)");
-        $dbo->setQuery($query);
-
-        try {
-            $result = $dbo->loadColumn();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        return empty($result) ? [] : $result;
     }
 
     /**
@@ -410,7 +275,7 @@ class THM_GroupsHelperProfiles
      * Creates the HTML for the name container
      *
      * @param   int   $profileID  the id of the profile
-     * @param   bool  $newTab     whether or not the profile should open in a new tab
+     * @param   bool  $newTab     whether the profile should open in a new tab
      *
      * @return string the HTML string containing name information
      * @throws Exception
@@ -453,8 +318,8 @@ class THM_GroupsHelperProfiles
             ->where("sn.profileID = $profileID")
             ->where("sn.attributeID = " . SURNAME)
             ->where("fn.attributeID = " . FORENAME)
-            ->where("prt.attributeID = " . TITLE)
-            ->where("pot.attributeID = " . POSTTITLE);
+            ->where("prt.attributeID = " . Attributes::SUPPLEMENT_PRE)
+            ->where("pot.attributeID = " . Attributes::SUPPLEMENT_POST);
 
         $dbo->setQuery($query);
 
@@ -530,7 +395,7 @@ class THM_GroupsHelperProfiles
      * Retrieves the attributes for a given profile id in their raw format
      *
      * @param   int   $profileID  the id whose values are sought
-     * @param   bool  $published  whether or not only published values should be returned
+     * @param   bool  $published  whether only published values should be returned
      *
      * @return array the profile attributes
      * @throws Exception
@@ -589,29 +454,6 @@ class THM_GroupsHelperProfiles
     }
 
     /**
-     * Creates the HTML for the title container
-     *
-     * @param   array  $attributes  the attributes of the profile
-     *
-     * @return string the HTML string containing title information
-     */
-    public static function getTitleContainer($attributes)
-    {
-        $text = '';
-
-        $title = empty($attributes[5]['value']) ? '' : nl2br(htmlspecialchars_decode($attributes[5]['value']));
-        $title .= empty($attributes[7]['value']) ? '' : ', ' . nl2br(htmlspecialchars_decode($attributes[7]['value']));
-
-        if (empty($title)) {
-            return $text;
-        }
-
-        $text .= '<span class="attribute-title">' . $title . '</span>';
-
-        return '<div class="attribute-inline">' . JHtml::link($attributes['URL'], $text) . '</div>';
-    }
-
-    /**
      * Creates the HTML for the name container
      *
      * @param   int  $profileID  the id of the profile
@@ -621,7 +463,7 @@ class THM_GroupsHelperProfiles
      */
     public static function getVCardLink($profileID)
     {
-        $icon = '<span class="icon-vcard" title="' . \JText::_('COM_THM_GROUPS_VCARD_DOWNLOAD') . '"></span>';
+        $icon = '<span class="icon-vcard" title="' . Text::_('VCARD_DOWNLOAD') . '"></span>';
         $url  = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID, 'format' => 'vcf']);
 
         return JHtml::link($url, $icon);
@@ -668,81 +510,5 @@ class THM_GroupsHelperProfiles
         }
 
         return 0;
-    }
-
-    /**
-     * Resolves the user name attribute to forename and surnames
-     *
-     * @param   int     $id    the id of the profile user
-     * @param   string  $name  the name attribute of the Joomla user
-     *
-     * @return array the forename and surname of the user as they were resolved
-     * @throws Exception
-     */
-    public static function resolveUserName($id, $name)
-    {
-        if ($ntData = self::getNamesAndTitles($id) and $name === "{$ntData['forename']} {$ntData['surname']}") {
-            return [$ntData['forename'], $ntData['surname']];
-        }
-
-        // Special case for adding deceased as part of the entered name
-        $name = htmlentities($name);
-        $name = str_replace('&dagger;', '', $name);
-        $name = html_entity_decode($name);
-
-        $name = preg_replace('/[^A-ZÀ-ÖØ-Þa-zß-ÿ\p{N}_.\-\']/', ' ', $name);
-        $name = preg_replace('/ +/', ' ', $name);
-        $name = trim($name);
-
-        $nameFragments = explode(" ", $name);
-        $nameFragments = array_filter($nameFragments);
-
-        $surname        = array_pop($nameFragments);
-        $nameSupplement = '';
-
-        // The next element is a supplementary preposition.
-        while (preg_match('/^[a-zß-ÿ]+$/', end($nameFragments))) {
-            $nameSupplement = array_pop($nameFragments);
-            $surname        = $nameSupplement . ' ' . $surname;
-        }
-
-        // These supplements indicate the existence of a further noun.
-        if (in_array($nameSupplement, ['zu', 'zum'])) {
-            $otherSurname = array_pop($nameFragments);
-            $surname      = $otherSurname . ' ' . $surname;
-
-            while (preg_match('/^[a-zß-ÿ]+$/', end($nameFragments))) {
-                $nameSupplement = array_pop($nameFragments);
-                $surname        = $nameSupplement . ' ' . $surname;
-            }
-        }
-
-        $forename = implode(" ", $nameFragments);
-
-        return [$forename, $surname];
-    }
-
-    /**
-     * Sets the profile alias based on the profile's fore- and surename attributes
-     *
-     * @param   int  $profileID  the id of the profile for which the alias is to be set
-     *
-     * @return bool true on success, otherwise false
-     *
-     * @throws Exception
-     */
-    public static function setAlias(int $profileID): bool
-    {
-        $forenames = Users::forenames($profileID);
-        $surnames  = Users::surnames($profileID);
-
-        $names = $forenames ? $surnames : "$forenames $surnames";
-        $alias = Users::createAlias($profileID, $names);
-
-        $query = DB::query();
-        $query->update(DB::qn('#__users'))->set(DB::qc('alias', $alias, '=', true))->where(DB::qc('id', $profileID));
-        DB::set($query);
-
-        return DB::execute();
     }
 }
