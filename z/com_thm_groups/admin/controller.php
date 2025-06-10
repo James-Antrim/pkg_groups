@@ -229,40 +229,6 @@ class THM_GroupsController extends JControllerLegacy
     }
 
     /**
-     * Publishes the resource
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function publish()
-    {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'publish'));
-
-        if ($functionAvailable) {
-            $success = $model->publish();
-
-            if ($success) {
-                $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
-                $type = 'message';
-            }
-            else {
-                $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
-                $type = 'error';
-            }
-        }
-        else {
-            $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
-            $type = 'error';
-        }
-
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_manager");
-        parent::display();
-    }
-
-    /**
      * Enables profile specific content
      *
      * @return void
@@ -481,42 +447,6 @@ class THM_GroupsController extends JControllerLegacy
         }
 
         $app = JFactory::getApplication();
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_manager");
-        parent::display();
-    }
-
-    /*Warning: Invalid argument supplied for foreach() in /srv/www/websites/dev/mnd/administrator/components/com_thm_groups/models/profile.php on line 116*/
-
-    /**
-     * Hides the public display of the resource
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function unpublish()
-    {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'unpublish'));
-
-        if ($functionAvailable) {
-            $success = $model->unpublish();
-
-            if ($success) {
-                $msg  = JText::_('COM_THM_GROUPS_SAVE_SUCCESS');
-                $type = 'message';
-            }
-            else {
-                $msg  = JText::_('COM_THM_GROUPS_SAVE_FAIL');
-                $type = 'error';
-            }
-        }
-        else {
-            $msg  = JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE');
-            $type = 'error';
-        }
-
         $app->enqueueMessage($msg, $type);
         $app->input->set('view', "{$this->resource}_manager");
         parent::display();

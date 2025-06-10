@@ -177,30 +177,6 @@ class THM_GroupsModelProfile extends JModelLegacy
     }
 
     /**
-     * Allows the public display of the user's profile. Access checks are performed in toggle.
-     *
-     * @return bool
-     * @throws Exception
-     */
-    public function publish()
-    {
-        if (!Can::manage()) {
-            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
-
-            return false;
-        }
-
-        $profileIDs = Input::getSelectedIDs();
-        foreach ($profileIDs as $profileID) {
-            if (!$this->updateBinaryValue($profileID, 'published', 1)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Allows public display of personal content. Access checks are performed in toggle.
      *
      * @return bool
@@ -617,39 +593,6 @@ class THM_GroupsModelProfile extends JModelLegacy
 
             return false;
         }
-    }
-
-    /**
-     * Hides the public display of the user's profile. Access checks are performed in toggle.
-     *
-     * @return bool
-     * @throws Exception
-     */
-    public function unpublish()
-    {
-        $app = JFactory::getApplication();
-
-        if (!Can::manage()) {
-            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
-
-            return false;
-        }
-
-        $profileIDs = Input::getSelectedIDs();
-        foreach ($profileIDs as $profileID) {
-            if ($categoryID = Users::categoryID($profileID)) {
-                $this->updateCategoryPublishing($categoryID, 0);
-            }
-
-            $profileDisabled = $this->updateBinaryValue($profileID, 'published', 0);
-            $contentDisabled = $this->updateBinaryValue($profileID, 'contentEnabled', 0);
-
-            if (!$contentDisabled or !$profileDisabled) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**

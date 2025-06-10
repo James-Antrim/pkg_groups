@@ -159,36 +159,6 @@ class THM_GroupsController extends JControllerLegacy
     }
 
     /**
-     * Publishes the resource
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function publish()
-    {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'publish'));
-
-        if ($functionAvailable) {
-            $success = $model->publish();
-
-            if ($success) {
-                $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_SUCCESS'));
-            }
-            else {
-                $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
-            }
-        }
-        else {
-            $app->enqueueMessage(JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE'), 'error');
-        }
-
-        $referrer = $app->input->server->getString('HTTP_REFERER');
-        $app->redirect($referrer);
-    }
-
-    /**
      * Saves changes to the profile and redirects to the profile on success
      *
      * @return  void
@@ -277,36 +247,6 @@ class THM_GroupsController extends JControllerLegacy
 
         if ($functionAvailable) {
             $success = $this->getModel($this->resource)->toggle();
-
-            if ($success) {
-                $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_SUCCESS'));
-            }
-            else {
-                $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
-            }
-        }
-        else {
-            $app->enqueueMessage(JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE'), 'error');
-        }
-
-        $referrer = $app->input->server->getString('HTTP_REFERER');
-        $app->redirect($referrer);
-    }
-
-    /**
-     * Hides display of personal content
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function unpublish()
-    {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'unpublish'));
-
-        if ($functionAvailable) {
-            $success = $model->unpublish();
 
             if ($success) {
                 $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_SUCCESS'));

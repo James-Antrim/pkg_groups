@@ -249,17 +249,6 @@ class THM_GroupsModelContent extends JModelItem
     }
 
     /**
-     * Method to change the core published state of THM Groups articles.
-     *
-     * @return  boolean  true on success, otherwise false
-     * @throws Exception
-     */
-    public function publish()
-    {
-        return THM_GroupsHelperContent::publish();
-    }
-
-    /**
      * Saves the manually set order of records.
      *
      * @param   array  $contentIDs  an array of primary content ids
