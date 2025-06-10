@@ -11,6 +11,8 @@
 JLoader::import('joomla.application.component.model');
 JLoader::import('category', JPATH_SITE . '/components/com_content/models');
 
+use THM\Groups\Helpers\Profiles as Helper;
+
 /**
  * Data retrieval class for the THM Groups profile module.
  *
@@ -146,7 +148,7 @@ class THM_GroupsHelperProfilesModule
 
         $profiles = array_flip($profiles);
         foreach (array_keys($profiles) as $profileID) {
-            $name                 = THM_GroupsHelperProfiles::getLNFName($profileID);
+            $name                 = Helper::lnfName($profileID);
             $profiles[$profileID] = $name;
         }
         asort($profiles);
