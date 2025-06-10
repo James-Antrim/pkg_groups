@@ -12,7 +12,7 @@
 namespace THM\Groups\Helpers;
 
 use Joomla\CMS\Helper\ContentHelper;
-use THM\Groups\Adapters\{Input, User};
+use THM\Groups\Adapters\{Application, User};
 
 class Can
 {
@@ -70,13 +70,44 @@ class Can
     /**
      * Checks whether the user has access to create component resources.
      *
-     * @param   string  $context  the context in which access is being checked
+     * @param   string  $context     the context in which access is being checked
+     * @param   int     $categoryID  the id of the category context as applicable
      *
      * @return bool
      */
-    public static function create(string $context = 'com_users'): bool
+    public static function create(string $context = 'com_users', int $categoryID = 0): bool
     {
-        return (self::administrate($context) or ContentHelper::getActions($context)->get('core.create'));
+        $user = User::instance();
+
+        // Basic context rights
+        if (
+            $user->authorise('core.admin', $context)
+            or $user->authorise('core.manage', $context)
+            or $user->authorise('core.create', $context)) {
+            return true;
+        }
+
+        switch ($context) {
+            case 'com_content':
+                return false;
+            case 'com_content.category':
+                // Basic resource rights
+                $asset = $categoryID ? "$context.$categoryID" : $context;
+                if ($user->authorise('core.create', $asset)) {
+                    return true;
+                }
+
+                if (empty($categoryID)) {
+                    return false;
+                }
+
+                // Rights specific to the groups component, publication state ignored because of identity at this level.
+                $userID = Categories::userID($categoryID);
+                return ($userID === $user->id and Users::content($userID));
+            default:
+                return false;
+
+        }
     }
 
     /**
@@ -154,7 +185,7 @@ class Can
      *
      * @return bool
      */
-    public static function identity(int $id = 0): bool
+    private static function identity(int $id = 0): bool
     {
         return ($id and User::id() === $id);
     }
@@ -194,9 +225,31 @@ class Can
      *
      * @return bool
      */
-    public static function save(int $id, string $context = 'com_users'): bool
+    public static function save(string $context, int $id = 0): bool
     {
-        return $id ? self::edit($context) : self::create($context);
+        if (self::administrate($context)) {
+            return true;
+        }
+
+        switch ($context) {
+            // Someone creating or editing content or the profile associated category
+            case 'com_content.category':
+                // user is groups-associated with category and global or individual enable
+                // user can edit or save in with content permissions on this category
+                return false;
+            case 'com_content':
+                // groups related content
+                return (self::edit($context, $id) or self::create($context));
+            case 'com_groups':
+                if (self::manage()) {
+                    return true;
+                }
+                return (self::edit($context, $id) or self::create($context));
+            case 'com_users':
+                return (self::edit($context, $id) or self::create($context) or ($id and self::identity($id)));
+            default:
+                return false;
+        }
     }
 
     /**
@@ -208,7 +261,7 @@ class Can
      */
     public static function saveUser(int $id): bool
     {
-        return (self::save($id) or ($id and self::identity($id)));
+        return (self::save('com_users', $id) or ($id and self::identity($id)));
     }
 
     /**
@@ -224,19 +277,27 @@ class Can
             return true;
         }
 
+        $public = !Application::backend();
+
+        // todo: square this with admin menu generation
         return match ($view) {
             // Administrative views and admin access was already checked
             'Attribute', 'Attributes',
             'Role', 'Roles',
-            'Template', 'Templates',
-                // TODO group/s authorization was admin in users, but need to be revisited for presentation
-            'Group', 'Groups' => false,
-            // the published content/contents of a specific person or content administration
-            'Content', 'Contents' => (Input::getInt('personID') or self::administrate()),
-            // persons associated with a specific group or person administration
-            'Persons' => (Input::getInt('groupID') or self::administrate()),
+            'Template', 'Templates' => false,
+
+            // com users rights and no public display
+            'Group', 'Groups' => self::manage(),
+
+            // com content rights or public display
+            'Content', 'Contents' => ($public or self::manage('com_content')),
+
+            // com users rights or public display
+            'Persons' => ($public or self::manage()),
+
             // Development queue
-            'Level', 'Levels' => false,
+            //'Level', 'Levels' => false,
+
             // Viewing is allowed, functions, layouts and levels may still be restricted elsewhere.
             default => true,
         };
