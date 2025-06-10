@@ -13,7 +13,8 @@ defined('_JEXEC') or die;
 
 require_once HELPERS . 'content.php';
 
-use THM\Groups\Helpers\{Profiles, Users};
+use THM\Groups\Adapters\Text;
+use THM\Groups\Helpers\{Can, Profiles, Users};
 
 /**
  * Class displays content in the profile's content category
@@ -50,35 +51,35 @@ class THM_GroupsViewContent_Manager extends JViewLegacy
         $user            = JFactory::getUser();
         $this->profileID = JFactory::getApplication()->input->getInt('profileID', $user->id);
         if (empty($this->profileID) or !Users::published($this->profileID)) {
-            $exc = new Exception(JText::_('COM_THM_GROUPS_PROFILE_NOT_FOUND'), '404');
+            $exc = new Exception(Text::_('PROFILE_NOT_FOUND'), '404');
             JErrorPage::render($exc);
         }
 
         $this->categoryID = Users::categoryID($this->profileID);
         $contentEnabled   = Users::content($this->profileID);
         if (empty($this->categoryID) or empty($contentEnabled)) {
-            $exc = new Exception(JText::_('COM_THM_GROUPS_ERROR_412'), '412');
+            $exc = new Exception(Text::_('ERROR_412'), '412');
             JErrorPage::render($exc);
         }
 
-        $this->canCreate = THM_GroupsHelperCategories::canCreate($this->categoryID);
-        $this->canEdit   = THM_GroupsHelperCategories::canEdit($this->categoryID);
+        $this->canCreate = Can::create('com_content.category', $this->categoryID);
+        $this->canEdit   = Can::edit('com_content.category', $this->categoryID);
         $this->items     = $this->get('Items');
         $this->menuID    = JFactory::getApplication()->input->getInt('Itemid', 0);
         $this->modifyDocument();
 
         if ($this->profileID == $user->id) {
-            $contextTitle = JText::_('COM_THM_GROUPS_MY_CONTENT');
+            $contextTitle = Text::_('MY_CONTENT');
         }
         elseif ($this->canEdit) {
-            $contextTitle = JText::sprintf(
-                'COM_THM_GROUPS_MANAGE_PROFILE_CONTENT',
+            $contextTitle = Text::sprintf(
+                'MANAGE_PROFILE_CONTENT',
                 Profiles::name($this->profileID)
             );
         }
         else {
-            $contextTitle = JText::sprintf(
-                'COM_THM_GROUPS_PROFILE_CONTENT',
+            $contextTitle = Text::sprintf(
+                'PROFILE_CONTENT',
                 Profiles::name($this->profileID)
             );
         }
@@ -98,8 +99,8 @@ class THM_GroupsViewContent_Manager extends JViewLegacy
             $return  = base64_encode(Joomla\CMS\Uri\Uri::getInstance()->toString());
             $addURL  = JUri::base() . '?option=com_content&task=article.add';
             $addURL  .= "&catid={$this->categoryID}&return=$return";
-            $attribs = ['title' => JText::_('COM_THM_GROUPS_NEW_ARTICLE'), 'class' => 'btn'];
-            $text    = '<span class="icon-new"></span> ' . JText::_('COM_THM_GROUPS_NEW_ARTICLE');
+            $attribs = ['title' => Text::_('NEW_ARTICLE'), 'class' => 'btn'];
+            $text    = '<span class="icon-new"></span> ' . Text::_('NEW_ARTICLE');
 
             return JHTML::_('link', JRoute::_($addURL), $text, $attribs);
         }
@@ -147,7 +148,7 @@ class THM_GroupsViewContent_Manager extends JViewLegacy
     }
 
     /**
-     * Creates the HMTL for the status select box
+     * Creates the HTML for the status select box
      *
      * @param   int  $key    the row id
      * @param   int  $state  the content state
@@ -162,47 +163,47 @@ class THM_GroupsViewContent_Manager extends JViewLegacy
         switch ($state) {
             case self::PUBLISHED:
                 $spanClass = 'icon-publish green';
-                $spanTip   = JText::_('COM_THM_GROUPS_PUBLISHED');
+                $spanTip   = Text::_('PUBLISHED');
                 break;
             case self::UNPUBLISHED:
                 $spanClass = 'icon-unpublish red';
-                $spanTip   = JText::_('COM_THM_GROUPS_UNPUBLISHED');
+                $spanTip   = Text::_('UNPUBLISHED');
                 break;
             case self::ARCHIVED:
                 $spanClass = 'icon-archive red';
-                $spanTip   = JText::_('COM_THM_GROUPS_ARCHIVED');
+                $spanTip   = Text::_('ARCHIVED');
                 break;
             case self::TRASHED:
                 $spanClass = 'icon-trash red';
-                $spanTip   = JText::_('COM_THM_GROUPS_TRASHED');
+                $spanTip   = Text::_('TRASHED');
                 break;
         }
 
         $select = '<span class="status-container ' . $spanClass . ' hasTip" title="' . $spanTip . '"></span>';
         $select .= '<div class="btn-group">';
         $select .= '<a class="btn dropdown-toggle stateid" data-toggle="dropdown" href="#">';
-        $select .= JText::_('COM_THM_GROUPS_CHANGE_STATUS');
+        $select .= Text::_('CHANGE_STATUS');
         $select .= '<span class="icon-arrow-down-3 pull-right"></span></a>';
         $select .= '<ul id="category" class="dropdown-menu">';
 
         if ($state != self::PUBLISHED) {
             $select .= '<li><a href="javascript://" onclick="listItemTask(\'cb' . $key . '\', \'content.publish\')">';
-            $select .= '<i class="icon-publish"></i> ' . JText::_('COM_THM_GROUPS_PUBLISH');
+            $select .= '<i class="icon-publish"></i> ' . Text::_('PUBLISH');
             $select .= '</a></li>';
         }
         if ($state != self::UNPUBLISHED) {
             $select .= '<li><a href="javascript://" onclick="listItemTask(\'cb' . $key . '\', \'content.unpublish\')">';
-            $select .= '<i class="icon-unpublish"></i> ' . JText::_('COM_THM_GROUPS_UNPUBLISH');
+            $select .= '<i class="icon-unpublish"></i> ' . Text::_('UNPUBLISH');
             $select .= '</a></li>';
         }
         if ($state != self::ARCHIVED) {
             $select .= '<li><a href="javascript://" onclick="listItemTask(\'cb' . $key . '\', \'content.archive\')">';
-            $select .= '<i class="icon-archive"></i> ' . JText::_('COM_THM_GROUPS_ARCHIVE');
+            $select .= '<i class="icon-archive"></i> ' . Text::_('ARCHIVE');
             $select .= '</a></li>';
         }
         if ($state != self::TRASHED) {
             $select .= '<li><a href="javascript://" onclick="listItemTask(\'cb' . $key . '\', \'content.trash\')">';
-            $select .= '<i class="icon-trash"></i> ' . JText::_('COM_THM_GROUPS_TRASH');
+            $select .= '<i class="icon-trash"></i> ' . Text::_('TRASH');
             $select .= '</a></li>';
         }
         $select .= '</ul>';
@@ -225,7 +226,7 @@ class THM_GroupsViewContent_Manager extends JViewLegacy
         $contentLinkAttribs = [
             'class'  => 'view-link',
             'target' => '_blank',
-            'title'  => JText::_('COM_THM_GROUPS_VIEW')
+            'title'  => Text::_('VIEW')
         ];
         $lock               = '';
         $formLink           = '';
@@ -240,7 +241,7 @@ class THM_GroupsViewContent_Manager extends JViewLegacy
             $returnURL = base64_encode(Joomla\CMS\Uri\Uri::getInstance()->toString());
             $formURL   = JUri::base() . "?option=com_content&task=article.edit&a_id=$item->id&return=$returnURL";
             $formURL   = JRoute::_($formURL);
-            $formLink  .= JHTML::_('link', $formURL, $item->title, ['title' => JText::_('COM_THM_GROUPS_EDIT')]);
+            $formLink  .= JHTML::_('link', $formURL, $item->title, ['title' => Text::_('EDIT')]);
 
             $contentText = '<span class="icon-eye-open"></span>';
         }
@@ -268,11 +269,11 @@ class THM_GroupsViewContent_Manager extends JViewLegacy
     {
         if ($value) {
             $iconClass = 'publish';
-            $tip       = 'COM_THM_GROUPS_PUBLISHED';
+            $tip       = 'PUBLISHED';
         }
         else {
             $iconClass = 'unpublish';
-            $tip       = 'COM_THM_GROUPS_UNPUBLISHED';
+            $tip       = 'UNPUBLISHED';
         }
 
         $menuID     = JFactory::getApplication()->input->getInt('Itemid');
@@ -280,7 +281,7 @@ class THM_GroupsViewContent_Manager extends JViewLegacy
         $url        .= empty($menuID) ? '' : "&Itemid=$menuID";
         $url        .= empty($attribute) ? '' : "&attribute=$attribute";
         $icon       = '<span class="icon-' . $iconClass . '"></span>';
-        $attributes = ['title' => JText::_($tip), 'class' => 'btn', 'data-toggle' => 'tooltip'];
+        $attributes = ['title' => Text::_($tip), 'class' => 'btn', 'data-toggle' => 'tooltip'];
 
         $link = JHtml::_('link', $url, $icon, $attributes);
 

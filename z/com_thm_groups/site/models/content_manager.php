@@ -10,9 +10,7 @@
  */
 defined('_JEXEC') or die;
 
-require_once HELPERS . 'categories.php';
-
-use THM\Groups\Helpers\Users;
+use THM\Groups\Helpers\{Can, Users};
 
 /**
  * Class retrieves information about content for the profile's content category
@@ -56,7 +54,7 @@ class THM_GroupsModelContent_Manager extends JModelList
             ->where("cCats.id = '$this->categoryID'");
 
         // User cannot edit anything => only show published and featured
-        if (!THM_GroupsHelperCategories::canEdit($this->categoryID)) {
+        if (!Can::edit('com_content.category', $this->categoryID)) {
             $date       = JFactory::getDate();
             $quotedDate = $dbo->quote($date->toSql());
 

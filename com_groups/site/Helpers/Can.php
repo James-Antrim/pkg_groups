@@ -107,12 +107,44 @@ class Can
      * Checks whether the user has access to create component resources.
      *
      * @param   string  $context  the context in which access is being checked
+     * @param   int     $id       the id of a specific resource as relevant
      *
      * @return bool
      */
-    public static function edit(string $context = 'com_users'): bool
+    public static function edit(string $context = 'com_users', int $id = 0): bool
     {
-        return (self::administrate($context) or ContentHelper::getActions($context)->get('core.edit'));
+        $user = User::instance();
+
+        // Basic context rights
+        if (
+            $user->authorise('core.admin', $context)
+            or $user->authorise('core.manage', $context)
+            or $user->authorise('core.edit', $context)
+            or $user->authorise('core.edit.own', $context)) {
+            return true;
+        }
+
+        switch ($context) {
+            case 'com_content':
+                return false;
+            case 'com_content.category':
+                // Basic resource rights
+                $asset = $id ? "$context.$id" : $context;
+                if ($user->authorise('core.edit', $asset) or $user->authorise('core.edit.own', $asset)) {
+                    return true;
+                }
+
+                if (empty($id)) {
+                    return false;
+                }
+
+                // Rights specific to the groups component, publication state ignored because of identity at this level.
+                $userID = Categories::userID($id);
+                return ($userID === $user->id and Users::content($userID));
+            default:
+                return false;
+
+        }
     }
 
     /**

@@ -415,22 +415,22 @@ class Users
         $userID = 0;
 
         if (is_numeric($segment)) {
-            $userID = $segment;
+            $userID = (int) $segment;
         }
         // Corrected pre 3.8 URL formatting
-        elseif (preg_match('/^(\d+)\-([a-zA-Z\-]+)(\-\d+)*$/', $segment, $matches)) {
-            $userID = $matches[1];
+        elseif (preg_match('/^(\d+)-([a-zA-Z\-]+)(-\d+)*$/', $segment, $matches)) {
+            $userID = (int) $matches[1];
             $alias  = $matches[2];
         }
         // Original faulty URL formatting
         elseif (preg_match('/^\d+-(\d+)-([a-zA-Z\-]+)$/', $segment, $matches)) {
-            $userID = $matches[1];
+            $userID = (int) $matches[1];
             $alias  = $matches[2];
         }
 
         // Syntactically
         $validAlias = (!empty($alias));
-        $validID    = (!empty($userID) and is_numeric($userID));
+        $validID    = (!empty($userID));
 
         // The id and alias were not consistent with each other.
         if ($validAlias and $validID and $userID != self::idByAlias($alias)) {

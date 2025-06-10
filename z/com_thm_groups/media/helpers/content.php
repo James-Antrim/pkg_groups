@@ -8,14 +8,14 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\Input;
+use THM\Groups\Adapters\{Input, Text};
 use THM\Groups\Helpers\{Can, Users};
+use THM\Groups\Tables\Content as Table;
 
 define('PUBLISH', 1);
 define('UNPUBLISH', 0);
 define('ARCHIVE', 2);
 define('TRASH', -2);
-require_once 'categories.php';
 
 /**
  * Class providing helper functions for batch select options
@@ -77,7 +77,7 @@ class THM_GroupsHelperContent
         $profileID  = self::getProfileID($contentID);
         $isOwn      = $profileID === $user->id;
 
-        // Irregardless of configuration only administrators and content owners should be able to edit
+        // Regardless of configuration only administrators and content owners should be able to edit
         $editEnabled    = (($canEdit or $canEditOwn) and $isOwn);
         $isPublished    = Users::published($profileID);
         $contentEnabled = Users::content($profileID);
@@ -422,7 +422,7 @@ class THM_GroupsHelperContent
         $contentID = $contentIDs[0];
 
         if (!THM_GroupsHelperContent::canEditState($contentID)) {
-            $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+            $app->enqueueMessage(Text::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
             return false;
         }
@@ -441,7 +441,7 @@ class THM_GroupsHelperContent
         $success = $table->publish($contentID, $statusValue, JFactory::getUser()->id);
 
         if (!$success) {
-            $app->enqueueMessage(JText::_('COM_THM_GROUPS_STATE_FAIL'), 'error');
+            $app->enqueueMessage(Text::_('STATE_FAIL'), 'error');
 
             return false;
         }
@@ -493,8 +493,7 @@ class THM_GroupsHelperContent
             return false;
         }
 
-        JTable::addIncludePath(JPATH_ROOT . '/libraries/legacy/table');
-        $table      = JTable::getInstance('Content', 'JTable');
+        $table      = new Table();
         $conditions = [];
 
         // Update ordering values
@@ -631,7 +630,7 @@ class THM_GroupsHelperContent
                 }
             }
             else {
-                $app->enqueueMessage(JText::_('JLIB_RULES_NOT_ALLOWED'), 'error');
+                $app->enqueueMessage(Text::_('JLIB_RULES_NOT_ALLOWED'), 'error');
 
                 return false;
             }

@@ -13,66 +13,15 @@
 require_once 'component.php';
 require_once 'profiles.php';
 
-use THM\Groups\Helpers\{Can, Categories as Helper, Profiles, Users};
+use Joomla\CMS\Table\Category as CoreTable;
+use THM\Groups\Adapters\Application;
+use THM\Groups\Helpers\{Categories as Helper, Profiles, Users};
 
 /**
  * Class providing helper functions for batch select options
  */
 class THM_GroupsHelperCategories
 {
-    /**
-     * Checks whether the user is authorized to edit the contents of the given category
-     *
-     * @param   int  $categoryID  the id of the category
-     *
-     * @return bool true if the user may edit the the category's content, otherwise false
-     * @throws Exception
-     */
-    public static function canCreate($categoryID)
-    {
-        if (Can::manage()) {
-            return true;
-        }
-
-        $user           = JFactory::getUser();
-        $canCreate      = $user->authorise('core.create', 'com_content.category.' . $categoryID);
-        $profileID      = Helper::userID($categoryID);
-        $isOwn          = $profileID === $user->id;
-        $isPublished    = Users::published($profileID);
-        $contentEnabled = Users::content($profileID);
-
-        return ($canCreate and $isOwn and $isPublished and $contentEnabled);
-    }
-
-    /**
-     * Checks whether the user is authorized to edit the contents of the given category
-     *
-     * @param   int  $categoryID  the id of the category
-     *
-     * @return bool true if the user may edit the the category's content, otherwise false
-     * @throws Exception
-     */
-    public static function canEdit($categoryID)
-    {
-        if (Can::manage()) {
-            return true;
-        }
-
-        $user       = JFactory::getUser();
-        $canEdit    = $user->authorise('core.edit', 'com_content.category.' . $categoryID);
-        $canEditOwn = $user->authorise('core.edit.own', 'com_content.category.' . $categoryID);
-        $profileID  = Helper::userID($categoryID);
-        $isOwn      = $profileID === $user->id;
-
-        // Regardless of configuration only administrators and content owners should be able to edit
-        $editEnabled    = (($canEdit or $canEditOwn) and $isOwn);
-        $isPublished    = Users::published($profileID);
-        $contentEnabled = Users::content($profileID);
-        $profileEnabled = ($isPublished and $contentEnabled);
-
-        return ($editEnabled and $profileEnabled);
-    }
-
     /**
      * Creates a content category for the profile
      *
@@ -103,13 +52,13 @@ class THM_GroupsHelperCategories
     /**
      * Creates a content category for the user's personal content
      *
-     * @param   int  $parentID   Parent ID of this Category entry
-     * @param   int  $profileID  Id of user
+     * @param   int  $parentID  Parent ID of this Category entry
+     * @param   int  $userID
      *
      * @return  mixed int the id of the created category on success, otherwise false
      * @throws Exception
      */
-    private static function createContentCategory($parentID, $profileID)
+    private static function createContentCategory($parentID, $userID)
     {
         $dbo = JFactory::getDBO();
 
@@ -127,10 +76,14 @@ class THM_GroupsHelperCategories
             return false;
         }
 
-        $alias    = Users::alias($profileID);
-        $category = JTable::getInstance('Category', 'JTable');
+        $alias = Users::alias($userID);
 
-        $category->title           = Profiles::name($profileID);
+        //@todo: make the existing profile => category map table aptly named
+        //@todo: wrap the categories table
+        /** @var CoreTable $category */
+        $category = Application::factory()->createTable('Category', '', ['dbo' => Application::database()]);
+
+        $category->title           = Profiles::name($userID);
         $category->alias           = $alias;
         $category->path            = "$path/$alias";
         $category->extension       = 'com_content';
@@ -138,7 +91,7 @@ class THM_GroupsHelperCategories
         $category->access          = 1;
         $category->params          = '{"target":"","image":""}';
         $category->metadata        = '{"page_title":"","author":"","robots":""}';
-        $category->created_user_id = $profileID;
+        $category->created_user_id = $userID;
         $category->language        = '*';
 
         // Append category to parent as last child
