@@ -13,6 +13,7 @@ defined('_JEXEC') or die;
 require_once HELPERS . 'profiles.php';
 
 use \JFactory as Factory;
+use THM\Groups\Helpers\Profiles as Helper;
 use THM\Groups\Views\HTML\Users;
 
 /**
@@ -98,7 +99,7 @@ class THM_GroupsViewProfile extends JViewLegacy
         }
 
         $addressText = (!empty($address) and !empty($office)) ? "$office\\n$address" : "$office$address";
-        $cardName    = THM_GroupsHelperProfiles::getDisplayName($profileID);
+        $cardName    = Helper::name($profileID);
         $email       = (!empty($profile[EMAIL_ATTRIBUTE]) and !empty($profile[EMAIL_ATTRIBUTE]['value'])) ?
             $profile[EMAIL_ATTRIBUTE]['value'] : '';
         $forenames   = (!empty($profile[FORENAME]) and !empty($profile[EMAIL_ATTRIBUTE]['value'])) ?

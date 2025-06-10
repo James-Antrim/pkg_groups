@@ -68,30 +68,6 @@ class THM_GroupsHelperProfiles
     }
 
     /**
-     * Creates the name to be displayed
-     *
-     * @param   int   $profileID  the user id
-     * @param   bool  $withTitle  whether the titles should be displayed
-     * @param   bool  $withSpan   whether the attributes should be contained in individual spans for style assignments
-     *
-     * @return  string  the profile name
-     * @throws Exception
-     */
-    public static function getDisplayName($profileID, $withTitle = false, $withSpan = false)
-    {
-        $ntData = Helper::namesAndTitles($profileID, $withTitle, $withSpan);
-
-        $text = "{$ntData['preTitle']} {$ntData['forename']} {$ntData['surname']}";
-
-        // The dagger for deceased was moved in the called function
-        if (!empty($ntData['postTitle'])) {
-            $text .= ", {$ntData['postTitle']}";
-        }
-
-        return trim($text);
-    }
-
-    /**
      * Creates HTML for the display of a profile
      *
      * @param   int   $profileID   the id of the profile
@@ -148,7 +124,7 @@ class THM_GroupsHelperProfiles
      */
     public static function getNameContainer($profileID, $newTab = false)
     {
-        $text    = self::getDisplayName($profileID, true, true);
+        $text    = Helper::name($profileID, true, true);
         $url     = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID]);
         $attribs = [];
         if ($newTab) {

@@ -13,6 +13,8 @@ use THM\Groups\Adapters\Input;
 require_once 'attribute_types.php';
 require_once 'fields.php';
 
+use THM\Groups\Helpers\Profiles;
+
 /**
  * Class providing helper functions for batch select options
  */
@@ -317,7 +319,7 @@ class THM_GroupsHelperAttributes
             $random = rand(1, 100);
             $url    = JUri::root() . $relativePath . "?force=$random";
 
-            $alt = empty($profileID) ? JText::_('COM_THM_GROUPS_PROFILE_IMAGE') : THM_GroupsHelperProfiles::getDisplayName($profileID);
+            $alt = empty($profileID) ? JText::_('COM_THM_GROUPS_PROFILE_IMAGE') : Profiles::name($profileID);
 
             return JHtml::image($url, $alt, ['class' => 'edit_img']);
         }
@@ -541,7 +543,7 @@ class THM_GroupsHelperAttributes
                     $url        = JUri::root() . $relativePath;
                     $attributes = ['class' => 'thm_groups_profile_container_profile_image'];
 
-                    return JHTML::image($url, THM_GroupsHelperProfiles::getDisplayName($attribute['profileID']),
+                    return JHTML::image($url, Profiles::name($attribute['profileID']),
                         $attributes);
                 }
 

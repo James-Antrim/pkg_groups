@@ -15,6 +15,8 @@ defined('_JEXEC') or die;
 require_once HELPERS . 'profiles.php';
 require_once HELPERS . 'menu.php';
 
+use THM\Groups\Helpers\Profiles as Helper;
+
 /**
  * THMGroupsViewProfile class for component com_thm_groups
  */
@@ -48,7 +50,7 @@ class THM_GroupsViewProfile extends JViewLegacy
         $specialFieldIDs  = [FILE];
 
         $json = [
-            'profileName' => THM_GroupsHelperProfiles::getDisplayName($profileID, true),
+            'profileName' => Helper::name($profileID, true),
             'profileLink' => THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID])
         ];
 

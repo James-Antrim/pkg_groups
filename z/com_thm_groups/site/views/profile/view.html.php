@@ -12,8 +12,9 @@ defined('_JEXEC') or die;
 
 use THM\Groups\Helpers\Users;
 
-require_once HELPERS . 'profiles.php';
 require_once HELPERS . 'router.php';
+
+use THM\Groups\Helpers\Profiles as Helper;
 
 /**
  * THMGroupsViewProfile class for component com_thm_groups
@@ -83,6 +84,6 @@ class THM_GroupsViewProfile extends JViewLegacy
         $doc = JFactory::getDocument();
         $doc->addStyleSheet('media/com_thm_groups/css/profile_item.css');
         JHtml::_('bootstrap.framework');
-        $doc->setTitle(THM_GroupsHelperProfiles::getDisplayName($this->profileID, true));
+        $doc->setTitle(Helper::name($this->profileID, true));
     }
 }

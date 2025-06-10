@@ -22,7 +22,7 @@ require_once 'GroupsValidator.php';
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
-use THM\Groups\Helpers\Users;
+use THM\Groups\Helpers\{Profiles, Users};
 
 /**
  * Class tries to resolve teacher stub calls from thm organizer to thm groups profiles.
@@ -415,7 +415,7 @@ class plgSystemTHM_Groups extends CMSPlugin
                 continue;
             }
 
-            $displayName = THM_GroupsHelperProfiles::getDisplayName($profileID, true);
+            $displayName = Profiles::name($profileID, true);
 
             // No Groups surname use the Organizer name.
             if (empty($displayName)) {

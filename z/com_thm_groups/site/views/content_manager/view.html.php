@@ -14,7 +14,8 @@ defined('_JEXEC') or die;
 use THM\Groups\Helpers\Users;
 
 require_once HELPERS . 'content.php';
-require_once HELPERS . 'profiles.php';
+
+use THM\Groups\Helpers\Profiles;
 
 /**
  * Class displays content in the profile's content category
@@ -74,13 +75,13 @@ class THM_GroupsViewContent_Manager extends JViewLegacy
         elseif ($this->canEdit) {
             $contextTitle = JText::sprintf(
                 'COM_THM_GROUPS_MANAGE_PROFILE_CONTENT',
-                THM_GroupsHelperProfiles::getDisplayName($this->profileID)
+                Profiles::name($this->profileID)
             );
         }
         else {
             $contextTitle = JText::sprintf(
                 'COM_THM_GROUPS_PROFILE_CONTENT',
-                THM_GroupsHelperProfiles::getDisplayName($this->profileID)
+                Profiles::name($this->profileID)
             );
         }
         $this->pageTitle = $contextTitle;

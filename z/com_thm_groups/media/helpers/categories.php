@@ -9,7 +9,7 @@
  */
 
 // Added here for calls from plugins
-use THM\Groups\Helpers\{Can, Users};
+use THM\Groups\Helpers\{Can, Profiles, Users};
 
 require_once 'component.php';
 require_once 'profiles.php';
@@ -129,7 +129,7 @@ class THM_GroupsHelperCategories
         $alias    = Users::alias($profileID);
         $category = JTable::getInstance('Category', 'JTable');
 
-        $category->title           = THM_GroupsHelperProfiles::getDisplayName($profileID);
+        $category->title           = Profiles::name($profileID);
         $category->alias           = $alias;
         $category->path            = "$path/$alias";
         $category->extension       = 'com_content';
@@ -238,7 +238,7 @@ class THM_GroupsHelperCategories
         $category = JTable::getInstance('Category', 'JTable');
         $category->load($results['id']);
         preg_match('/\d+/', $profileAlias, $autoIncrement);
-        $title = THM_GroupsHelperProfiles::getDisplayName($results['profileID']);
+        $title = Profiles::name($results['profileID']);
         if (!empty($autoIncrement)) {
             $title = "$title {$autoIncrement[0]}";
         }

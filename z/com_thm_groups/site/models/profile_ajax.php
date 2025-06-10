@@ -33,7 +33,7 @@ class THM_GroupsModelProfile_Ajax extends JModelLegacy
         $profileIDs = THM_GroupsHelperGroups::getProfileIDs($groupID);
 
         foreach ($profileIDs as $profileID) {
-            $displayName = THM_GroupsHelperProfiles::getDisplayName($profileID, true);
+            $displayName = Helper::name($profileID, true);
             if (empty($displayName)) {
                 continue;
             }

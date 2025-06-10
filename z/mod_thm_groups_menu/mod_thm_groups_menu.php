@@ -12,13 +12,12 @@ defined('_JEXEC') or die;
 
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/categories.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/menu.php';
-require_once JPATH_ROOT . '/media/com_thm_groups/helpers/profiles.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/router.php';
 
 use \Joomla\CMS\Factory as Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 use \JText as Text;
-use THM\Groups\Helpers\Users;
+use THM\Groups\Helpers\{Profiles, Users};
 
 $input     = Factory::getApplication()->input;
 $profileID = $input->get('profileID');
@@ -39,12 +38,12 @@ if (!empty($profileID)) {
     $displayedTitle = $params->get('displayedTitle', 'module_title');
     if ($displayedTitle == 'profile_name') {
         if ($showAdmin) {
-            $name          = THM_GroupsHelperProfiles::getDisplayName($profileID);
+            $name          = Profiles::name($profileID);
             $module->title = Text::sprintf('MOD_THM_GROUPS_ADMINISTRATION', $name);
         }
         else {
             $showTitles    = $params->get('showTitles', 1);
-            $module->title = THM_GroupsHelperProfiles::getDisplayName($profileID, $showTitles);
+            $module->title = Profiles::name($profileID, $showTitles);
         }
     }
 

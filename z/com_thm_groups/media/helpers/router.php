@@ -9,10 +9,9 @@
  */
 
 require_once 'content.php';
-require_once 'profiles.php';
 
 use \Joomla\CMS\Uri\Uri as URI;
-use THM\Groups\Helpers\Users;
+use THM\Groups\Helpers\{Profiles, Users};
 
 /**
  * Class providing helper functions for batch select options
@@ -187,7 +186,7 @@ class THM_GroupsHelperRouter
 
         $contentID   = $app->input->getInt('id');
         $pathway     = $app->getPathway();
-        $profileName = THM_GroupsHelperProfiles::getDisplayName($profileID);
+        $profileName = Profiles::name($profileID);
         $profileURL  = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID]);
         $session     = JFactory::getSession();
 

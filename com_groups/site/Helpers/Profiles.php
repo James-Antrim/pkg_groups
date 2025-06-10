@@ -60,6 +60,28 @@ class Profiles
     }
 
     /**
+     * Creates a name based on user attributes and optionally title attributes.
+     *
+     * @param   int   $userID      the id of the profile user
+     * @param   bool  $withTitles  whether to include titles as part of the result set
+     * @param   bool  $withSpan    whether to surround the data with spans with a corresponding css class
+     *
+     * @return string
+     */
+    public static function name(int $userID, bool $withTitles = false, bool $withSpan = false): string
+    {
+        $results = self::namesAndTitles($userID, $withTitles, $withSpan);
+        $result  = empty($results['forenames']) ? $results['surnames'] : "{$results['forenames']} {$results['surnames']}";
+
+        if ($withTitles) {
+            $result = empty($results['pre']) ? $result : "{$results['pre']} $result";
+            $result = empty($results['post']) ? $result : "$result, {$results['post']} ";
+        }
+
+        return $result;
+    }
+
+    /**
      * Retrieves user name information as an array, optionally with titles and or spans with css classes.
      *
      * @param   int   $userID      the id of the profile user
