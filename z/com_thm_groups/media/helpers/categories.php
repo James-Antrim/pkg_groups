@@ -9,12 +9,11 @@
  */
 
 // Added here for calls from plugins
-use THM\Groups\Helpers\{Can, Profiles, Users};
 
 require_once 'component.php';
 require_once 'profiles.php';
 
-use THM\Groups\Helpers\Categories as Helper;
+use THM\Groups\Helpers\{Can, Categories as Helper, Profiles, Users};
 
 /**
  * Class providing helper functions for batch select options
@@ -65,7 +64,7 @@ class THM_GroupsHelperCategories
         $profileID  = Helper::userID($categoryID);
         $isOwn      = $profileID === $user->id;
 
-        // Irregardless of configuration only administrators and content owners should be able to edit
+        // Regardless of configuration only administrators and content owners should be able to edit
         $editEnabled    = (($canEdit or $canEditOwn) and $isOwn);
         $isPublished    = Users::published($profileID);
         $contentEnabled = Users::content($profileID);
@@ -146,49 +145,6 @@ class THM_GroupsHelperCategories
         $category->setLocation($parentID, 'last-child');
 
         return empty($category->store()) ? false : $category->id;
-    }
-
-    /**
-     * Gets the profile's category id
-     *
-     * @param   int  $profileID  the user id
-     *
-     * @return  mixed  int on successful query, null if the query failed, 0 on exception or if user is empty
-     * @throws Exception
-     */
-    public static function getIDByProfileID($profileID)
-    {
-        $contentEnabled = Users::content($profileID);
-
-        if (!$contentEnabled) {
-            return 0;
-        }
-
-        $dbo   = JFactory::getDBO();
-        $query = $dbo->getQuery(true);
-
-        $query->select('cc.id')
-            ->from('#__categories AS cc')
-            ->innerJoin('#__thm_groups_categories AS gc ON gc.id = cc.id')
-            ->where("profileID = '$profileID'");
-        $dbo->setQuery($query);
-
-        try {
-            $categoryID = $dbo->loadResult();
-        }
-        catch (Exception $exc) {
-            JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
-
-            return 0;
-        }
-
-        if (!empty($categoryID)) {
-            return $categoryID;
-        }
-
-        self::create($profileID);
-
-        return self::getIDByProfileID($profileID);
     }
 
     /**

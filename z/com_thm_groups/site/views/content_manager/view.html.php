@@ -11,11 +11,9 @@
 // No direct access to this file
 defined('_JEXEC') or die;
 
-use THM\Groups\Helpers\Users;
-
 require_once HELPERS . 'content.php';
 
-use THM\Groups\Helpers\Profiles;
+use THM\Groups\Helpers\{Profiles, Users};
 
 /**
  * Class displays content in the profile's content category
@@ -56,7 +54,7 @@ class THM_GroupsViewContent_Manager extends JViewLegacy
             JErrorPage::render($exc);
         }
 
-        $this->categoryID = THM_GroupsHelperCategories::getIDByProfileID($this->profileID);
+        $this->categoryID = Users::categoryID($this->profileID);
         $contentEnabled   = Users::content($this->profileID);
         if (empty($this->categoryID) or empty($contentEnabled)) {
             $exc = new Exception(JText::_('COM_THM_GROUPS_ERROR_412'), '412');

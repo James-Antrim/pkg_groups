@@ -12,6 +12,8 @@ defined('_JEXEC') or die;
 
 require_once HELPERS . 'categories.php';
 
+use THM\Groups\Helpers\Users;
+
 /**
  * Class retrieves information about content for the profile's content category
  */
@@ -30,7 +32,7 @@ class THM_GroupsModelContent_Manager extends JModelList
     {
         $user             = JFactory::getUser();
         $profileID        = JFactory::getApplication()->input->getInt('profileID', $user->id);
-        $this->categoryID = THM_GroupsHelperCategories::getIDByProfileID($profileID);
+        $this->categoryID = Users::categoryID($profileID);
 
         parent::__construct($config);
     }

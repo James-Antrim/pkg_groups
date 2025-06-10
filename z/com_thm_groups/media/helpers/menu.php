@@ -8,10 +8,9 @@
  * @link        www.thm.de
  */
 
-require_once 'categories.php';
-
 use \Joomla\CMS\Factory as Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use THM\Groups\Helpers\Users;
 
 /**
  * Data retrieval class for the THM Groups menu module.
@@ -59,7 +58,7 @@ class THM_GroupsHelperMenu
      */
     public static function getContent($profileID)
     {
-        $categoryID = THM_GroupsHelperCategories::getIDByProfileID($profileID);
+        $categoryID = Users::categoryID($profileID);
         // Load the parameters
         $dbo        = Factory::getDBO();
         $date       = Factory::getDate();
