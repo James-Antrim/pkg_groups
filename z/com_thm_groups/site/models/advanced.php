@@ -13,6 +13,8 @@ defined('_JEXEC') or die;
 
 jimport('joomla.filesystem.path');
 
+use THM\Groups\Helpers\Profiles as Helper;
+
 /**
  * Advanced model class of component com_thm_groups
  *
@@ -128,7 +130,7 @@ class THM_GroupsModelAdvanced extends JModelLegacy
 
                 $profiles = [];
                 foreach ($profileIDs as $profileID) {
-                    $profileName = THM_GroupsHelperProfiles::getLNFName($profileID);
+                    $profileName = Helper::lnfName($profileID);
 
                     // No surname
                     if (empty($profileName)) {

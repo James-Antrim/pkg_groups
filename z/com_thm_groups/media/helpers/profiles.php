@@ -8,8 +8,8 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\Text;
-use THM\Groups\Helpers\{Attributes, Types, Users};
+use THM\Groups\Adapters\{Database as DB, HTML, Text};
+use THM\Groups\Helpers\{Attributes, Profiles as Helper, Types, Users};
 use THM\Groups\Controllers\Profile as Controller;
 
 require_once 'attributes.php';
@@ -24,33 +24,6 @@ require_once JPATH_ROOT . '/administrator/components/com_thm_groups/tables/profi
  */
 class THM_GroupsHelperProfiles
 {
-    /**
-     * Adds an association profile => group in the Joomla table mapping this relationship
-     *
-     * @param   int  $profileID  the id of the profile to associate
-     * @param   int  $groupID    the id of the group to associate the profile with
-     *
-     * @return void if an exception occurs it is handled as such
-     * @throws Exception
-     */
-    public static function associateJoomlaGroup($profileID, $groupID)
-    {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->insert('#__user_usergroup_map')->columns("user_id, group_id")->values("$profileID, $groupID");
-        $dbo->setQuery($query);
-
-        try {
-            $dbo->execute();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return;
-        }
-
-    }
-
     /**
      * Associates a profile with a given group/role association
      *
@@ -76,11 +49,11 @@ class THM_GroupsHelperProfiles
         }
 
         $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
+        $query = DB::query();
         $query->insert('#__thm_groups_profile_associations')
             ->columns(['profileID', 'role_associationID'])
             ->values("$profileID, $assocID");
-        $dbo->setQuery($query);
+        DB::set($query);
 
         try {
             $dbo->execute();
@@ -95,93 +68,6 @@ class THM_GroupsHelperProfiles
     }
 
     /**
-     * Corrects missing group associations caused by missing event triggers from batch processing in com_user.
-     *
-     * @return void if an exception occurs it is handled as such
-     * @throws Exception
-     */
-    public static function correctGroups()
-    {
-        $dbo = JFactory::getDbo();
-
-        // Associations that are in Groups, but not in Joomla
-        $query = $dbo->getQuery(true);
-        $query->select('DISTINCT pAssoc.profileID, rAssoc.groupID, uum.user_id')
-            ->from('#__thm_groups_profile_associations AS pAssoc')
-            ->innerJoin('#__thm_groups_role_associations as rAssoc on pAssoc.role_associationID = rAssoc.id')
-            ->leftJoin('#__user_usergroup_map as uum on uum.user_id = pAssoc.profileID and uum.group_id = rAssoc.groupID')
-            ->where('uum.user_id IS NULL');
-        $dbo->setQuery($query);
-
-        try {
-            $missingAssocs = $dbo->loadAssocList();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return;
-        }
-
-        if (!empty($missingAssocs)) {
-            foreach ($missingAssocs as $missingAssoc) {
-                self::associateJoomlaGroup($missingAssoc['profileID'], $missingAssoc['groupID']);
-            }
-        }
-
-        $stdGroups = "1,2,3,4,5,6,7,8";
-
-        // Users in relevant groups are missing from Groups
-        $query = $dbo->getQuery(true);
-        $query->select('DISTINCT user_id')
-            ->from('#__user_usergroup_map AS uum')
-            ->where("group_id NOT IN ($stdGroups)")
-            ->where('user_id NOT IN (SELECT id FROM #__thm_groups_profiles)');
-        $dbo->setQuery($query);
-
-        try {
-            $missingIDs = $dbo->loadColumn();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return;
-        }
-
-        if ($missingIDs) {
-            $controller = new Controller();
-            foreach ($missingIDs as $missingID) {
-                $controller->create($missingID);
-            }
-        }
-
-        // Associations that are in Joomla, but not in Groups
-        $query = $dbo->getQuery(true);
-        $query->select('DISTINCT uum.user_id AS profileID, ra.id AS assocID')
-            ->from('#__user_usergroup_map AS uum')
-            ->innerJoin('#__thm_groups_profiles AS profile ON profile.id = uum.user_id')
-            ->innerJoin('#__thm_groups_role_associations AS ra ON ra.groupID = uum.group_id AND ra.roleID = 1')
-            ->leftJoin('#__thm_groups_profile_associations AS pa ON pa.profileID = profile.id AND pa.role_associationID = ra.id')
-            ->where("uum.group_id NOT IN ($stdGroups)")
-            ->where('pa.id IS NULL');
-        $dbo->setQuery($query);
-
-        try {
-            $missingAssocs = $dbo->loadAssocList();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return;
-        }
-
-        if ($missingAssocs) {
-            foreach ($missingAssocs as $missingAssoc) {
-                self::associateRole($missingAssoc['profileID'], $missingAssoc['assocID']);
-            }
-        }
-    }
-
-    /**
      * Creates the name to be displayed
      *
      * @param   int   $profileID  the user id
@@ -193,7 +79,7 @@ class THM_GroupsHelperProfiles
      */
     public static function getDisplayName($profileID, $withTitle = false, $withSpan = false)
     {
-        $ntData = self::getNamesAndTitles($profileID, $withTitle, $withSpan);
+        $ntData = Helper::namesAndTitles($profileID, $withTitle, $withSpan);
 
         $text = "{$ntData['preTitle']} {$ntData['forename']} {$ntData['surname']}";
 
@@ -252,26 +138,6 @@ class THM_GroupsHelperProfiles
     }
 
     /**
-     * Creates the name to be displayed
-     *
-     * @param   int   $profileID  the user id
-     * @param   bool  $withTitle  whether the titles should be displayed
-     * @param   bool  $withSpan   whether the attributes should be contained in individual spans for style assignments
-     *
-     * @return  string  the profile name
-     * @throws Exception
-     */
-    public static function getLNFName($profileID, $withTitle = false, $withSpan = false)
-    {
-        $ntData = self::getNamesAndTitles($profileID, $withTitle, $withSpan);
-
-        $text = empty($ntData['forename']) ? $ntData['surname'] : "{$ntData['surname']}, {$ntData['forename']} ";
-        $text .= " {$ntData['preTitle']} {$ntData['postTitle']}";
-
-        return trim($text);
-    }
-
-    /**
      * Creates the HTML for the name container
      *
      * @param   int   $profileID  the id of the profile
@@ -295,70 +161,6 @@ class THM_GroupsHelperProfiles
     }
 
     /**
-     * Retrieves data to be used in functions returning profile names and titles
-     *
-     * @param   int   $profileID  the user id
-     * @param   bool  $withTitle  whether the titles should be displayed
-     * @param   bool  $withSpan   whether the attributes should be contained in individual spans for style assignments
-     *
-     * @return  array the name and title data
-     * @throws Exception
-     */
-    private static function getNamesAndTitles($profileID, $withTitle = false, $withSpan = false)
-    {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('sn.value AS surname, fn.value AS forename')
-            ->select('prt.value AS preTitle, prt.published AS prePublished')
-            ->select('pot.value AS postTitle, pot.published AS postPublished')
-            ->from('#__thm_groups_profile_attributes AS sn')
-            ->leftJoin('#__thm_groups_profile_attributes AS fn ON fn.profileID = sn.profileID')
-            ->leftJoin('#__thm_groups_profile_attributes AS prt ON prt.profileID = sn.profileID')
-            ->leftJoin('#__thm_groups_profile_attributes AS pot ON pot.profileID = sn.profileID')
-            ->where("sn.profileID = $profileID")
-            ->where("sn.attributeID = " . SURNAME)
-            ->where("fn.attributeID = " . FORENAME)
-            ->where("prt.attributeID = " . Attributes::SUPPLEMENT_PRE)
-            ->where("pot.attributeID = " . Attributes::SUPPLEMENT_POST);
-
-        $dbo->setQuery($query);
-
-        try {
-            if (!$results = $dbo->loadAssoc()) {
-                return [];
-            }
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-        }
-
-        if (empty($withTitle) or empty($results['prePublished'])) {
-            $results['preTitle'] = '';
-        }
-
-        if (empty($withTitle) or empty($results['postPublished'])) {
-            $results['postTitle'] = '';
-        }
-        else {
-            // Special handling for deceased
-            if (strpos($results['postTitle'], '†') !== false) {
-                $results['surname']   .= ' †';
-                $results['postTitle'] = trim(str_replace('†', '', $results['postTitle']));
-            }
-        }
-
-        if ($withSpan) {
-            $results['surname']   = empty($results['surname']) ? '' : '<span class="name-value">' . $results['surname'] . '</span>';
-            $results['forename']  = empty($results['forename']) ? '' : '<span class="name-value">' . $results['forename'] . '</span>';
-            $results['preTitle']  = empty($results['preTitle']) ? '' : '<span class="title-value">' . $results['preTitle'] . '</span>';
-            $results['postTitle'] = empty($results['postTitle']) ? '' : '<span class="title-value">' . $results['postTitle'] . '</span>';
-        }
-
-        return empty($results) ? [] : $results;
-    }
-
-    /**
      * Retrieves the id of the profile associated with the given alias.
      *
      * @param   string  $username  the username
@@ -368,27 +170,17 @@ class THM_GroupsHelperProfiles
      *
      * @throws Exception
      */
-    public static function getProfileIDByUserName($username)
+    public static function getProfileIDByUserName(string $username): int
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
+        $query = DB::query();
         $query->select('DISTINCT p.id')
             ->from('#__thm_groups_profiles AS p')
             ->innerJoin('#__users AS u on u.id = p.id')
-            ->where('u.username = ' . $dbo->quote($username));
+            ->where(DB::qc('u.username', $username, '=', true));
 
-        $dbo->setQuery($query);
+        DB::set($query);
 
-        try {
-            $profileID = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return 0;
-        }
-
-        return empty($profileID) ? 0 : $profileID;
+        return DB::integer() ?: 0;
     }
 
     /**
@@ -400,7 +192,7 @@ class THM_GroupsHelperProfiles
      * @return array the profile attributes
      * @throws Exception
      */
-    public static function getRawProfile($profileID, $published = true)
+    public static function getRawProfile(int $profileID, bool $published = true): array
     {
         $attributes           = [];
         $attributeIDs         = THM_GroupsHelperAttributes::getAttributeIDs(true);
@@ -430,27 +222,15 @@ class THM_GroupsHelperProfiles
      * @return array the role association ids associated with the profile
      * @throws Exception
      */
-    public static function getRoleAssociations($profileID)
+    public static function getRoleAssociations(int $profileID): array
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-
+        $query = DB::query();
         $query->select('role_associationID')
-            ->from('#__thm_groups_profile_associations')
+            ->from('#__groups_profile_associations')
             ->where("profileID = $profileID");
+        DB::set($query);
 
-        $dbo->setQuery($query);
-
-        try {
-            $assocs = $dbo->loadColumn();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return [];
-        }
-
-        return empty($assocs) ? [] : $assocs;
+        return DB::integers() ?: [];
     }
 
     /**
@@ -461,12 +241,12 @@ class THM_GroupsHelperProfiles
      * @return string the HTML string containing name information
      * @throws Exception
      */
-    public static function getVCardLink($profileID)
+    public static function getVCardLink(int $profileID): string
     {
         $icon = '<span class="icon-vcard" title="' . Text::_('VCARD_DOWNLOAD') . '"></span>';
         $url  = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID, 'format' => 'vcf']);
 
-        return JHtml::link($url, $icon);
+        return HTML::link($url, $icon);
     }
 
     /**
@@ -474,10 +254,9 @@ class THM_GroupsHelperProfiles
      *
      * @param   string  $potentialProfile  the segment being checked
      *
-     * @return mixed int the id if a distinct profile was found, string if no distinct profile was found, otherwise 0
-     * @throws Exception
+     * @return int|string int the id if a distinct profile was found, string if no distinct profile was found, otherwise 0
      */
-    public static function resolve($potentialProfile)
+    public static function resolve($potentialProfile): int|string
     {
         if (is_numeric($potentialProfile)) {
             $profileID = $potentialProfile;

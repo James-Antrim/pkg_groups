@@ -12,6 +12,8 @@ defined('_JEXEC') or die;
 require_once HELPERS . 'groups.php';
 require_once HELPERS . 'profiles.php';
 
+use THM\Groups\Helpers\Profiles as Helper;
+
 /**
  * Class provides methods to retrieve data for pool ajax calls
  */
@@ -36,7 +38,7 @@ class THM_GroupsModelProfile_Ajax extends JModelLegacy
                 continue;
             }
 
-            $lnfName = THM_GroupsHelperProfiles::getLNFName($profileID);
+            $lnfName = Helper::lnfName($profileID);
 
             $link = JUri::base() . "?option=com_thm_groups&view=profile&profileID=$profileID";
 

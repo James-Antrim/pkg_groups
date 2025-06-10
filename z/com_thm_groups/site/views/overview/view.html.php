@@ -15,6 +15,8 @@ defined('_JEXEC') or die;
 require_once HELPERS . 'profiles.php';
 require_once HELPERS . 'router.php';
 
+use THM\Groups\Helpers\Profiles as Helper;
+
 /**
  * Class provides an overview of group profiles.
  */
@@ -106,8 +108,8 @@ class THM_GroupsViewOverview extends JViewLegacy
     public function getProfileLink($profileID)
     {
         $url           = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID]);
-        $showTitles    = $this->params->get('showTitles', 1);
-        $displayedText = THM_GroupsHelperProfiles::getLNFName($profileID, $showTitles, true);
+        $showTitles    = (bool) $this->params->get('showTitles', 1);
+        $displayedText = Helper::lnfName($profileID, $showTitles, true);
 
         return JHtml::link($url, $displayedText);
     }

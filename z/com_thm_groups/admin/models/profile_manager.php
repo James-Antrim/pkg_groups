@@ -9,41 +9,18 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Helpers\Can;
+use THM\Groups\Adapters\{Database as DB, Text};
+use THM\Groups\Helpers\{Can, Profiles as Helper};
+use THM\Groups\Models\ListModel;
 
 defined('_JEXEC') or die;
-require_once HELPERS . 'profiles.php';
-require_once HELPERS . 'roles.php';
-require_once JPATH_ROOT . '/media/com_thm_groups/models/list.php';
 
 /**
  * THM_GroupsModelProfile_Manager class for component com_thm_groups
  */
-class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
+class THM_GroupsModelProfile_Manager extends ListModel
 {
-
-    protected $defaultOrdering = "surname";
-
-    protected $defaultDirection = "ASC";
-
-    /**
-     * Constructor
-     *
-     * @param   array  $config  config array
-     *
-     * @throws Exception
-     */
-    public function __construct($config = [])
-    {
-        if (empty($config['filter_fields'])) {
-            $config['filter_fields'] = [];
-        }
-
-        parent::__construct($config);
-
-        $this->defaultLimit = JFactory::getApplication()->get('list_limit', '50');
-        THM_GroupsHelperProfiles::correctGroups();
-    }
+    protected string $defaultOrdering = "surname";
 
     /**
      * Return groups with roles of a user by ID
@@ -55,58 +32,52 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
      */
     private function getAssociations($profileID)
     {
-        $query = $this->_db->getQuery(true);
+        $query    = DB::query();
+        $template = 'GROUP_CONCAT(DISTINCT %s ORDER BY %s SEPARATOR ", ") AS %s';
 
+        $groups = DB::qn(['ug.id', 'ug.title'], ['groupID', 'groupName']);
+        $roles  = [
+            sprintf($template, 'roles.id', 'roles.name', 'roleID'),
+            sprintf($template, 'roles.name', 'roles.name', 'roleName')
+        ];
         $query
-            ->select('ug.id AS groupID, ug.title AS groupName')
-            ->select('GROUP_CONCAT(DISTINCT roles.id ORDER BY roles.name SEPARATOR ", ") AS roleID')
-            ->select('GROUP_CONCAT(DISTINCT roles.name ORDER BY roles.name SEPARATOR ", ") AS roleName')
-            ->from('#__thm_groups_profile_associations AS pa')
-            ->leftJoin('#__thm_groups_role_associations AS ra ON pa.role_associationID = ra.id')
-            ->leftJoin('#__usergroups AS ug ON ra.groupID = ug.id')
-            ->leftJoin('#__thm_groups_roles AS roles ON ra.roleID = roles.id')
-            ->where("pa.profileID = $profileID AND ra.groupID > 1")
-            ->group('groupID');
+            ->select(array_merge($groups, $roles))
+            ->from(DB::qn('#__groups_profile_associations', 'pa'))
+            ->leftJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('pa.role_associationID', 'ra.id'))
+            ->leftJoin(DB::qn('#__usergroups', 'ug'), DB::qc('ug.id', 'ra.groupID'))
+            ->leftJoin(DB::qn('#__groups_roles', 'roles'), DB::qc('ra.roleID', 'roles.id'))
+            ->where(DB::qcs([['pa.profileID', $profileID], ['ra.groupID', 1, '>']]))
+            ->group(DB::qn('groupID'));
+        DB::set($query);
 
-        $this->_db->setQuery($query);
-
-        try {
-            $associations = $this->_db->loadAssocList();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return [];
-        }
-
-        return empty($associations) ? [] : $associations;
+        return DB::arrays() ?: [];
     }
 
     /**
      * Generates HTML with links for disassociation of groups/roles with the user being iterated
      *
      * @param   int   $profileID  the id of the user being iterated
-     * @param   bool  $canEdit    whether or not the user is authorized to edit associations
+     * @param   bool  $canEdit    whether the user is authorized to edit associations
      *
      * @return  string the HTML output
      * @throws Exception
      */
-    private function getAssocLinks($profileID, $canEdit)
+    private function getAssocLinks(int $profileID, bool $canEdit)
     {
         $associations = $this->getAssociations($profileID);
         $result       = "";
         $deleteIcon   = '<span class="icon-delete"></span>';
 
         $deleteRoleParameters = "GROUPID,ROLEID,$profileID";
-        $roleTitle            = JText::_('COM_THM_GROUPS_GROUP') . ": GROUPNAME - ";
-        $roleTitle            .= JText::_('COM_THM_GROUPS_ROLE') . ": ROLENAME::" . JText::_('COM_THM_GROUPS_REMOVE_ROLE');
+        $roleTitle            = Text::_('GROUP') . ": GROUPNAME - ";
+        $roleTitle            .= Text::_('ROLE') . ": ROLENAME::" . Text::_('REMOVE_ROLE');
 
         // this should be reworked with dynamic task setting like toggle $roleAssocID
         $rawRoleLink = '<a onclick="disassociateRole(' . $deleteRoleParameters . ');" ';
         $rawRoleLink .= 'title="' . $roleTitle . '" class="hasTooltip">' . $deleteIcon . '</a>ROLENAME';
 
         $deleteGroupParameters = "'profile',GROUPID,$profileID";
-        $groupTitle            = JText::_('COM_THM_GROUPS_GROUP') . ": GROUPNAME::" . JText::_('COM_THM_GROUPS_REMOVE_ALL_ROLES');
+        $groupTitle            = Text::_('GROUP') . ": GROUPNAME::" . Text::_('REMOVE_ALL_ROLES');
 
         // this should be reworked with dynamic task setting like toggle cb$id and $groupID
         $rawGroupLink = '<a onclick="disassociateGroup(' . $deleteGroupParameters . ');" ';
@@ -178,15 +149,13 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
 
         $headers                   = [];
         $headers['checkbox']       = '';
-        $headers['surname']        = JHtml::_('searchtools.sort', JText::_('COM_THM_GROUPS_NAME'), 'surname, forename',
-            $direction, $ordering);
-        $headers['published']      = JHtml::_('searchtools.sort', JText::_('COM_THM_GROUPS_PUBLISHED'),
-            'published', $direction, $ordering);
-        $headers['canEdit']        = JHtml::_('searchtools.sort', JText::_('COM_THM_GROUPS_PROFILE_EDIT'), 'canEdit',
-            $direction, $ordering);
-        $headers['contentEnabled'] = JHtml::_('searchtools.sort', JText::_('COM_THM_GROUPS_CONTENT_ENABLED'),
-            'contentEnabled', $direction, $ordering);
-        $headers['gnr']            = JText::_('COM_THM_GROUPS_ASSOCIATED_GROUPS_AND_ROLES');
+        $headers['surname']        = JHtml::_('searchtools.sort', Text::_('NAME'), 'surname, forename', $direction, $ordering);
+        $headers['published']      = JHtml::_('searchtools.sort', Text::_('PUBLISHED'), 'published', $direction, $ordering);
+        $headers['canEdit']        = JHtml::_('searchtools.sort', Text::_('PROFILE_EDIT'), 'canEdit', $direction, $ordering);
+        $headers['contentEnabled'] = JHtml::_(
+            'searchtools.sort', Text::_('CONTENT_ENABLED'), 'contentEnabled', $direction, $ordering
+        );
+        $headers['gnr']            = Text::_('ASSOCIATED_GROUPS_AND_ROLES');
 
         return $headers;
     }
@@ -224,12 +193,12 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
 
         $canEdit = Can::manage();
         $index   = 0;
-        foreach ($items as $key => $item) {
+        foreach ($items as $item) {
             $url            = "index.php?option=com_thm_groups&view=profile_edit&id=$item->profileID";
             $return[$index] = [];
 
             $return[$index][0] = JHtml::_('grid.id', $index, $item->profileID);
-            $return[$index][1] = JHtml::_('link', $url, THM_GroupsHelperProfiles::getLNFName($item->profileID));
+            $return[$index][1] = JHtml::_('link', $url, Helper::lnfName($item->profileID));
 
             $return[$index][2] = $this->getToggle($item->profileID, $item->published, 'profile', '', 'published');
             $return[$index][3] = $this->getToggle($item->profileID, $item->canEdit, 'profile', '', 'canEdit');
@@ -250,46 +219,37 @@ class THM_GroupsModelProfile_Manager extends THM_GroupsModelList
      */
     protected function getListQuery()
     {
-        $query = $this->_db->getQuery(true);
+        $query = DB::query();
 
         $select = 'DISTINCT profile.id as profileID, profile.published, profile.canEdit, profile.contentEnabled, ';
-        $select .= 'fn.value as forename, sn.value as surname, em.value as email';
+        $select .= 'forenames, surnames, email';
 
-        $query->select($select);
-        $query->from('#__thm_groups_profiles AS profile');
+        $query->select('*');
+        $query->from(DB::qn('#__users', 'u'));
 
-        // Forename
-        $query->innerJoin('#__thm_groups_profile_attributes AS fn ON fn.profileID = profile.id AND fn.attributeID = 1');
+        $this->setSearchFilter($query, ['id', 'forenames', 'surnames', 'email']);
 
-        // Surname
-        $query->innerJoin('#__thm_groups_profile_attributes AS sn ON sn.profileID = profile.id AND sn.attributeID = 2');
-
-        // Email
-        $query->innerJoin('#__thm_groups_profile_attributes AS em ON em.profileID = profile.id AND em.attributeID = 4');
-
-        $this->setSearchFilter($query, ['profile.id', 'fn.value', 'sn.value', 'em.value']);
-
-        $this->setIDFilter($query, 'profile.published', ['filter.published']);
-        $this->setIDFilter($query, 'profile.canEdit', ['filter.canEdit']);
-        $this->setIDFilter($query, 'profile.contentEnabled', ['filter.contentEnabled']);
+        $this->setIDFilter($query, 'content', 'filter.content');
+        $this->setIDFilter($query, 'editing', 'filter.editing');
+        $this->setIDFilter($query, 'published', 'filter.published');
 
         $filterGroups = $this->state->get('list.groupID');
         $filterRoles  = $this->state->get('list.roleID');
 
-        if (!empty($filterGroups) or !empty($filterRoles)) {
-            // We don't need these unless filter is requested
-            $query->leftJoin('#__thm_groups_profile_associations AS pa ON pa.profileID = profile.id');
-            $query->leftJoin('#__thm_groups_role_associations AS ra ON ra.id = pa.role_associationID');
+        if ($filterGroups or $filterRoles) {
+            $query->leftJoin(DB::qn('#__user_usergroup_map', 'uugm'), DB::qc('uugm.user_id', 'u.id'))
+                ->leftJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.mapID', 'uugm.id'));
 
             if ($filterGroups) {
-                $this->setIDFilter($query, 'ra.groupID', ['list.groupID']);
+                $this->setIDFilter($query, 'ra.groupID', 'list.groupID');
             }
+
             if ($filterRoles) {
-                $this->setIDFilter($query, 'ra.roleID', ['list.roleID']);
+                $this->setIDFilter($query, 'ra.roleID', 'list.roleID');
             }
         }
 
-        $this->setOrdering($query);
+        $this->orderBy($query);
 
         return $query;
     }
