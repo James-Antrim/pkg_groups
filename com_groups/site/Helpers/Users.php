@@ -401,6 +401,60 @@ class Users
     }
 
     /**
+     * Attempts to resolve the given string to a valid profile.
+     *
+     * @param   string  $segment  the url segment being checked
+     *
+     * @return int|string non
+     * -zero int if the clue resolved to a specific profile, string if the clue resolved to multiple
+     *                    profiles, int 0 if no resolution took place
+     */
+    public static function resolve(string $segment): int|string
+    {
+        $alias  = '';
+        $userID = 0;
+
+        if (is_numeric($segment)) {
+            $userID = $segment;
+        }
+        // Corrected pre 3.8 URL formatting
+        elseif (preg_match('/^(\d+)\-([a-zA-Z\-]+)(\-\d+)*$/', $segment, $matches)) {
+            $userID = $matches[1];
+            $alias  = $matches[2];
+        }
+        // Original faulty URL formatting
+        elseif (preg_match('/^\d+-(\d+)-([a-zA-Z\-]+)$/', $segment, $matches)) {
+            $userID = $matches[1];
+            $alias  = $matches[2];
+        }
+
+        // Syntactically
+        $validAlias = (!empty($alias));
+        $validID    = (!empty($userID) and is_numeric($userID));
+
+        // The id and alias were not consistent with each other.
+        if ($validAlias and $validID and $userID != self::idByAlias($alias)) {
+            return 0;
+        }
+
+        if (!$validID) {
+            $alias  = $validAlias ? $alias : $segment;
+            $userID = Users::idByAlias($alias);
+        }
+
+        if ($userID) {
+            if (is_numeric($userID)) {
+                return Users::published($userID) ? $userID : 0;
+            } // Disambiguation necessary
+            elseif (is_string($userID)) {
+                return $userID;
+            }
+        }
+
+        return 0;
+    }
+
+    /**
      * Returns the user's surnames.
      *
      * @param   int  $userID

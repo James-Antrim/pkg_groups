@@ -224,46 +224,4 @@ class THM_GroupsHelperProfiles
 
         return HTML::link($url, $icon);
     }
-
-    /**
-     * Parses the given string to check for a valid profile
-     *
-     * @param   string  $potentialProfile  the segment being checked
-     *
-     * @return int|string int the id if a distinct profile was found, string if no distinct profile was found, otherwise 0
-     */
-    public static function resolve($potentialProfile): int|string
-    {
-        if (is_numeric($potentialProfile)) {
-            $profileID = $potentialProfile;
-        } // Corrected pre 3.8 URL formatting
-        elseif (preg_match('/^(\d+)\-([a-zA-Z\-]+)(\-\d+)*$/', $potentialProfile, $matches)) {
-            $profileID      = $matches[1];
-            $potentialAlias = $matches[2];
-        } // Original faulty URL formatting
-        elseif (preg_match('/^\d+-(\d+)-([a-zA-Z\-]+)$/', $potentialProfile, $matches)) {
-            $profileID      = $matches[1];
-            $potentialAlias = $matches[2];
-        }
-
-        if (!empty($profileID) and !empty($potentialAlias) and $profileID != Users::idByAlias($potentialAlias)) {
-            return 0;
-        }
-
-        $potentialAlias = empty($potentialAlias) ? $potentialProfile : $potentialAlias;
-        if (empty($profileID) or !is_numeric($profileID)) {
-            $profileID = Users::idByAlias($potentialAlias);
-        }
-
-        if ($profileID and is_numeric($profileID)) {
-            if (is_numeric($profileID)) {
-                return Users::published($profileID) ? $profileID : 0;
-            } // Disambiguation necessary
-            elseif (is_string($profileID)) {
-                return $profileID;
-            }
-        }
-
-        return 0;
-    }
 }

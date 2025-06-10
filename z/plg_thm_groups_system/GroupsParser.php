@@ -111,20 +111,20 @@ class GroupsParser
 
                 case 'articles':
                 case 'content_manager':
-                    $return['profileID'] = THM_GroupsHelperProfiles::resolve($lastItem);
+                    $return['profileID'] = Users::resolve($lastItem);
                     $return['view']      = 'content_manager';
                     break;
 
                 case 'profile':
                 case 'profile_edit':
-                    $return['profileID'] = THM_GroupsHelperProfiles::resolve($lastItem);
+                    $return['profileID'] = Users::resolve($lastItem);
                     $return['view']      = $secondLastItem;
                     break;
 
             }
         }
         else {
-            $return['profileID'] = THM_GroupsHelperProfiles::resolve($secondLastItem);
+            $return['profileID'] = Users::resolve($secondLastItem);
             $return['id']        = THM_GroupsHelperContent::resolve($lastItem);
 
             // Invalid profile id, but valid content id => use the profileID associated with the content
@@ -248,10 +248,10 @@ class GroupsParser
         // Rules with context. If context does not resolve to something relevant the query is returned empty.
         if ($secondLastItem) {
             if ($secondLastItem === 'profile_edit' or $secondLastItem === 'content_manager') {
-                $query['profileID'] = THM_GroupsHelperProfiles::resolve($lastItem);
+                $query['profileID'] = Users::resolve($lastItem);
                 $query['view']      = $secondLastItem;
             }
-            elseif ($profileID = THM_GroupsHelperProfiles::resolve($secondLastItem)) {
+            elseif ($profileID = Users::resolve($secondLastItem)) {
                 if ($contentID = THM_GroupsHelperContent::resolve($lastItem, $profileID)) {
                     $query['id']   = $contentID;
                     $query['view'] = 'content';
@@ -286,7 +286,7 @@ class GroupsParser
             return $query;
         }
 
-        $searchProfileID = THM_GroupsHelperProfiles::resolve($lastItem);
+        $searchProfileID = Users::resolve($lastItem);
         if ($searchProfileID and is_numeric($searchProfileID)) {
             $query['profileID'] = $searchProfileID;
             $query['view']      = 'profile';
