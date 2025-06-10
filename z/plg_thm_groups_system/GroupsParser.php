@@ -10,11 +10,10 @@
  * @link        www.thm.de
  */
 
-require_once JPATH_ROOT . '/media/com_thm_groups/helpers/categories.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
 
 use Joomla\CMS\Language\Text;
-use THM\Groups\Helpers\Users;
+use THM\Groups\Helpers\{Categories, Users};
 
 class GroupsParser
 {
@@ -33,7 +32,7 @@ class GroupsParser
             return $query;
         }
 
-        $profileID = THM_GroupsHelperCategories::getProfileID($cParams[1]);
+        $profileID = Categories::userID($cParams[1]);
 
         // The profile ID does not match the paired alias.
         if ($profileID != Users::idByAlias($cParams[2])) {
@@ -261,10 +260,10 @@ class GroupsParser
                 }
                 $query['profileID'] = $profileID;
             }
-            elseif ($profileID = THM_GroupsHelperCategories::resolve($secondLastItem)) {
+            elseif ($profileID = Categories::resolve($secondLastItem)) {
                 if ($profileID === true) {
                     // Second last is Groups root category
-                    $query['profileID'] = THM_GroupsHelperCategories::resolve($lastItem);
+                    $query['profileID'] = Categories::resolve($lastItem);
                     $query['view']      = 'profile';
                 }
                 else {
@@ -291,7 +290,7 @@ class GroupsParser
             $query['profileID'] = $searchProfileID;
             $query['view']      = 'profile';
         }
-        elseif ($categoryProfileID = THM_GroupsHelperCategories::resolve($lastItem)) {
+        elseif ($categoryProfileID = Categories::resolve($lastItem)) {
             if ($categoryProfileID === true) {
                 $query['search'] = '';
                 $query['view']   = 'overview';

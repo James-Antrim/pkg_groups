@@ -9,6 +9,7 @@
  */
 
 use THM\Groups\Helpers\Can;
+use THM\Groups\Helpers\Categories;
 
 defined('_JEXEC') or die;
 
@@ -48,7 +49,7 @@ class THM_GroupsViewContent_Manager extends THM_GroupsViewList
             JText::_('COM_THM_GROUPS_CONTENT_MANAGER_VIEW_TITLE'), 'content_manager'
         );
 
-        $rootCategory = THM_GroupsHelperCategories::getRoot();
+        $rootCategory = Categories::root();
 
         if (!empty($rootCategory)) {
             JToolBarHelper::publishList('content.feature', 'COM_THM_GROUPS_FEATURE');

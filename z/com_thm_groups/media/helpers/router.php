@@ -11,7 +11,7 @@
 require_once 'content.php';
 
 use \Joomla\CMS\Uri\Uri as URI;
-use THM\Groups\Helpers\{Profiles, Users};
+use THM\Groups\Helpers\{Categories, Profiles, Users};
 
 /**
  * Class providing helper functions for batch select options
@@ -265,7 +265,7 @@ class THM_GroupsHelperRouter
                 }
                 elseif (preg_match('/^(\d+)/', $query['catid'], $matches)) {
                     // true for root, false for irrelevant, otherwise profileID
-                    $profileID = THM_GroupsHelperCategories::resolve($matches[0]);
+                    $profileID = Categories::resolve($matches[0]);
                 }
             }
             if (!empty($query['a_id']) or !empty($query['id'])) {
@@ -306,11 +306,11 @@ class THM_GroupsHelperRouter
 
         if (!empty($query['id'])) {
             if (is_numeric($query['id'])) {
-                $profileID = THM_GroupsHelperCategories::resolve($query['id']);
+                $profileID = Categories::resolve($query['id']);
             }
             elseif (preg_match('/^(\d+)/', $query['id'], $matches)) {
                 // true for root, false for irrelevant, otherwise profileID
-                $profileID = THM_GroupsHelperCategories::getProfileID($matches[0]);
+                $profileID = Categories::userID($matches[0]);
             }
         }
 

@@ -283,9 +283,9 @@ class Users
      *
      * @param   string  $alias
      *
-     * @return int
+     * @return int|string
      */
-    public static function idByAlias(string $alias): int
+    public static function idByAlias(string $alias): int|string
     {
         /** @var Table $table */
         $table = self::getTable();
@@ -439,7 +439,7 @@ class Users
 
         if (!$validID) {
             $alias  = $validAlias ? $alias : $segment;
-            $userID = Users::idByAlias($alias);
+            $userID = self::idByAlias($alias);
         }
 
         if ($userID) {

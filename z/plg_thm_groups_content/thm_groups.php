@@ -10,9 +10,10 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Helpers\Categories;
+
 defined('_JEXEC') or die;
 
-require_once JPATH_ROOT . '/media/com_thm_groups/helpers/categories.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/renderer.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/router.php';
@@ -41,7 +42,7 @@ class PlgContentThm_Groups extends JPlugin
             return true;
         }
 
-        $profileID = THM_GroupsHelperCategories::getProfileID($article->catid);
+        $profileID = Categories::userID($article->catid);
 
         // Irrelevant
         if (empty($profileID)) {
@@ -72,7 +73,7 @@ class PlgContentThm_Groups extends JPlugin
             return true;
         }
 
-        $profileID = THM_GroupsHelperCategories::getProfileID($article->catid);
+        $profileID = Categories::userID($article->catid);
 
         // Irrelevant
         if (empty($profileID)) {

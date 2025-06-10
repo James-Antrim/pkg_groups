@@ -14,6 +14,8 @@ use THM\Groups\Helpers\{Can, Profiles, Users};
 require_once 'component.php';
 require_once 'profiles.php';
 
+use THM\Groups\Helpers\Categories as Helper;
+
 /**
  * Class providing helper functions for batch select options
  */
@@ -35,7 +37,7 @@ class THM_GroupsHelperCategories
 
         $user           = JFactory::getUser();
         $canCreate      = $user->authorise('core.create', 'com_content.category.' . $categoryID);
-        $profileID      = self::getProfileID($categoryID);
+        $profileID      = Helper::userID($categoryID);
         $isOwn          = $profileID === $user->id;
         $isPublished    = Users::published($profileID);
         $contentEnabled = Users::content($profileID);
@@ -60,7 +62,7 @@ class THM_GroupsHelperCategories
         $user       = JFactory::getUser();
         $canEdit    = $user->authorise('core.edit', 'com_content.category.' . $categoryID);
         $canEditOwn = $user->authorise('core.edit.own', 'com_content.category.' . $categoryID);
-        $profileID  = self::getProfileID($categoryID);
+        $profileID  = Helper::userID($categoryID);
         $isOwn      = $profileID === $user->id;
 
         // Irregardless of configuration only administrators and content owners should be able to edit
@@ -83,7 +85,7 @@ class THM_GroupsHelperCategories
     public static function create($profileID)
     {
         $categoryID = 0;
-        $parentID   = self::getRoot();
+        $parentID   = Helper::root();
 
         if ($parentID > 0) {
             // Create category and get its ID
@@ -190,102 +192,6 @@ class THM_GroupsHelperCategories
     }
 
     /**
-     * Returns the id of the profile associated with the category
-     *
-     * @param   string  $search  the search contents
-     *
-     * @return int the id of the profile on success, otherwise 0
-     *
-     * @throws Exception
-     */
-    public static function getProfileID($search)
-    {
-        $dbo   = JFactory::getDBO();
-        $query = $dbo->getQuery(true);
-
-        $query->select('cc.id, cc.alias, cc.path, gc.profileID')
-            ->from('#__categories AS cc')
-            ->innerJoin('#__thm_groups_categories AS gc ON gc.id = cc.id');
-        if (is_numeric($search)) {
-            $query->where("cc.id = '$search'");
-        }
-        else {
-            $query->where("cc.alias = '$search'");
-        }
-        $dbo->setQuery($query);
-
-        try {
-            $results = $dbo->loadAssoc();
-        }
-        catch (Exception $exc) {
-            JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
-
-            return 0;
-        }
-
-        // There was no category with the given alias associated with groups
-        if (empty($results)) {
-            return 0;
-        }
-
-        $profileAlias = Users::alias($results['profileID']);
-
-        // Category information is already set correctly
-        if ($results['alias'] === $profileAlias and $results['path'] === $profileAlias) {
-            return $results['profileID'];
-        }
-
-        $category = JTable::getInstance('Category', 'JTable');
-        $category->load($results['id']);
-        preg_match('/\d+/', $profileAlias, $autoIncrement);
-        $title = Profiles::name($results['profileID']);
-        if (!empty($autoIncrement)) {
-            $title = "$title {$autoIncrement[0]}";
-        }
-
-        $category->title = $title;
-        $category->alias = $profileAlias;
-        $category->path  = $profileAlias;
-
-        return ($category->store()) ? $results['profileID'] : 0;
-
-    }
-
-    /**
-     * Returns the root category id for profile associated content.
-     *
-     * @return mixed
-     */
-    public static function getRoot()
-    {
-        return JComponentHelper::getParams('com_thm_groups')->get('rootCategory');
-    }
-
-    /**
-     * Checks whether the given information can identify with the configured root category
-     *
-     * @param   mixed  $categoryData  int the category id or string the category alias
-     *
-     * @return bool true if the category could be identified as the root category, otherwise false
-     */
-    public static function isRoot($categoryData)
-    {
-        $root = self::getRoot();
-        if (is_numeric($categoryData)) {
-            return $categoryData == $root;
-        }
-
-        $category = JTable::getInstance('Category', 'JTable');
-        $category->load(['alias' => $categoryData]);
-
-        if (!empty($category->id)) {
-            return $category->id == $root;
-        }
-
-        return false;
-    }
-
-    /**
      * Creates an association mapping a profile to a content category
      *
      * @param   int  $profileID   the profile ID
@@ -311,40 +217,6 @@ class THM_GroupsHelperCategories
         }
 
         return empty($success) ? false : true;
-    }
-
-    /**
-     * Resolves the given string to  a category associated with the Groups if possible.
-     *
-     * @param   string  $potentialCategory  the segment being checked
-     *
-     * @return mixed true if the category is the root category, int the profile id if associated with a profile, false
-     *               if the category is not associated with groups
-     * @throws Exception
-     */
-    public static function resolve($potentialCategory)
-    {
-        if (is_numeric($potentialCategory)) {
-            $categoryID = $potentialCategory;
-        }
-        elseif (preg_match('/^(\d+)\-[a-zA-Z\-]+$/', $potentialCategory, $matches)) {
-            $categoryID = $matches[1];
-        }
-        else {
-            $categoryID = $potentialCategory;
-        }
-
-        if (empty($categoryID)) {
-            return $categoryID;
-        }
-
-        if (self::isRoot($categoryID)) {
-            return true;
-        }
-
-        $profileID = self::getProfileID($categoryID);
-
-        return empty($profileID) ? false : $profileID;
     }
 
     /**

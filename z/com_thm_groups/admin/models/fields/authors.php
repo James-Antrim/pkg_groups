@@ -8,6 +8,8 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Helpers\Categories;
+
 defined('_JEXEC') or die;
 JFormHelper::loadFieldClass('list');
 require_once HELPERS . 'content.php';
@@ -76,7 +78,7 @@ class JFormFieldAuthors extends JFormFieldList
     {
         $options = [];
 
-        $rootCategory = THM_GroupsHelperCategories::getRoot();
+        $rootCategory = Categories::root();
 
         if (empty($rootCategory)) {
             return parent::getOptions();

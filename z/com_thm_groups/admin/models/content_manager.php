@@ -13,6 +13,8 @@ defined('_JEXEC') or die;
 require_once HELPERS . 'content.php';
 require_once JPATH_SITE . '/media/com_thm_groups/models/list.php';
 
+use THM\Groups\Helpers\Categories;
+
 /**
  * THM_GroupsModelContent_Manager is a class which deals with the information preparation for the administrator view.
  */
@@ -46,7 +48,7 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
     {
         $query = $this->_db->getQuery(true);
 
-        $rootCategory = THM_GroupsHelperCategories::getRoot();
+        $rootCategory = Categories::root();
 
         if (empty($rootCategory)) {
             return $query;
@@ -103,7 +105,7 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
      */
     public function getItems()
     {
-        $rootCategory = THM_GroupsHelperCategories::getRoot();
+        $rootCategory = Categories::root();
 
         $return = [];
 
