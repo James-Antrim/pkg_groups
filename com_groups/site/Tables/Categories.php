@@ -19,6 +19,8 @@ use THM\Groups\Adapters\Application;
  */
 class Categories extends Category
 {
+    use Resettable;
+
     /**
      * INT(10) UNSIGNED NOT NULL DEFAULT 0
      * @var int
@@ -74,9 +76,9 @@ class Categories extends Category
 
     /**
      * MEDIUMTEXT DEFAULT NULL
-     * @var string
+     * @var string|null
      */
-    public string $description = '';
+    public string|null $description = null;
 
     /**
      * VARCHAR(50) NOT NULL DEFAULT ''

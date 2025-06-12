@@ -13,7 +13,7 @@ namespace THM\Groups\Tools;
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
 use THM\Groups\Adapters\{Application, Database as DB, Text};
-use THM\Groups\Helpers\{Attributes, Groups, Types};
+use THM\Groups\Helpers\{Attributes, Groups, Profiles, Types};
 use THM\Groups\Tables;
 
 /**
@@ -346,7 +346,7 @@ class Migration
     private static function categories(): void
     {
         $query = DB::query();
-        $query->select(DB::qn(['id', 'profileID'], ['categoryID', 'userID']))
+        $query->select(DB::qn(['id', 'profileID'], ['id', 'created_user_id']))
             ->from(DB::qn('#__thm_groups_categories'));
         DB::set($query);
 
@@ -354,7 +354,7 @@ class Migration
             $table = new Tables\Categories();
 
             // Already there
-            if ($table->load($result)) {
+            if ($table->load($result['id']) and $table->created_user_id === $result['created_user_id']) {
                 continue;
             }
 
@@ -398,6 +398,11 @@ class Migration
     {
         //Integration::getTestResults();
         $session = Application::session();
+
+        if (!$session->get('com_groups.migrated.settings')) {
+            self::settings();
+            $session->set('com_groups.migrated.settings', true);
+        }
 
         if (!$session->get('com_groups.migrated.categories')) {
             self::categories();
@@ -682,6 +687,39 @@ class Migration
         }
 
         return $map;
+    }
+
+    /**
+     * Migrates the thm groups component settings.
+     *
+     * @return void
+     */
+    private static function settings(): void
+    {
+        $query = DB::query();
+        $query->select(DB::qn('params'))
+            ->from(DB::qn('#__extensions'))
+            ->where(DB::qc('element', 'com_thm_groups', '=', true));
+        DB::set($query);
+
+        if ($deprecated = DB::string()) {
+            $deprecated = json_decode($deprecated, true);
+            $params     = [
+                'automatic-publishing' => Profiles::ENABLED,
+                'module-context'       => !isset($deprecated['dynamicContext']) ? null : $deprecated['dynamicContext'],
+                'profile-management'   => !isset($deprecated['editownprofile']) ?
+                    Profiles::DECENTRALIZED : $deprecated['editownprofile'],
+                'profile-content'      => !isset($deprecated['enabled']) ? Profiles::DISABLED : $deprecated['enabled'],
+                'root-category'        => !isset($deprecated['rootCategory']) ? null : $deprecated['rootCategory'],
+            ];
+
+            $query = DB::query();
+            $query->update(DB::qn('#__extensions'))
+                ->set(DB::qc('params', json_encode($params), '=', true))
+                ->where(DB::qc('element', 'com_groups', '=', true));
+            DB::set($query);
+            DB::execute();
+        }
     }
 
     /**

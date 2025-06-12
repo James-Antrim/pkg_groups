@@ -24,7 +24,7 @@ class Categories
      */
     public static function root(): int
     {
-        if (!$rootID = (int) Input::getParams()->get('category')) {
+        if (!$rootID = (int) Input::getParams()->get('root-category')) {
             Application::message('NO_ROOT', Application::WARNING);
             return 0;
         }
