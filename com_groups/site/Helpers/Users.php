@@ -11,7 +11,8 @@
 namespace THM\Groups\Helpers;
 
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text, User as Account};
-use THM\Groups\Tables\{Categories, Users as Table};
+use THM\Groups\Helpers\Categories as CHelper;
+use THM\Groups\Tables\{Categories as CTable, Users as Table};
 
 /**
  * Accessor class for user and profile data.
@@ -131,8 +132,8 @@ class Users
      */
     public static function categoryID(int $userID): int
     {
-        $table = new Categories();
-        if ($table->load(['userID' => $userID])) {
+        $table = new CTable();
+        if ($table->load(['created_user_id' => $userID, 'parent_id' => CHelper::root()])) {
             return $table->categoryID;
         }
 

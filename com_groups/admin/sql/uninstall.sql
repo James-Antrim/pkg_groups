@@ -11,6 +11,10 @@ DROP TABLE IF EXISTS
     `#__groups_template_attributes`,
     `#__groups_templates`;
 
+ALTER TABLE `#__categories`
+    DROP CONSTRAINT `fk_categories_createdID`,
+    DROP CONSTRAINT `fk_categories_modifiedID`;
+
 ALTER TABLE `#__user_usergroup_map`
     DROP CONSTRAINT `PRIMARY`,
     DROP COLUMN `id`,

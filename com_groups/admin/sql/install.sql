@@ -19,17 +19,6 @@ CREATE TABLE IF NOT EXISTS `#__groups_attributes` (
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `#__groups_categories` (
-    `id`         INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-    `categoryID` INT(11)          NOT NULL COMMENT 'Signed because of categories table \'id\' fk.',
-    `userID`     INT(11)          NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `entry` (`categoryID`, `userID`)
-)
-    ENGINE = InnoDB
-    DEFAULT CHARSET = utf8mb4
-    COLLATE = utf8mb4_unicode_ci;
-
 #todo integrate with usergroups?
 # no unique keys for groups which may have the same name in different contexts.
 CREATE TABLE IF NOT EXISTS `#__groups_groups` (
@@ -108,6 +97,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_templates` (
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
+#region fix joomla tables and values
 # modernize the table for ease of reference from the role associations table
 ALTER TABLE `#__user_usergroup_map`
     DROP CONSTRAINT `PRIMARY`,
@@ -128,6 +118,24 @@ ALTER TABLE `#__users`
     ADD COLUMN `converisID` INT(11) UNSIGNED DEFAULT NULL,
     ADD UNIQUE KEY (`alias`),
     ADD UNIQUE KEY (`converisID`);
+
+# fix categories structure user table id structure was not held consistent with these two columns
+ALTER TABLE `#__categories`
+    CHANGE `created_user_id` `created_user_id` INT(11) DEFAULT NULL,
+    CHANGE `modified_user_id` `modified_user_id` INT(11) DEFAULT NULL;
+
+# fix categories values deleted and zero user.id values are in these columns which are invalid references
+UPDATE `#__categories`
+SET `created_user_id` = NULL
+WHERE `created_user_id` NOT IN (SELECT id
+                                FROM `#__users`);
+
+UPDATE `#__categories`
+SET `modified_user_id` = NULL
+WHERE `modified_user_id` NOT IN (SELECT id
+                                 FROM `#__users`);
+#endregion
+
 #endregion
 
 #region Fill
@@ -236,12 +244,16 @@ VALUES (1, 'Cards', 'Cards', 1, 1, 0),
 #endregion
 
 #region Reference
+ALTER TABLE `#__categories`
+    ADD CONSTRAINT `fk_categories_createdID` FOREIGN KEY (`created_user_id`) REFERENCES `#__users` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL,
+    ADD CONSTRAINT `fk_categories_modifiedID` FOREIGN KEY (`modified_user_id`) REFERENCES `#__users` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL;
+
 ALTER TABLE `#__groups_attributes`
     ADD CONSTRAINT `fk_attributes_viewLevelID` FOREIGN KEY (`viewLevelID`) REFERENCES `#__viewlevels` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `#__groups_categories`
-    ADD CONSTRAINT `fk_categories_categoryID` FOREIGN KEY (`categoryID`) REFERENCES `#__categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    ADD CONSTRAINT `fk_categories_userID` FOREIGN KEY (`userID`) REFERENCES `#__users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `#__groups_groups`
     ADD CONSTRAINT `fk_groups_groupID` FOREIGN KEY (`id`) REFERENCES `#__usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;

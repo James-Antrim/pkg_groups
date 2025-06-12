@@ -33,7 +33,7 @@ class Categories
     }
 
     /**
-     * Attempts to resolve the given string to a valid category.
+     * Attempts to resolve the given string to a valid user.
      *
      * @param   int|string  $segment  the url segment being checked
      *
@@ -72,18 +72,16 @@ class Categories
     public static function userID(int|string $identifier): int
     {
         $query = DB::query();
-        $query->select(DB::qn(['cc.id', 'cc.alias', 'cc.path', 'gc.userID']))
-            ->from(DB::qn('#__categories', 'cc'))
-            ->innerJoin(DB::qn('#__groups_categories', 'gc'), DB::qc('gc.id', 'cc.id'));
+        $query->select(DB::qn(['id', 'alias', 'path', 'created_user_id']))->from(DB::qn('#__categories'));
 
         if (is_numeric($identifier)) {
             $literal    = false;
             $identifier = (int) $identifier;
-            $subject    = 'cc.id';
+            $subject    = 'id';
         }
         else {
             $literal = true;
-            $subject = 'cc.alias';
+            $subject = 'alias';
         }
 
         $query->where(DB::qc($subject, $identifier, '=', $literal));
@@ -93,7 +91,7 @@ class Categories
             return 0;
         }
 
-        $userID    = $results['userID'];
+        $userID    = $results['created_user_id'];
         $userAlias = Users::alias($userID);
 
         // Category information is already set correctly
