@@ -10,11 +10,10 @@
 
 use Joomla\CMS\Log\Log;
 use THM\Groups\Adapters\{Application, Database as DB, Input};
+use THM\Groups\Controllers\Category;
 use THM\Groups\Helpers\{Attributes, Can, Users};
 
 defined('_JEXEC') or die;
-require_once HELPERS . 'content.php';
-require_once HELPERS . 'groups.php';
 require_once HELPERS . 'profiles.php';
 require_once HELPERS . 'roles.php';
 
@@ -193,7 +192,8 @@ class THM_GroupsModelProfile extends JModelLegacy
         $profileIDs = Input::getSelectedIDs();
         foreach ($profileIDs as $profileID) {
             if (!$categoryID = Users::categoryID($profileID)) {
-                $categoryID = THM_GroupsHelperCategories::create($profileID);
+                $category   = new Category();
+                $categoryID = $category->create($profileID);
             }
 
             if (!Users::published($profileID)) {
@@ -515,7 +515,8 @@ class THM_GroupsModelProfile extends JModelLegacy
             case 'contentEnabled':
 
                 if (!$categoryID = Users::categoryID($profileID)) {
-                    $categoryID = THM_GroupsHelperCategories::create($profileID);
+                    $category   = new Category();
+                    $categoryID = $category->create($profileID);
                 }
 
                 if (!Users::published($profileID)) {
@@ -603,8 +604,6 @@ class THM_GroupsModelProfile extends JModelLegacy
      */
     public function unpublishContent()
     {
-        $app = JFactory::getApplication();
-
         if (!Can::manage()) {
             Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
