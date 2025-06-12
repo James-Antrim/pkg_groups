@@ -10,8 +10,7 @@
 
 namespace THM\Groups\Helpers;
 
-use Joomla\CMS\Language\Text;
-use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\{Application, Database as DB, Text};
 
 /**
  *  Constants and functions for dealing with groups from an external read context.
@@ -19,6 +18,30 @@ use THM\Groups\Adapters\Application;
 class Roles implements Selectable
 {
     use Named, Persistent;
+
+    /**
+     * Retrieves a list
+     *
+     * @param   int  $userID
+     * @param   int  $groupID
+     *
+     * @return string[]
+     */
+    public static function mapped(int $userID, int $groupID): array
+    {
+        $role = 'name_' . Application::tag();
+
+        $query = DB::query();
+        $query->select(DB::qn($role))
+            ->from(DB::qn('#__groups_roles', 'r'))
+            ->innerJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.roleID', 'r.id'))
+            ->innerJoin(DB::qn('#__user_usergroups_map', 'uugm'), DB::qc('uugm.id', 'ra.mapID'))
+            ->where(DB::qcs([['uugm.group_id', $groupID], ['uugm.user_id', $userID]]));
+        DB::set($query);
+
+        return DB::column();
+        //'<div class="attribute-wrap attribute-roles">' . implode(', ', $roles) . '</div>' : '';
+    }
 
     /**
      * @inheritDoc
@@ -29,20 +52,14 @@ class Roles implements Selectable
     {
         $plural    = 'plural_' . Application::tag();
         $options   = [];
-        $options[] = (object) [
-            'text'  => Text::_('GROUPS_NONE_MEMBER'),
-            'value' => ''
-        ];
+        $options[] = (object) ['text' => Text::_('NONE_MEMBER'), 'value' => ''];
 
         foreach (self::resources() as $roleID => $role) {
             if ($associated and empty($role->groups)) {
                 continue;
             }
 
-            $options[] = (object) [
-                'text'  => $role->$plural,
-                'value' => $roleID
-            ];
+            $options[] = (object) ['text' => $role->$plural, 'value' => $roleID];
         }
 
         return $options;

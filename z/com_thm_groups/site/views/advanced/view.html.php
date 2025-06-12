@@ -11,9 +11,10 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Helpers\Roles;
+
 require_once HELPERS . 'groups.php';
 require_once HELPERS . 'profiles.php';
-require_once HELPERS . 'roles.php';
 
 define('ROLESORT', 0);
 define('NO', 0);
@@ -104,8 +105,9 @@ class THM_GroupsViewAdvanced extends JViewLegacy
         $showRoles = $this->params->get('showRoles', NO);
         $sort      = $this->params->get('sort', ALPHASORT);
 
-        $roleContainer = ($showRoles and $sort == ALPHASORT) ?
-            THM_GroupsHelperRoles::getRoles($profile['id'], $this->params->get('groupID')) : '';
+        $roleContainer =
+            ($showRoles and $sort === ALPHASORT and $roles = Roles::mapped($profile['id'], $this->params->get('groupID'))) ?
+                '<div class="attribute-wrap attribute-roles">' . implode(', ', $roles) . '</div>' : '';
 
         $attributes = THM_GroupsHelperProfiles::getDisplay($profile['id'], $this->templateID, $this->suppress);
 

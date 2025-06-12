@@ -95,43 +95,6 @@ class THM_GroupsHelperRoles
     }
 
     /**
-     * Retrieves a comma separated list of roles associated with both the group and the profile
-     *
-     * @param   int  $profileID  the id of the profile
-     * @param   int  $groupID    the id of the group
-     *
-     * @return string a comma seperated list of roles
-     * @throws Exception
-     */
-    public static function getRoles($profileID, $groupID)
-    {
-        $dbo = JFactory::getDbo();
-
-        $query = $dbo->getQuery(true);
-        $query
-            ->select("roles.name AS roleName")
-            ->from('#__thm_groups_roles AS roles')
-            ->innerJoin('#__thm_groups_role_associations AS ra ON ra.roleID = roles.id')
-            ->innerJoin('#__thm_groups_profile_associations AS pa ON pa.role_associationID = ra.id')
-            ->where("roles.id != '" . MEMBER . "'")
-            ->where("ra.groupID = '$groupID'")
-            ->where("pa.profileID = '$profileID'");
-
-        $dbo->setQuery($query);
-
-        try {
-            $roles = $dbo->loadColumn();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return '';
-        }
-
-        return empty($roles) ? '' : '<div class="attribute-wrap attribute-roles">' . implode(', ', $roles) . '</div>';
-    }
-
-    /**
      * Retrieves profileIDs for the given group/role association.
      *
      * @param   int  $assocID  the id of the group/role association

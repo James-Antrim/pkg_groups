@@ -12,7 +12,6 @@ defined('_JEXEC') or die;
 require_once dirname(__FILE__) . '/helper.php';
 require_once JPATH_ROOT . "/media/com_thm_groups/helpers/groups.php";
 require_once JPATH_ROOT . "/media/com_thm_groups/helpers/profiles.php";
-require_once JPATH_ROOT . "/media/com_thm_groups/helpers/roles.php";
 
 $app = JFactory::getApplication();
 JFactory::getLanguage()->load('com_thm_groups');
