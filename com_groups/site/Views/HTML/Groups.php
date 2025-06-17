@@ -96,7 +96,7 @@ class Groups extends ListView
             $item->supplement = implode(' / ', $item->path);
         }
         else {
-            $item->prefix = Helper::getPrefix($item->level);
+            $item->prefix = Helper::prefix($item->level);
         }
 
         if (in_array($item->id, Helper::DEFAULT)) {
@@ -107,7 +107,7 @@ class Groups extends ListView
         }
 
         if (!$this->state->get('filter.roleID')) {
-            $roles = Helper::getRoles($item->id);
+            $roles = Helper::roles($item->id);
             $count = count($roles);
 
             //$item->viewLevel = implode(', ', $levels);
@@ -129,7 +129,7 @@ class Groups extends ListView
         }
 
         if (!$this->state->get('filter.levelID')) {
-            $levels = Helper::getLevels($item->id);
+            $levels = Helper::levels($item->id);
             $count  = count($levels);
 
             $item->viewLevel = match (true) {

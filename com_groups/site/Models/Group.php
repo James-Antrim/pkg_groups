@@ -26,7 +26,7 @@ class Group extends EditModel
             $group            = UGH::getInstance()->get($groupID);
             $item->title      = $group->title;
             $item->parent_id  = $group->parent_id;
-            $levels           = Helper::getLevels($groupID);
+            $levels           = Helper::levels($groupID);
             $item->viewLevels = array_keys($levels);
         }
 

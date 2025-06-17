@@ -70,13 +70,22 @@ class Groups implements Selectable
     }
 
     /**
+     * Gets the IDs of existing user groups.
+     * @return int[]
+     */
+    public static function ids(): array
+    {
+        return array_keys(self::resources());
+    }
+
+    /**
      * Gets the view levels associated with the group.
      *
      * @param   int  $groupID  the id of the group to get levels for
      *
      * @return array [id => title]
      */
-    public static function getLevels(int $groupID): array
+    public static function levels(int $groupID): array
     {
         $group    = UserGroupsHelper::getInstance()->get($groupID);
         $groupIDs = $group->path;
@@ -108,6 +117,24 @@ class Groups implements Selectable
         return $return;
     }
 
+    /** @inheritDoc */
+    public static function options(bool $allowDefault = false): array
+    {
+        $options = [];
+
+        foreach (self::resources() as $groupID => $group) {
+            $disabled = (!$allowDefault and in_array($groupID, self::DEFAULT)) ? 'disabled' : '';
+
+            $options[] = (object) [
+                'disable' => $disabled,
+                'text'    => self::prefix($group->level) . $group->title,
+                'value'   => $group->id
+            ];
+        }
+
+        return $options;
+    }
+
     /**
      * Gets the prefix for hierarchical list displays.
      *
@@ -116,7 +143,7 @@ class Groups implements Selectable
      * @return string the prefix to display
      *
      */
-    public static function getPrefix(int $level): string
+    public static function prefix(int $level): string
     {
         $prefix = '';
         if ($level > 1) {
@@ -126,6 +153,22 @@ class Groups implements Selectable
         return $prefix;
     }
 
+    /** @inheritDoc */
+    public static function resources(): array
+    {
+        $groups = self::userGroups();
+
+        foreach ($groups as $groupID => $group) {
+            if ($name = self::getName($groupID)) {
+                $group->title = $name;
+            }
+
+            $group->roles = RoleAssociations::byGroupID($groupID);
+        }
+
+        return $groups;
+    }
+
     /**
      * Gets the roles associated with the group.
      *
@@ -133,7 +176,7 @@ class Groups implements Selectable
      *
      * @return array [id => name]
      */
-    public static function getRoles(int $groupID): array
+    public static function roles(int $groupID): array
     {
         $tag = Application::tag();
         $db  = Application::database();
@@ -161,51 +204,8 @@ class Groups implements Selectable
      * Gets the existing stock of usergroups. stdClass[id => ug];
      * @return array
      */
-    private static function getUserGroups(): array
+    private static function userGroups(): array
     {
         return UserGroupsHelper::getInstance()->getAll();
-    }
-
-    /**
-     * Gets the IDs of existing user groups.
-     * @return int[]
-     */
-    public static function ids(): array
-    {
-        return array_keys(self::resources());
-    }
-
-    /** @inheritDoc */
-    public static function options(bool $allowDefault = false): array
-    {
-        $options = [];
-
-        foreach (self::resources() as $groupID => $group) {
-            $disabled = (!$allowDefault and in_array($groupID, self::DEFAULT)) ? 'disabled' : '';
-
-            $options[] = (object) [
-                'disable' => $disabled,
-                'text'    => self::getPrefix($group->level) . $group->title,
-                'value'   => $group->id
-            ];
-        }
-
-        return $options;
-    }
-
-    /** @inheritDoc */
-    public static function resources(): array
-    {
-        $groups = self::getUserGroups();
-
-        foreach ($groups as $groupID => $group) {
-            if ($name = self::getName($groupID)) {
-                $group->title = $name;
-            }
-
-            $group->roles = RoleAssociations::byGroupID($groupID);
-        }
-
-        return $groups;
     }
 }

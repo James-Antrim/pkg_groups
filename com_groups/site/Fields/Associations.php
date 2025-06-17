@@ -32,7 +32,7 @@ class Associations extends ListField
         $options        = [];
 
         foreach (Groups::resources() as $groupID => $group) {
-            $prefix    = strip_tags(Groups::getPrefix($group->level));
+            $prefix    = strip_tags(Groups::prefix($group->level));
             $options[] = (object) [
                 'text'  => $prefix . $group->title,
                 'value' => "groupID-$groupID"
@@ -44,7 +44,7 @@ class Associations extends ListField
             }
 
             foreach ($group->roles as $assocID => $roleID) {
-                $prefix = strip_tags(Groups::getPrefix($group->level));
+                $prefix = strip_tags(Groups::prefix($group->level));
 
                 // Remove &ndash;&nbsp;
                 $prefix = substr($prefix, 0, strlen($prefix) - 13);
