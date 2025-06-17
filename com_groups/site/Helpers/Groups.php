@@ -153,6 +153,34 @@ class Groups implements Selectable
         return $prefix;
     }
 
+    /**
+     * Retrieves the ids of profiles directly associated with a group.
+     *
+     * @param   int        $groupID
+     * @param   bool|null  $published  the published status of the user profiles
+     *
+     * @return array
+     */
+    public static function profileIDs(int $groupID = 0, bool|null $published = Users::PUBLISHED): array
+    {
+        $query = DB::query();
+        $query->select('DISTINCT ' . DB::qn('user_id'))
+            ->from(DB::qn('#__user_usergroup_map', 'uugm'))
+            ->innerJoin(DB::qn('#__users', 'u'), DB::qn('u.id', 'uugm.user_id'));
+
+        if ($groupID) {
+            $query->where(DB::qc('group_id', $groupID));
+        }
+
+        if ($published !== null) {
+            $query->where(DB::qc('u.published', (int) $published));
+        }
+
+        DB::set($query);
+
+        return DB::integers();
+    }
+
     /** @inheritDoc */
     public static function resources(): array
     {

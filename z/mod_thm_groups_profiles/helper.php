@@ -11,7 +11,7 @@
 JLoader::import('joomla.application.component.model');
 JLoader::import('category', JPATH_SITE . '/components/com_content/models');
 
-use THM\Groups\Helpers\Profiles as Helper;
+use THM\Groups\Helpers\{Groups, Profiles as Helper};
 
 /**
  * Data retrieval class for the THM Groups profile module.
@@ -119,7 +119,7 @@ class THM_GroupsHelperProfilesModule
 
         if (!empty($dynamicParams['groupID'])) {
             if (empty($moduleParams) or empty($moduleParams['showRoles'])) {
-                $profileIDs = THM_GroupsHelperGroups::getProfileIDs($dynamicParams['groupID']);
+                $profileIDs = Groups::profileIDs($dynamicParams['groupID']);
                 return self::sortProfiles($profileIDs);
             }
 

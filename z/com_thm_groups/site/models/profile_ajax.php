@@ -8,9 +8,9 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Helpers\Groups;
+
 defined('_JEXEC') or die;
-require_once HELPERS . 'groups.php';
-require_once HELPERS . 'profiles.php';
 
 use THM\Groups\Helpers\Profiles as Helper;
 
@@ -30,7 +30,7 @@ class THM_GroupsModelProfile_Ajax extends JModelLegacy
     {
         $groupID    = JFactory::getApplication()->input->getInt('groupID', 0);
         $profiles   = [];
-        $profileIDs = THM_GroupsHelperGroups::getProfileIDs($groupID);
+        $profileIDs = Groups::profileIDs($groupID);
 
         foreach ($profileIDs as $profileID) {
             $displayName = Helper::name($profileID, true);
