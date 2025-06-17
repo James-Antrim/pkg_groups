@@ -14,11 +14,12 @@ use Joomla\CMS\Table\Table;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Can;
-use THM\Groups\Helpers\Users as Helper;
 use THM\Groups\Tables\Incremented;
 
 class User extends FormController
 {
+    use Associated;
+
     protected string $list = 'Users';
 
     /** @inheritDoc */

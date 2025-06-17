@@ -18,13 +18,6 @@ class Profile extends FormController
 {
     protected string $list = 'Users';
 
-    /** @inheritDoc */
-    protected function prepareData(): array
-    {
-        /** @todo implement this */
-        return [];
-    }
-
     /**
      * Creates a profile based on rudimentary user data.
      *
@@ -94,5 +87,12 @@ class Profile extends FormController
                 ]);
             }
         }
+    }
+
+    /** @inheritDoc */
+    protected function prepareData(): array
+    {
+        /** @todo implement this */
+        return [];
     }
 }

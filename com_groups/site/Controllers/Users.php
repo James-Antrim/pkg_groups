@@ -13,11 +13,13 @@ namespace THM\Groups\Controllers;
 use Joomla\CMS\{Access\Access, Application\CMSApplication, Plugin\PluginHelper, User\UserHelper};
 use Joomla\Component\Users\Administrator\Model\UserModel;
 use THM\Groups\Adapters\{Application, Database as DB, Dispatcher, Input, User};
-use THM\Groups\Helpers\{Can, Groups};
+use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\{RoleAssociations, Users as UT, UserUsergroupMap as UUGM};
 
 class Users extends ListController
 {
+    use Associated;
+
     // Add or remove a group / role association.
     private const ADD = 1, REMOVE = 0;
 
@@ -81,6 +83,7 @@ class Users extends ListController
         $this->farewell($selected, $updated);
     }
 
+    /** @inheritDoc */
     protected function authorize(): void
     {
         $authorized = match (debug_backtrace()[1]) {
@@ -175,7 +178,7 @@ class Users extends ListController
             }
 
             if ($batchMap) {
-                $mapped = $this->map($selectedID, $actionValue, $groupID, $roleID);
+                $mapped = $this->associate($selectedID, $actionValue, $groupID, $roleID);
             }
             else {
                 $mapped = true;
@@ -301,7 +304,6 @@ class Users extends ListController
     {
         $this->checkToken();
         $this->authorize();
-        $selectedID = Input::getSelectedID();
         $updated    = 0;
 
         /**
@@ -407,61 +409,6 @@ class Users extends ListController
         }
 
         return in_array($userID, $selectedIDs) ? [$userID] : [];
-    }
-
-    /**
-     * Maps / removes mappings of the given user id to the given groups & roles.
-     *
-     * @param   int  $userID   the id of the user to (dis-) associate
-     * @param   int  $action   the action to be performed on the user
-     * @param   int  $groupID  the id of the group to be (dis-) associated
-     * @param   int  $roleID   the id of the role to be (dis-) associated
-     *
-     * @return bool
-     */
-    private function map(int $userID, int $action, int $groupID, int $roleID): bool
-    {
-        $mapData = ['group_id' => $groupID, 'user_id' => $userID];
-        $map     = new UUGM();
-        $map->load($mapData);
-
-        if ($action === self::REMOVE) {
-            // Mapping doesn't exist
-            if (!$map->id) {
-                return false;
-            }
-
-            // Delete the mapping
-            if (!$roleID) {
-                return $map->delete();
-            }
-
-            $assoc     = new RoleAssociations();
-            $assocData = ['mapID' => $map->id, 'roleID' => $roleID];
-
-            // Association doesn't exist
-            if (!$assoc->load($assocData)) {
-                return false;
-            }
-
-            // Delete the association
-            return $assoc->delete();
-        }
-
-        if (!$map->id and !$map->save($mapData)) {
-            // Doesn't exist and couldn't be created
-            return false;
-        }
-
-        // No role requested or
-        if (!$roleID or in_array($groupID, Groups::DEFAULT)) {
-            return true;
-        }
-
-        $assoc     = new RoleAssociations();
-        $assocData = ['mapID' => $map->id, 'roleID' => $roleID];
-
-        return ($assoc->load($assocData) or $assoc->save($assocData));
     }
 
     /**
