@@ -8,13 +8,16 @@
  * @link        www.thm.de
  */
 require_once 'framework.php';
-$lang = THM_GroupsHelperLanguage::getLanguage(); ?>
+
+use THM\Groups\Adapters\Text;
+
+?>
 <html>
 <head>
     <link rel="stylesheet" href="<?php echo JUri::root() . 'css/documentation.css'; ?>">
 </head>
 <body class="groups-documentation">
-<h3><?php echo $lang->_('COM_THM_GROUPS_TEMPLATE_MANAGER'); ?></h3>
-<p><?php echo html_entity_decode($lang->_('COM_THM_GROUPS_TEMPLATE_MANAGER_DESC_LONG')); ?></p>
+<h3><?php echo Text::_('TEMPLATE_MANAGER'); ?></h3>
+<p><?php echo html_entity_decode(Text::_('TEMPLATE_MANAGER_DESC_LONG')); ?></p>
 </body>
 </html>

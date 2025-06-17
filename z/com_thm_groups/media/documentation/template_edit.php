@@ -8,25 +8,28 @@
  * @link        www.thm.de
  */
 require_once 'framework.php';
-$lang = THM_GroupsHelperLanguage::getLanguage(); ?>
+
+use THM\Groups\Adapters\Text;
+
+?>
 <html>
 <head>
     <link rel="stylesheet" href="<?php echo JUri::root() . 'css/documentation.css'; ?>">
 </head>
 <body class="groups-documentation">
-<h3><?php echo $lang->_('COM_THM_GROUPS_TEMPLATE_EDIT'); ?></h3>
-<p><?php echo $lang->_('COM_THM_GROUPS_TEMPLATE_EDIT_DESC_LONG'); ?></p>
+<h3><?php echo Text::_('TEMPLATE_EDIT'); ?></h3>
+<p><?php echo Text::_('TEMPLATE_EDIT_DESC_LONG'); ?></p>
 <div class="list">
-    <div class="label"><?php echo $lang->_('COM_THM_GROUPS_ORDER'); ?></div>
-    <div class="description"><?php echo $lang->_('COM_THM_GROUPS_TEMPLATE_ORDER_DESC_LONG'); ?></div>
-    <div class="label"><?php echo $lang->_('COM_THM_GROUPS_LABEL'); ?></div>
-    <div class="description"><?php echo $lang->_('COM_THM_GROUPS_LABEL_DESC'); ?></div>
-    <div class="label"><?php echo $lang->_('COM_THM_GROUPS_PUBLISHED'); ?></div>
-    <div class="description"><?php echo $lang->_('COM_THM_GROUPS_PUBLISHED_DESC_LONG'); ?></div>
-    <div class="label"><?php echo $lang->_('COM_THM_GROUPS_SHOW_ICON'); ?></div>
-    <div class="description"><?php echo $lang->_('COM_THM_GROUPS_SHOW_ICON_DESC'); ?></div>
-    <div class="label"><?php echo $lang->_('COM_THM_GROUPS_SHOW_LABEL'); ?></div>
-    <div class="description"><?php echo $lang->_('COM_THM_GROUPS_SHOW_LABEL_DESC'); ?></div>
+    <div class="label"><?php echo Text::_('ORDER'); ?></div>
+    <div class="description"><?php echo Text::_('TEMPLATE_ORDER_DESC_LONG'); ?></div>
+    <div class="label"><?php echo Text::_('LABEL'); ?></div>
+    <div class="description"><?php echo Text::_('LABEL_DESC'); ?></div>
+    <div class="label"><?php echo Text::_('PUBLISHED'); ?></div>
+    <div class="description"><?php echo Text::_('PUBLISHED_DESC_LONG'); ?></div>
+    <div class="label"><?php echo Text::_('SHOW_ICON'); ?></div>
+    <div class="description"><?php echo Text::_('SHOW_ICON_DESC'); ?></div>
+    <div class="label"><?php echo Text::_('SHOW_LABEL'); ?></div>
+    <div class="description"><?php echo Text::_('SHOW_LABEL_DESC'); ?></div>
     <div class="clearFix"></div>
 </div>
 </body>

@@ -9,7 +9,8 @@
  */
 defined('_JEXEC') or die;
 JFormHelper::loadFieldClass('list');
-require_once HELPERS . 'language.php';
+
+use THM\Groups\Adapters\Application;
 
 /**
  * Class loads a list of fields for selection
@@ -37,7 +38,7 @@ class JFormFieldLocalizedList extends JFormFieldList
         $dbo   = JFactory::getDbo();
         $query = $dbo->getQuery(true);
 
-        $tag         = THM_GroupsHelperLanguage::getShortTag();
+        $tag         = Application::tag();
         $valueColumn = $this->getAttribute('valueColumn') . "_$tag";
         $textColumn  = $this->getAttribute('textColumn') . "_$tag";
 

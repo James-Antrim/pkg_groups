@@ -10,6 +10,8 @@
 defined('_JEXEC') or die;
 JFormHelper::loadFieldClass('list');
 
+use THM\Groups\Adapters\Application;
+
 /**
  * Class loads a list of fields for selection
  */
@@ -81,8 +83,7 @@ class JFormFieldGenericList extends JFormFieldList
 
         $localized = $this->getAttribute('localized', false);
         if ($localized) {
-            require_once HELPERS . 'language.php';
-            $tag = THM_GroupsHelperLanguage::getShortTag();
+            $tag = Application::tag();
             foreach ($textColumns as $key => $value) {
                 $textColumns[$key] = $value . '_' . $tag;
             }
