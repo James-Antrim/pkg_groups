@@ -119,16 +119,13 @@ class THM_GroupsHelperProfilesModule
 
         if (!empty($dynamicParams['groupID'])) {
             if (empty($moduleParams) or empty($moduleParams['showRoles'])) {
-                $profileIDs = Groups::profileIDs($dynamicParams['groupID']);
-                return self::sortProfiles($profileIDs);
+                return Groups::profileIDs($dynamicParams['groupID']);
             }
 
             $profileIDs = [];
-            $assocIDs   = THM_GroupsHelperGroups::getRoleAssocIDs($dynamicParams['groupID']);
-            foreach ($assocIDs as $assocID) {
-                $roleProfileIDs    = THM_GroupsHelperGroups::getProfileIDsByAssoc($assocID);
-                $sortedProfilesIDs = self::sortProfiles($roleProfileIDs);
-                $profileIDs        = array_merge($profileIDs, $sortedProfilesIDs);
+            $assocs     = Groups::associations($dynamicParams['groupID']);
+            foreach ($assocs as $roleProfileIDs) {
+                $profileIDs = array_merge($profileIDs, $roleProfileIDs);
             }
             return $profileIDs;
         }

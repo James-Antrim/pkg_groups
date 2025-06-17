@@ -49,8 +49,9 @@ class Groups implements Selectable
             ->innerJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.mapID', 'uugm.id'))
             ->innerJoin(DB::qn('#__groups_roles', 'r'), DB::qc('r.id', 'ra.roleID'))
             ->innerJoin(DB::qn('#__users', 'u'), DB::qc('u.id', 'uugm.user_id'))
-            ->where(DB::qc('uugm.group_id', $groupID))
+            ->where(DB::qcs([['uugm.group_id', $groupID], ['u.published', Users::PUBLISHED]]))
             ->order(implode(',', DB::qn(['r.ordering', 'u.surnames', 'u.forenames'])));
+
         DB::set($query);
 
         $results = [];
@@ -156,24 +157,21 @@ class Groups implements Selectable
     /**
      * Retrieves the ids of profiles directly associated with a group.
      *
-     * @param   int        $groupID
-     * @param   bool|null  $published  the published status of the user profiles
+     * @param   int  $groupID
      *
      * @return array
      */
-    public static function profileIDs(int $groupID = 0, bool|null $published = Users::PUBLISHED): array
+    public static function profileIDs(int $groupID = 0): array
     {
         $query = DB::query();
         $query->select('DISTINCT ' . DB::qn('user_id'))
             ->from(DB::qn('#__user_usergroup_map', 'uugm'))
-            ->innerJoin(DB::qn('#__users', 'u'), DB::qn('u.id', 'uugm.user_id'));
+            ->innerJoin(DB::qn('#__users', 'u'), DB::qn('u.id', 'uugm.user_id'))
+            ->where(DB::qc('u.published', Users::PUBLISHED))
+            ->order(implode(',', DB::qn(['u.surnames', 'u.forenames'])));
 
         if ($groupID) {
             $query->where(DB::qc('group_id', $groupID));
-        }
-
-        if ($published !== null) {
-            $query->where(DB::qc('u.published', (int) $published));
         }
 
         DB::set($query);
