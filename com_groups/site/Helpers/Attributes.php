@@ -16,7 +16,8 @@ use THM\Groups\Adapters\Text;
 class Attributes implements Selectable
 {
     use Persistent;
-    use Published;
+
+    public const PUBLISHED = 1, UNPUBLISHED = 0;
 
     public const PUBLIC = 1;
 
