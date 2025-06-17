@@ -11,8 +11,6 @@
 use THM\Groups\Adapters\Text;
 
 defined('_JEXEC') or die;
-require_once HELPERS . 'groups.php';
-require_once HELPERS . 'profiles.php';
 jimport('joomla.filesystem.path');
 
 /**

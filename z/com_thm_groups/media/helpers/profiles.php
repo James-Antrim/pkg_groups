@@ -9,11 +9,10 @@
  */
 
 use THM\Groups\Adapters\{Database as DB, HTML, Text};
-use THM\Groups\Helpers\{Attributes, Profiles as Helper, Types, Users};
+use THM\Groups\Helpers\{Attributes, Profiles as Helper, Types};
 use THM\Groups\Controllers\Profile as Controller;
 
 require_once 'attributes.php';
-require_once 'groups.php';
 require_once 'router.php';
 require_once JPATH_ROOT . '/administrator/components/com_thm_groups/tables/profiles.php';
 require_once JPATH_ROOT . '/administrator/components/com_thm_groups/tables/profile_attributes.php';

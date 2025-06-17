@@ -13,6 +13,7 @@ namespace THM\Groups\Helpers;
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
 use THM\Groups\Adapters\{Application, Database as DB};
+use THM\Groups\Tables\Groups as Table;
 
 /**
  *  Constants and functions for dealing with groups from an external read context.
@@ -116,6 +117,24 @@ class Groups implements Selectable
         asort($return);
 
         return $return;
+    }
+
+    /**
+     * Gets the localized name of the group associated with the given id.
+     *
+     * @param   int  $groupID
+     *
+     * @return string
+     */
+    public static function name(int $groupID): string
+    {
+        $group = new Table();
+
+        if (!$group->load($groupID)) {
+            return '';
+        }
+
+        return Application::tag() === 'en' ? $group->name_en : $group->name_de;
     }
 
     /** @inheritDoc */

@@ -13,7 +13,6 @@
 
 use THM\Groups\Helpers\Roles;
 
-require_once HELPERS . 'groups.php';
 require_once HELPERS . 'profiles.php';
 
 define('ROLESORT', 0);

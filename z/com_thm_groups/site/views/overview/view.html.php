@@ -12,10 +12,9 @@
  */
 
 defined('_JEXEC') or die;
-require_once HELPERS . 'profiles.php';
 require_once HELPERS . 'router.php';
 
-use THM\Groups\Helpers\Profiles as Helper;
+use THM\Groups\Helpers\{Groups, Profiles as Helper};
 
 /**
  * Class provides an overview of group profiles.
@@ -62,7 +61,7 @@ class THM_GroupsViewOverview extends JViewLegacy
             }
         }
         else {
-            $totalProfiles       = THM_GroupsHelperGroups::getProfileCount($groupID);
+            $totalProfiles       = count(Groups::profileIDs($groupID));
             $this->columnCount   = (int) $this->params->get('columnCount', 3);
             $this->maxColumnSize = (int) ceil($totalProfiles / $this->columnCount) + $this->columnCount;
         }
@@ -139,7 +138,7 @@ class THM_GroupsViewOverview extends JViewLegacy
 
         // If there is a group ID the view was called from a menu item
         if ($groupID) {
-            $title = THM_GroupsHelperGroups::getName($groupID);
+            $title = Groups::name($groupID);
         }
         elseif (empty($input->get('search'))) {
             $title = JText::_('COM_THM_GROUPS_OVERVIEW');
