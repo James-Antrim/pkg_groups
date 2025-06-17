@@ -93,40 +93,4 @@ class THM_GroupsHelperRoles
 
         return (empty($role['name']) or $hideMemberRole) ? '' : $role['name'];
     }
-
-    /**
-     * Retrieves profileIDs for the given group/role association.
-     *
-     * @param   int  $assocID  the id of the group/role association
-     *
-     * @return  array the profile ids for the given association
-     * @throws Exception
-     */
-    public static function getProfileIDs($assocID)
-    {
-        $dbo = JFactory::getDbo();
-
-        $query = $dbo->getQuery(true);
-        $query
-            ->select("p.id")
-            ->from('#__thm_groups_profiles AS p')
-            ->innerJoin('#__thm_groups_profile_associations as pa on pa.profileID = p.id')
-            ->innerJoin('#__thm_groups_role_associations as ra on ra.id = pa.role_associationID');
-
-        $query->where("ra.id = '$assocID'");
-        $query->where("p.published = '1'");
-
-        $dbo->setQuery($query);
-
-        try {
-            $profileIDs = $dbo->loadColumn();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return [];
-        }
-
-        return empty($profileIDs) ? [] : $profileIDs;
-    }
 }

@@ -12,7 +12,7 @@ namespace THM\Groups\Helpers;
 
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
-use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\{Application, Database as DB};
 
 /**
  *  Constants and functions for dealing with groups from an external read context.
@@ -33,6 +33,41 @@ class Groups implements Selectable
         self::REGISTERED,
         self::SUPER_ADMIN
     ];
+
+    /**
+     * Retrieves a map of roleIDs => userIDs for the given group.
+     *
+     * @param   int  $groupID
+     *
+     * @return array
+     */
+    public static function associations(int $groupID): array
+    {
+        $query = DB::query();
+        $query->select(DB::qn(['r.id', 'uugm.user_id'], ['roleID', 'userID']))
+            ->from(DB::qn('#__user_usergroup_map', 'uugm'))
+            ->innerJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.mapID', 'uugm.id'))
+            ->innerJoin(DB::qn('#__groups_roles', 'r'), DB::qc('r.id', 'ra.roleID'))
+            ->innerJoin(DB::qn('#__users', 'u'), DB::qc('u.id', 'uugm.user_id'))
+            ->where(DB::qc('uugm.group_id', $groupID))
+            ->order(implode(',', DB::qn(['r.ordering', 'u.surnames', 'u.forenames'])));
+        DB::set($query);
+
+        $results = [];
+
+        foreach (DB::arrays() as $result) {
+            $roleID = $result['roleID'];
+            $userID = $result['userID'];
+            if (empty($results[$roleID])) {
+                $results[$roleID] = [];
+            }
+            if (empty($results[$roleID][$userID])) {
+                $results[$roleID][$userID] = $userID;
+            }
+        }
+
+        return $results;
+    }
 
     /**
      * Gets the view levels associated with the group.
@@ -71,15 +106,6 @@ class Groups implements Selectable
         asort($return);
 
         return $return;
-    }
-
-    /**
-     * Gets the IDs of existing user groups.
-     * @return int[]
-     */
-    public static function getIDs(): array
-    {
-        return array_keys(self::resources());
     }
 
     /**
@@ -138,6 +164,15 @@ class Groups implements Selectable
     private static function getUserGroups(): array
     {
         return UserGroupsHelper::getInstance()->getAll();
+    }
+
+    /**
+     * Gets the IDs of existing user groups.
+     * @return int[]
+     */
+    public static function ids(): array
+    {
+        return array_keys(self::resources());
     }
 
     /** @inheritDoc */

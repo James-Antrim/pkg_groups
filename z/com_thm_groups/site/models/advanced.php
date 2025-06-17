@@ -13,7 +13,7 @@ defined('_JEXEC') or die;
 
 jimport('joomla.filesystem.path');
 
-use THM\Groups\Helpers\Profiles as Helper;
+use THM\Groups\Helpers\{Groups, Profiles as Helper};
 
 /**
  * Advanced model class of component com_thm_groups
@@ -81,39 +81,37 @@ class THM_GroupsModelAdvanced extends JModelLegacy
     {
         $sort = $this->params->get('sort', ALPHASORT);
 
-        $groupedProfiles = [];
+        $profiles = [];
 
         foreach ($this->groups as $group) {
 
             // Get the role IDs associated with the group.
-            $groupRoleAssocs = THM_GroupsHelperGroups::getRoleAssocIDs($group->id);
+            $groupRoleAssocs = Groups::associations($group->id);
 
             // Turn the role ids into indexes
-            $groupedProfiles[$group->id]         = $groupRoleAssocs;
-            $groupedProfiles[$group->id]['name'] = $group->title;
+            $profiles[$group->id]         = $groupRoleAssocs;
+            $profiles[$group->id]['name'] = $group->title;
         }
 
-        foreach ($groupedProfiles as $groupID => $roleAssociations) {
+        foreach ($profiles as $groupID => $associations) {
 
             $nonMemberIDs = [];
             $memberIDs    = [];
 
-            foreach ($roleAssociations as $roleID => $assocID) {
+            foreach ($associations as $roleID => $userIDs) {
 
                 // This index requires no processing
                 if ($roleID == 'name') {
                     continue;
                 }
 
-                $profileIDs = THM_GroupsHelperRoles::getProfileIDs($assocID);
-
                 // The role is not associated with any profiles in the group.
-                if (empty($profileIDs)) {
-                    unset($groupedProfiles[$groupID][$roleID]);
+                if (empty($userIDs)) {
+                    unset($profiles[$groupID][$roleID]);
 
                     // Only the role name is left => the group itself is irrelevant
-                    if (count($groupedProfiles[$groupID]) === 1) {
-                        unset($groupedProfiles[$groupID]);
+                    if (count($profiles[$groupID]) === 1) {
+                        unset($profiles[$groupID]);
                         break;
                     }
                     continue;
@@ -142,29 +140,29 @@ class THM_GroupsModelAdvanced extends JModelLegacy
 
                 uasort($profiles, ['THM_GroupsModelAdvanced', 'sortProfiles']);
 
-                $groupedProfiles[$groupID][$roleID] = ['name' => $roleName, 'profiles' => $profiles];
+                $profiles[$groupID][$roleID] = ['name' => $roleName, 'profiles' => $profiles];
             }
 
             $onlyMemberIDs = array_diff($memberIDs, $nonMemberIDs);
 
             // Every group member has is a part of a more specific group
             if (empty($onlyMemberIDs)) {
-                unset($groupedProfiles[$groupID][1]);
+                unset($profiles[$groupID][1]);
             }
             else {
-                foreach (array_keys($groupedProfiles[$groupID][1]['profiles']) as $profileID) {
+                foreach (array_keys($profiles[$groupID][1]['profiles']) as $profileID) {
                     if (!in_array($profileID, $onlyMemberIDs)) {
-                        unset($groupedProfiles[$groupID][1]['profiles'][$profileID]);
+                        unset($profiles[$groupID][1]['profiles'][$profileID]);
                     }
                 }
             }
         }
 
         if ($sort == ROLESORT) {
-            return $groupedProfiles;
+            return $profiles;
         }
 
-        return $this->getAlphabeticalProfiles($groupedProfiles);
+        return $this->getAlphabeticalProfiles($profiles);
     }
 
     /**
