@@ -10,12 +10,13 @@
 
 use THM\Groups\Adapters\{Database as DB, HTML, Text};
 use THM\Groups\Helpers\{Attributes, Profiles as Helper, Types};
-use THM\Groups\Controllers\Profile as Controller;
 
 require_once 'attributes.php';
 require_once 'router.php';
 require_once JPATH_ROOT . '/administrator/components/com_thm_groups/tables/profiles.php';
 require_once JPATH_ROOT . '/administrator/components/com_thm_groups/tables/profile_attributes.php';
+
+use THM\Groups\Helpers\Templates;
 
 
 /**
@@ -79,11 +80,11 @@ class THM_GroupsHelperProfiles
      */
     public static function getDisplay($profileID, $templateID = 0, $suppress = false, $showImage = true)
     {
-        $preRendered     = [Attributes::SUPPLEMENT_PRE, FORENAME, SURNAME, Attributes::SUPPLEMENT_POST];
+        $preRendered     = [Attributes::SUPPLEMENT_PRE, Attributes::SUPPLEMENT_POST];
         $attributes      = [];
         $imageAttributes = [];
 
-        $attributeIDs = THM_GroupsHelperAttributes::getAttributeIDs(true, $templateID);
+        $attributeIDs = Templates::attributeIDs($templateID);
 
         foreach ($attributeIDs as $attributeID) {
 
@@ -170,7 +171,7 @@ class THM_GroupsHelperProfiles
     public static function getRawProfile(int $profileID, bool $published = true): array
     {
         $attributes           = [];
-        $attributeIDs         = THM_GroupsHelperAttributes::getAttributeIDs(true);
+        $attributeIDs         = Attributes::ids(true);
         $authorizedViewAccess = JFactory::getUser()->getAuthorisedViewLevels();
 
         foreach ($attributeIDs as $attributeID) {

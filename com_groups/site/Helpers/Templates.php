@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Helpers;
 
-use THM\Groups\Adapters\{Application, Database as DB};
+use THM\Groups\Adapters\{Application, Database as DB, User};
 
 /**
  *  Constants and functions for dealing with groups from an external read context.
@@ -66,6 +66,27 @@ class Templates extends Selectable
             'tip'    => 'GROUPS_TOGGLE_TIP_NOT_DEFAULT_VCARDS_CONTEXT'
         ]
     ];
+
+    /**
+     * Retrieves the ids of attributes assigned to the template.
+     *
+     * @param   int  $templateID
+     *
+     * @return array
+     */
+    public static function attributeIDs(int $templateID): array
+    {
+        $query = DB::query();
+        $query->select(DB::qn('attributeID'))
+            ->from(DB::qn('#__groups_template_attributes', 'ta'))
+            ->innerJoin(DB::qn('#__groups_attributes', 'a'), DB::qc('a.id', 'ta.attributeID'))
+            ->whereIn(DB::qn('a.viewLevelID'), User::levels())
+            ->where(DB::qcs([['ta.published', 1], ['a.published', 1], ['ta.templateID', $templateID]]))
+            ->order(DB::qn('ta.ordering'));
+        DB::set($query);
+
+        return DB::objects('id');
+    }
 
     /**
      * @inheritDoc

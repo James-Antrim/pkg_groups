@@ -9,12 +9,14 @@
  */
 defined('_JEXEC') or die;
 
+use THM\Groups\Helpers\Attributes;
+
 ?>
 <form id="adminForm" name="adminForm" class="form-horizontal form-validate site-edit"
       action="<?php echo JURI::base(); ?>" method="post" enctype="multipart/form-data">
     <?php echo $this->getToolbar(); ?>
     <div class="form-horizontal groups-site">
-        <?php foreach (THM_GroupsHelperAttributes::getAttributeIDs() as $attributeID) : ?>
+        <?php foreach (Attributes::ids() as $attributeID) : ?>
             <?php echo THM_GroupsHelperAttributes::getInput($attributeID, $this->profileID); ?>
         <?php endforeach; ?>
     </div>

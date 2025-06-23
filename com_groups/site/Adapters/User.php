@@ -65,6 +65,19 @@ class User
     }
 
     /**
+     * Retrieves the view access level ids allowed the user.
+     *
+     * @param   int  $userID
+     *
+     * @return array
+     */
+    public static function levels(int $userID = 0): array
+    {
+        $user = self::instance($userID);
+        return $user->getAuthorisedViewLevels();
+    }
+
+    /**
      * Gets the name of the user.
      *
      * @param   int|string  $userID

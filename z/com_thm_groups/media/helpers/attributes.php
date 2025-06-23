@@ -8,12 +8,12 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\Input;
+use THM\Groups\Adapters\{Input, Text};
+use THM\Groups\Helpers\Profiles;
 
 require_once 'attribute_types.php';
 require_once 'fields.php';
 
-use THM\Groups\Helpers\Profiles;
 
 /**
  * Class providing helper functions for batch select options
@@ -129,54 +129,6 @@ class THM_GroupsHelperAttributes
         $options = self::getOptions($attributeID);
 
         return array_merge($attribute, $options);
-    }
-
-    /**
-     * Gets all attribute ids optionally ordered by their ordering property
-     *
-     * @param   bool  $restrictions
-     * @param   int   $templateID  the id of the template with which attributes must be associated
-     *
-     * @return array the attribute ids
-     * @throws Exception
-     */
-    public static function getAttributeIDs($restrictions = false, $templateID = 0)
-    {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('a.id')->from('#__thm_groups_attributes AS a');
-
-        // All non-edit views
-        if ($restrictions or $templateID) {
-            $viewLevels = JFactory::getUser()->getAuthorisedViewLevels();
-            $viewLevels = "('" . implode("', '", $viewLevels) . "')";
-            $query->where("(a.viewLevelID IN $viewLevels OR a.viewLevelID IS NULL)");
-
-            if ($templateID) {
-                $query->innerJoin('#__thm_groups_template_attributes AS ta ON ta.attributeID = a.id');
-                $query->where("ta.published = '1'")->where("ta.templateID = '$templateID'")->order('ta.ordering');
-            }
-            else {
-                $query->where("a.published = '1'");
-            }
-        }
-
-        if (empty($templateID)) {
-            $query->order('a.ordering');
-        }
-
-        $dbo->setQuery($query);
-
-        try {
-            $attributeIDs = $dbo->loadColumn();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return [];
-        }
-
-        return empty($attributeIDs) ? [] : $attributeIDs;
     }
 
     /**
@@ -319,7 +271,7 @@ class THM_GroupsHelperAttributes
             $random = rand(1, 100);
             $url    = JUri::root() . $relativePath . "?force=$random";
 
-            $alt = empty($profileID) ? JText::_('COM_THM_GROUPS_PROFILE_IMAGE') : Profiles::name($profileID);
+            $alt = empty($profileID) ? Text::_('COM_THM_GROUPS_PROFILE_IMAGE') : Profiles::name($profileID);
 
             return JHtml::image($url, $alt, ['class' => 'edit_img']);
         }
@@ -379,7 +331,7 @@ class THM_GroupsHelperAttributes
      * Creates a label for an attribute
      *
      * @param   array  $attribute  the attribute to be labeled
-     * @param   bool   $form       whether or not the label will be displayed in the profile edit form
+     * @param   bool   $form       whether the label will be displayed in the profile edit form
      *
      * @return string the html for the label
      */
@@ -405,10 +357,10 @@ class THM_GroupsHelperAttributes
             }
             elseif ($attribute['showLabel']) {
                 if ($attribute['fieldID'] == HTML) {
-                    $html .= '<h3>' . JText::_($attribute['label']) . '</h3>';
+                    $html .= '<h3>' . Text::_($attribute['label']) . '</h3>';
                 }
                 else {
-                    $html .= '<div class="attribute-label">' . JText::_($attribute['label']) . '</div>';
+                    $html .= '<div class="attribute-label">' . Text::_($attribute['label']) . '</div>';
                 }
             }
         }
@@ -451,8 +403,8 @@ class THM_GroupsHelperAttributes
     /**
      * Creates a checkbox for the published status of the attribute being iterated
      *
-     * @param   array  $attribute  the attribute for which the publish checkbox is to be displayed
-     * @param   bool   $inline     whether or not the attribute is text based
+     * @param   array  $attribute  the attribute for which the published checkbox is to be displayed
+     * @param   bool   $inline     whether the attribute is text based
      *
      * @return  string  the HTML checkbox output
      */
@@ -460,13 +412,13 @@ class THM_GroupsHelperAttributes
     {
         $class = $inline ? 'published-container inline' : 'published-container wrap';
         $html  = '<div class="' . $class . '">';
-        $label = '<span class="published-label">' . JText::_('COM_THM_GROUPS_PUBLISHED') . ':</span>';
+        $label = '<span class="published-label">' . Text::_('PUBLISHED') . ':</span>';
 
         $type    = 'type="checkbox"';
         $id      = 'id="jform_' . $attribute['id'] . '_published" ';
         $name    = 'name="jform[' . $attribute['id'] . '][published]" ';
         $class   = 'class="hasTip" ';
-        $title   = 'title="' . JText::_('COM_THM_GROUPS_PUBLISHED') . '" ';
+        $title   = 'title="' . Text::_('PUBLISHED') . '" ';
         $checked = empty($attribute['published']) ? '' : 'checked="checked"';
         $input   = "<input $type $id $name $class $title $checked />";
 
@@ -479,14 +431,14 @@ class THM_GroupsHelperAttributes
      * Creates the container for the attribute value
      *
      * @param   array  $attribute  the profile attribute being iterated
-     * @param   bool   $suppress   whether or not lengthy text should be initially hidden.
+     * @param   bool   $suppress   whether lengthy text should be initially hidden.
      *
      * @return string the HTML for the value container
      * @throws Exception
      */
     private static function getValueDisplay($attribute, $suppress = true)
     {
-        $columns = (int) JFactory::getApplication()->getParams()->get('columns');
+        $columns = (int) Input::getParams()->get('columns');
 
         // Advanced view or module
         if (!empty($columns)) {
@@ -523,7 +475,7 @@ class THM_GroupsHelperAttributes
 
                 // The closing div for the toggled container is added later to ensure that the toggle label doesn't move
                 if ($suppress and strlen(strip_tags($value)) > $maxLength) {
-                    $html = '<span class="toggled-text-link">' . JText::_('COM_THM_GROUPS_ACTION_DISPLAY') . '</span>';
+                    $html = '<span class="toggled-text-link">' . Text::_('ACTION_DISPLAY') . '</span>';
                     $html .= '</div>';
                     $html .= '<div class="toggled-text-container" style="display:none;">' . $value;
                 }
@@ -580,7 +532,7 @@ class THM_GroupsHelperAttributes
      * Creates the HTML for the display of the attribute view level
      *
      * @param   array  $attribute  the attribute for which to display the view level
-     * @param   bool   $inline     whether or not the attribute is text based
+     * @param   bool   $inline     whether the attribute is text based
      *
      * @return string the html of the view level display
      */
@@ -588,7 +540,7 @@ class THM_GroupsHelperAttributes
     {
         $class = $inline ? 'view-level-container inline' : 'view-level-container wrap';
         $html  = '<div class="' . $class . '">';
-        $html  .= JText::_('COM_THM_GROUPS_VIEW_LEVEL') . ': ';
+        $html  .= Text::_('VIEW_LEVEL') . ': ';
         if (empty($attribute['viewLevel']) or $attribute['viewLevel'] == $attribute['defaultLevel']) {
             $html .= '<span class="public-access">' . $attribute['defaultLevel'] . '</span>';
         }
