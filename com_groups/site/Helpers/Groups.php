@@ -47,9 +47,9 @@ class Groups extends Selectable
         $query = DB::query();
         $query->select(DB::qn(['r.id', 'uugm.user_id'], ['roleID', 'userID']))
             ->from(DB::qn('#__user_usergroup_map', 'uugm'))
-            ->innerJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.mapID', 'uugm.id'))
-            ->innerJoin(DB::qn('#__groups_roles', 'r'), DB::qc('r.id', 'ra.roleID'))
             ->innerJoin(DB::qn('#__users', 'u'), DB::qc('u.id', 'uugm.user_id'))
+            ->leftJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.mapID', 'uugm.id'))
+            ->leftJoin(DB::qn('#__groups_roles', 'r'), DB::qc('r.id', 'ra.roleID'))
             ->where(DB::qcs([['uugm.group_id', $groupID], ['u.published', Users::PUBLISHED]]))
             ->order(implode(',', DB::qn(['r.ordering', 'u.surnames', 'u.forenames'])));
 
@@ -58,7 +58,7 @@ class Groups extends Selectable
         $results = [];
 
         foreach (DB::arrays() as $result) {
-            $roleID = $result['roleID'];
+            $roleID = $result['roleID'] ?: Roles::MEMBERS;
             $userID = $result['userID'];
             if (empty($results[$roleID])) {
                 $results[$roleID] = [];

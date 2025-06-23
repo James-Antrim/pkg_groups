@@ -19,6 +19,8 @@ class Roles extends Selectable
 {
     use Named, Persistent;
 
+    public const MEMBER = 'MEMBER', MEMBERS = 'MEMBERS';
+
     /**
      * Retrieves a list
      *
