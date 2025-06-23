@@ -18,7 +18,7 @@ use THM\Groups\Tables\Groups as Table;
 /**
  *  Constants and functions for dealing with groups from an external read context.
  */
-class Groups implements Selectable
+class Groups extends Selectable
 {
     use Named;
 
@@ -72,15 +72,6 @@ class Groups implements Selectable
     }
 
     /**
-     * Gets the IDs of existing user groups.
-     * @return int[]
-     */
-    public static function ids(): array
-    {
-        return array_keys(self::resources());
-    }
-
-    /**
      * Gets the view levels associated with the group.
      *
      * @param   int  $groupID  the id of the group to get levels for
@@ -92,23 +83,19 @@ class Groups implements Selectable
         $group    = UserGroupsHelper::getInstance()->get($groupID);
         $groupIDs = $group->path;
 
-        $db     = Application::database();
-        $id     = $db->quoteName('id');
-        $rules  = $db->quoteName('rules');
-        $title  = $db->quoteName('title');
-        $levels = $db->quoteName('#__viewlevels');
-
-        $query  = $db->getQuery(true);
+        $query  = DB::query();
         $regex  = $query->concatenate(["'[,\\\\[]'", ':groupID', "'[,\\\\]]'"]);
         $return = [];
-        $query->select([$id, $title])->from($levels)->where("$rules REGEXP $regex");
+        $query->select(DB::qn(['id', 'title']))
+            ->from(DB::qn('#__viewlevels'))
+            ->bind(':groupID', $groupID, ParameterType::INTEGER)
+            ->where(DB::qn('rules') . " REGEXP $regex");
 
         do {
             $groupID = array_pop($groupIDs);
-            $query->bind(':groupID', $groupID, ParameterType::INTEGER);
-            $db->setQuery($query);
+            DB::set($query);
 
-            if ($results = $db->loadAssocList('id', 'title')) {
+            if ($results = DB::arrays('id', 'title')) {
                 $return += $results;
             }
         }
@@ -223,26 +210,17 @@ class Groups implements Selectable
      */
     public static function roles(int $groupID): array
     {
-        $tag = Application::tag();
-        $db  = Application::database();
+        $tag   = Application::tag();
+        $query = DB::query();
+        $query->select([DB::qn("r.id"), DB::qn("r.name_$tag", 'name')])
+            ->from(DB::qn('#__groups_roles', 'r'))
+            ->innerJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.roleID', 'r.id'))
+            ->innerJoin(DB::qn('#__user_usergroup_map', 'm'), DB::qc('m.id', 'ra.mapID'))
+            ->where(DB::qc('m.group_id', $groupID))
+            ->order(DB::qn("r.name_$tag"));
+        DB::set($query);
 
-        $roleID     = $db->quoteName("r.id");
-        $condition1 = $db->quoteName("ra.roleID") . " = $roleID";
-        $condition2 = $db->quoteName("m.id") . ' = ' . $db->quoteName("ra.mapID");
-
-        $query = $db->getQuery(true)
-            ->select([$roleID, $db->quoteName("r.name_$tag", 'name')])
-            ->from($db->quoteName('#__groups_roles', 'r'))
-            ->join('inner', $db->quoteName('#__groups_role_associations', 'ra'), $condition1)
-            ->join('inner', $db->quoteName('#__user_usergroup_map', 'm'), $condition2)
-            ->where($db->quoteName("m.group_id") . ' = :groupID')
-            ->bind(':groupID', $groupID, ParameterType::INTEGER)
-            ->order($db->quoteName("r.name_$tag"));
-        $db->setQuery($query);
-
-        $results = $db->loadAssocList('id', 'name');
-
-        return $results ?? [];
+        return DB::arrays('id', 'name');
     }
 
     /**

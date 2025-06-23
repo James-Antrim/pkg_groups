@@ -59,7 +59,7 @@ class Attributes extends ListView
     {
         $options = [
             'query'        => 'index.php?option=com_groups&view=attribute&id=',
-            'unlabeledIDs' => Helper::getUnlabeled(),
+            'unlabeledIDs' => Helper::unlabeledIDs(),
             'unlabeledTip' => Text::_('TOGGLE_TIP_UNLABELED')
         ];
 

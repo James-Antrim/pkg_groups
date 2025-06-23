@@ -10,13 +10,12 @@
 
 namespace THM\Groups\Helpers;
 
-use Joomla\CMS\Language\Text;
-use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\{Application, Database as DB};
 
 /**
  *  Constants and functions for dealing with groups from an external read context.
  */
-class Templates implements Selectable
+class Templates extends Selectable
 {
     use Named, Persistent;
 
@@ -81,6 +80,10 @@ class Templates implements Selectable
     /** @inheritDoc */
     public static function resources(): array
     {
-        return [];
+        $query = DB::query();
+        $query->select('*')->from(DB::qn('#__groups_templates'))->order(DB::qn('plural_' . Application::tag()));
+        DB::set($query);
+
+        return DB::objects('id');
     }
 }

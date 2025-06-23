@@ -15,7 +15,7 @@ use THM\Groups\Adapters\Text;
 /**
  * @todo Add type conversion routines for migration of values between attributes of differing types.
  */
-class Types implements Selectable
+class Types extends Selectable
 {
     /**
      * Types determines the data management of attribute values.

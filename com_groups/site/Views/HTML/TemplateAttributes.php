@@ -69,7 +69,7 @@ class TemplateAttributes extends ListView
     {
         $options = [
             'label'        => 'label_' . Application::tag(),
-            'unlabeledIDs' => AH::getUnlabeled(),
+            'unlabeledIDs' => AH::unlabeledIDs(),
             'unlabeledTip' => Text::_('TOGGLE_TIP_UNLABELED')
         ];
 

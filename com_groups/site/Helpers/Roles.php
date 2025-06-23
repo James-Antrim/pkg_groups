@@ -15,7 +15,7 @@ use THM\Groups\Adapters\{Application, Database as DB, Text};
 /**
  *  Constants and functions for dealing with groups from an external read context.
  */
-class Roles implements Selectable
+class Roles extends Selectable
 {
     use Named, Persistent;
 
@@ -29,10 +29,8 @@ class Roles implements Selectable
      */
     public static function mapped(int $userID, int $groupID): array
     {
-        $role = 'name_' . Application::tag();
-
         $query = DB::query();
-        $query->select(DB::qn($role))
+        $query->select(DB::qn('name_' . Application::tag()))
             ->from(DB::qn('#__groups_roles', 'r'))
             ->innerJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.roleID', 'r.id'))
             ->innerJoin(DB::qn('#__user_usergroups_map', 'uugm'), DB::qc('uugm.id', 'ra.mapID'))
@@ -40,7 +38,6 @@ class Roles implements Selectable
         DB::set($query);
 
         return DB::column();
-        //'<div class="attribute-wrap attribute-roles">' . implode(', ', $roles) . '</div>' : '';
     }
 
     /**
@@ -68,18 +65,11 @@ class Roles implements Selectable
     /** @inheritDoc */
     public static function resources(): array
     {
-        $db     = Application::database();
-        $query  = $db->getQuery(true);
-        $plural = $db->quoteName('plural_' . Application::tag());
-        $roles  = $db->quoteName('#__groups_roles');
-        $query->select('*')->from($roles)->order($plural);
-        $db->setQuery($query);
+        $query = DB::query();
+        $query->select('*')->from(DB::qn('#__groups_roles'))->order(DB::qn('plural_' . Application::tag()));
+        DB::set($query);
 
-        if (!$roles = $db->loadObjectList('id')) {
-            return [];
-        }
-
-        foreach ($roles as $roleID => $role) {
+        foreach ($roles = DB::objects('id') as $roleID => $role) {
             $role->groups = RoleAssociations::byRoleID($roleID);
         }
 

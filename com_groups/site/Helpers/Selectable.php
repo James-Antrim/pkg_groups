@@ -12,19 +12,26 @@ namespace THM\Groups\Helpers;
 
 use stdClass;
 
-interface Selectable
+abstract class Selectable
 {
     /**
-     * Returns a list of resource options.
-     *
-     * @return stdClass[]
+     * Retrieves the ids of resources.
+     * @return int[]
      */
-    public static function options(): array;
+    public static function ids(): array
+    {
+        return array_keys(static::resources());
+    }
 
     /**
-     * Returns a list of resource objects.
-     *
+     * Returns a list of resource options.
      * @return stdClass[]
      */
-    public static function resources(): array;
+    abstract public static function options(): array;
+
+    /**
+     * Returns an array of resources [id => resource].
+     * @return stdClass[]
+     */
+    abstract public static function resources(): array;
 }

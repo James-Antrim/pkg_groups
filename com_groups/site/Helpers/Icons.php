@@ -13,7 +13,7 @@ namespace THM\Groups\Helpers;
 use THM\Groups\Adapters\Application;
 
 // TODO Add component configuration settings for individual groups in the lower tier areas.
-class Icons implements Selectable
+class Icons extends Selectable
 {
     private const
         SUPPRESSED = 0,
@@ -10376,6 +10376,15 @@ class Icons implements Selectable
                 Application::message("Selector $selector missing from icon $content.");
             }
         }
+    }
+
+    /**
+     * Retrieves the ids of resources.
+     * @return string[]
+     */
+    public static function ids(): array
+    {
+        return parent::ids();
     }
 
     /** @inheritDoc */

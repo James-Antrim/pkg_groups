@@ -10,10 +10,9 @@
 
 namespace THM\Groups\Helpers;
 
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\Text;
+use THM\Groups\Adapters\{Application, Database as DB, Text};
 
-class Attributes implements Selectable
+class Attributes extends Selectable
 {
     use Persistent;
 
@@ -67,24 +66,6 @@ class Attributes implements Selectable
         ]
     ];
 
-    /**
-     * Retrieves the ids of attributes which are of unlabeled types.
-     * @return array
-     */
-    public static function getUnlabeled(): array
-    {
-        $unlabeled = [Types::IMAGE, Types::SUPPLEMENT];
-
-        $db    = Application::database();
-        $query = $db->getQuery(true);
-        $query->select($db->quoteName('id'))
-            ->from($db->quoteName('#__groups_attributes'))
-            ->whereIn($db->quoteName('typeID'), $unlabeled);
-        $db->setQuery($query);
-
-        return $db->loadColumn();
-    }
-
     /** @inheritDoc */
     public static function options(): array
     {
@@ -105,21 +86,29 @@ class Attributes implements Selectable
     /** @inheritDoc */
     public static function resources(): array
     {
-        $db         = Application::database();
-        $query      = $db->getQuery(true);
-        $label      = $db->quoteName('label_' . Application::tag());
-        $attributes = $db->quoteName('#__groups_attributes');
-        $query->select('*')->from($attributes)->order($label);
-        $db->setQuery($query);
+        $query = DB::query();
+        $query->select('*')->from(DB::qn('#__groups_attributes'))->order(DB::qn('label_' . Application::tag()));
+        DB::set($query);
 
-        if (!$attributes = $db->loadObjectList('id')) {
-            return [];
-        }
-
-        foreach ($attributes as $attribute) {
+        foreach ($attributes = DB::objects('id') as $attribute) {
             $attribute->type = Text::_(Types::TYPES[$attribute->typeID]['name']);
         }
 
         return $attributes;
+    }
+
+    /**
+     * Retrieves the ids of attributes which are of unlabeled types.
+     * @return array
+     */
+    public static function unlabeledIDs(): array
+    {
+        $query = DB::query();
+        $query->select(DB::qn('id'))
+            ->from(DB::qn('#__groups_attributes'))
+            ->whereIn(DB::qn('typeID'), [Types::IMAGE, Types::SUPPLEMENT]);
+        DB::set($query);
+
+        return DB::integers();
     }
 }
