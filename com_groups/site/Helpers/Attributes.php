@@ -11,6 +11,7 @@
 namespace THM\Groups\Helpers;
 
 use THM\Groups\Adapters\{Application, Database as DB, Text};
+use THM\Groups\Tables\Attributes as Table;
 
 class Attributes extends Selectable
 {
@@ -81,6 +82,21 @@ class Attributes extends Selectable
         }
 
         return $options;
+    }
+
+    /**
+     * Retrieve the parameters for the specified attribute
+     *
+     * @param   int  $attributeID
+     *
+     * @return array
+     * @todo rename the database field appropriately
+     */
+    public static function parameters(int $attributeID): array
+    {
+        $attribute = new Table();
+
+        return $attribute->load($attributeID) ? json_decode($attribute->options, true) : [];
     }
 
     /** @inheritDoc */

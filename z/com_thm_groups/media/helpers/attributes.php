@@ -9,7 +9,7 @@
  */
 
 use THM\Groups\Adapters\{Input, Text};
-use THM\Groups\Helpers\Profiles;
+use THM\Groups\Helpers\{Attributes as Helper, Profiles};
 
 require_once 'attribute_types.php';
 require_once 'fields.php';
@@ -35,7 +35,7 @@ class THM_GroupsHelperAttributes
 
         THM_GroupsHelperAttribute_Types::configureForm($typeID, $form);
 
-        $options = self::getOptions($attributeID);
+        $options = Helper::parameters($attributeID);
         foreach ($options as $option => $value) {
             $form->setValue($option, null, $value);
         }
@@ -126,7 +126,7 @@ class THM_GroupsHelperAttributes
             return [];
         }
 
-        $options = self::getOptions($attributeID);
+        $options = Helper::parameters($attributeID);
 
         return array_merge($attribute, $options);
     }
@@ -366,38 +366,6 @@ class THM_GroupsHelperAttributes
         }
 
         return $html;
-    }
-
-    /**
-     * Returns specific field type options mapped with attribute type data and optionally mapped with form data
-     *
-     * @param   int  $attributeID  the attribute id
-     *
-     * @return  array the field options set with form values if available
-     * @throws Exception
-     */
-    public static function getOptions($attributeID)
-    {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('options')->from('#__thm_groups_attributes')->where("id = $attributeID");
-        $dbo->setQuery($query);
-
-        try {
-            $options = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return [];
-        }
-
-        $options = json_decode($options, true);
-        if (empty($options)) {
-            $options = [];
-        }
-
-        return THM_GroupsHelperAttribute_Types::getOptions(self::getAttributeTypeID($attributeID), $options);
     }
 
     /**
