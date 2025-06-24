@@ -132,23 +132,4 @@ class THM_GroupsHelperProfilesModule
 
         return [];
     }
-
-    /**
-     * Sorts the profiles according to the surnames and forenames of the profiles.
-     *
-     * @param   array  $profiles  the profiles to be sorted
-     *
-     * @return array the sorted profiles
-     */
-    private static function sortProfiles($profiles)
-    {
-
-        $profiles = array_flip($profiles);
-        foreach (array_keys($profiles) as $profileID) {
-            $name                 = Helper::lnfName($profileID);
-            $profiles[$profileID] = $name;
-        }
-        asort($profiles);
-        return array_flip($profiles);
-    }
 }

@@ -66,7 +66,9 @@ class THM_GroupsModelAdvanced extends JModelLegacy
             }
         }
 
-        uasort($profiles, ['THM_GroupsModelAdvanced', 'sortProfiles']);
+        uasort($profiles, function ($profile1, $profile2) {
+            return $profile1['name'] > $profile2['name'];
+        });
 
         return $profiles;
     }
@@ -138,7 +140,9 @@ class THM_GroupsModelAdvanced extends JModelLegacy
                     $profiles[$profileID] = ['id' => $profileID, 'name' => $profileName];
                 }
 
-                uasort($profiles, ['THM_GroupsModelAdvanced', 'sortProfiles']);
+                uasort($profiles, function ($profile1, $profile2) {
+                    return $profile1['name'] > $profile2['name'];
+                });
 
                 $profiles[$groupID][$roleID] = ['name' => $roleName, 'profiles' => $profiles];
             }
