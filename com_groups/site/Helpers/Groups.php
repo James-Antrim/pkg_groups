@@ -191,7 +191,7 @@ class Groups extends Selectable
         $groups = self::userGroups();
 
         foreach ($groups as $groupID => $group) {
-            if ($name = self::getName($groupID)) {
+            if ($name = self::name($groupID)) {
                 $group->title = $name;
             }
 

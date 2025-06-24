@@ -23,9 +23,9 @@ trait Named
      *
      * @return string
      */
-    public static function getName(int $resourceID): string
+    public static function name(int $resourceID): string
     {
-        return self::getNameAttribute('name', $resourceID);
+        return self::nameColumn('name', $resourceID);
     }
 
     /**
@@ -36,7 +36,7 @@ trait Named
      *
      * @return string
      */
-    public static function getNameAttribute(string $columnName, int $resourceID): string
+    public static function nameColumn(string $columnName, int $resourceID): string
     {
         $table = self::getTable();
         if (!$table->load($resourceID)) {
@@ -65,8 +65,8 @@ trait Named
      *
      * @return string
      */
-    public static function getPlural(int $resourceID): string
+    public static function plural(int $resourceID): string
     {
-        return self::getNameAttribute('plural', $resourceID);
+        return self::nameColumn('plural', $resourceID);
     }
 }

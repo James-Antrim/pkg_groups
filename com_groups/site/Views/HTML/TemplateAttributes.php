@@ -42,7 +42,7 @@ class TemplateAttributes extends ListView
         $toolbar->cancel('TemplateAttributes.cancel');
         $toolbar->divider();
 
-        ToolbarHelper::title(TH::getName($templateID), 'fa fa-list-ol');
+        ToolbarHelper::title(TH::name($templateID), 'fa fa-list-ol');
     }
 
     /** @inheritDoc */

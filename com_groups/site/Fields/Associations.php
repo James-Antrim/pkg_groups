@@ -53,7 +53,7 @@ class Associations extends ListField
                 $prefix .= '&#8942;&nbsp;&nbsp;&nbsp;&reg;&nbsp;';
 
                 $options[] = (object) [
-                    'text'  => $prefix . Roles::getName($roleID) . " ($group->title)",
+                    'text'  => $prefix . Roles::name($roleID) . " ($group->title)",
                     'value' => "assocID-$assocID"
                 ];
             }
