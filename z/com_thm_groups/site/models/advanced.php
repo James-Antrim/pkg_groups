@@ -9,60 +9,45 @@
  * @link        www.thm.de
  */
 
-defined('_JEXEC') or die;
-
-jimport('joomla.filesystem.path');
-
-use THM\Groups\Helpers\{Groups, Profiles as Helper};
+use Joomla\CMS\Helper\UserGroupsHelper;
+use Joomla\CMS\MVC\Model\BaseDatabaseModel;
+use THM\Groups\Adapters\Input;
+use THM\Groups\Helpers\{Groups, Profiles as Helper, Roles};
+use THM\Groups\Models\Profiles as Model;
 
 /**
  * Advanced model class of component com_thm_groups
  *
  * Model for advanced context
  */
-class THM_GroupsModelAdvanced extends JModelLegacy
+class THM_GroupsModelAdvanced extends BaseDatabaseModel
 {
-    private $groups;
+    private array $groups = [];
 
-    public $params;
-
-    /**
-     * Constructor
-     *
-     * @param   array  $config  An array of configuration options (name, state, dbo, table_path, ignore_request).
-     *
-     * @throws Exception
-     */
+    /** @inheritDoc */
     public function __construct(array $config = [])
     {
         parent::__construct($config);
-        $this->params = JFactory::getApplication()->getParams();
         $this->setGroups();
     }
 
     /**
-     * Returns a flat array of profiles alphabetically sorted by the profile's surname.
+     * Turns the multidimensional array (Group => Role => Profile)  into a flat array of alphabetically ordered profiles.
      *
-     * @param   array  $groupedProfiles  the profiles grouped by group and role
+     * @param   array  $groupedProfiles
      *
-     * @return array unique profiles in a single group alphabetically sorted.
+     * @return array
      */
-    private function getAlphabeticalProfiles($groupedProfiles)
+    private function byName(array $groupedProfiles): array
     {
         $profiles = [];
-        foreach ($groupedProfiles as $groupID => $assocs) {
-
-            foreach ($assocs as $assocID => $data) {
-
-                if ($assocID == 'name') {
+        foreach ($groupedProfiles as $profileIDs) {
+            foreach ($profileIDs as $profileID) {
+                if (!$profileName = Helper::lnfName($profileID)) {
                     continue;
                 }
 
-                foreach ($data['profiles'] as $profileID => $profileData) {
-                    if (empty($profiles[$profileID])) {
-                        $profiles[$profileID] = $profileData;
-                    }
-                }
+                $profiles[$profileID] = ['id' => $profileID, 'name' => $profileName];
             }
         }
 
@@ -74,133 +59,58 @@ class THM_GroupsModelAdvanced extends JModelLegacy
     }
 
     /**
-     * Returns array with every group members and related attribute. The group is predefined as view parameter
+     * Retrieves profiles as part of a multidimensional array. Group => Role => Profile
      *
-     * @return  array  array with group members and related user attributes
-     * @throws Exception
+     * @param   array  $groupedProfiles
+     *
+     * @return array
      */
-    public function getProfiles()
+    private function byRole(array $groupedProfiles): array
     {
-        $sort = $this->params->get('sort', ALPHASORT);
-
-        $profiles = [];
-
-        foreach ($this->groups as $group) {
-
-            // Get the role IDs associated with the group.
-            $groupRoleAssocs = Groups::associations($group->id);
-
-            // Turn the role ids into indexes
-            $profiles[$group->id]         = $groupRoleAssocs;
-            $profiles[$group->id]['name'] = $group->title;
-        }
-
-        foreach ($profiles as $groupID => $associations) {
-
-            $nonMemberIDs = [];
-            $memberIDs    = [];
-
-            foreach ($associations as $roleID => $userIDs) {
-
-                // This index requires no processing
-                if ($roleID == 'name') {
-                    continue;
-                }
-
-                // The role is not associated with any profiles in the group.
-                if (empty($userIDs)) {
-                    unset($profiles[$groupID][$roleID]);
-
-                    // Only the role name is left => the group itself is irrelevant
-                    if (count($profiles[$groupID]) === 1) {
-                        unset($profiles[$groupID]);
-                        break;
-                    }
-                    continue;
-                }
-
-                if ($roleID === 1) {
-                    $memberIDs = array_merge($memberIDs, $profileIDs);
-                }
-                else {
-                    $nonMemberIDs = array_merge($nonMemberIDs, $profileIDs);
-                }
-
-                $roleName = THM_GroupsHelperRoles::getNameByAssoc($assocID, $sort);
+        foreach ($groupedProfiles as $groupID => $associations) {
+            foreach ($associations as $roleID => $profileIDs) {
 
                 $profiles = [];
                 foreach ($profileIDs as $profileID) {
-                    $profileName = Helper::lnfName($profileID);
-
-                    // No surname
-                    if (empty($profileName)) {
+                    if (!$profileName = Helper::lnfName($profileID)) {
                         continue;
                     }
 
                     $profiles[$profileID] = ['id' => $profileID, 'name' => $profileName];
                 }
 
-                uasort($profiles, function ($profile1, $profile2) {
-                    return $profile1['name'] > $profile2['name'];
-                });
-
-                $profiles[$groupID][$roleID] = ['name' => $roleName, 'profiles' => $profiles];
+                $groupedProfiles[$groupID][$roleID] = ['name' => Roles::name($roleID), 'profiles' => $profiles];
             }
 
-            $onlyMemberIDs = array_diff($memberIDs, $nonMemberIDs);
+            // Move the unassigned profiles to the end of the group
+            $members = $groupedProfiles[$groupID][Roles::MEMBERS];
+            unset($groupedProfiles[$groupID][Roles::MEMBERS]);
+            $groupedProfiles[$groupID][Roles::MEMBERS] = $members;
 
-            // Every group member has is a part of a more specific group
-            if (empty($onlyMemberIDs)) {
-                unset($profiles[$groupID][1]);
-            }
-            else {
-                foreach (array_keys($profiles[$groupID][1]['profiles']) as $profileID) {
-                    if (!in_array($profileID, $onlyMemberIDs)) {
-                        unset($profiles[$groupID][1]['profiles'][$profileID]);
-                    }
-                }
-            }
+            $groupedProfiles[$groupID]['name'] = Groups::name($groupID);
         }
 
-        if ($sort == ROLESORT) {
-            return $profiles;
-        }
-
-        return $this->getAlphabeticalProfiles($profiles);
+        return $groupedProfiles;
     }
 
     /**
-     * Sorts nested groups. Used in call-backs for array sort functions => ignore usage warnings.
+     * Returns array with every group members and related attribute. The group is predefined as view parameter
      *
-     * @param   object  $group1  the first group being compared
-     * @param   object  $group2  the second group being compared
-     *
-     * @return int
+     * @return  array  array with group members and related user attributes
+     * @throws Exception
      */
-    private static function orderNested($group1, $group2)
+    public function getProfiles(): array
     {
-        // First group is antecedent
-        if ($group2->lft > $group1->rgt) {
-            return 1;
+        $groupedProfiles = [];
+        foreach ($this->groups as $group) {
+            $groupAssocs                 = Groups::associations($group->id);
+            $groupedProfiles[$group->id] = $groupAssocs;
         }
 
-        // Second group is antecedent
-        if ($group1->lft > $group2->rgt) {
-            return -1;
-        }
+        $sort = Input::getParams()->get('sort', ALPHASORT);
+        $sort = in_array($sort, Model::SORTS) ? $sort : ALPHASORT;
 
-        // First group is nested
-        if ($group1->lft > $group2->lft and $group1->rgt < $group2->rgt) {
-            return 1;
-        }
-
-        // Second group is nested
-        if ($group2->lft > $group1->lft and $group2->rgt < $group1->rgt) {
-            return 1;
-        }
-
-        // This should not be able to take place due to the nested table structure
-        return 0;
+        return $sort === Model::ROLESORT ? $this->byRole($groupedProfiles) : $this->byName($groupedProfiles);
     }
 
     /**
@@ -209,25 +119,25 @@ class THM_GroupsModelAdvanced extends JModelLegacy
      *
      * @return void
      */
-    private function setGroups()
+    private function setGroups(): void
     {
-        $ugHelper = JHelperUsergroups::getInstance();
+        $params   = Input::getParams();
+        $ugHelper = UserGroupsHelper::getInstance();
 
-        if (!$parentGroup = $ugHelper->get($this->params->get('groupID'))) {
+        if (!$parentGroup = $ugHelper->get($params->get('groupID'))) {
             return;
         }
 
-        $allGroups    = $ugHelper->getAll();
-        $this->groups = [];
+        $allGroups = $ugHelper->getAll();
+        $subs      = $params->get('subgroups');
+        $subs      = in_array($subs, Input::BINARY) ? $subs : Input::YES;
 
-        // If no subgroups are desired no further processing is needed
-        if ($this->params->get('subgroups', YES) == NO) {
+        if ($subs === Input::NO) {
             $this->groups[] = $parentGroup;
-
             return;
         }
 
-        foreach ($allGroups as $key => $group) {
+        foreach ($allGroups as $group) {
             $relevant = ($group->lft >= $parentGroup->lft and $group->rgt <= $parentGroup->rgt);
 
             if ($relevant) {
@@ -237,20 +147,30 @@ class THM_GroupsModelAdvanced extends JModelLegacy
 
         unset($allGroups);
 
-        uasort($this->groups, ['THM_GroupsModelAdvanced', 'orderNested']);
-    }
+        uasort($this->groups, function ($groupOne, $groupTwo) {
+            // First group is antecedent
+            if ($groupTwo->lft > $groupOne->rgt) {
+                return 1;
+            }
 
-    /**
-     * Sorts the profiles by the surname attribute value.
-     *
-     * @param   array  $profile1  the profile being compared
-     * @param   array  $profile2  the profile being compared with
-     *
-     * @return bool whether the first profile's surname is 'bigger' than the second profile's surname
-     */
-    private static function sortProfiles($profile1, $profile2)
-    {
-        return $profile1['name'] > $profile2['name'];
+            // Second group is antecedent
+            if ($groupOne->lft > $groupTwo->rgt) {
+                return -1;
+            }
+
+            // First group is nested
+            if ($groupOne->lft > $groupTwo->lft and $groupOne->rgt < $groupTwo->rgt) {
+                return 1;
+            }
+
+            // Second group is nested
+            if ($groupTwo->lft > $groupOne->lft and $groupTwo->rgt < $groupOne->rgt) {
+                return 1;
+            }
+
+            // This should not be able to take place due to the nested table structure
+            return 0;
+        });
     }
 
 }
