@@ -36,7 +36,7 @@ trait Named
      *
      * @return string
      */
-    public static function nameColumn(string $columnName, int $resourceID): string
+    private static function nameColumn(string $columnName, int $resourceID): string
     {
         $table = self::getTable();
         if (!$table->load($resourceID)) {
