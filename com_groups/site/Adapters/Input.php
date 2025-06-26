@@ -21,6 +21,8 @@ class Input
 {
     public const NO = 0, NONE = -1, YES = 1;
 
+    public const BINARY = [self::NO, self::YES];
+
     // (File) Formats
     public const HTML = 'html', JSON = 'json', VCF = 'vcf';
 
