@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="params">
+        <fieldset name="basic" label="GROUPS_SETTINGS">
+            <field name="groupID" type="usergroup" label="COM_GROUPS_GROUP" multiple="false"/>
+            <field name="subgroups" type="radio" label="COM_GROUPS_INCLUDE_SUBGROUPS" default="1" filter="integer"
+                   layout="joomla.form.field.radio.switcher">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="showTitles" type="radio" label="GROUPS_SHOW_PROFILE_TITLES" default="1" filter="integer"
+                   layout="joomla.form.field.radio.switcher">
+                <option value="0">JNO</option>
+                <option value="1">JYES</option>
+            </field>
+            <field name="showRoles" type="radio" label="GROUPS_SHOW_ROLES" default="0" filter="integer"
+                   layout="joomla.form.field.radio.switcher">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+            <field name="layout" type="list" label="GROUPS_LAYOUT" default="overview">
+                <option value="advanced">GROUPS_ADVANCED</option>
+                <option value="overview">GROUPS_OVERVIEW</option>
+            </field>
+            <field name="columns" type="integer" label="GROUPS_COLUMNS" first="1" last="3" step="1" default="2"/>
+            <!-- todo field: templates -->
+            <!--<field name="templateID" type="Templates" label="COM_GROUPS_TEMPLATE" default="1" showon="layout:advanced"/> -->
+            <field name="sort" type="radio" label="COM_GROUPS_SORT" default="1" showon="layout:advanced">
+                <option value="1">GROUPS_BY_NAME</option>
+                <option value="0">GROUPS_BY_ROLE</option>
+            </field>
+            <field name="suppress" type="radio" label="GROUPS_SUPPRESS_TEXT" default="1" showon="layout:advanced">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
+        </fieldset>
+    </fields>
+</form>
