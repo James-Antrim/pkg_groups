@@ -73,6 +73,16 @@ abstract class BaseView extends HtmlView
         return $this->layout ?: strtolower($this->_name);
     }
 
+    /**
+     * Modifies the document by adding script and style declarations.
+     *
+     * @return void modifies the document
+     */
+    public function modifyDocument(): void
+    {
+        return;
+    }
+
     /** @inheritDoc */
     public function setModel($model, $default = false): BaseDatabaseModel
     {
