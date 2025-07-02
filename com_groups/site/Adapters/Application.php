@@ -30,14 +30,14 @@ class Application
      * Predefined Joomla message types without unnecessary prefixing.
      * @see    CMSApplicationInterface
      */
-    public const ERROR = 'error', MESSAGE = 'message', NOTICE = 'notice', WARNING = 'warning';
+    public const ERROR = 'error', INFO = 'info', MESSAGE = 'message', NOTICE = 'notice', WARNING = 'warning';
 
     /**
      * Unused locally, but Joomla supported.
      * @ALERT, @CRITICAL, @EMERGENCY: danger
-     * @DEBUG, @INFO: info
+     * @DEBUG: info
      *
-     * public const ALERT = 'alert', CRITICAL = 'critical', DEBUG = 'debug', EMERGENCY = 'emergency', INFO = 'info';
+     * public const ALERT = 'alert', CRITICAL = 'critical', DEBUG = 'debug', EMERGENCY = 'emergency';
      * @noinspection GrazieInspection
      */
 

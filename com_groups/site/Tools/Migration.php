@@ -558,7 +558,7 @@ class Migration
         if ($assocs = DB::objects()) {
             foreach ($assocs as $assoc) {
                 // Mapping to standard groups is not valid
-                if (in_array($assoc->groupID, Groups::DEFAULT)) {
+                if (in_array($assoc->groupID, Groups::STANDARD_GROUPS)) {
                     continue;
                 }
 

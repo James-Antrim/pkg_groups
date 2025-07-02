@@ -99,7 +99,7 @@ class Groups extends ListView
             $item->prefix = Helper::prefix($item->level);
         }
 
-        if (in_array($item->id, Helper::DEFAULT)) {
+        if (in_array($item->id, Helper::STANDARD_GROUPS)) {
             $context = "groups-group-$item->id";
             $tip     = Text::_('GROUPS_PROTECTED_GROUP');
 

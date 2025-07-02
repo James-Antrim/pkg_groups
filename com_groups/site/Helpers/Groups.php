@@ -24,7 +24,7 @@ class Groups extends Selectable
 
     public const PUBLIC = 1, REGISTERED = 2, AUTHOR = 3, EDITOR = 4, PUBLISHER = 5, MANAGER = 6, ADMIN = 7, SUPER_ADMIN = 8;
 
-    public const DEFAULT = [
+    public const STANDARD_GROUPS = [
         self::ADMIN,
         self::AUTHOR,
         self::EDITOR,
@@ -109,15 +109,15 @@ class Groups extends Selectable
     /**
      * Gets the localized name of the group associated with the given id.
      *
-     * @param   int  $groupID
+     * @param   int  $resourceID
      *
      * @return string
      */
-    public static function name(int $groupID): string
+    public static function name(int $resourceID): string
     {
         $group = new Table();
 
-        if (!$group->load($groupID)) {
+        if (!$group->load($resourceID)) {
             return '';
         }
 
@@ -130,7 +130,7 @@ class Groups extends Selectable
         $options = [];
 
         foreach (self::resources() as $groupID => $group) {
-            $disabled = (!$allowDefault and in_array($groupID, self::DEFAULT)) ? 'disabled' : '';
+            $disabled = (!$allowDefault and in_array($groupID, self::STANDARD_GROUPS)) ? 'disabled' : '';
 
             $options[] = (object) [
                 'disable' => $disabled,

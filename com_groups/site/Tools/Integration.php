@@ -224,7 +224,7 @@ class Integration
         $query->select('DISTINCT ' . $db->quoteName('u') . '.*')
             ->from($db->quoteName('#__users', 'u'))
             ->join('inner', $db->quoteName('#__user_usergroup_map', 'm'), $condition)
-            ->whereNotIn($db->quoteName('m.group_id'), Groups::DEFAULT);
+            ->whereNotIn($db->quoteName('m.group_id'), Groups::STANDARD_GROUPS);
 
         $where = $db->quoteName('u.converisID');
         $where .= $resolved ? ' IS NOT NULL' : ' IS NULL';

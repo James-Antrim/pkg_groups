@@ -61,7 +61,7 @@ trait Associated
         }
 
         // No role requested or
-        if (!$roleID or in_array($groupID, Groups::DEFAULT)) {
+        if (!$roleID or in_array($groupID, Groups::STANDARD_GROUPS)) {
             return true;
         }
 

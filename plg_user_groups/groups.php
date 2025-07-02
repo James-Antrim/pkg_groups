@@ -43,7 +43,7 @@ class PlgUserGroups extends CMSPlugin
         }
 
         $groupIDs  = ArrayHelper::toInteger($properties['groups']);
-        $displayed = (bool) array_diff($groupIDs, GH::DEFAULT);
+        $displayed = (bool) array_diff($groupIDs, GH::STANDARD_GROUPS);
 
         // The person is only associated with default groups and should therefore irrelevant to Groups
         if (!$displayed) {
