@@ -215,7 +215,7 @@ abstract class ListModel extends Base
             $data->filter = [];
         }
 
-        foreach ((array) $this->state as $property => $value) {
+        foreach ($this->state->toArray() as $property => $value) {
             if (str_starts_with($property, 'list.')) {
                 $listProperty              = substr($property, 5);
                 $data->list[$listProperty] = $value;
