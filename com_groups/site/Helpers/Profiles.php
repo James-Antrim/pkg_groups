@@ -17,26 +17,6 @@ class Profiles
     public const CENTRALIZED = 0, DECENTRALIZED = 1, DISABLED = 0, ENABLED = 1;
 
     /**
-     * Retrieves the profile attribute value with the given parameters.
-     *
-     * @param   int  $userID       the id of the user resource
-     * @param   int  $attributeID  the id of the attribute resource
-     * @param   int  $published    whether the attribute is published
-     *
-     * @return string
-     */
-    public static function attribute(int $userID, int $attributeID, int $published = Attributes::PUBLISHED): string
-    {
-        $published = $published === Attributes::UNPUBLISHED ? Attributes::UNPUBLISHED : Attributes::PUBLISHED;
-        $table     = new Table();
-        if ($table->load(['attributeID' => $attributeID, 'published' => $published, 'userID' => $userID])) {
-            return $table->value;
-        }
-
-        return '';
-    }
-
-    /**
      * Creates a last name first styled name based on user attributes and optionally title attributes.
      *
      * @param   int   $userID      the id of the profile user
@@ -82,7 +62,7 @@ class Profiles
     }
 
     /**
-     * Retrieves user name information as an array, optionally with titles and or spans with css classes.
+     * Retrieves username information as an array, optionally with titles and or spans with css classes.
      *
      * @param   int   $userID      the id of the profile user
      * @param   bool  $withTitles  whether to include titles as part of the result set
@@ -98,8 +78,8 @@ class Profiles
         ];
 
         if ($withTitles) {
-            $results['post'] = self::attribute($userID, Attributes::SUPPLEMENT_POST);
-            $results['pre']  = self::attribute($userID, Attributes::SUPPLEMENT_PRE);
+            $results['post'] = self::titles($userID, Attributes::SUPPLEMENT_POST);
+            $results['pre']  = self::titles($userID, Attributes::SUPPLEMENT_PRE);
 
             // Special handling for deceased
             if (str_contains($results['post'], '†')) {
@@ -119,5 +99,23 @@ class Profiles
         }
 
         return $results;
+    }
+
+    /**
+     * Retrieves the profile attribute value with the given parameters.
+     *
+     * @param   int  $userID       the id of the user resource
+     * @param   int  $attributeID  the id of the attribute resource
+     *
+     * @return string
+     */
+    public static function titles(int $userID, int $attributeID): string
+    {
+        $table = new Table();
+        if ($table->load(['attributeID' => $attributeID, 'published' => Attributes::PUBLISHED, 'userID' => $userID])) {
+            return $table->value;
+        }
+
+        return '';
     }
 }
