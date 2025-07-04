@@ -73,10 +73,10 @@ class Users extends ListModel
         $query  = DB::query();
         $tag    = Application::tag();
 
-        $query->select(DB::qn([
+        $query->select(DB::qn(
             ["g.name_$tag", 'g.id', "r.name_$tag", 'r.id', 'map.user_id'],
             ['group', 'groupID', 'role', 'roleID', 'userID']
-        ]))
+        ))
             ->from(DB::qn('#__groups_groups', 'g'))
             ->innerJoin(DB::qn('#__user_usergroup_map', 'map'), DB::qc('map.group_id', 'g.id'))
             ->leftJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.mapID', 'map.id'))
