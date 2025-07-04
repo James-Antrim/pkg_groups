@@ -12,6 +12,9 @@ namespace THM\Groups\Views;
 
 use THM\Groups\Adapters\Application;
 
+/**
+ * Handles getting and setting of the global view property $_name
+ */
 trait Named
 {
     /** @var string The name of the view class */

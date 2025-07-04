@@ -15,7 +15,7 @@ class User extends FormView
     /** @inheritDoc */
     public function display($tpl = null): void
     {
-        $this->todo = [
+        $this->toDo = [
             'Add JS to validate image properties.'
         ];
 

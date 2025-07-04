@@ -73,7 +73,7 @@ class Groups extends ListView
     /** @inheritDoc */
     public function display($tpl = null): void
     {
-        $this->todo = [
+        $this->toDo = [
             'Add batch processing for adding / removing roles.',
             'Add batch processing for view levels.'
         ];

@@ -39,7 +39,7 @@ abstract class FormView extends Core
      */
     protected string $layout = 'edit';
 
-    public array $todo = [];
+    public array $toDo = [];
 
     /**
      * Seems to be used somewhere to decide between Joomla Core UI (true) and bootstrap (false)

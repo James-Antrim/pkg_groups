@@ -16,15 +16,13 @@ use stdClass;
 use THM\Groups\Helpers\Attributes as Helper;
 use THM\Groups\Layouts\ListItem;
 
-/**
- * View class for displaying available attribute types.
- * @todo Add a type migration dialog.
- */
+/** @inheritDoc */
 class Attributes extends ListView
 {
     /** @inheritDoc */
     protected function addToolbar(): void
     {
+        $this->toDo[] = 'Add a type migration dialog';
         // Manage access is a prerequisite for getting this far
         $toolbar = Toolbar::getInstance();
         $toolbar->addNew('Attributes.add');

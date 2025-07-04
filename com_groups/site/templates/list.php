@@ -16,7 +16,7 @@ use THM\Groups\Views\HTML\ListView;
 
 /** @var ListView $this */
 
-$action         = Route::_('index.php?option=com_groups&view=' . $this->_name);
+$action         = Route::_('index.php?option=com_groups&view=' . strtolower($this->_name));
 $direction      = $this->escape($this->state->get('list.direction'));
 $orderBy        = $this->escape($this->state->get('list.ordering'));
 $dragEnabled    = (!empty($this->items) and $orderBy == 'ordering' and strtolower($direction) == 'asc');
@@ -35,9 +35,9 @@ if ($dragEnabled) {
     $dragProperties = ArrayHelper::toString($dragProperties);
 }
 
-if ($this->todo) {
+if ($this->toDo) {
     echo '<ul>';
-    foreach ($this->todo as $todo) {
+    foreach ($this->toDo as $todo) {
         echo "<li>$todo</li>";
     }
     echo '</ul>';

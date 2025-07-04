@@ -10,7 +10,8 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\MVC\View\ListView as Base;
+use Joomla\CMS\MVC\View\ListView as Core;
+use Joomla\CMS\Uri\Uri;
 use stdClass;
 use THM\Groups\Adapters\{Application, Text, Toolbar};
 use THM\Groups\Helpers\Can;
@@ -20,19 +21,23 @@ use THM\Groups\Helpers\Can;
  * - Overrides/-writes to avoid deprecated code in the platform or promote ease of use
  * - Supplemental functions to extract common code from list models
  */
-abstract class ListView extends Base
+abstract class ListView extends Core
 {
     use Configured;
     use Titled;
 
     protected const NONE = -1;
 
+    /** @var bool the value of the relevant authorizations in context. */
     public bool $allowBatch = false;
+    protected string $baseURL = '';
+    /** @var string The default text for an empty result set. */
     public string $empty = '';
+    /** @var array The header information to display indexed by the referenced attribute. */
     public array $headers = [];
     protected string $layout = 'list';
-    /** @var array The default text for an empty result set. */
-    public array $todo = [];
+    /** @var array the open items. */
+    public array $toDo = [];
 
     /**
      * Constructor
@@ -48,7 +53,38 @@ abstract class ListView extends Base
 
         parent::__construct($config);
 
+        $this->baseURL = $this->baseURL ?: Uri::base() . 'index.php?option=com_groups';
         $this->configure();
+    }
+
+    /**
+     * Adds the add and delete buttons to the toolbar.
+     * @return void
+     */
+    protected function addBasicButtons(): void
+    {
+        $this->addAdd();
+        $this->addDelete();
+    }
+
+    /**
+     * Adds a button to delete resources.
+     */
+    protected function addAdd(): void
+    {
+        $controller = $this->getName();
+        $toolbar    = Toolbar::getInstance();
+        $toolbar->addNew("$controller.add");
+    }
+
+    /**
+     * Adds a button to delete resources.
+     */
+    protected function addDelete(): void
+    {
+        $controller = $this->getName();
+        $toolbar    = Toolbar::getInstance();
+        $toolbar->delete("$controller.delete")->message(Text::_('DELETE_CONFIRM'))->listCheck(true);
     }
 
     /** @inheritDoc */
@@ -86,7 +122,10 @@ abstract class ListView extends Base
      *
      * @return void
      */
-    abstract protected function completeItem(int $index, stdClass $item, array $options = []): void;
+    protected function completeItem(int $index, stdClass $item, array $options = []): void
+    {
+        // Overridable as needed.
+    }
 
     /**
      * Processes items for output.

@@ -17,17 +17,15 @@ use stdClass;
 use THM\Groups\Layouts\ListItem;
 use THM\Groups\Tables\Attributes as AT;
 
-/**
- * View class for displaying available attribute types.
- * @todo Add a type migration dialog.
- */
+/** @inheritDoc */
 class TemplateAttributes extends ListView
 {
     /** @inheritDoc */
     protected function addToolbar(): void
     {
-        $templateID = Input::getID();
-        $toolbar    = Toolbar::getInstance();
+        $this->toDo[] = 'Add a type migration dialog';
+        $templateID   = Input::getID();
+        $toolbar      = Toolbar::getInstance();
 
         if ($available = $this->getAvailable()) {
             $addGroup = $toolbar->dropdownButton('add-group');

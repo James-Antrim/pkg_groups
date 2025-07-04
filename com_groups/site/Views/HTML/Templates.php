@@ -50,7 +50,7 @@ class Templates extends ListView
     /** @inheritDoc */
     public function display($tpl = null): void
     {
-        $this->todo = [];
+        $this->toDo = [];
 
         parent::display($tpl);
     }

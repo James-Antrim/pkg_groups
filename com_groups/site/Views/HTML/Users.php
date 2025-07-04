@@ -48,39 +48,39 @@ class Users extends ListView
             if (Can::changeState()) {
                 $childBar->standardButton('publish', 'GROUPS_PUBLISH_PROFILE')
                     ->icon('fa fa-eye')
-                    ->task('Users.publish')
+                    ->task('users.publish')
                     ->listCheck(true);
                 $childBar->standardButton('unblock', 'GROUPS_UNPUBLISH_PROFILE')
                     ->icon('fa fa-eye-slash')
-                    ->task('Users.unpublish')
+                    ->task('users.unpublish')
                     ->listCheck(true);
                 $childBar->standardButton('enableEditing', 'GROUPS_ENABLE_EDITING')
                     ->icon('fa fa-edit')
-                    ->task('Users.enableEditing')
+                    ->task('users.enableEditing')
                     ->listCheck(true);
                 $childBar->standardButton('disableEditing', 'GROUPS_DISABLE_EDITING')
                     ->icon('fa fa-minus-circle')
-                    ->task('Users.disableEditing')
+                    ->task('users.disableEditing')
                     ->listCheck(true);
                 $childBar->standardButton('enableContent', 'GROUPS_ENABLE_CONTENT')
                     ->icon('fa fa-folder-open')
-                    ->task('Users.enableContent')
+                    ->task('users.enableContent')
                     ->listCheck(true);
                 $childBar->standardButton('disableContent', 'GROUPS_DISABLE_CONTENT')
                     ->icon('fa fa-folder')
-                    ->task('Users.disableContent')
+                    ->task('users.disableContent')
                     ->listCheck(true);
                 $childBar->standardButton('unblock', 'GROUPS_UNBLOCK_USER')
                     ->icon('fa fa-door-open')
-                    ->task('Users.block')
+                    ->task('users.block')
                     ->listCheck(true);
                 $childBar->standardButton('block', 'GROUPS_BLOCK_USER')
                     ->icon('fa fa-door-closed')
-                    ->task('Users.block')
+                    ->task('users.block')
                     ->listCheck(true);
                 $childBar->standardButton('activate', 'GROUPS_ACTIVATE_USER')
                     ->icon('fa fa-check-square')
-                    ->task('Users.activate')
+                    ->task('users.activate')
                     ->listCheck(true);
 
                 if (Can::batchProcess()) {
@@ -91,7 +91,7 @@ class Users extends ListView
                 }
 
                 if (Can::delete()) {
-                    $childBar->delete('Users.delete')
+                    $childBar->delete('users.delete')
                         ->message('GROUPS_DELETE_MESSAGE')
                         ->text('GROUPS_DELETE_USER')
                         ->listCheck(true);
@@ -121,15 +121,15 @@ class Users extends ListView
     /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        $item->activated     = HTML::toggle($index, Helper::activatedStates[$item->activated], 'Users');
-        $item->block         = HTML::toggle($index, Helper::blockedStates[$item->block], 'Users');
-        $item->content       = HTML::toggle($index, Helper::contentStates[$item->content], 'Users');
-        $item->editing       = HTML::toggle($index, Helper::editingStates[$item->editing], 'Users');
+        $item->activated     = HTML::toggle($index, Helper::activatedStates[$item->activated], 'users');
+        $item->block         = HTML::toggle($index, Helper::blockedStates[$item->block], 'users');
+        $item->content       = HTML::toggle($index, Helper::contentStates[$item->content], 'users');
+        $item->editing       = HTML::toggle($index, Helper::editingStates[$item->editing], 'users');
         $item->editLink      = Route::_('index.php?option=com_groups&view=user&id=' . $item->id);
         $item->groups        = $this->formatGroups($item->groups);
         $item->lastvisitDate = $item->lastvisitDate ?: Text::_('GROUPS_NEVER');
         $item->name          = $item->forenames ? "$item->forenames $item->surnames" : $item->surnames;
-        $item->published     = HTML::toggle($index, Helper::publishedStates[$item->published], 'Users');
+        $item->published     = HTML::toggle($index, Helper::publishedStates[$item->published], 'users');
         $item->viewLink      = Route::_('index.php?option=com_groups&view=profile&id=' . $item->id);
     }
 
@@ -137,7 +137,7 @@ class Users extends ListView
     public function display($tpl = null): void
     {
         $this->allowBatch = Can::batchProcess();
-        $this->todo       = [
+        $this->toDo       = [
             'add configuration to overwrite com_users links to here?',
             'add button',
             'access debug button under group list'

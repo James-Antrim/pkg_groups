@@ -30,7 +30,7 @@ class Users extends ListController
     private const ACTIONS = [self::ADD, self::REMOVE, self::RESET, self::STOP];
 
     /** @inheritDoc */
-    protected string $item = 'User';
+    protected string $item = 'user';
 
     /**
      * Activates the selected users.
@@ -304,7 +304,7 @@ class Users extends ListController
     {
         $this->checkToken();
         $this->authorize();
-        $updated    = 0;
+        $updated = 0;
 
         /**
          * First argument is the groupID in this context.
