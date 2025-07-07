@@ -22,6 +22,21 @@ use Joomla\CMS\WebAsset\WebAssetManager;
 class Document
 {
     /**
+     * Wrapper for document charset functions.
+     *
+     * @param   string  $type  Charset encoding string
+     *
+     * @return HtmlDocument|string
+     */
+    public static function charset(string $type = ''): HtmlDocument|string
+    {
+        /** @var HtmlDocument $document */
+        $document = Application::document();
+
+        return $type ? $document->setCharset($type) : $document->getCharset();
+    }
+
+    /**
      * Gets the path for the given file and type.
      *
      * @param   string  $file  the name of the file
@@ -29,26 +44,11 @@ class Document
      *
      * @return string
      */
-    private static function getPath(string $file, string $type): string
+    private static function path(string $file, string $type): string
     {
         $path = "components/com_groups/$type/$file.$type";
 
         return file_exists(JPATH_ROOT . "/$path") ? $path : '';
-    }
-
-    /**
-     * Wraps the new standard access method to retrieve a toolbar.
-     *
-     * @param   string  $name
-     *
-     * @return TB
-     */
-    public static function getToolbar(string $name = 'toolbar'): TB
-    {
-        /** @var HtmlDocument $document */
-        $document = Application::document();
-
-        return $document->getToolbar($name);
     }
 
     /**
@@ -60,7 +60,7 @@ class Document
      */
     public static function script(string $file = ''): void
     {
-        if ($path = self::getPath($file, 'js')) {
+        if ($path = self::path($file, 'js')) {
             self::webAssetManager()->registerAndUseScript("gps.$file", $path);
         }
     }
@@ -83,37 +83,6 @@ class Document
     }
 
     /**
-     * Explicitly sets the document's charset.
-     *
-     * @param   string  $type  Charset encoding string
-     *
-     * @return  HtmlDocument instance of $this to allow chaining
-     */
-    public static function setCharset(string $type = 'utf-8'): HtmlDocument
-    {
-        /** @var HtmlDocument $document */
-        $document = Application::document();
-
-        return $document->setCharset($type);
-    }
-
-    /**
-     * Sets the title of the document
-     *
-     * @param   string  $title  The title to be set
-     *
-     * @return  HtmlDocument instance of $this to allow chaining
-     * @since   1.7.0
-     */
-    public static function setTitle(string $title): HtmlDocument
-    {
-        /** @var HtmlDocument $document */
-        $document = Application::document();
-
-        return $document->setTitle($title);
-    }
-
-    /**
      * Adds a style to a page.
      *
      * @param   string  $file  the file name
@@ -122,9 +91,39 @@ class Document
      */
     public static function style(string $file = ''): void
     {
-        if ($path = self::getPath($file, 'css')) {
-            self::webAssetManager()->registerAndUseStyle("oz.$file", $path);
+        if ($path = self::path($file, 'css')) {
+            self::webAssetManager()->registerAndUseStyle("groups.$file", $path);
         }
+    }
+
+    /**
+     * Wrapper for document title functions.
+     *
+     * @param   string  $title  The title to be set
+     *
+     * @return HtmlDocument|string
+     */
+    public static function title(string $title = ''): HtmlDocument|string
+    {
+        /** @var HtmlDocument $document */
+        $document = Application::document();
+
+        return $title ? $document->setTitle($title) : $document->getTitle();
+    }
+
+    /**
+     * Wraps the new standard access method to retrieve a toolbar.
+     *
+     * @param   string  $name
+     *
+     * @return TB
+     */
+    public static function toolbar(string $name = 'toolbar'): TB
+    {
+        /** @var HtmlDocument $document */
+        $document = Application::document();
+
+        return $document->getToolbar($name);
     }
 
     /**

@@ -90,7 +90,7 @@ abstract class FormView extends Core
         $title = $new ? "GROUPS_ADD_$constant" : "GROUPS_EDIT_$constant";
         $this->title($title);
 
-        $toolbar = Document::getToolbar();
+        $toolbar = Document::toolbar();
 
         if (count($buttons) > 1) {
             $saveGroup = $toolbar->dropdownButton('save-group');

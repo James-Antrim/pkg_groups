@@ -31,7 +31,7 @@ class Toolbar
      */
     public static function getInstance(string $name = 'toolbar'): Core
     {
-        return Document::getToolbar($name);
+        return Document::toolbar($name);
     }
 
     /**
