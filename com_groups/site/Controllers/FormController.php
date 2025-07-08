@@ -281,12 +281,12 @@ abstract class FormController extends Controller
     /**
      * Validates the form data beyond the implicit type validation performed during prepareData.
      *
-     * @param   array  &$data      the form data to validate
-     * @param   array   $required  the required fields
+     * @param   array  $data      the form data to validate
+     * @param   array  $required  the required fields
      *
      * @return void
      */
-    protected function validate(array &$data, array $required = []): void
+    protected function validate(array $data, array $required = []): void
     {
         foreach ($data as $key => $value) {
             if (in_array($key, $required) and empty($value)) {

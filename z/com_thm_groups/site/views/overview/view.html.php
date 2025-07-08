@@ -15,17 +15,18 @@ defined('_JEXEC') or die;
 require_once HELPERS . 'router.php';
 
 use THM\Groups\Helpers\{Groups, Profiles as Helper};
+use THM\Groups\Views\HTML\Titled;
 
 /**
  * Class provides an overview of group profiles.
  */
 class THM_GroupsViewOverview extends JViewLegacy
 {
+    use Titled;
+
     public $columnCount;
 
     public $maxColumnSize;
-
-    public $title = '';
 
     public $profiles = [];
 
@@ -47,7 +48,7 @@ class THM_GroupsViewOverview extends JViewLegacy
         $groupID        = $this->params->get('groupID');
         if (empty($groupID)) {
             $totalProfiles = 0;
-            foreach ($this->profiles as $letter => $profiles) {
+            foreach ($this->profiles as $profiles) {
                 $totalProfiles += count($profiles);
             }
 
@@ -67,7 +68,22 @@ class THM_GroupsViewOverview extends JViewLegacy
         }
 
         $this->modifyDocument();
-        $this->setTitle();
+
+        $input   = JFactory::getApplication()->input;
+        $groupID = $this->params->get('groupID');
+
+        // If there is a group ID the view was called from a menu item
+        if ($groupID) {
+            $title = Groups::name($groupID);
+        }
+        elseif (empty($input->get('search'))) {
+            $title = 'OVERVIEW';
+        }
+        else {
+            $title = 'DISAMBIGUATION';
+        }
+
+        $this->title($title);
 
         parent::display($tpl);
     }
@@ -123,32 +139,5 @@ class THM_GroupsViewOverview extends JViewLegacy
         $document = JFactory::getDocument();
         $document->addStyleSheet('media/com_thm_groups/css/overview.css');
         JHtml::_('bootstrap.framework');
-    }
-
-    /**
-     * Sets the page title
-     *
-     * @return void sets the title property of the document and the view object
-     * @throws Exception
-     */
-    private function setTitle()
-    {
-        $input   = JFactory::getApplication()->input;
-        $groupID = $this->params->get('groupID');
-
-        // If there is a group ID the view was called from a menu item
-        if ($groupID) {
-            $title = Groups::name($groupID);
-        }
-        elseif (empty($input->get('search'))) {
-            $title = JText::_('COM_THM_GROUPS_OVERVIEW');
-        }
-        else {
-            $title = JText::_('COM_THM_GROUPS_DISAMBIGUATION');
-        }
-
-        //    show_title
-        $this->document->setTitle($title);
-        $this->title = $title;
     }
 }

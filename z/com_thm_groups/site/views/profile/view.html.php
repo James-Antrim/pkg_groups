@@ -15,12 +15,15 @@ use THM\Groups\Helpers\Users;
 require_once HELPERS . 'router.php';
 
 use THM\Groups\Helpers\Profiles as Helper;
+use THM\Groups\Views\HTML\Titled;
 
 /**
  * THMGroupsViewProfile class for component com_thm_groups
  */
 class THM_GroupsViewProfile extends JViewLegacy
 {
+    use Titled;
+
     public $attributes;
 
     public $canEdit;
@@ -84,6 +87,6 @@ class THM_GroupsViewProfile extends JViewLegacy
         $doc = JFactory::getDocument();
         $doc->addStyleSheet('media/com_thm_groups/css/profile_item.css');
         JHtml::_('bootstrap.framework');
-        $doc->setTitle(Helper::name($this->profileID, true));
+        $this->title(Helper::name($this->profileID, true));
     }
 }

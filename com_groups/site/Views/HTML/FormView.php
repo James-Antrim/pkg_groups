@@ -87,7 +87,7 @@ abstract class FormView extends Core
 
         $new = empty($this->item->id);
 
-        $title = $new ? "GROUPS_ADD_$constant" : "GROUPS_EDIT_$constant";
+        $title = $new ? "ADD_$constant" : "EDIT_$constant";
         $this->title($title);
 
         $toolbar = Document::toolbar();

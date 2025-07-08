@@ -10,6 +10,8 @@
  */
 
 // No direct access to this file
+use THM\Groups\Views\HTML\Titled;
+
 defined('_JEXEC') or die;
 
 require_once JPATH_ROOT . '/media/com_thm_groups/views/profile_edit_view.php';
@@ -19,6 +21,8 @@ require_once JPATH_ROOT . '/media/com_thm_groups/views/profile_edit_view.php';
  */
 class THM_GroupsViewProfile_Edit extends THM_GroupsViewProfile_Edit_View
 {
+    use Titled;
+
     /**
      * Method to generate buttons for user interaction
      *
@@ -26,7 +30,8 @@ class THM_GroupsViewProfile_Edit extends THM_GroupsViewProfile_Edit_View
      */
     protected function addToolBar()
     {
-        JToolBarHelper::title(JText::_('COM_THM_GROUPS_PROFILE_EDIT_EDIT_TITLE'), 'title');
+        $title = empty($this->item->id) ? "ADD_PROFILE" : "EDIT_PROFILE";
+        $this->title($title);
 
         JToolBarHelper::apply('profile.apply', 'JTOOLBAR_APPLY');
         JToolBarHelper::save('profile.save', 'JTOOLBAR_SAVE');

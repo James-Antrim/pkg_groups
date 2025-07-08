@@ -17,7 +17,7 @@ defined('_JEXEC') or die;
  */
 class THM_GroupsController extends JControllerLegacy
 {
-    private $resource = '';
+    private $resource;
 
     /**
      * Class constructor
@@ -385,7 +385,7 @@ class THM_GroupsController extends JControllerLegacy
         $model   = $this->getModel('profile');
         $success = $model->saveCropped();
 
-        if ($success != false) {
+        if ($success) {
             echo $success;
         }
 

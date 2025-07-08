@@ -10,6 +10,7 @@
  */
 
 use THM\Groups\Helpers\Can;
+use THM\Groups\Views\HTML\Titled;
 
 defined('_JEXEC') or die;
 
@@ -21,6 +22,8 @@ require_once JPATH_ROOT . '/media/com_thm_groups/views/list.php';
  */
 class THM_GroupsViewGroup_Manager extends THM_GroupsViewList
 {
+    use Titled;
+
     public $batch;
 
     public $roles;
@@ -62,7 +65,7 @@ class THM_GroupsViewGroup_Manager extends THM_GroupsViewList
      */
     protected function addToolbar()
     {
-        JToolBarHelper::title(JText::_('COM_THM_GROUPS_GROUP_MANAGER_TITLE'), 'group_manager');
+        $this->title('GROUPS');
 
         $rolesTitle  = JText::_('COM_THM_GROUPS_BATCH_ROLES');
         $rolesButton = '<button id="group-roles" data-toggle="modal" data-target="#modal-roles" class="btn btn-small">';

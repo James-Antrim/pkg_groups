@@ -12,7 +12,7 @@ namespace THM\Groups\Adapters;
 
 use Exception;
 use Joomla\CMS\Document\HtmlDocument;
-use Joomla\CMS\Toolbar\{Toolbar as Core, ToolbarHelper as Helper};
+use Joomla\CMS\Toolbar\Toolbar as Core;
 
 /**
  * Class integrates toolbar and toolbar helper into one interface for dealing with toolbars.
@@ -56,20 +56,5 @@ class Toolbar
         }
 
         return $html;
-    }
-
-    /**
-     * Sets the application (view) title to a pre-rendered title layout with the given text and optional icon. Also sets
-     * the document title.
-     *
-     * @param   string  $title  the view title
-     * @param   string  $icon   the icon class name
-     *
-     * @return  void
-     * @see Helper::title()
-     */
-    public static function setTitle(string $title, string $icon = ''): void
-    {
-        Helper::title(Text::_($title), $icon);
     }
 }

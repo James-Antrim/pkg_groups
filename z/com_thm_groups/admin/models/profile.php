@@ -312,7 +312,7 @@ class THM_GroupsModelProfile extends JModelLegacy
         }
 
         // Upload new cropped image
-        $uploaded = JFile::upload($file['tmp_name'], $path, false);
+        $uploaded = JFile::upload($file['tmp_name'], $path);
 
         // Create thumbs and send back prev image to the form
         if ($uploaded) {
@@ -320,10 +320,9 @@ class THM_GroupsModelProfile extends JModelLegacy
             $convertedPath = substr($path, $position);
 
             // Adding a random number ensures that the browser no longer uses the cached image.
-            $random   = rand(1, 100);
-            $newImage = "<img  src='" . JURI::root() . $convertedPath . "?force=$random" . "'/>";
+            $random = rand(1, 100);
 
-            return $newImage;
+            return "<img  src='" . JURI::root() . $convertedPath . "?force=$random" . "'/>";
         }
 
         return false;
@@ -467,7 +466,7 @@ class THM_GroupsModelProfile extends JModelLegacy
         DB::set($query);
 
         try {
-            $success = DB::execute();
+            return DB::execute();
         }
         catch (Exception $exception) {
             // Ignore duplicate entry exception
@@ -480,8 +479,6 @@ class THM_GroupsModelProfile extends JModelLegacy
                 return false;
             }
         }
-
-        return empty($success) ? false : true;
     }
 
     /**
@@ -527,13 +524,13 @@ class THM_GroupsModelProfile extends JModelLegacy
                     $categoryEnabled = $this->updateCategoryPublishing($categoryID, 1);
                     $contentEnabled  = $this->updateBinaryValue($profileID, 'contentEnabled', 1);
 
-                    return ($categoryEnabled and $contentEnabled) ? true : false;
+                    return $categoryEnabled and $contentEnabled;
                 }
 
                 $categoryDisabled = $this->updateCategoryPublishing($categoryID, 0);
                 $contentDisabled  = $this->updateBinaryValue($profileID, 'contentEnabled', 0);
 
-                return ($categoryDisabled and $contentDisabled) ? true : false;
+                return $categoryDisabled and $contentDisabled;
             case 'published':
 
                 if ($value) {
@@ -547,7 +544,7 @@ class THM_GroupsModelProfile extends JModelLegacy
                 $profileDisabled = $this->updateBinaryValue($profileID, 'published', 0);
                 $contentDisabled = $this->updateBinaryValue($profileID, 'contentEnabled', 0);
 
-                return ($contentDisabled and $profileDisabled) ? true : false;
+                return $contentDisabled and $profileDisabled;
             default:
                 return false;
         }

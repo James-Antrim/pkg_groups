@@ -46,15 +46,13 @@ class THM_GroupsHelperContent
         $dbo->setQuery($query);
 
         try {
-            $success = $dbo->execute();
+            return $dbo->execute();
         }
         catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return false;
         }
-
-        return (bool) $success;
     }
 
     /**
@@ -183,15 +181,13 @@ class THM_GroupsHelperContent
         $dbo->setQuery($query);
 
         try {
-            $success = $dbo->execute();
+            return $dbo->execute();
         }
         catch (Exception $exception) {
             JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
             return false;
         }
-
-        return (bool) $success;
     }
 
     /**
@@ -398,7 +394,7 @@ class THM_GroupsHelperContent
     public static function isPublished($contentID)
     {
         JTable::addIncludePath(JPATH_ROOT . '/libraries/legacy/table');
-        $table = JTable::getInstance('Content', 'JTable');
+        $table = JTable::getInstance('Content');
         $table->load($contentID);
 
         return $table->state === 1;
@@ -435,7 +431,7 @@ class THM_GroupsHelperContent
         $statusValue = Joomla\Utilities\ArrayHelper::getValue($validStatuses, $status, 0, 'int');
 
         JTable::addIncludePath(JPATH_ROOT . '/libraries/legacy/table');
-        $table = JTable::getInstance('Content', 'JTable');
+        $table = JTable::getInstance('Content');
 
         // Attempt to change the state of the records.
         $success = $table->publish($contentID, $statusValue, JFactory::getUser()->id);
@@ -547,7 +543,7 @@ class THM_GroupsHelperContent
     public static function setAuthor($contentID, $profileID)
     {
         JTable::addIncludePath(JPATH_ROOT . '/libraries/legacy/table');
-        $content = JTable::getInstance('Content', 'JTable');
+        $content = JTable::getInstance('Content');
         $content->load($contentID);
         $content->created_by = $profileID;
 
@@ -583,15 +579,13 @@ class THM_GroupsHelperContent
         $dbo->setQuery($query);
 
         try {
-            $success = $dbo->execute();
+            return $dbo->execute();
         }
         catch (Exception $exc) {
             JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
 
             return false;
         }
-
-        return empty($success) ? false : true;
     }
 
     /**

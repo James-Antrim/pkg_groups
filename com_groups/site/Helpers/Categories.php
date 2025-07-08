@@ -17,8 +17,6 @@ use THM\Groups\Tables\Categories as Table;
 
 class Categories
 {
-    use Published;
-
     /**
      * Retrieves the id of the root category if configured.
      *

@@ -11,7 +11,9 @@
 
 namespace THM\Groups\Views\HTML;
 
-use THM\Groups\Adapters\{Application, Document, Input, Text, Toolbar};
+use THM\Groups\Adapters\{Application, Document, Input, Text};
+use Joomla\CMS\Application\WebApplication;
+use Joomla\CMS\Layout\FileLayout;
 
 trait Titled
 {
@@ -42,10 +44,11 @@ trait Titled
      *
      * @param   string  $standard     the title to display
      * @param   string  $conditional  the conditional title to display
+     * @param   string  $icon         the icon class
      *
      * @return void
      */
-    protected function title(string $standard, string $conditional = ''): void
+    protected function title(string $standard, string $conditional = '', string $icon = ''): void
     {
         $params = Input::parameters();
 
@@ -56,12 +59,19 @@ trait Titled
             $title = empty($conditional) ? Text::_($standard) : Text::_($conditional);
         }
 
-        // Joomla standard title/toolbar output property declared dynamically by Joomla => direct access creates inspection error.
-        Toolbar::setTitle($title);
-
         // Internally implemented title & toolbar output for frontend use.
         $this->title = $title;
 
-        Document::title(strip_tags($title) . ' - ' . Application::instance()->get('sitename'));
+        // @todo Remove with 7.0
+        /** @var WebApplication $app */
+        $app                  = Application::instance();
+        $layout               = new FileLayout('joomla.toolbar.title');
+        $app->JComponentTitle = $layout->render(['title' => $title, 'icon' => $icon]);
+
+        // Title for the document / the browser tab
+        $title = strip_tags($title) . ' - ' . Application::instance()->get('sitename');
+        $title .= Application::backend() ? ' - ' . Text::_('JADMINISTRATION') : '';
+
+        Document::title($title);
     }
 }

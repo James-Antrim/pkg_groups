@@ -10,6 +10,8 @@
  */
 
 // No direct access
+use THM\Groups\Views\HTML\Titled;
+
 defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
@@ -25,6 +27,7 @@ jimport('joomla.application.component.helper');
  */
 class THM_GroupsViewContent extends JViewLegacy
 {
+    use Titled;
 
     protected $item;
 
@@ -194,10 +197,10 @@ class THM_GroupsViewContent extends JViewLegacy
             $pageTitle         = $this->item->title . ' - ';
             $pageTitle         .= JText::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM',
                 $this->state->get('list.offset') + 1);
-            $this->document->setTitle($pageTitle);
+            $this->title($pageTitle);
         }
         else {
-            $this->document->setTitle($this->item->title);
+            $this->title($this->item->title);
         }
 
         THM_GroupsHelperRouter::setPathway();
@@ -220,7 +223,7 @@ class THM_GroupsViewContent extends JViewLegacy
 
         // Process the content plugins.
         JPluginHelper::importPlugin('content');
-        $results = $dispatcher->trigger(
+        $dispatcher->trigger(
             'onContentPrepare',
             ['com_content.article', &$this->item, &$this->params, $pageNo]
         );

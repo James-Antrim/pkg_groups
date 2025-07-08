@@ -10,6 +10,7 @@
  */
 
 use THM\Groups\Helpers\Can;
+use THM\Groups\Views\HTML\Titled;
 
 defined('_JEXEC') or die;
 
@@ -21,6 +22,8 @@ require_once JPATH_ROOT . '/media/com_thm_groups/views/list.php';
  */
 class THM_GroupsViewProfile_Manager extends THM_GroupsViewList
 {
+    use Titled;
+
     public $batch;
 
     public $groups;
@@ -57,7 +60,7 @@ class THM_GroupsViewProfile_Manager extends THM_GroupsViewList
      */
     protected function addToolbar()
     {
-        JToolBarHelper::title(JText::_('COM_THM_GROUPS_PROFILE_MANAGER_TITLE'), 'profile_manager');
+        $this->title('PROFILES');
 
         $bar = JToolBar::getInstance('toolbar');
 

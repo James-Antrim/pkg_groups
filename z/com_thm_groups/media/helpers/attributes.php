@@ -109,7 +109,7 @@ class THM_GroupsHelperAttributes
         $subQuery = $dbo->getQuery(true);
         $subQuery->select("title")->from("#__viewlevels AS vl2")->where("vl2.id = 1");
 
-        $query->select('(' . (string) $subQuery . ') AS defaultLevel');
+        $query->select('(' . $subQuery . ') AS defaultLevel');
 
         $dbo->setQuery($query);
 
@@ -215,9 +215,8 @@ class THM_GroupsHelperAttributes
         $contents = str_replace('VALUE', $value, $contents);
 
         $html = str_replace('LABEL', $label, $html);
-        $html = str_replace('CONTENTS', $contents, $html);
 
-        return $html;
+        return str_replace('CONTENTS', $contents, $html);
     }
 
     /**
@@ -248,7 +247,7 @@ class THM_GroupsHelperAttributes
                 $value = $dbo->loadResult();
             }
             catch (Exception $exception) {
-                JFactory::getApplication()->enqueueMessage($exception->getMessage($exception->getMessage()), 'error');
+                JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
 
                 return '';
             }
@@ -470,7 +469,7 @@ class THM_GroupsHelperAttributes
                 return '';
 
             case URL:
-                $protocolled = strpos($attribute['value'], '://') !== false;
+                $protocolled = str_contains($attribute['value'], '://');
                 $URL         = $protocolled ? $attribute['value'] : "https://{$attribute['value']}";
                 $link        = JHtml::link($URL, $attribute['value'], ['target' => '_blank']);
 

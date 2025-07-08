@@ -10,6 +10,7 @@
 
 use THM\Groups\Helpers\Can;
 use THM\Groups\Helpers\Categories;
+use THM\Groups\Views\HTML\Titled;
 
 defined('_JEXEC') or die;
 
@@ -21,6 +22,8 @@ require_once JPATH_ROOT . "/media/com_thm_groups/views/list.php";
  */
 class THM_GroupsViewContent_Manager extends THM_GroupsViewList
 {
+    use Titled;
+
     /**
      * Method to get display
      *
@@ -45,9 +48,7 @@ class THM_GroupsViewContent_Manager extends THM_GroupsViewList
      */
     protected function addToolbar()
     {
-        JToolBarHelper::title(
-            JText::_('COM_THM_GROUPS_CONTENT_MANAGER_VIEW_TITLE'), 'content_manager'
-        );
+        $this->title('CONTENT');
 
         $rootCategory = Categories::root();
 

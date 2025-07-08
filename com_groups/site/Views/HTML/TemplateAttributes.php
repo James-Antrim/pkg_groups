@@ -10,7 +10,6 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Toolbar\ToolbarHelper;
 use THM\Groups\Adapters\{Application, HTML, Input, Text, Toolbar};
 use THM\Groups\Helpers\{Attributes as AH, TemplateAttributes as Helper, Templates as TH};
 use stdClass;
@@ -40,7 +39,7 @@ class TemplateAttributes extends ListView
         $toolbar->cancel('TemplateAttributes.cancel');
         $toolbar->divider();
 
-        ToolbarHelper::title(TH::name($templateID), 'fa fa-list-ol');
+        $this->title(TH::name($templateID), '', 'fa fa-list-ol');
     }
 
     /** @inheritDoc */
