@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
 
+use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\Users;
 
 require_once HELPERS . 'profiles.php';
@@ -24,7 +25,7 @@ class THM_GroupsController extends JControllerLegacy
 {
     private $profileID;
 
-    private $resource = '';
+    private $resource;
 
     /**
      * Class constructor
@@ -90,28 +91,16 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function checkin()
+    public function checkin(): void
     {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'checkin'));
-
-        if ($functionAvailable) {
-            $success = $this->getModel($this->resource)->checkin();
-
-            if ($success) {
-                $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_SUCCESS'));
-            }
-            else {
-                $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
-            }
+        if ($this->getModel($this->resource)->checkin()) {
+            Application::message('SAVE_SUCCESS');
         }
         else {
-            $app->enqueueMessage(JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE'), 'error');
+            Application::message('SAVE_FAIL', Application::ERROR);
         }
 
-        $referrer = $app->input->server->getString('HTTP_REFERER');
-        $app->redirect($referrer);
+        Application::redirect(Input::referrer());
     }
 
     /**
@@ -120,7 +109,7 @@ class THM_GroupsController extends JControllerLegacy
      * @return  void outputs a blank string on success, otherwise affects no change
      * @throws Exception
      */
-    public function deletePicture()
+    public function deletePicture(): void
     {
         JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_thm_groups/models');
         $model   = JModelLegacy::getInstance('profile', 'THM_GroupsModel');
@@ -137,7 +126,7 @@ class THM_GroupsController extends JControllerLegacy
      * @return  void
      * @throws Exception
      */
-    private function preProcess()
+    private function preProcess(): void
     {
         $input = JFactory::getApplication()->input;
         $data  = $input->get('jform', [], 'array');
@@ -154,8 +143,6 @@ class THM_GroupsController extends JControllerLegacy
             }
             JFactory::getApplication()->redirect();
         }
-
-        return;
     }
 
     /**
@@ -214,23 +201,16 @@ class THM_GroupsController extends JControllerLegacy
      *
      * @throws Exception
      */
-    public function saveOrderAjax()
+    public function saveOrderAjax(): void
     {
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'saveorder'));
+        $pks   = Input::selectedIDs();
+        $order = array_keys($pks);
 
-        if ($functionAvailable) {
-            // Get the input
-            $pks   = Input::getSelectedIDs();
-            $order = array_keys($pks);
-
-            if ($model->saveorder($pks, $order)) {
-                echo "1";
-            }
+        if ($this->getModel($this->resource)->saveorder($pks, $order)) {
+            echo "1";
         }
 
-        // Close the application
-        JFactory::getApplication()->close();
+        Application::close();
     }
 
     /**
@@ -239,27 +219,15 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function toggle()
+    public function toggle(): void
     {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'toggle'));
-
-        if ($functionAvailable) {
-            $success = $this->getModel($this->resource)->toggle();
-
-            if ($success) {
-                $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_SUCCESS'));
-            }
-            else {
-                $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
-            }
+        if ($this->getModel($this->resource)->toggle()) {
+            Application::message('SAVE_SUCCESS');
         }
         else {
-            $app->enqueueMessage(JText::_('COM_THM_GROUPS_ACTION_UNAVAILABLE'), 'error');
+            Application::message('SAVE_FAIL', Application::ERROR);
         }
 
-        $referrer = $app->input->server->getString('HTTP_REFERER');
-        $app->redirect($referrer);
+        Application::redirect(Input::referrer());
     }
 }

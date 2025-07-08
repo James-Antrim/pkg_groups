@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\{Input, Text};
+use THM\Groups\Adapters\{Application, Input};
 
 defined('_JEXEC') or die;
 
@@ -29,8 +29,8 @@ class THM_GroupsController extends JControllerLegacy
     public function __construct($config = [])
     {
         parent::__construct($config);
-        $task           = JFactory::getApplication()->input->get('task', '');
-        $taskParts      = explode('.', $task);
+
+        $taskParts      = explode('.', Input::task());
         $this->resource = $taskParts[0];
     }
 
@@ -42,9 +42,9 @@ class THM_GroupsController extends JControllerLegacy
      */
     public function add()
     {
-        $app = JFactory::getApplication();
-        $app->input->set('view', "{$this->resource}_edit");
-        $app->input->set('id', 0);
+        $input = Input::instance();
+        $input->set('view', "{$this->resource}_edit");
+        $input->set('id', 0);
         parent::display();
     }
 
@@ -54,37 +54,22 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function apply()
+    public function apply(): void
     {
-        $app        = JFactory::getApplication();
-        $data       = $app->input->get('jform', [], 'array');
-        $resourceID = empty($data['id']) ? $app->input->get('id', 0) : $data['id'];
-        $model      = $this->getModel($this->resource);
+        $data       = Input::post();
+        $resourceID = empty($data['id']) ? Input::id() : $data['id'];
 
-        $functionAvailable = (method_exists($model, 'save'));
-
-        if ($functionAvailable) {
-            $savedID = $model->save();
-
-            if (!empty($savedID)) {
-                $msg  = Text::_('SAVE_SUCCESS');
-                $type = 'message';
-            }
-            else {
-                $msg  = Text::_('SAVE_FAIL');
-                $type = 'error';
-            }
+        if ($savedID = $this->getModel($this->resource)->save()) {
+            Application::message('SAVE_SUCCESS');
         }
         else {
-            $msg  = Text::_('ACTION_UNAVAILABLE');
-            $type = 'error';
+            Application::message('SAVE_FAIL', Application::ERROR);
         }
 
-        $resourceID = empty($savedID) ? $resourceID : $savedID;
-
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_edit");
-        $app->input->set('id', $resourceID);
+        $input      = Input::instance();
+        $resourceID = $savedID ?: $resourceID;
+        $input->set('id', $resourceID);
+        $input->set('view', "{$this->resource}_edit");
         parent::display();
     }
 
@@ -94,31 +79,16 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function batch()
+    public function batch(): void
     {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'batch'));
-
-        if ($functionAvailable) {
-            $success = $model->batch();
-
-            if ($success) {
-                $msg  = Text::_('BATCH_SUCCESS');
-                $type = 'message';
-            }
-            else {
-                $msg  = Text::_('BATCH_FAIL');
-                $type = 'error';
-            }
+        if ($this->getModel($this->resource)->batch()) {
+            Application::message('BATCH_SUCCESS');
         }
         else {
-            $msg  = Text::_('ACTION_UNAVAILABLE');
-            $type = 'error';
+            Application::message('BATCH_FAIL');
         }
 
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_manager");
+        Input::instance()->set('view', "{$this->resource}_manager");
         parent::display();
     }
 
@@ -128,31 +98,16 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function delete()
+    public function delete(): void
     {
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'delete'));
-
-        if ($functionAvailable) {
-            $success = $model->delete();
-
-            if ($success) {
-                $msg  = Text::_('DELETE_SUCCESS');
-                $type = 'message';
-            }
-            else {
-                $msg  = Text::_('DELETE_FAIL');
-                $type = 'error';
-            }
+        if ($this->getModel($this->resource)->delete()) {
+            Application::message('DELETE_SUCCESS');
         }
         else {
-            $msg  = Text::_('ACTION_UNAVAILABLE');
-            $type = 'error';
+            Application::message('DELETE_FAIL', Application::ERROR);
         }
 
-        $app = JFactory::getApplication();
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_manager");
+        Input::instance()->set('view', "{$this->resource}_manager");
         parent::display();
     }
 
@@ -180,16 +135,11 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function edit()
+    public function edit(): void
     {
-        $app = JFactory::getApplication();
-        $app->input->set('view', "{$this->resource}_edit");
-
-        $requestedIDs = Input::selectedIDs();
-        $requestedID  = (empty($requestedIDs) or empty($requestedIDs[0])) ?
-            $app->input->getInt('id', 0) : $requestedIDs[0];
-
-        $app->input->set('id', $requestedID);
+        $input = Input::instance();
+        $input->set('view', "{$this->resource}_edit");
+        $input->set('id', Input::selectedID());
         parent::display();
     }
 
@@ -199,31 +149,16 @@ class THM_GroupsController extends JControllerLegacy
      * @return  void
      * @throws Exception
      */
-    public function feature()
+    public function feature(): void
     {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'feature'));
-
-        if ($functionAvailable) {
-            $success = $model->feature();
-
-            if ($success) {
-                $msg  = Text::_('SAVE_SUCCESS');
-                $type = 'message';
-            }
-            else {
-                $msg  = Text::_('SAVE_FAIL');
-                $type = 'error';
-            }
+        if ($this->getModel($this->resource)->feature()) {
+            Application::message('SAVE_SUCCESS');
         }
         else {
-            $msg  = Text::_('ACTION_UNAVAILABLE');
-            $type = 'error';
+            Application::message('SAVE_FAIL', Application::ERROR);
         }
 
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_manager");
+        Input::instance()->set('view', "{$this->resource}_manager");
         parent::display();
 
     }
@@ -234,31 +169,16 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function publishContent()
+    public function publishContent(): void
     {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'publish'));
-
-        if ($functionAvailable) {
-            $success = $model->publishContent();
-
-            if ($success) {
-                $msg  = Text::_('SAVE_SUCCESS');
-                $type = 'message';
-            }
-            else {
-                $msg  = Text::_('SAVE_FAIL');
-                $type = 'error';
-            }
+        if ($this->getModel($this->resource)->publishContent()) {
+            Application::message('SAVE_SUCCESS');
         }
         else {
-            $msg  = Text::_('ACTION_UNAVAILABLE');
-            $type = 'error';
+            Application::message('SAVE_FAIL', Application::ERROR);
         }
 
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_manager");
+        Input::instance()->set('view', "{$this->resource}_manager");
         parent::display();
     }
 
@@ -268,31 +188,16 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function save()
+    public function save(): void
     {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'save'));
-
-        if ($functionAvailable) {
-            $success = $model->save();
-
-            if ($success) {
-                $msg  = Text::_('SAVE_SUCCESS');
-                $type = 'message';
-            }
-            else {
-                $msg  = Text::_('SAVE_FAIL');
-                $type = 'error';
-            }
+        if ($this->getModel($this->resource)->save()) {
+            Application::message('SAVE_SUCCESS');
         }
         else {
-            $msg  = Text::_('ACTION_UNAVAILABLE');
-            $type = 'error';
+            Application::message('SAVE_FAIL', Application::ERROR);
         }
 
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_manager");
+        Input::instance()->set('view', "{$this->resource}_manager");
         parent::display();
     }
 
@@ -302,38 +207,22 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function save2copy()
+    public function save2copy(): void
     {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'save'));
-        $formData          = $app->input->get('jform', [], 'array');
+        $existingID = Input::id();
 
-        if ($functionAvailable and !empty($formData['id'])) {
-            $existingID     = $formData['id'];
-            $formData['id'] = 0;
-            $app->input->set('jform', $formData);
+        $input = Input::instance();
+        $input->set('id', 0);
 
-            $newID = $model->save();
-
-            if ($newID) {
-                $msg  = Text::_('SAVE_SUCCESS');
-                $type = 'message';
-                $app->input->set('id', $newID);
-            }
-            else {
-                $msg  = Text::_('SAVE_FAIL');
-                $type = 'error';
-                $app->input->set('id', $existingID);
-            }
+        if ($newID = $this->getModel($this->resource)->save()) {
+            Application::message('SAVE_SUCCESS');
         }
         else {
-            $msg  = Text::_('ACTION_UNAVAILABLE');
-            $type = 'error';
+            Application::message('SAVE_FAIL', Application::ERROR);
         }
 
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_edit");
+        $input->set('id', $newID ?: $existingID);
+        $input->set('view', "{$this->resource}_edit");
         parent::display();
     }
 
@@ -344,32 +233,18 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function save2new()
+    public function save2new(): void
     {
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'save'));
-
-        if ($functionAvailable) {
-            $success = $model->save();
-
-            if ($success) {
-                $msg  = Text::_('SAVE_SUCCESS');
-                $type = 'message';
-            }
-            else {
-                $msg  = Text::_('SAVE_FAIL');
-                $type = 'error';
-            }
+        if ($this->getModel($this->resource)->save()) {
+            Application::message('SAVE_SUCCESS');
         }
         else {
-            $msg  = Text::_('ACTION_UNAVAILABLE');
-            $type = 'error';
+            Application::message('SAVE_FAIL', Application::ERROR);
         }
 
-        $app = JFactory::getApplication();
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_edit");
-        $app->input->set('id', 0);
+        $input = Input::instance();
+        $input->set('id', 0);
+        $input->set('view', "{$this->resource}_edit");
         parent::display();
     }
 
@@ -424,31 +299,16 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function toggle()
+    public function toggle(): void
     {
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'toggle'));
-
-        if ($functionAvailable) {
-            $success = $this->getModel($this->resource)->toggle();
-
-            if ($success) {
-                $msg  = Text::_('SAVE_SUCCESS');
-                $type = 'message';
-            }
-            else {
-                $msg  = Text::_('SAVE_FAIL');
-                $type = 'error';
-            }
+        if ($this->getModel($this->resource)->toggle()) {
+            Application::message('SAVE_SUCCESS');
         }
         else {
-            $msg  = Text::_('ACTION_UNAVAILABLE');
-            $type = 'error';
+            Application::message('SAVE_FAIL', Application::ERROR);
         }
 
-        $app = JFactory::getApplication();
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_manager");
+        Input::instance()->set('view', "{$this->resource}_manager");
         parent::display();
     }
 
@@ -458,31 +318,16 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function unpublishContent()
+    public function unpublishContent(): void
     {
-        $app               = JFactory::getApplication();
-        $model             = $this->getModel($this->resource);
-        $functionAvailable = (method_exists($model, 'unpublishContent'));
-
-        if ($functionAvailable) {
-            $success = $model->unpublishContent();
-
-            if ($success) {
-                $msg  = Text::_('SAVE_SUCCESS');
-                $type = 'message';
-            }
-            else {
-                $msg  = Text::_('SAVE_FAIL');
-                $type = 'error';
-            }
+        if ($this->getModel($this->resource)->unpublishContent()) {
+            Application::message('SAVE_SUCCESS');
         }
         else {
-            $msg  = Text::_('ACTION_UNAVAILABLE');
-            $type = 'error';
+            Application::message('SAVE_FAIL', Application::ERROR);
         }
 
-        $app->enqueueMessage($msg, $type);
-        $app->input->set('view', "{$this->resource}_manager");
+        Input::instance()->set('view', "{$this->resource}_manager");
         parent::display();
     }
 }

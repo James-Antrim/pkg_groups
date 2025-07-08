@@ -11,6 +11,7 @@
 namespace THM\Groups\Adapters;
 
 use Exception;
+use JetBrains\PhpStorm\NoReturn;
 use Joomla\CMS\Application\{CMSApplication, CMSApplicationInterface, WebApplication};
 use Joomla\CMS\{Component\ComponentHelper, Document\Document, Factory, Language\Language};
 use Joomla\CMS\{Menu\MenuItem, Plugin\PluginHelper, Session\Session, Uri\Uri};
@@ -95,6 +96,16 @@ class Application
     public static function container(): Container
     {
         return Factory::getContainer();
+    }
+
+    /**
+     * Closes the application.
+     *
+     * @return void
+     */
+    #[NoReturn] public static function close(): void
+    {
+        exit(0);
     }
 
     /**

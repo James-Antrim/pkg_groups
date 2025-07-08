@@ -11,7 +11,7 @@
  * @link        www.thm.de
  */
 
-use Joomla\CMS\Language\Text;
+use THM\Groups\Adapters\Application;
 
 /**
  * ThmGroupsInstaller
@@ -45,7 +45,8 @@ class Com_THM_GroupsInstallerScript
             $assignedGroups = $dbo->loadAssocList();
         }
         catch (RuntimeException $exception) {
-            JFactory::getApplication()->enqueueMessage(Text::_('GROUPS_ERROR'), 'error');
+            Application::message($exception->getMessage(), Application::ERROR);
+            return;
         }
 
         if (empty($assignedGroups)) {
@@ -70,7 +71,7 @@ class Com_THM_GroupsInstallerScript
                 $dbo->execute();
             }
             catch (RuntimeException $exception) {
-                JFactory::getApplication()->enqueueMessage(Text::_('GROUPS_ERROR'), 'error');
+                Application::message($exception->getMessage(), Application::ERROR);
             }
         }
     }
@@ -88,7 +89,7 @@ class Com_THM_GroupsInstallerScript
 
         if (!file_exists($dirToCreate) && !mkdir($dirToCreate, 0755, true)) {
             $msg = "Failed to create the images directory $dirToCreate. This can lead to errors saving image attributes.";
-            JFactory::getApplication()->enqueueMessage($msg, 'error');
+            Application::message($msg, Application::ERROR);
 
             return false;
         }
@@ -115,7 +116,7 @@ class Com_THM_GroupsInstallerScript
             $users = $dbo->loadAssocList();
         }
         catch (RuntimeException $exception) {
-            JFactory::getApplication()->enqueueMessage(Text::_('GROUPS_ERROR'), 'error');
+            Application::message($exception->getMessage(), Application::ERROR);
         }
 
         if (empty($users)) {
@@ -143,7 +144,7 @@ class Com_THM_GroupsInstallerScript
 
             }
             catch (RuntimeException $exception) {
-                JFactory::getApplication()->enqueueMessage(Text::_('GROUPS_ERROR'), 'error');
+                Application::message($exception->getMessage(), Application::ERROR);
                 $dbo->transactionRollback();
             }
 
@@ -167,7 +168,7 @@ class Com_THM_GroupsInstallerScript
                 $dbo->execute();
             }
             catch (RuntimeException $exception) {
-                JFactory::getApplication()->enqueueMessage(Text::_('GROUPS_ERROR'), 'error');
+                Application::message($exception->getMessage(), Application::ERROR);
                 $dbo->transactionRollback();
             }
 
@@ -195,7 +196,7 @@ class Com_THM_GroupsInstallerScript
             $dbo->execute();
         }
         catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
+            Application::message($exception->getMessage(), Application::ERROR);
 
             return;
         }
