@@ -60,7 +60,7 @@ class Templates extends ListController
         $this->checkToken();
         $this->authorize();
 
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
         $table       = new Table();
 
         if ($selectedID = reset($selectedIDs) and $table->load($selectedID)) {

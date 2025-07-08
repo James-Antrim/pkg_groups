@@ -25,7 +25,7 @@ class User extends FormController
     /** @inheritDoc */
     protected function authorize(): void
     {
-        if (!Can::saveUser(Input::getID())) {
+        if (!Can::saveUser(Input::id())) {
             Application::error(403);
         }
     }
@@ -33,8 +33,8 @@ class User extends FormController
     /** @inheritDoc */
     protected function prepareData(): array
     {
-        $forename = Input::getString('forename');
-        $surname  = Input::getString('surname');
+        $forename = Input::string('forename');
+        $surname  = Input::string('surname');
         $name     = $forename ? "$forename $surname" : $surname;
 
         return [
@@ -42,40 +42,40 @@ class User extends FormController
 
             /** User Access **/
             // "user_details
-            'email'          => Input::getString('email'),
+            'email'          => Input::string('email'),
             'forename'       => $forename,
             'name'           => $name,
             'surname'        => $surname,
-            'password'       => Input::getString('password'), // hmmm
-            'password2'      => Input::getString('password2'), // hmmm
-            'username'       => Input::getString('username'),
+            'password'       => Input::string('password'), // hmmm
+            'password2'      => Input::string('password2'), // hmmm
+            'username'       => Input::string('username'),
             // "profile"
             // Profile attribute values...
             // "settings"
-            'language'       => Input::getString('language'),
-            'timezone'       => Input::getString('timezone'),
+            'language'       => Input::string('language'),
+            'timezone'       => Input::string('timezone'),
             // "accessibility"
-            'a11y_contrast'  => Input::getString('a11y_contrast'), // 0/'high_contrast'
-            'a11y_font'      => Input::getString('a11y_font'), // 0/'fontsize'
-            'a11y_highlight' => Input::getString('a11y_highlight'), // 0/'highlight'
-            'a11y_mono'      => Input::getString('a11y_mono'), // 0/'monochrome'
+            'a11y_contrast'  => Input::string('a11y_contrast'), // 0/'high_contrast'
+            'a11y_font'      => Input::string('a11y_font'), // 0/'fontsize'
+            'a11y_highlight' => Input::string('a11y_highlight'), // 0/'highlight'
+            'a11y_mono'      => Input::string('a11y_mono'), // 0/'monochrome'
 
             /** Admin Access **/
             // "user_details"
-            'block'          => (int) Input::getBool('block'),
+            'block'          => (int) Input::bool('block'),
             // Groups field...
-            'requireReset'   => (int) Input::getBool('requireReset'),
+            'requireReset'   => (int) Input::bool('requireReset'),
             // "settings"
-            'admin_style'    => Input::getInt('admin_style'),
-            'admin_language' => Input::getString('admin_language'),
-            'editor'         => Input::getString('editor'),
+            'admin_style'    => Input::integer('admin_style'),
+            'admin_language' => Input::string('admin_language'),
+            'editor'         => Input::string('editor'),
 
             /** Trash **/
             // "user_details"
-            'lastResetTime'  => Input::getString('lastResetTime'), // immutable and stupid?
-            'lastvisitDate'  => Input::getString('lastvisitDate'), // existing: keep, new: irrelevant, field: stupid?
-            'registerDate'   => Input::getString('registerDate'), // existing: keep, new: now, field: unnecessary?
-            'resetCount'     => Input::getInt('resetCount'), // immutable and stupid?
+            'lastResetTime'  => Input::string('lastResetTime'), // immutable and stupid?
+            'lastvisitDate'  => Input::string('lastvisitDate'), // existing: keep, new: irrelevant, field: stupid?
+            'registerDate'   => Input::string('registerDate'), // existing: keep, new: now, field: unnecessary?
+            'resetCount'     => Input::integer('resetCount'), // immutable and stupid?
             'sendEmail'      => 0, // No
         ];
     }
@@ -90,7 +90,7 @@ class User extends FormController
         $this->checkToken();
         $this->authorize();
         $data  = $this->prepareData();
-        $id    = Input::getID();
+        $id    = Input::id();
         $table = $this->getTable();
 
         return $this->store($table, $data, $id);

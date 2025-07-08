@@ -22,20 +22,20 @@ class Attribute extends FormController
     /** @inheritDoc */
     protected function prepareData(): array
     {
-        $context = Input::getInt('context');
-        $icon    = Input::getString('icon');
+        $context = Input::integer('context');
+        $icon    = Input::string('icon');
 
         $data = [
             'context'     => in_array($context, Helper::CONTEXTS) ? $context : Helper::BOTH_CONTEXTS,
             'icon'        => Icons::supported($icon),
-            'label_de'    => Input::getString('label_de'),
-            'label_en'    => Input::getString('label_en'),
-            'showIcon'    => (int) Input::getBool('showIcon'),
-            'showLabel'   => (int) Input::getBool('showLabel'),
-            'viewLevelID' => Input::getInt('viewLevelID', Helper::PUBLIC)
+            'label_de'    => Input::string('label_de'),
+            'label_en'    => Input::string('label_en'),
+            'showIcon'    => (int) Input::bool('showIcon'),
+            'showLabel'   => (int) Input::bool('showLabel'),
+            'viewLevelID' => Input::integer('viewLevelID', Helper::PUBLIC)
         ];
 
-        $typeID         = Input::getInt('typeID');
+        $typeID         = Input::integer('typeID');
         $typeID         = array_key_exists($typeID, Types::TYPES) ? $typeID : Types::TEXT;
         $data['typeID'] = $typeID;
 
@@ -74,7 +74,7 @@ class Attribute extends FormController
      */
     private function setArrayOption(array &$options, string $option): void
     {
-        if ($values = Input::getArray($option)) {
+        if ($values = Input::array($option)) {
             $options[$option] = $values;
         }
     }
@@ -89,7 +89,7 @@ class Attribute extends FormController
      */
     private function setBoolOption(array &$options, string $option): void
     {
-        if (Input::getBool($option)) {
+        if (Input::bool($option)) {
             $options[$option] = 1;
         }
     }
@@ -104,7 +104,7 @@ class Attribute extends FormController
      */
     private function setIntOption(array &$options, string $option): void
     {
-        if ($value = Input::getInt($option)) {
+        if ($value = Input::integer($option)) {
             $options[$option] = $value;
         }
     }
@@ -119,7 +119,7 @@ class Attribute extends FormController
      */
     private function setStringOption(array &$options, string $option): void
     {
-        if ($value = Input::getString($option)) {
+        if ($value = Input::string($option)) {
             $options[$option] = $value;
         }
     }

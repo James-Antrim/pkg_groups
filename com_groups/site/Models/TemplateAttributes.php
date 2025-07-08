@@ -36,7 +36,7 @@ class TemplateAttributes extends ListModel
     protected function getListQuery(): QueryInterface
     {
         $query      = DB::query();
-        $templateID = Input::getID();
+        $templateID = Input::id();
 
         $query->select('*')
             ->from(DB::qn('#__groups_template_attributes'))

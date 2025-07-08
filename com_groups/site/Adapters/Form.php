@@ -32,68 +32,28 @@ class Form extends Core
         FormHelper::addFormPath(JPATH_SITE . '/components/com_groups/Forms');
     }
 
-    /** @inheritDoc */
-    protected function loadField($element, $group = null, $value = null): DatabaseAwareInterface|FormField|bool
+    /**
+     * Loads a reasonably namespaced form field.
+     *
+     * @param   string  $field  the name of the field class to load
+     *
+     * @return FormField
+     */
+    private function field(string $field): FormField
     {
-        // Make sure there is a valid SimpleXMLElement.
-        if (!($element instanceof SimpleXMLElement)) {
-            $error = sprintf('%s::%s `xml` is not an instance of SimpleXMLElement', get_class($this), __METHOD__);
-            Application::message($error, 'error');
+        $fqName = 'THM\\Groups\\Fields\\' . $field;
 
-            return false;
-        }
+        $field = new $fqName($this);
+        $field->setDatabase($this->getDatabase());
 
-        // Get the field type.
-        $type = $element['type'] ? (string) $element['type'] : 'text';
-
-        $fields = $this->getFieldClasses();
-        if (!in_array($type, $fields)) {
-            return parent::loadField($element, $group, $value);
-        }
-
-        // Load the FormField object for the field.
-        $field = $this->loadFieldClass($type);
-
-        /*
-         * Get the value for the form field if not set.
-         * Default to the translated version of the 'default' attribute
-         * if 'translate_default' attribute if set to 'true' or '1'
-         * else the value of the 'default' attribute for the field.
-         */
-        if ($value === null) {
-            $default = (string) ($element['default'] ? $element['default'] : $element->default);
-
-            if (($translate = $element['translate_default']) && ((string) $translate === 'true' || (string) $translate === '1')) {
-                $lang = Application::language();
-
-                if ($lang->hasKey($default)) {
-                    $debug   = $lang->setDebug(false);
-                    $default = Text::_($default);
-                    $lang->setDebug($debug);
-                }
-                else {
-                    $default = Text::_($default);
-                }
-            }
-
-            $value = $this->getValue((string) $element['name'], $group, $default);
-        }
-
-        $field->setForm($this);
-
-        if ($field->setup($element, $value, $group)) {
-            return $field;
-        }
-        else {
-            return false;
-        }
+        return $field;
     }
 
     /**
-     * Checks for the available Table classes.
+     * Checks for the available field classes.
      * @return array
      */
-    private function getFieldClasses(): array
+    private function fields(): array
     {
         $fields = [];
         foreach (glob(JPATH_SITE . '/components/com_groups/Fields/*') as $field) {
@@ -141,21 +101,61 @@ class Form extends Core
         return $forms[$name];
     }
 
-    /**
-     * Loads a reasonably namespaced form field.
-     *
-     * @param   string  $field  the name of the field class to load
-     *
-     * @return FormField
-     */
-    private function loadFieldClass(string $field): FormField
+    /** @inheritDoc */
+    protected function loadField($element, $group = null, $value = null): DatabaseAwareInterface|FormField|bool
     {
-        $fqName = 'THM\\Groups\\Fields\\' . $field;
+        // Make sure there is a valid SimpleXMLElement.
+        if (!($element instanceof SimpleXMLElement)) {
+            $error = sprintf('%s::%s `xml` is not an instance of SimpleXMLElement', get_class($this), __METHOD__);
+            Application::message($error, 'error');
 
-        $field = new $fqName($this);
-        $field->setDatabase($this->getDatabase());
+            return false;
+        }
 
-        return $field;
+        // Get the field type.
+        $type = $element['type'] ? (string) $element['type'] : 'text';
+
+        $fields = $this->fields();
+        if (!in_array($type, $fields)) {
+            return parent::loadField($element, $group, $value);
+        }
+
+        // Load the FormField object for the field.
+        $field = $this->field($type);
+
+        /*
+         * Get the value for the form field if not set.
+         * Default to the translated version of the 'default' attribute
+         * if 'translate_default' attribute if set to 'true' or '1'
+         * else the value of the 'default' attribute for the field.
+         */
+        if ($value === null) {
+            $default = (string) ($element['default'] ? $element['default'] : $element->default);
+
+            if (($translate = $element['translate_default']) && ((string) $translate === 'true' || (string) $translate === '1')) {
+                $lang = Application::language();
+
+                if ($lang->hasKey($default)) {
+                    $debug   = $lang->setDebug(false);
+                    $default = Text::_($default);
+                    $lang->setDebug($debug);
+                }
+                else {
+                    $default = Text::_($default);
+                }
+            }
+
+            $value = $this->getValue((string) $element['name'], $group, $default);
+        }
+
+        $field->setForm($this);
+
+        if ($field->setup($element, $value, $group)) {
+            return $field;
+        }
+        else {
+            return false;
+        }
     }
 
     /**

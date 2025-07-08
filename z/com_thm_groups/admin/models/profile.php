@@ -42,7 +42,7 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         $newProfileData  = $app->getUserStateFromRequest('.profiles', 'profiles', [], 'array');
         $requestedAssocs = json_decode(urldecode($app->input->getString('batch-data')), true);
-        $selectedIDs     = Input::getSelectedIDs();
+        $selectedIDs     = Input::selectedIDs();
 
         if ($selectedIDs and !empty($requestedAssocs)) {
             return $this->batchRoles($selectedIDs, $requestedAssocs);
@@ -109,8 +109,8 @@ class THM_GroupsModelProfile extends JModelLegacy
      */
     public function deletePicture($profileID = 0, $attributeID = 0)
     {
-        $profileID   = Input::getInt('profileID', $profileID);
-        $attributeID = Input::getInt('attributeID', $attributeID);
+        $profileID   = Input::integer('profileID', $profileID);
+        $attributeID = Input::integer('attributeID', $attributeID);
 
         if (!Users::editing($profileID)) {
             Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
@@ -189,7 +189,7 @@ class THM_GroupsModelProfile extends JModelLegacy
             return false;
         }
 
-        $profileIDs = Input::getSelectedIDs();
+        $profileIDs = Input::selectedIDs();
         foreach ($profileIDs as $profileID) {
             if (!$categoryID = Users::categoryID($profileID)) {
                 $category   = new Category();
@@ -610,7 +610,7 @@ class THM_GroupsModelProfile extends JModelLegacy
             return false;
         }
 
-        $profileIDs = Input::getSelectedIDs();
+        $profileIDs = Input::selectedIDs();
         foreach ($profileIDs as $profileID) {
             if (!$categoryID = Users::categoryID($profileID)) {
                 continue;

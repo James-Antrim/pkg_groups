@@ -26,8 +26,8 @@ class TemplateAttributes extends Attributed
 
     public function add(): void
     {
-        $referrer = Input::getReferrer();
-        if ($args = Input::getArray('args') and count($args) === 2) {
+        $referrer = Input::referrer();
+        if ($args = Input::array('args') and count($args) === 2) {
             [$templateID, $attributeID] = $args;
             $data  = ['attributeID' => $attributeID, 'templateID' => $templateID];
             $table = new Table();
@@ -66,7 +66,7 @@ class TemplateAttributes extends Attributed
         $this->authorizeAJAX();
 
         $ordering       = 1;
-        $associationIDs = Input::getArray('cid');
+        $associationIDs = Input::array('cid');
 
         foreach ($associationIDs as $associationID) {
             $attributeID = Helper::getAttributeID($associationID);
@@ -96,7 +96,7 @@ class TemplateAttributes extends Attributed
         $this->checkToken();
         $this->authorize();
 
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
         $selected    = count($selectedIDs);
         $updated     = $this->updateBool($column, $selectedIDs, $value);
 
@@ -108,7 +108,7 @@ class TemplateAttributes extends Attributed
     {
         parent::farewell($selected, $updated, $delete, $autoRedirect);
 
-        $referrer = Input::getReferrer();
+        $referrer = Input::referrer();
         parse_str($referrer, $params);
 
         $url = $this->baseURL;

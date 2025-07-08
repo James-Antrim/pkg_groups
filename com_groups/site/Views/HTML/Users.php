@@ -27,7 +27,7 @@ class Users extends ListView
     protected function addToolbar(): void
     {
         // Get the toolbar object instance
-        $toolbar = Toolbar::getInstance();
+        $toolbar = Toolbar::instance();
 
         /*if (Can::create())
         {

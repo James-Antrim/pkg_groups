@@ -73,7 +73,7 @@ abstract class ListView extends Core
     protected function addAdd(): void
     {
         $controller = $this->getName();
-        $toolbar    = Toolbar::getInstance();
+        $toolbar    = Toolbar::instance();
         $toolbar->addNew("$controller.add");
     }
 
@@ -83,7 +83,7 @@ abstract class ListView extends Core
     protected function addDelete(): void
     {
         $controller = $this->getName();
-        $toolbar    = Toolbar::getInstance();
+        $toolbar    = Toolbar::instance();
         $toolbar->delete("$controller.delete")->message(Text::_('DELETE_CONFIRM'))->listCheck(true);
     }
 
@@ -95,7 +95,7 @@ abstract class ListView extends Core
         $this->title(strtoupper($controller));
 
         if (Application::backend() and Can::administrate()) {
-            $toolbar = Toolbar::getInstance();
+            $toolbar = Toolbar::instance();
             $toolbar->preferences('com_groups');
         }
 

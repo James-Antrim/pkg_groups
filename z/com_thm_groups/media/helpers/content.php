@@ -413,7 +413,7 @@ class THM_GroupsHelperContent
     public static function publish()
     {
         $app        = JFactory::getApplication();
-        $contentIDs = Input::getSelectedIDs();
+        $contentIDs = Input::selectedIDs();
 
         if (empty($contentIDs) or empty($contentIDs[0])) {
             return false;
@@ -605,7 +605,7 @@ class THM_GroupsHelperContent
         $app   = JFactory::getApplication();
         $input = $app->input;
 
-        $selectedContent = Input::getSelectedIDs();
+        $selectedContent = Input::selectedIDs();
         $toggleID        = $input->getInt('id', 0);
         $value           = $input->getBool('value', false);
 

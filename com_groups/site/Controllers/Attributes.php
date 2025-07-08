@@ -28,7 +28,7 @@ class Attributes extends Attributed
         $this->checkToken();
         $this->authorize();
 
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
         $selected    = count($selectedIDs);
 
         if ($protectedIDs = array_intersect($selectedIDs, Helper::PROTECTED)) {
@@ -68,7 +68,7 @@ class Attributes extends Attributed
         $this->authorizeAJAX();
 
         $ordering     = 1;
-        $attributeIDs = Input::getArray('cid');
+        $attributeIDs = Input::array('cid');
 
         foreach ($attributeIDs as $attributeID) {
             $protected = in_array($attributeID, Helper::PROTECTED);
@@ -91,7 +91,7 @@ class Attributes extends Attributed
         $this->checkToken();
         $this->authorize();
 
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
         $selected    = count($selectedIDs);
         $selectedIDs = array_diff($selectedIDs, Helper::PROTECTED);
         $updated     = $this->updateBool($column, $selectedIDs, $value);

@@ -294,7 +294,7 @@ abstract class ListModel extends Base
         $this->state->set('list.ordering', $ordering);
         $this->state->set('list.direction', $direction);
 
-        if ($format = Input::getCMD('format') and $format !== 'html') {
+        if ($format = Input::cmd('format') and $format !== 'html') {
             $limit = 0;
             $start = 0;
         }
@@ -374,8 +374,8 @@ abstract class ListModel extends Base
      */
     protected function setValueFilters(QueryInterface $query, array $queryColumns): void
     {
-        $filters = Input::getFilterItems();
-        $lists   = Input::getListItems();
+        $filters = Input::filters();
+        $lists   = Input::lists();
         $state   = $this->getState();
 
         // The view level filters

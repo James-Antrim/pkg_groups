@@ -24,8 +24,8 @@ class TemplateAttributes extends ListView
     protected function addToolbar(): void
     {
         $this->toDo[] = 'Add a type migration dialog';
-        $templateID   = Input::getID();
-        $toolbar      = Toolbar::getInstance();
+        $templateID   = Input::id();
+        $toolbar      = Toolbar::instance();
 
         if ($available = $this->getAvailable()) {
             $addGroup = $toolbar->dropdownButton('add-group');

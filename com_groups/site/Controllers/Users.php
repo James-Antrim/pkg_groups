@@ -42,7 +42,7 @@ class Users extends ListController
         $this->authorize();
 
         $app         = Application::instance();
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
         $selected    = count($selectedIDs);
         $updated     = 0;
 
@@ -113,8 +113,8 @@ class Users extends ListController
         $user  = User::instance();
         $super = $user->get('isRoot');
 
-        $batchItems  = Input::getBatchItems();
-        $selectedIDs = Input::getSelectedIDs();
+        $batchItems  = Input::batches();
+        $selectedIDs = Input::selectedIDs();
 
         // Will always have a non-zero value if the Joomla UI was used.
         $selected = count($selectedIDs);
@@ -214,7 +214,7 @@ class Users extends ListController
 
         /** @var CMSApplication $app */
         $app         = Application::instance();
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
         $user        = User::instance();
         $super       = $user->get('isRoot');
 
@@ -267,14 +267,14 @@ class Users extends ListController
     {
         $this->checkToken();
         $this->authorize();
-        $selectedID = Input::getSelectedID();
+        $selectedID = Input::selectedID();
         $updated    = 0;
 
         /**
          * First argument is the groupID in this context.
          * @see Dispatcher::dispatch()
          */
-        $groupID = Input::getArray('args') ? Input::getArray('args')[0] : 0;
+        $groupID = Input::array('args') ? Input::array('args')[0] : 0;
 
         // Not a super-user group or the current user is a super-user.
         if ($groupID and (!Access::checkGroup($groupID, 'core.admin') or Access::check(User::id(), 'core.admin'))) {
@@ -310,7 +310,7 @@ class Users extends ListController
          * First argument is the groupID in this context.
          * @see Dispatcher::dispatch()
          */
-        if (Input::getArray('args') and $id = Input::getArray('args')[0]) {
+        if (Input::array('args') and $id = Input::array('args')[0]) {
             $ra = new RoleAssociations();
             if ($ra->delete($id)) {
                 $updated = 1;
@@ -332,7 +332,7 @@ class Users extends ListController
         $this->checkToken();
         $this->authorize();
 
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
         $selected    = count($selectedIDs);
         $updated     = $this->updateBool('content', $selectedIDs, false);
 
@@ -351,7 +351,7 @@ class Users extends ListController
         $this->checkToken();
         $this->authorize();
 
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
         $selected    = count($selectedIDs);
         $updated     = $this->updateBool('editing', $selectedIDs, false);
 
@@ -369,7 +369,7 @@ class Users extends ListController
         $this->checkToken();
         $this->authorize();
 
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
         $selected    = count($selectedIDs);
         $updated     = $this->updateBool('content', $selectedIDs, true);
 
@@ -388,7 +388,7 @@ class Users extends ListController
         $this->checkToken();
         $this->authorize();
 
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
         $selected    = count($selectedIDs);
         $updated     = $this->updateBool('editing', $selectedIDs, true);
 
@@ -469,7 +469,7 @@ class Users extends ListController
         /** @var CMSApplication $app */
         $app         = Application::instance();
         $block       = $value === true;
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
         $user        = User::instance();
         $super       = $user->get('isRoot');
 
@@ -554,7 +554,7 @@ class Users extends ListController
     {
         $this->checkToken();
 
-        $selectedIDs = Input::getSelectedIDs();
+        $selectedIDs = Input::selectedIDs();
 
         // Deviating authorization because of personal account access
         if (!Can::changeState()) {

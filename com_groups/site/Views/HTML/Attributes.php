@@ -24,7 +24,7 @@ class Attributes extends ListView
     {
         $this->toDo[] = 'Add a type migration dialog';
         // Manage access is a prerequisite for getting this far
-        $toolbar = Toolbar::getInstance();
+        $toolbar = Toolbar::instance();
         $toolbar->addNew('Attributes.add');
         $toolbar->delete('Attributes.delete', 'GROUPS_DELETE')->message('JGLOBAL_CONFIRM_DELETE')->listCheck(true);
         $toolbar->divider();

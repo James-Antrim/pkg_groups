@@ -27,7 +27,7 @@ class Roles extends ListController
         $this->checkToken();
         $this->authorize();
 
-        if (!$selectedIDs = Input::getSelectedIDs()) {
+        if (!$selectedIDs = Input::selectedIDs()) {
             Application::message('GROUPS_NO_SELECTION', Application::WARNING);
 
             return;

@@ -29,7 +29,7 @@ class Toolbar
      * @return  Core  The Toolbar object.
      * @see HtmlDocument::getToolbar()
      */
-    public static function getInstance(string $name = 'toolbar'): Core
+    public static function instance(string $name = 'toolbar'): Core
     {
         return Document::toolbar($name);
     }
@@ -45,7 +45,7 @@ class Toolbar
      */
     public static function render(string $name = 'toolbar', array $options = []): string
     {
-        $bar  = self::getInstance($name);
+        $bar  = self::instance($name);
         $html = '';
 
         try {

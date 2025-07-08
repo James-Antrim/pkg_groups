@@ -24,10 +24,10 @@ class Group extends FormController
     protected function prepareData(): array
     {
         return [
-            'name_de'    => Input::getString('name_de'),
-            'name_en'    => Input::getString('name_en'),
-            'title'      => Input::getString('title'),
-            'parent_id'  => Input::getInt('parent_id'),
+            'name_de'    => Input::string('name_de'),
+            'name_en'    => Input::string('name_en'),
+            'title'      => Input::string('title'),
+            'parent_id'  => Input::integer('parent_id'),
             'viewLevels' => Input::resourceIDs('viewLevels')
         ];
 

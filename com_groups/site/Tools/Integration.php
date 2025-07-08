@@ -71,7 +71,7 @@ class Integration
      */
     private static function getURL(): string
     {
-        if (!$url = (string) Input::getParams()->get('fis')) {
+        if (!$url = (string) Input::parameters()->get('fis')) {
             Application::message('Converis credentials have not been configured.', Application::WARNING);
             return '';
         }
@@ -272,7 +272,7 @@ class Integration
 
     private static function setCredentials(CurlHandle $curl): bool
     {
-        $params = Input::getParams();
+        $params = Input::parameters();
 
         if (!$key = $params->get('fisKey') or !$token = $params->get('fisToken')) {
             Application::message('Converis credentials have not been configured.', Application::WARNING);

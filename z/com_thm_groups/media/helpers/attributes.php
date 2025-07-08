@@ -406,7 +406,7 @@ class THM_GroupsHelperAttributes
      */
     private static function getValueDisplay($attribute, $suppress = true)
     {
-        $columns = (int) Input::getParams()->get('columns');
+        $columns = (int) Input::parameters()->get('columns');
 
         // Advanced view or module
         if (!empty($columns)) {

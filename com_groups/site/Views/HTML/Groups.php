@@ -29,7 +29,7 @@ class Groups extends ListView
     protected function addToolbar(): void
     {
         $actions = CoreAccess::getActions('com_users');
-        $toolbar = Toolbar::getInstance();
+        $toolbar = Toolbar::instance();
 
         if ($actions->get('core.create')) {
             $toolbar->addNew('Group.add');

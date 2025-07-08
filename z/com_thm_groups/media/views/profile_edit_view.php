@@ -41,7 +41,7 @@ class THM_GroupsViewProfile_Edit_View extends JViewLegacy
     public function display($tpl = null)
     {
         $input           = JFactory::getApplication()->input;
-        $selectedIDs     = Input::getSelectedIDs();
+        $selectedIDs     = Input::selectedIDs();
         $this->profileID = $selectedIDs ? $selectedIDs[0] : $input->getInt('profileID', $input->getInt('id', 0));
 
         if (!Users::editing($this->profileID)) {

@@ -185,7 +185,7 @@ class THM_GroupsController extends JControllerLegacy
         $app = JFactory::getApplication();
         $app->input->set('view', "{$this->resource}_edit");
 
-        $requestedIDs = Input::getSelectedIDs();
+        $requestedIDs = Input::selectedIDs();
         $requestedID  = (empty($requestedIDs) or empty($requestedIDs[0])) ?
             $app->input->getInt('id', 0) : $requestedIDs[0];
 
@@ -406,7 +406,7 @@ class THM_GroupsController extends JControllerLegacy
 
         if ($functionAvailable) {
             // Get the input
-            $pks   = Input::getSelectedIDs();
+            $pks   = Input::selectedIDs();
             $order = array_keys($pks);
 
             if ($model->saveorder($pks, $order)) {

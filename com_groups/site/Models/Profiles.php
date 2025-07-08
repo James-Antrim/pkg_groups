@@ -38,7 +38,7 @@ class Profiles extends BaseDatabaseModel
         Migration::migrate();
 
         // Profiles were are selected by approximation with user sur- and forenames, the groups are not relevant.
-        if (!Input::getString('search')) {
+        if (!Input::string('search')) {
             $this->groups();
         }
 
@@ -55,7 +55,7 @@ class Profiles extends BaseDatabaseModel
     private function byName(array $groupedProfiles): array
     {
         $addContext = count($groupedProfiles) > 1;
-        $showTitles = (bool) Input::getParams()->get('showTitles', Input::YES);
+        $showTitles = (bool) Input::parameters()->get('showTitles', Input::YES);
         $profiles   = [];
 
         foreach ($groupedProfiles as $groupID => $rolledProfiles) {
@@ -97,7 +97,7 @@ class Profiles extends BaseDatabaseModel
     private function byRole(array $groupedProfiles): array
     {
         $addContext = count($groupedProfiles) > 1;
-        $showTitles = (bool) Input::getParams()->get('showTitles', Input::YES);
+        $showTitles = (bool) Input::parameters()->get('showTitles', Input::YES);
 
         foreach ($groupedProfiles as $groupID => $associations) {
             $gName = Groups::name($groupID);
@@ -153,7 +153,7 @@ class Profiles extends BaseDatabaseModel
         DB::set($query);
 
         $profiles   = [];
-        $showTitles = (bool) Input::getParams()->get('showTitles', Input::YES);
+        $showTitles = (bool) Input::parameters()->get('showTitles', Input::YES);
 
         foreach (DB::integers('id') as $profileID) {
             if (!$profileName = Helper::lnfName($profileID, $showTitles)) {
@@ -172,7 +172,7 @@ class Profiles extends BaseDatabaseModel
      */
     private function groups(): void
     {
-        $params   = Input::getParams();
+        $params   = Input::parameters();
         $ugHelper = UGHelper::getInstance();
         if (!$parent = $ugHelper->get($params->get('groupID'))) {
             return;
@@ -228,10 +228,10 @@ class Profiles extends BaseDatabaseModel
      */
     public function profiles(): array
     {
-        $params = Input::getParams();
+        $params = Input::parameters();
 
         // Groups and roles are irrelevant in a search context.
-        if ($terms = Input::getString('search') and $terms = Text::trim($terms)) {
+        if ($terms = Input::string('search') and $terms = Text::trim($terms)) {
             return $this->bySearch($terms);
         }
 

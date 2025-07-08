@@ -45,7 +45,7 @@ class Profile extends FormController
         $names = $forenames ? $surnames : "$forenames $surnames";
         $alias = UH::createAlias($userID, $names);
 
-        $params    = Input::getParams();
+        $params    = Input::parameters();
         $content   = $params->get('profile-content');
         $content   = in_array($content, [PH::DISABLED, PH::ENABLED]) ? $content : PH::DISABLED;
         $editing   = $params->get('profile-management');

@@ -24,10 +24,10 @@ class Role extends FormController
     protected function prepareData(): array
     {
         return [
-            'name_de'   => Input::getString('name_de'),
-            'name_en'   => Input::getString('name_en'),
-            'plural_de' => Input::getString('plural_de'),
-            'plural_en' => Input::getString('plural_en')
+            'name_de'   => Input::string('name_de'),
+            'name_en'   => Input::string('name_en'),
+            'plural_de' => Input::string('plural_de'),
+            'plural_en' => Input::string('plural_en')
         ];
 
     }

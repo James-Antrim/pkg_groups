@@ -24,11 +24,11 @@ class Template extends FormController
     protected function prepareData(): array
     {
         return [
-            'name_de' => Input::getString('name_de'),
-            'name_en' => Input::getString('name_en'),
-            'cards'   => (int) Input::getBool('cards'),
-            'roles'   => (int) Input::getBool('roles'),
-            'vcards'  => (int) Input::getBool('vcards')
+            'name_de' => Input::string('name_de'),
+            'name_en' => Input::string('name_en'),
+            'cards'   => (int) Input::bool('cards'),
+            'roles'   => (int) Input::bool('roles'),
+            'vcards'  => (int) Input::bool('vcards')
         ];
     }
 
