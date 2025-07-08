@@ -10,7 +10,8 @@
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
-defined('_JEXEC') or die;
+
+use Joomla\CMS\Language\Text;
 
 /**
  * ThmGroupsInstaller
@@ -44,7 +45,7 @@ class Com_THM_GroupsInstallerScript
             $assignedGroups = $dbo->loadAssocList();
         }
         catch (RuntimeException $exception) {
-            JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ERROR'), 'error');
+            JFactory::getApplication()->enqueueMessage(Text::_('GROUPS_ERROR'), 'error');
         }
 
         if (empty($assignedGroups)) {
@@ -69,7 +70,7 @@ class Com_THM_GroupsInstallerScript
                 $dbo->execute();
             }
             catch (RuntimeException $exception) {
-                JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ERROR'), 'error');
+                JFactory::getApplication()->enqueueMessage(Text::_('GROUPS_ERROR'), 'error');
             }
         }
     }
@@ -114,7 +115,7 @@ class Com_THM_GroupsInstallerScript
             $users = $dbo->loadAssocList();
         }
         catch (RuntimeException $exception) {
-            JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ERROR'), 'error');
+            JFactory::getApplication()->enqueueMessage(Text::_('GROUPS_ERROR'), 'error');
         }
 
         if (empty($users)) {
@@ -142,7 +143,7 @@ class Com_THM_GroupsInstallerScript
 
             }
             catch (RuntimeException $exception) {
-                JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ERROR'), 'error');
+                JFactory::getApplication()->enqueueMessage(Text::_('GROUPS_ERROR'), 'error');
                 $dbo->transactionRollback();
             }
 
@@ -166,7 +167,7 @@ class Com_THM_GroupsInstallerScript
                 $dbo->execute();
             }
             catch (RuntimeException $exception) {
-                JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ERROR'), 'error');
+                JFactory::getApplication()->enqueueMessage(Text::_('GROUPS_ERROR'), 'error');
                 $dbo->transactionRollback();
             }
 
