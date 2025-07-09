@@ -60,8 +60,7 @@ class PlgUserGroups extends CMSPlugin
         }
 
         if (empty($user->surnames)) {
-            $controller = new Controller();
-            $controller->create($user->id);
+            Controller::create($user->id);
         }
     }
 

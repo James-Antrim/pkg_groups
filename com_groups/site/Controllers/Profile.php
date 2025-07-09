@@ -10,13 +10,31 @@
 
 namespace THM\Groups\Controllers;
 
+use Joomla\CMS\Application\CMSApplication;
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
+use Joomla\Input\Input as CoreInput;
 use THM\Groups\Adapters\{Application, Database as DB, Input};
 use THM\Groups\Helpers\{Attributes as AH, Profiles as PH, Types, Users as UH};
 use THM\Groups\Tables\{ProfileAttributes as PAT, Users as Table};
 
 class Profile extends FormController
 {
-    protected string $list = 'Users';
+    protected string $list = 'Profiles';
+
+    /** @inheritDoc */
+    public function __construct(
+        $config = [],
+        ?MVCFactoryInterface $factory = null,
+        ?CMSApplication $app = null,
+        ?CoreInput $input = null
+    )
+    {
+        if (Application::backend()) {
+            $this->list = 'Users';
+        }
+
+        parent::__construct($config, $factory, $app, $input);
+    }
 
     /**
      * Creates a profile based on rudimentary user data.
@@ -25,7 +43,7 @@ class Profile extends FormController
      *
      * @return void
      */
-    public function create(int $userID): void
+    public static function create(int $userID): void
     {
         $user = new Table();
 
@@ -36,7 +54,7 @@ class Profile extends FormController
         }
 
         // Profile exists
-        if ($user->surnames !== null) {
+        if ($user->surnames !== null or str_contains($user->name, "'")) {
             return;
         }
 

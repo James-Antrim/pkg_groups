@@ -369,7 +369,7 @@ class Migration
     {
         $query = DB::query();
         $query->insert(DB::qn('#__groups_groups'))
-            ->columns([DB::qn('id'), DB::qn('name_de'), DB::qn('name_en')])
+            ->columns(DB::qn(['id', 'name_de', 'name_en']))
             ->values(":id, :name_de, :name_en")
             ->bind(':id', $groupID, ParameterType::INTEGER)
             ->bind(':name_de', $name)
