@@ -61,7 +61,7 @@ class Controller extends BaseController
     {
         if (!Can::administrate()) {
             echo Text::_('403');
-            $this->app->close();
+            Application::close();
         }
     }
 

@@ -8,6 +8,7 @@
  * @link        www.thm.de
  */
 
+use JetBrains\PhpStorm\NoReturn;
 use THM\Groups\Adapters\{Application, Input};
 
 defined('_JEXEC') or die;
@@ -40,7 +41,7 @@ class THM_GroupsController extends JControllerLegacy
      * @return  void redirects to the edit view for a new resource entry
      * @throws Exception
      */
-    public function add()
+    public function add(): void
     {
         $input = Input::instance();
         $input->set('view', "{$this->resource}_edit");
@@ -117,7 +118,7 @@ class THM_GroupsController extends JControllerLegacy
      * @return  void outputs a blank string on success, otherwise affects no change
      * @throws Exception
      */
-    public function deletePicture()
+    #[NoReturn] public function deletePicture(): void
     {
         $model   = $this->getModel('profile');
         $success = $model->deletePicture();
@@ -126,7 +127,7 @@ class THM_GroupsController extends JControllerLegacy
             echo '';
         }
 
-        JFactory::getApplication()->close();
+        Application::close();
     }
 
     /**
@@ -255,7 +256,7 @@ class THM_GroupsController extends JControllerLegacy
      * @return  void outputs the saved image on success, otherwise affects no change
      * @throws Exception
      */
-    public function saveCropped()
+    #[NoReturn] public function saveCropped(): void
     {
         $model   = $this->getModel('profile');
         $success = $model->saveCropped();
@@ -264,7 +265,7 @@ class THM_GroupsController extends JControllerLegacy
             echo $success;
         }
 
-        JFactory::getApplication()->close();
+        Application::close();
     }
 
     /**
@@ -274,7 +275,7 @@ class THM_GroupsController extends JControllerLegacy
      *
      * @throws Exception
      */
-    public function saveOrderAjax()
+    #[NoReturn] public function saveOrderAjax(): void
     {
         $model             = $this->getModel($this->resource);
         $functionAvailable = (method_exists($model, 'saveorder'));
@@ -290,7 +291,7 @@ class THM_GroupsController extends JControllerLegacy
         }
 
         // Close the application
-        JFactory::getApplication()->close();
+        Application::close();
     }
 
     /**

@@ -10,6 +10,7 @@
 defined('_JEXEC') or die;
 jimport('joomla.application.component.controller');
 
+use JetBrains\PhpStorm\NoReturn;
 use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\Users;
 
@@ -48,7 +49,7 @@ class THM_GroupsController extends JControllerLegacy
      * @return  void
      * @throws Exception
      */
-    public function apply()
+    public function apply(): void
     {
         $this->preProcess();
 
@@ -76,7 +77,7 @@ class THM_GroupsController extends JControllerLegacy
      * @return  void
      * @throws Exception
      */
-    public function cancel()
+    public function cancel(): void
     {
         $this->preProcess();
 
@@ -109,7 +110,7 @@ class THM_GroupsController extends JControllerLegacy
      * @return  void outputs a blank string on success, otherwise affects no change
      * @throws Exception
      */
-    public function deletePicture(): void
+    #[NoReturn] public function deletePicture(): void
     {
         JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_thm_groups/models');
         $model   = JModelLegacy::getInstance('profile', 'THM_GroupsModel');
@@ -117,7 +118,7 @@ class THM_GroupsController extends JControllerLegacy
 
         echo empty($success) ? 'error' : '';
 
-        JFactory::getApplication()->close();
+        Application::close();
     }
 
     /**
@@ -151,7 +152,7 @@ class THM_GroupsController extends JControllerLegacy
      * @return  void
      * @throws Exception
      */
-    public function save()
+    public function save(): void
     {
         $this->preProcess();
 
@@ -181,7 +182,7 @@ class THM_GroupsController extends JControllerLegacy
      * @return  void outputs the saved image on success, otherwise affects no change
      * @throws Exception
      */
-    public function saveCropped()
+    #[NoReturn] public function saveCropped(): void
     {
         JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_thm_groups/models');
         $model   = JModelLegacy::getInstance('profile', 'THM_GroupsModel');
@@ -191,7 +192,7 @@ class THM_GroupsController extends JControllerLegacy
             echo $success;
         }
 
-        JFactory::getApplication()->close();
+        Application::close();
     }
 
     /**
@@ -201,7 +202,7 @@ class THM_GroupsController extends JControllerLegacy
      *
      * @throws Exception
      */
-    public function saveOrderAjax(): void
+    #[NoReturn] public function saveOrderAjax(): void
     {
         $pks   = Input::selectedIDs();
         $order = array_keys($pks);

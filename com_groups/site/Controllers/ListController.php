@@ -168,7 +168,7 @@ abstract class ListController extends Controller
 
         echo Text::_('Request performed successfully.');
 
-        $this->app->close();
+        Application::close();
     }
 
     /**

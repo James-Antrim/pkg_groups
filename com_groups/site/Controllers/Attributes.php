@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Controllers;
 
+use JetBrains\PhpStorm\NoReturn;
 use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\Attributes as Helper;
 use THM\Groups\Tables\Attributes as Table;
@@ -62,7 +63,7 @@ class Attributes extends Attributed
      * Method to save the submitted ordering values for records via AJAX.
      * @return  void
      */
-    public function saveOrderAjax(): void
+    #[NoReturn] public function saveOrderAjax(): void
     {
         $this->checkToken();
         $this->authorizeAJAX();
@@ -82,7 +83,7 @@ class Attributes extends Attributed
 
         echo Text::_('Request performed successfully.');
 
-        $this->app->close();
+        Application::close();
     }
 
     /** @inheritDoc */
