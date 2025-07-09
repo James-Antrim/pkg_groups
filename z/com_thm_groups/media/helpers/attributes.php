@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\{Input, Text};
+use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\{Attributes as Helper, Profiles};
 
 require_once 'attribute_types.php';
@@ -29,7 +29,7 @@ class THM_GroupsHelperAttributes
      * @return void configures the form for the relevant field
      * @throws Exception
      */
-    public static function configureForm($attributeID, &$form)
+    public static function configureForm(int $attributeID, &$form): void
     {
         $typeID = self::getAttributeTypeID($attributeID);
 
@@ -85,7 +85,7 @@ class THM_GroupsHelperAttributes
      * @return array the attribute information
      * @throws Exception
      */
-    public static function getAttribute($attributeID, $profileID, $published)
+    public static function getAttribute(int $attributeID, int $profileID, bool $published): array
     {
         $dbo   = JFactory::getDbo();
         $query = $dbo->getQuery(true);
@@ -140,7 +140,7 @@ class THM_GroupsHelperAttributes
      *
      * @throws Exception
      */
-    public static function getAttributeTypeID($attributeID)
+    public static function getAttributeTypeID(int $attributeID)
     {
         $dbo   = JFactory::getDbo();
         $query = $dbo->getQuery(true);
@@ -148,7 +148,7 @@ class THM_GroupsHelperAttributes
         $query
             ->select('typeID')
             ->from('#__thm_groups_attributes')
-            ->where('id = ' . (int) $attributeID);
+            ->where('id = ' . $attributeID);
         $dbo->setQuery($query);
 
         try {
@@ -169,7 +169,7 @@ class THM_GroupsHelperAttributes
      * @param $attribute
      * @param $suppress
      *
-     * @return mixed|string
+     * @return array|string|string[]
      *
      * @throws Exception
      * @since version
@@ -229,7 +229,7 @@ class THM_GroupsHelperAttributes
      * @return string the image HTML
      * @throws Exception
      */
-    public static function getImage($attribute, $profileID = 0, $attributeID = 0)
+    public static function getImage(array $attribute, int $profileID = 0, int $attributeID = 0): string
     {
         if (!empty($attribute) and !empty($attribute['value'])) {
             $value = $attribute['value'];
@@ -287,13 +287,13 @@ class THM_GroupsHelperAttributes
      * @return string the HTML of the attribute input aggregate
      * @throws Exception
      */
-    public static function getInput($attributeID, $profileID)
+    public static function getInput(int $attributeID, int $profileID): string
     {
         $attribute = self::getAttribute($attributeID, $profileID, false);
 
         $label            = self::getLabel($attribute, true);
         $input            = THM_GroupsHelperFields::getInput($profileID, $attribute);
-        $isSite           = JFactory::getApplication()->isClient('site');
+        $isSite           = !Application::backend();
         $textBased        = in_array($attribute['fieldID'], [TEXT, URL, EMAIL, TELEPHONE]);
         $inline           = ((!$isSite and $textBased) or ($isSite and !$textBased));
         $publishInput     = self::getPublishInput($attribute, $inline);
@@ -334,7 +334,7 @@ class THM_GroupsHelperAttributes
      *
      * @return string the html for the label
      */
-    public static function getLabel($attribute, $form = false)
+    public static function getLabel(array $attribute, bool $form = false): string
     {
         $html  = '';
         $label = $attribute['label'];
@@ -375,7 +375,7 @@ class THM_GroupsHelperAttributes
      *
      * @return  string  the HTML checkbox output
      */
-    private static function getPublishInput($attribute, $inline = false)
+    private static function getPublishInput(array $attribute, bool $inline = false): string
     {
         $class = $inline ? 'published-container inline' : 'published-container wrap';
         $html  = '<div class="' . $class . '">';
@@ -403,7 +403,7 @@ class THM_GroupsHelperAttributes
      * @return string the HTML for the value container
      * @throws Exception
      */
-    private static function getValueDisplay($attribute, $suppress = true)
+    private static function getValueDisplay(array $attribute, bool $suppress = true): string
     {
         $columns = (int) Input::parameters()->get('columns');
 
@@ -503,7 +503,7 @@ class THM_GroupsHelperAttributes
      *
      * @return string the html of the view level display
      */
-    private static function getViewLevelDisplay($attribute, $inline = false)
+    private static function getViewLevelDisplay(array $attribute, bool $inline = false): string
     {
         $class = $inline ? 'view-level-container inline' : 'view-level-container wrap';
         $html  = '<div class="' . $class . '">';

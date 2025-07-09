@@ -43,6 +43,15 @@ class Application
      */
 
     /**
+     * Returns whether the platform was opened in an api context.
+     * @return bool
+     */
+    public static function api(): bool
+    {
+        return self::instance()->isClient('api');
+    }
+
+    /**
      * Checks whether the current context is the administrator context.
      * @return bool
      */

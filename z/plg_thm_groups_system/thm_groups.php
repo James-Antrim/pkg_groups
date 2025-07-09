@@ -153,7 +153,7 @@ class plgSystemTHM_Groups extends CMSPlugin
     {
         // Only trigger for front end requests
         $app = JFactory::getApplication();
-        if ($app->isClient('administrator')) {
+        if (Application::backend()) {
             return;
         }
 
@@ -308,7 +308,7 @@ class plgSystemTHM_Groups extends CMSPlugin
     {
         // Only trigger for front end requests
         $app = JFactory::getApplication();
-        if ($app->isClient('administrator')) {
+        if (Application::backend()) {
             return;
         }
 
