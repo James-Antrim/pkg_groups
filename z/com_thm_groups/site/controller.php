@@ -24,9 +24,9 @@ require_once HELPERS . 'profiles.php';
  */
 class THM_GroupsController extends JControllerLegacy
 {
-    private $profileID;
+    private int $profileID;
 
-    private $resource;
+    private string $resource;
 
     /**
      * Class constructor
@@ -66,9 +66,7 @@ class THM_GroupsController extends JControllerLegacy
             $app->enqueueMessage(JText::_('COM_THM_GROUPS_SAVE_FAIL'), 'error');
         }
 
-        $params = ['profileID' => $this->profileID, 'view' => 'profile_edit'];
-        $url    = THM_GroupsHelperRouter::build($params);
-        $app->redirect($url);
+        Application::redirect(THM_GroupsHelperRouter::build(['profileID' => $this->profileID, 'view' => 'profile_edit']));
     }
 
     /**
@@ -80,10 +78,7 @@ class THM_GroupsController extends JControllerLegacy
     public function cancel(): void
     {
         $this->preProcess();
-
-        $params = ['profileID' => $this->profileID, 'view' => 'profile'];
-        $url    = THM_GroupsHelperRouter::build($params);
-        JFactory::getApplication()->redirect($url);
+        Application::redirect(THM_GroupsHelperRouter::build(['profileID' => $this->profileID, 'view' => 'profile']));
     }
 
     /**
@@ -139,10 +134,10 @@ class THM_GroupsController extends JControllerLegacy
             $isPublished  = Users::published($this->profileID);
             $profileAlias = Users::alias($this->profileID);
             if ($isPublished and $profileAlias) {
-                $url = THM_GroupsHelperRouter::build(['profileID' => $this->profileID]);
-                JFactory::getApplication()->redirect($url);
+                Application::redirect(THM_GroupsHelperRouter::build(['profileID' => $this->profileID]));
             }
-            JFactory::getApplication()->redirect();
+
+            Application::redirect();
         }
     }
 
@@ -172,8 +167,7 @@ class THM_GroupsController extends JControllerLegacy
             $params['view'] = 'profile_edit';
         }
 
-        $url = THM_GroupsHelperRouter::build($params);
-        $app->redirect($url);
+        Application::redirect(THM_GroupsHelperRouter::build($params));
     }
 
     /**
@@ -188,7 +182,7 @@ class THM_GroupsController extends JControllerLegacy
         $model   = JModelLegacy::getInstance('profile', 'THM_GroupsModel');
         $success = $model->saveCropped();
 
-        if ($success != false) {
+        if ($success !== false) {
             echo $success;
         }
 

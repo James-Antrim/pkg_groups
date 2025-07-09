@@ -23,6 +23,7 @@ use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Uri\Uri;
 use THM\Groups\Helpers\{Profiles, Users};
+use THM\Groups\Adapters\Application;
 
 /**
  * Class tries to resolve teacher stub calls from thm organizer to thm groups profiles.
@@ -71,7 +72,7 @@ class plgSystemTHM_Groups extends CMSPlugin
 
         if (!$userID) {
             $app->enqueueMessage(Text::_('PLG_SYSTEM_THM_GROUPS_NOT_AUTHENTICATED'), 'error');
-            $app->redirect($defaultURL, 401);
+            Application::redirect($defaultURL, 401);
         }
 
         $query = $dbo->getQuery(true);
@@ -84,12 +85,12 @@ class plgSystemTHM_Groups extends CMSPlugin
         }
         catch (Exception $exc) {
             $app->enqueueMessage($exc->getMessage(), 'error');
-            $app->redirect($defaultURL, 500);
+            Application::redirect($defaultURL, 500);
         }
 
         if (empty($profileID)) {
             $app->enqueueMessage(Text::_('PLG_SYSTEM_THM_GROUPS_NOT_EXISTENT'), 'error');
-            $app->redirect($defaultURL, 404);
+            Application::redirect($defaultURL, 404);
         }
 
         $items = ['option' => 'com_thm_groups', 'view' => 'profile', 'profileID' => $profileID];
@@ -106,7 +107,7 @@ class plgSystemTHM_Groups extends CMSPlugin
      * @noinspection PhpUnused
      * @noinspection PhpUnusedPrivateMethodInspection
      */
-    private static function login()
+    private static function login(): void
     {
         $app        = JFactory::getApplication();
         $input      = $app->input;
@@ -123,7 +124,7 @@ class plgSystemTHM_Groups extends CMSPlugin
             $app->enqueueMessage(Text::_('JINVALID_TOKEN_NOTICE'), 'warning');
         }
 
-        $app->redirect($referrer);
+        Application::redirect($referrer);
     }
 
     /**
@@ -134,12 +135,12 @@ class plgSystemTHM_Groups extends CMSPlugin
      * @noinspection PhpUnused
      * @noinspection PhpUnusedPrivateMethodInspection
      */
-    private static function logout()
+    private static function logout(): void
     {
         $app = JFactory::getApplication();
         $app->logout();
         $referrer = $app->input->server->getString('HTTP_REFERER');
-        $app->redirect($referrer);
+        Application::redirect($referrer);
     }
 
     /**
@@ -148,7 +149,7 @@ class plgSystemTHM_Groups extends CMSPlugin
      * @return void sets application variables
      * @throws Exception
      */
-    public function onAfterInitialise()
+    public function onAfterInitialise(): void
     {
         // Only trigger for front end requests
         $app = JFactory::getApplication();
@@ -303,7 +304,7 @@ class plgSystemTHM_Groups extends CMSPlugin
      * @return void
      * @throws Exception
      */
-    public function onAfterRender()
+    public function onAfterRender(): void
     {
         // Only trigger for front end requests
         $app = JFactory::getApplication();
@@ -369,7 +370,7 @@ class plgSystemTHM_Groups extends CMSPlugin
      * @return void modifies the output
      * @throws Exception
      */
-    private function replaceStubs(string &$output)
+    private function replaceStubs(string &$output): void
     {
         preg_match_all("/\<span.*id=\"(.*)\".*class=\"thm-groups-stub\"\>(.*)<\/span\>/", $output, $matches);
 
@@ -424,7 +425,7 @@ class plgSystemTHM_Groups extends CMSPlugin
                 continue;
             }
 
-            $url    = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID], true);
+            $url    = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID]);
             $link   = JHtml::_('link', $url, $displayName, ['target' => '_blank']);
             $output = str_replace($spans[$key], $link, $output);
         }
@@ -439,7 +440,7 @@ class plgSystemTHM_Groups extends CMSPlugin
      * @return void
      * @throws Exception
      */
-    private function route($parameters)
+    private function route($parameters): void
     {
         $input = JFactory::getApplication()->input;
 
@@ -453,6 +454,6 @@ class plgSystemTHM_Groups extends CMSPlugin
         }
 
         $router = JApplicationCms::getInstance('site')::getRouter('site');
-        $router->attachParseRule([$this, 'parse'], JRouter::PROCESS_DURING);
+        $router->attachParseRule([$this, 'parse']);
     }
 }
