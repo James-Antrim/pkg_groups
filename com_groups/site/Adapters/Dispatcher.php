@@ -98,8 +98,8 @@ class Dispatcher extends ComponentDispatcher
     /** @inheritDoc */
     protected function loadLanguage(): void
     {
-        // Load common and local language files.
-        $this->app->getLanguage()->load($this->option);
-        $this->app->getLanguage()->load($this->option, JPATH_ADMINISTRATOR . '/components/com_groups');
+        $language = Application::language();
+        $language->load($this->option);
+        $language->load($this->option, JPATH_ADMINISTRATOR . '/components/com_groups');
     }
 }

@@ -358,9 +358,7 @@ class Application
      */
     public static function tag(): string
     {
-        $language = self::instance()->getLanguage();
-
-        return explode('-', $language->getTag())[0];
+        return explode('-', self::language()->getTag())[0];
     }
 
     /**
