@@ -76,14 +76,7 @@ class plgSystemTHM_Groups extends CMSPlugin
         $query->select('id')->from('#__thm_groups_profiles')->where("id = $userID");
         $dbo->setQuery($query);
 
-
-        try {
-            $profileID = $dbo->loadResult();
-        }
-        catch (Exception $exc) {
-            $app->enqueueMessage($exc->getMessage(), 'error');
-            Application::redirect($defaultURL, 500);
-        }
+        $profileID = DB::integer();
 
         if (empty($profileID)) {
             $app->enqueueMessage(Text::_('PLG_SYSTEM_THM_GROUPS_NOT_EXISTENT'), 'error');

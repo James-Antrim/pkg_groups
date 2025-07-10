@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\{Input, Text};
+use THM\Groups\Adapters\{Database as DB, Input, Text};
 use THM\Groups\Helpers\{Can, Users};
 use THM\Groups\Tables\Content as Table;
 
@@ -264,9 +264,8 @@ class THM_GroupsHelperContent
      * @param   int  $contentID  the id of the content
      *
      * @return  int the id of the associated profile
-     * @throws Exception
      */
-    public static function getProfileID($contentID)
+    public static function getProfileID(int $contentID): int
     {
         $dbo   = JFactory::getDbo();
         $query = $dbo->getQuery(true);
@@ -276,16 +275,7 @@ class THM_GroupsHelperContent
             ->where("id = '$contentID'");
         $dbo->setQuery($query);
 
-        try {
-            $profileID = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return '';
-        }
-
-        return empty($profileID) ? '' : $profileID;
+        return DB::integer();
     }
 
     /**
