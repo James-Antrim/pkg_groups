@@ -8,8 +8,9 @@
  * @link        www.thm.de
  */
 
-use \Joomla\CMS\Factory as Factory;
+use Joomla\CMS\Factory as Factory;
 use Joomla\CMS\HTML\HTMLHelper;
+use THM\Groups\Adapters\Database as DB;
 use THM\Groups\Helpers\Users;
 
 /**
@@ -54,9 +55,8 @@ class THM_GroupsHelperMenu
      * @param   int  $profileID  the id of the profile
      *
      * @return    array  an array of table row objects
-     * @throws Exception
      */
-    public static function getContent($profileID)
+    public static function getContent(int $profileID): array
     {
         $categoryID = Users::categoryID($profileID);
         // Load the parameters
@@ -77,14 +77,7 @@ class THM_GroupsHelperMenu
 
         $dbo->setQuery($query);
 
-        try {
-            $contents = $dbo->loadObjectList();
-        }
-        catch (Exception $exception) {
-            Factory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return [];
-        }
+        $contents = DB::objects();
 
         return empty($contents) ? [] : $contents;
     }

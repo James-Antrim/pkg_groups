@@ -11,51 +11,48 @@
 namespace THM\Groups\Fields;
 
 use Joomla\CMS\Form\Field\ListField;
+use THM\Groups\Adapters\Database as DB;
 
 /**
  * Provides a list of context relevant groups.
  */
 class ViewLevels extends ListField
 {
-	protected $type = 'ViewLevels';
+    protected $type = 'ViewLevels';
 
-	/**
-	 * Method to get the group options.
-	 *
-	 * @return  array  the group option objects
-	 */
-	protected function getOptions(): array
-	{
-		$defaultOptions = parent::getOptions();
+    /**
+     * Method to get the group options.
+     *
+     * @return  array  the group option objects
+     */
+    protected function getOptions(): array
+    {
+        $defaultOptions = parent::getOptions();
 
-		$db    = $this->getDatabase();
-		$query = $db->getQuery(true);
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true);
 
-		$levels = $db->quoteName('#__viewlevels', 'vl');
-		$rules  = $db->quoteName('vl.rules');
-		$text   = $db->quoteName('vl.title', 'text');
-		$title  = $db->quoteName('vl.title');
-		$value  = 'DISTINCT ' . $db->quoteName('vl.id', 'value');
+        $levels = $db->quoteName('#__viewlevels', 'vl');
+        $rules  = $db->quoteName('vl.rules');
+        $text   = $db->quoteName('vl.title', 'text');
+        $title  = $db->quoteName('vl.title');
+        $value  = 'DISTINCT ' . $db->quoteName('vl.id', 'value');
 
-		$context = $this->form->getName();
-		$query->select([$value, $text])->from($levels)->order($title);
+        $context = $this->form->getName();
+        $query->select([$value, $text])->from($levels)->order($title);
 
-		if ($context === 'com_groups.attributes.filter')
-		{
-			$attributes = $db->quoteName('#__groups_attributes', 'a');
-			$condition  = $db->quoteName('a.viewLevelID') . ' = ' . $db->quoteName('vl.id');
-			$query->join('inner', $attributes, $condition);
-		}
+        if ($context === 'com_groups.attributes.filter') {
+            $attributes = $db->quoteName('#__groups_attributes', 'a');
+            $condition  = $db->quoteName('a.viewLevelID') . ' = ' . $db->quoteName('vl.id');
+            $query->join('inner', $attributes, $condition);
+        }
 
-		if ($context === 'com_groups.groups.filter')
-		{
-			$query->where("$rules != '[]'");
-		}
+        if ($context === 'com_groups.groups.filter') {
+            $query->where("$rules != '[]'");
+        }
 
-		$db->setQuery($query);
+        $db->setQuery($query);
 
-		$options = $db->loadObjectList() ?: [];
-
-		return array_merge($defaultOptions, $options);
-	}
+        return array_merge($defaultOptions, DB::objects());
+    }
 }

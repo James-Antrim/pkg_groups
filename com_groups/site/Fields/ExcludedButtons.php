@@ -12,7 +12,7 @@ namespace THM\Groups\Fields;
 
 use Joomla\CMS\Form\Field\ListField;
 use SimpleXMLElement;
-use THM\Groups\Helpers\Groups as Helper;
+use THM\Groups\Adapters\Database as DB;
 
 /**
  * Provides a list of context relevant groups.
@@ -41,7 +41,7 @@ class ExcludedButtons extends ListField
         $query->select([$value, $text])->from($extensions)->where("$name LIKE 'plg_editors-xtd%'")->order($element);
         $db->setQuery($query);
 
-        $options = $db->loadObjectList() ?: [];
+        $options = DB::objects();
 
         foreach ($options as $option) {
             $option->text = ucwords($option->text, " _-\t\r\n\f\v");

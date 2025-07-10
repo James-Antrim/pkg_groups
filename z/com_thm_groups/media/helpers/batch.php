@@ -9,6 +9,8 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Adapters\Database as DB;
+
 /**
  * Class providing helper functions for batch select options
  */
@@ -18,7 +20,6 @@ class THM_GroupsHelperBatch
      * Return all existing roles as select field
      *
      * @return  array  an array of options for drop-down list
-     * @throws Exception
      */
     public static function getRoles()
     {
@@ -29,14 +30,7 @@ class THM_GroupsHelperBatch
             ->order('id');
         $dbo->setQuery($query);
 
-        try {
-            $options = $dbo->loadObjectList();
-        }
-        catch (Exception $exc) {
-            JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
-
-            return [];
-        }
+        $options = DB::objects();
 
         for ($i = 0, $n = count($options); $i < $n; $i++) {
             $roles[] = JHtml::_('select.option', $options[$i]->value, $options[$i]->text);
