@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\{Application, Input, Text};
+use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
 use THM\Groups\Helpers\{Attributes as Helper, Profiles};
 
 require_once 'attribute_types.php';
@@ -83,7 +83,6 @@ class THM_GroupsHelperAttributes
      * @param   bool  $published    whether the profile attribute must be published
      *
      * @return array the attribute information
-     * @throws Exception
      */
     public static function getAttribute(int $attributeID, int $profileID, bool $published): array
     {
@@ -113,14 +112,7 @@ class THM_GroupsHelperAttributes
 
         $dbo->setQuery($query);
 
-        try {
-            $attribute = $dbo->loadAssoc();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return [];
-        }
+        $attribute = DB::array();
 
         if (empty($attribute)) {
             return [];

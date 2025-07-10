@@ -10,7 +10,8 @@
 
 require_once 'content.php';
 
-use \Joomla\CMS\Uri\Uri as URI;
+use Joomla\CMS\Uri\Uri;
+use THM\Groups\Adapters\Database as DB;
 use THM\Groups\Helpers\{Categories, Profiles, Users};
 
 /**
@@ -118,26 +119,18 @@ class THM_GroupsHelperRouter
      * @param   string  $possibleMenuPath  the path string to check against
      *
      * @return array the id, title and url of the menu item on success, otherwise empty
-     * @throws Exception
      */
-    public static function getMenuByPath($possibleMenuPath)
+    public static function getMenuByPath(string $possibleMenuPath): array
     {
         $dbo   = JFactory::getDbo();
         $query = $dbo->getQuery(true);
 
-        $query->select('id, title')->select($query->concatenate(["'" . URI::base() . "'", 'path']) . ' AS URL')
+        $query->select('id, title')->select($query->concatenate(["'" . Uri::base() . "'", 'path']) . ' AS URL')
             ->from('#__menu')
             ->where("path = '$possibleMenuPath'")->where("link LIKE '%option=com_thm_groups%'");
         $dbo->setQuery($query);
 
-        try {
-            $menu = $dbo->loadAssoc();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return [];
-        }
+        $menu = DB::array();
 
         return empty($menu) ? [] : $menu;
     }

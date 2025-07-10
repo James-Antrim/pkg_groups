@@ -10,6 +10,8 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Adapters\Database as DB;
+
 defined('_JEXEC') or die;
 
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/profiles.php';
@@ -49,12 +51,7 @@ class plgSystemTHM_Groups extends CMSPlugin
         $query->select('*')->from('#__menu')->where("path = '$alias'");
         $dbo->setQuery($query);
 
-        try {
-            $row = $dbo->loadAssoc();
-        }
-        catch (Exception $exc) {
-            return 0;
-        }
+        $row = DB::array();
 
         if (empty($row)) {
             return 0;

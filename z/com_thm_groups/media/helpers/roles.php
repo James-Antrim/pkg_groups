@@ -8,6 +8,8 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Adapters\Database as DB;
+
 /**
  * Class providing helper functions role entities
  */
@@ -64,9 +66,8 @@ class THM_GroupsHelperRoles
      * @param   bool  $block    whether redundant roles ('Mitglied') should be blocked
      *
      * @return  string the name of the role referenced in the association
-     * @throws Exception
      */
-    public static function getNameByAssoc($assocID, $block)
+    public static function getNameByAssoc($assocID, $block): string
     {
         $dbo = JFactory::getDbo();
 
@@ -79,14 +80,7 @@ class THM_GroupsHelperRoles
 
         $dbo->setQuery($query);
 
-        try {
-            $role = $dbo->loadAssoc();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return '';
-        }
+        $role = DB::array();
 
         // Role ID 1 is member which is implicitly true and therefore should not be explicitly stated
         $hideMemberRole = ($block and $role['id'] === MEMBER);
