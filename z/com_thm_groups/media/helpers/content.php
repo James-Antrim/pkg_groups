@@ -390,7 +390,7 @@ class THM_GroupsHelperContent
             return false;
         }
 
-        $taskParts     = explode('.', $app->input->getString('task'));
+        $taskParts     = explode('.', Input::task());
         $status        = count($taskParts) == 3 ? $taskParts[2] : 'unpublish';
         $validStatuses = ['publish' => 1, 'unpublish' => 0, 'archive' => 2, 'trash' => -2, 'report' => -3];
 
@@ -545,12 +545,11 @@ class THM_GroupsHelperContent
      */
     public static function toggle()
     {
-        $app   = JFactory::getApplication();
-        $input = $app->input;
+        $app = JFactory::getApplication();
 
         $selectedContent = Input::selectedIDs();
-        $toggleID        = $input->getInt('id', 0);
-        $value           = $input->getBool('value', false);
+        $toggleID        = Input::id();
+        $value           = Input::bool('value');
 
         // Should never occur without request manipulation
         if (empty($selectedContent) and empty($toggleID)) {

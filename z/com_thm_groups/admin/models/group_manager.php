@@ -9,15 +9,15 @@
  * @link        www.thm.de
  */
 
-defined('_JEXEC') or die;
-require_once JPATH_ROOT . '/media/com_thm_groups/models/list.php';
+use THM\Groups\Adapters\Input;
+use THM\Groups\Models\ListModel;
 
 /**
  * Class loads form data to edit an entry.
  */
-class THM_GroupsModelGroup_Manager extends THM_GroupsModelList
+class THM_GroupsModelGroup_Manager extends ListModel
 {
-    protected $defaultOrdering = 'ug1.lft';
+    protected string $defaultOrdering = 'ug1.lft';
 
     protected $defaultDirection = 'ASC';
 
@@ -128,7 +128,7 @@ class THM_GroupsModelGroup_Manager extends THM_GroupsModelList
         $app = JFactory::getApplication();
 
         // Adjust the context to support modal layouts.
-        if ($layout = $app->input->get('layout')) {
+        if ($layout = Input::layout()) {
             $this->context .= '.' . $layout;
         }
 

@@ -38,11 +38,10 @@ class THM_GroupsViewProfile_Edit_View extends JViewLegacy
      * @return  void
      * @throws Exception
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
-        $input           = JFactory::getApplication()->input;
-        $selectedIDs     = Input::selectedIDs();
-        $this->profileID = $selectedIDs ? $selectedIDs[0] : $input->getInt('profileID', $input->getInt('id', 0));
+        $selectedID      = Input::selectedID();
+        $this->profileID = $selectedID ?: Input::integer('profileID', Input::id());
 
         if (!Users::editing($this->profileID)) {
             $exc = new Exception(JText::_('JLIB_RULES_NOT_ALLOWED'), 401);

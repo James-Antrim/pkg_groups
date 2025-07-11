@@ -41,7 +41,7 @@ class THM_GroupsModelProfile extends JModelLegacy
         }
 
         $newProfileData  = $app->getUserStateFromRequest('.profiles', 'profiles', [], 'array');
-        $requestedAssocs = json_decode(urldecode($app->input->getString('batch-data')), true);
+        $requestedAssocs = json_decode(urldecode(Input::string('batch-data')), true);
         $selectedIDs     = Input::selectedIDs();
 
         if ($selectedIDs and !empty($requestedAssocs)) {
@@ -219,8 +219,7 @@ class THM_GroupsModelProfile extends JModelLegacy
      */
     public function save()
     {
-        $app  = JFactory::getApplication();
-        $data = $app->input->get('jform', [], 'array');
+        $data = Input::post();
 
         // Ensuring int will fail access checks on manipulated ids.
         $profileID = $data['profileID'];
@@ -273,8 +272,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     public function saveCropped()
     {
         $app       = JFactory::getApplication();
-        $input     = $app->input;
-        $profileID = $input->getInt('profileID');
+        $profileID = Input::integer('profileID');
 
         if (!Users::editing($profileID)) {
             Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
@@ -282,13 +280,14 @@ class THM_GroupsModelProfile extends JModelLegacy
             return false;
         }
 
-        $file = $app->input->files->get('data');
+        $input = Input::instance();
+        $file  = $input->files->get('data');
 
         if (empty($file)) {
             return false;
         }
 
-        $filename = $input->get('filename');
+        $filename = Input::string('filename');
 
         // TODO: Make these configurable
         $allowedExtensions = ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'BMP', 'GIF', 'JPG', 'JPEG', 'PNG'];
@@ -299,13 +298,13 @@ class THM_GroupsModelProfile extends JModelLegacy
             return false;
         }
 
-        $attributeID = $input->get('attributeID');
+        $attributeID = Input::integer('attributeID');
         $newFileName = $profileID . "_" . $attributeID . "." . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         $path        = self::IMAGE_PATH . "/$newFileName";
 
         // Out with the old
         $deleted = $this->deletePicture($profileID, $attributeID);
-        JFactory::getApplication()->enqueueMessage("Deleted: $deleted!", 'message');
+        Application::message("Deleted: $deleted!");
 
         if (!$deleted) {
             return false;
@@ -489,24 +488,20 @@ class THM_GroupsModelProfile extends JModelLegacy
      */
     public function toggle()
     {
-        $app = JFactory::getApplication();
-
         if (!Can::manage()) {
             Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
             return false;
         }
 
-        $input = $app->input;
-
-        if (!$profileID = $input->getInt('id', 0)) {
+        if (!$profileID = Input::id()) {
             return false;
         }
 
         // Toggle is called using the current value.
-        $value = !$input->getBool('value', false);
+        $value = !Input::bool('value');
 
-        switch ($input->getCmd('attribute')) {
+        switch (Input::cmd('attribute')) {
             case 'canEdit':
                 return $this->updateBinaryValue($profileID, 'canEdit', $value);
             case 'contentEnabled':

@@ -13,6 +13,7 @@ require_once 'content.php';
 use Joomla\CMS\Uri\Uri;
 use THM\Groups\Adapters\Database as DB;
 use THM\Groups\Helpers\{Categories, Profiles, Users};
+use THM\Groups\Adapters\Input;
 
 /**
  * Class providing helper functions for batch select options
@@ -169,7 +170,7 @@ class THM_GroupsHelperRouter
     public static function setPathway()
     {
         $app       = JFactory::getApplication();
-        $profileID = $app->input->getInt('profileID');
+        $profileID = Input::integer('profileID');
 
         if (empty($profileID)) {
             return;
@@ -177,7 +178,7 @@ class THM_GroupsHelperRouter
 
         // Get the pathway and empty and default items from Joomla
 
-        $contentID   = $app->input->getInt('id');
+        $contentID   = Input::id();
         $pathway     = $app->getPathway();
         $profileName = Profiles::name($profileID);
         $profileURL  = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID]);
@@ -188,7 +189,7 @@ class THM_GroupsHelperRouter
         if (empty($contentID)) {
 
             $profileAlias = Users::alias($profileID);
-            $pathItems    = self::getPathItems($app->input->server->getString('HTTP_REFERER'));
+            $pathItems    = self::getPathItems(Input::referrer());
 
             // Redirect back from a profile dependent item.
             if (in_array($profileAlias, $pathItems)) {

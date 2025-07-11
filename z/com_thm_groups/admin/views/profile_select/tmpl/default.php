@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-defined("_JEXEC") or die;
+use THM\Groups\Adapters\Input;
 
 $filters = $this->filterForm->getGroup('filter');
 ?>
@@ -16,7 +16,7 @@ $filters = $this->filterForm->getGroup('filter');
 <body>
 <script type="text/javascript">
     const rootURI = '<?php echo JUri::root(); ?>',
-        editor = '<?php echo JFactory::getApplication()->input->getString('editor')?>';
+        editor = '<?php echo Input::string('editor'); ?>';
 </script>
 <div id="profile-select-container" class="profile-select-container">
     <header class="header">
