@@ -8,54 +8,50 @@
  * @link        www.thm.de
  */
 
-use Joomla\CMS\{HTML\HTMLHelper, Language\Text, Router\Route, Session\Session};
-use Joomla\Utilities\ArrayHelper;
+use Joomla\CMS\{Language\Text, Router\Route, Session\Session};
 use THM\Groups\Adapters\{Application, HTML};
-use THM\Groups\Layouts;
+use THM\Groups\Layouts\HTML\{Batch, EmptySet, Headers, HiddenInputs, Row, Tools};
 use THM\Groups\Views\HTML\ListView;
 
 /** @var ListView $this */
 
-$action         = Route::_('index.php?option=com_groups&view=' . strtolower($this->_name));
-$direction      = $this->escape($this->state->get('list.direction'));
-$orderBy        = $this->escape($this->state->get('list.ordering'));
-$dragEnabled    = (!empty($this->items) and $orderBy == 'ordering' and strtolower($direction) == 'asc');
-$dragProperties = '';
-
-if ($dragEnabled) {
-    $baseURL      = 'index.php?option=com_groups';
-    $draggableURL = "$baseURL&task=$this->_name.saveOrderAjax&tmpl=component" . Session::getFormToken() . '=1';
-    HTML::_('draggablelist.draggable');
-    $dragProperties = [
-        'class'          => 'js-draggable',
-        'data-direction' => 'asc',
-        'data-nested'    => 'false',
-        'data-url'       => $draggableURL
-    ];
-    $dragProperties = ArrayHelper::toString($dragProperties);
-}
-
-if ($this->toDo) {
-    echo '<ul>';
-    foreach ($this->toDo as $todo) {
-        echo "<li>$todo</li>";
-    }
-    echo '</ul>';
-}
+$action = Route::_('index.php?option=com_groups&view=' . strtolower($this->_name));
 
 if (count($this->headers) > 4) {
     $wa = Application::document()->getWebAssetManager();
     $wa->useScript('table.columns');
 }
 
+$direction   = $this->escape($this->state->get('list.direction'));
+$orderBy     = $this->escape($this->state->get('list.ordering'));
+$dragEnabled = (!empty($this->items) and $orderBy == 'ordering' and strtolower($direction) == 'asc');
+$dragProps   = '';
+
+if ($dragEnabled) {
+    $baseURL = 'index.php?option=com_groups';
+    $dragURL = "$baseURL&task=$this->_name.saveOrderAjax&tmpl=component" . Session::getFormToken() . '=1';
+    HTML::_('draggablelist.draggable');
+    $dragProps = [
+        'properties' => [
+            'class'          => 'js-draggable',
+            'data-direction' => 'asc',
+            'data-nested'    => 'false',
+            'data-url'       => $dragURL
+        ]
+    ];
+    $dragProps = HTML::properties($dragProps);
+}
+
+$this->renderTasks();
+require_once 'header.php';
 ?>
 <form action="<?php echo $action; ?>" method="post" name="adminForm" id="adminForm">
     <div class="row">
         <div class="col-md-12">
             <div id="j-main-container" class="j-main-container groups">
-                <?php Layouts\ListTools::render($this); ?>
+                <?php Tools::render($this); ?>
                 <?php if (empty($this->items)) : ?>
-                    <?php Layouts\EmptyList::render($this); ?>
+                    <?php EmptySet::render($this); ?>
                 <?php else : ?>
                     <table class="table" id="<?php echo $this->_name ?>List">
                         <caption class="visually-hidden">
@@ -63,29 +59,20 @@ if (count($this->headers) > 4) {
                             <span id="orderedBy"><?php echo Text::_('JGLOBAL_SORTED_BY'); ?> </span>,
                             <span id="filteredBy"><?php echo Text::_('JGLOBAL_FILTERED_BY'); ?></span>
                         </caption>
-                        <?php Layouts\ListHeaders::render($this); ?>
-                        <tbody <?php echo $dragProperties; ?>>
+                        <?php Headers::render($this); ?>
+                        <tbody <?php echo $dragProps; ?>>
                         <?php foreach ($this->items as $rowNo => $item) : ?>
-                            <?php Layouts\ListItem::render($this, $rowNo, $item, $dragEnabled); ?>
+                            <?php Row::render($this, $rowNo, $item, $dragEnabled); ?>
                         <?php endforeach; ?>
                         </tbody>
                     </table>
                     <?php echo $this->pagination->getListFooter(); ?>
                     <?php if ($this->allowBatch and $batch = $this->filterForm->getGroup('batch')): ?>
-                        <?php echo HTMLHelper::_(
-                            'bootstrap.renderModal',
-                            'collapseModal',
-                            [
-                                'title'  => Text::_('GROUPS_BATCH_PROCESSING'),
-                                'footer' => Layouts\Batch::renderFooter($this),
-                            ],
-                            Layouts\Batch::renderBody($this)
-                        ); ?>
-                        <?php Layouts\Batch::renderBody($this); ?>
+                        <template id="groups-batch"><?php Batch::render($this); ?></template>
                     <?php endif; ?>
                 <?php endif; ?>
-
-                <input type="hidden" name="task" value="">
+                <?php HiddenInputs::render($this); ?>
+                <input type="hidden" name="task" value="<?php echo strtolower($this->_name); ?>.display">
                 <input type="hidden" name="boxchecked" value="0">
                 <?php echo HTML::token(); ?>
             </div>

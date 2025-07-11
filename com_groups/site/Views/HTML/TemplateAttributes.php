@@ -10,10 +10,10 @@
 
 namespace THM\Groups\Views\HTML;
 
+use stdClass;
 use THM\Groups\Adapters\{Application, HTML, Input, Text, Toolbar};
 use THM\Groups\Helpers\{Attributes as AH, TemplateAttributes as Helper, Templates as TH};
-use stdClass;
-use THM\Groups\Layouts\ListItem;
+use THM\Groups\Layouts\HTML\Row;
 use THM\Groups\Tables\Attributes as AT;
 
 /** @inheritDoc */
@@ -109,7 +109,7 @@ class TemplateAttributes extends ListView
             'check'     => ['type' => 'check'],
             'ordering'  => ['active' => false, 'type' => 'ordering'],
             'name'      => [
-                'link'       => ListItem::DIRECT,
+                'link'       => Row::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title'      => Text::_('GROUPS_ATTRIBUTE'),
                 'type'       => 'value'

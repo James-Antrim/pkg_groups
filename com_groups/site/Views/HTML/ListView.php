@@ -13,20 +13,16 @@ namespace THM\Groups\Views\HTML;
 use Joomla\CMS\MVC\View\ListView as Core;
 use Joomla\CMS\Uri\Uri;
 use stdClass;
-use THM\Groups\Adapters\{Application, Text, Toolbar};
+use THM\Groups\Adapters\{Application, Document, Input, Text, Toolbar};
+use THM\Groups\Controllers\Controller;
 use THM\Groups\Helpers\Can;
 
-/**
- * View class for handling lists of items.
- * - Overrides/-writes to avoid deprecated code in the platform or promote ease of use
- * - Supplemental functions to extract common code from list models
- */
+/** @inheritDoc */
 abstract class ListView extends Core
 {
     use Configured;
+    use Tasked;
     use Titled;
-
-    protected const NONE = -1;
 
     /** @var bool the value of the relevant authorizations in context. */
     public bool $allowBatch = false;
@@ -98,8 +94,6 @@ abstract class ListView extends Core
             $toolbar = Toolbar::instance();
             $toolbar->preferences('com_groups');
         }
-
-        //ToolbarHelper::help('Users:_Groups');
     }
 
     /**
@@ -149,8 +143,6 @@ abstract class ListView extends Core
     {
         $this->authorize();
 
-        //HTML::stylesheet(Uri::root() . 'components/com_groups/css/global.css');
-
         parent::display($tpl);
     }
 
@@ -164,7 +156,7 @@ abstract class ListView extends Core
             // Search for filter value which has been set
             foreach ($filters as $filter) {
                 // Empty values or none value
-                if ($filter and $filter !== self::NONE) {
+                if ($filter and $filter !== Input::NONE) {
                     return true;
                 }
 
@@ -193,8 +185,19 @@ abstract class ListView extends Core
 
         $this->empty = $this->empty ?: Text::_('EMPTY_RESULT_SET');
 
-        // All the tools are now there.
+        $this->subTitle();
+        $this->supplement();
         $this->initializeColumns();
         $this->completeItems();
+        $this->modifyDocument();
+    }
+
+    /**
+     * Adds scripts and stylesheets to the document.
+     */
+    protected function modifyDocument(): void
+    {
+        Document::script('cacheMiss');
+        Document::style('list');
     }
 }

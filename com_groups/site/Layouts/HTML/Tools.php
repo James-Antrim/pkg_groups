@@ -8,29 +8,26 @@
  * @link        www.thm.de
  */
 
-namespace THM\Groups\Layouts;
+namespace THM\Groups\Layouts\HTML;
 
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\HTML;
+use THM\Groups\Adapters\{Application, HTML};
 use THM\Groups\Views\HTML\ListView;
 
 /**
  * Creates the HTML element with list filtering, formatting and search control elements.
  */
-class ListTools
+class Tools
 {
     /**
      * Renders list headers.
      *
      * @param   ListView  $view  the view being displayed
      */
-    public static function render(ListView $view)
+    public static function render(ListView $view): void
     {
         if (empty($view->filterForm)) {
             return;
         }
-
-        //TODO: The original had something about a selector field here might be useful to circle back to this.
 
         // Checks if the filters button should exist.
         $filters     = $view->filterForm->getGroup('filter');

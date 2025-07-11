@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-namespace THM\Groups\Layouts;
+namespace THM\Groups\Layouts\HTML;
 
 use Joomla\CMS\Language\Text;
 use THM\Groups\Views\HTML\ListView;
@@ -21,9 +21,9 @@ class SearchBar
     /**
      * Renders the search bar.
      *
-     * @param ListView $view
+     * @param   ListView  $view
      */
-    public static function render(ListView $view)
+    public static function render(ListView $view): void
     {
         if (empty($view->filterForm)) {
             return;

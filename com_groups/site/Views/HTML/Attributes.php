@@ -11,10 +11,10 @@
 namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Router\Route;
-use THM\Groups\Adapters\{HTML, Text, Toolbar};
 use stdClass;
+use THM\Groups\Adapters\{HTML, Text, Toolbar};
 use THM\Groups\Helpers\Attributes as Helper;
-use THM\Groups\Layouts\ListItem;
+use THM\Groups\Layouts\HTML\Row;
 
 /** @inheritDoc */
 class Attributes extends ListView
@@ -71,7 +71,7 @@ class Attributes extends ListView
             'check'     => ['type' => 'check'],
             'ordering'  => ['active' => false, 'type' => 'ordering'],
             'name'      => [
-                'link'       => ListItem::DIRECT,
+                'link'       => Row::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title'      => Text::_('GROUPS_ATTRIBUTE'),
                 'type'       => 'value'

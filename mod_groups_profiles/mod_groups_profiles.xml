@@ -32,8 +32,7 @@
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
                 </field>
-                <field name="templateID" type="genericlist" valueColumn="id" textColumn="templateName" table="groups_templates"
-                       label="MOD_GROUPS_PROFILES_TEMPLATE" default="1" description="MOD_GROUPS_PROFILES_TEMPLATE_DESC"/>
+                <field name="templateID" type="Templates" label="MOD_GROUPS_PROFILES_TEMPLATE" default="1"/>
             </fieldset>
             <fieldset name="advanced">
                 <field name="moduleclass_sfx" type="textarea" rows="3" label="COM_MODULES_FIELD_MODULECLASS_SFX_LABEL"

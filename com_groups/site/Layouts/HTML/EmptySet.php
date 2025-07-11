@@ -8,12 +8,15 @@
  * @link        www.thm.de
  */
 
-namespace THM\Groups\Layouts;
+namespace THM\Groups\Layouts\HTML;
 
 use Joomla\CMS\Language\Text;
 use THM\Groups\Views\HTML\ListView;
 
-class EmptyList
+/**
+ * Class renders a message pertaining to an empty result set for the list view.
+ */
+class EmptySet
 {
     /**
      * Renders a notice for an empty result set.

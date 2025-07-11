@@ -10,15 +10,12 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Helper\ContentHelper as CoreAccess;
-use Joomla\CMS\Helper\UserGroupsHelper as UGH;
-use Joomla\CMS\Language\Text;
+use Joomla\CMS\Helper\{ContentHelper as CoreAccess, UserGroupsHelper as UGH};
 use Joomla\CMS\Router\Route;
 use stdClass;
-use THM\Groups\Adapters\Toolbar;
+use THM\Groups\Adapters\{HTML, Text, Toolbar};
 use THM\Groups\Helpers\Groups as Helper;
-use THM\Groups\Adapters\HTML;
-use THM\Groups\Layouts\ListItem;
+use THM\Groups\Layouts\HTML\Row;
 
 /**
  * View class for displaying available groups.
@@ -101,7 +98,7 @@ class Groups extends ListView
 
         if (in_array($item->id, Helper::STANDARD_GROUPS)) {
             $context = "groups-group-$item->id";
-            $tip     = Text::_('GROUPS_PROTECTED_GROUP');
+            $tip     = Text::_('PROTECTED_GROUP');
 
             $item->icon = HTML::tip(HTML::icon('lock'), $context, $tip);
         }
@@ -113,7 +110,7 @@ class Groups extends ListView
             //$item->viewLevel = implode(', ', $levels);
             switch (true) {
                 case $count === 0:
-                    $item->role = Text::_('GROUPS_NONE');
+                    $item->role = Text::_('NONE');
                     break;
                 case $count === 1:
                     // Doesn't take up too much space I hope...
@@ -122,7 +119,7 @@ class Groups extends ListView
                     $item->viewLevel = implode(', ', $roles);
                     break;
                 default:
-                    $item->role = Text::_('GROUPS_MULTIPLE');
+                    $item->role = Text::_('MULTIPLE');
                     break;
 
             }
@@ -133,8 +130,8 @@ class Groups extends ListView
             $count  = count($levels);
 
             $item->viewLevel = match (true) {
-                $count === 0 => Text::_('GROUPS_NONE'),
-                $count > 2 => Text::_('GROUPS_MULTIPLE'),
+                $count === 0 => Text::_('NONE'),
+                $count > 2 => Text::_('MULTIPLE'),
                 default => implode(', ', $levels),
             };
         }
@@ -144,12 +141,12 @@ class Groups extends ListView
 
             $eLink       = Route::_($link . 1);
             $properties  = ['class' => 'btn btn-success'];
-            $tip         = Text::_('GROUPS_ENABLED_USERS');
+            $tip         = Text::_('ENABLED_USERS');
             $item->users = HTML::tip($item->enabled, "enabled-tip-$item->id", $tip, $properties, $eLink);
 
             $bLink       = Route::_($link . 0);
             $properties  = ['class' => 'btn btn-danger'];
-            $tip         = Text::_('GROUPS_BLOCKED_USERS');
+            $tip         = Text::_('BLOCKED_USERS');
             $item->users .= HTML::tip($item->blocked, "blocked-tip-$item->id", $tip, $properties, $bLink);
         }
         else {
@@ -157,7 +154,7 @@ class Groups extends ListView
         }
 
         $link         = "index.php?option=com_users&view=debuggroup&group_id=$item->id";
-        $tip          = Text::_('GROUPS_DEBUG_GROUP_RIGHTS');
+        $tip          = Text::_('DEBUG_GROUP_RIGHTS');
         $icon         = HTML::icon('fas fa-th');
         $item->rights = HTML::tip($icon, "rights-tip-$item->id", $tip, [], $link, true);
     }
@@ -168,9 +165,9 @@ class Groups extends ListView
         $this->headers = [
             'check' => ['type' => 'check'],
             'name'  => [
-                'link'       => ListItem::DIRECT,
+                'link'       => Row::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_GROUP'),
+                'title'      => Text::_('GROUP'),
                 'type'       => 'value'
             ]
         ];
@@ -178,7 +175,7 @@ class Groups extends ListView
         if (!$this->state->get('filter.roleID')) {
             $this->headers['role'] = [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_ROLE'),
+                'title'      => Text::_('ROLE'),
                 'type'       => 'value'
             ];
         }
@@ -186,26 +183,26 @@ class Groups extends ListView
         if (!$this->state->get('filter.levelID')) {
             $this->headers['viewLevel'] = [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_LEVEL'),
+                'title'      => Text::_('LEVEL'),
                 'type'       => 'value'
             ];
         }
 
         $this->headers['users'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title'      => Text::_('GROUPS_USERS'),
+            'title'      => Text::_('USERS'),
             'type'       => 'value'
         ];
 
         $this->headers['id'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title'      => Text::_('GROUPS_ID'),
+            'title'      => Text::_('ID'),
             'type'       => 'value'
         ];
 
         $this->headers['rights'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title'      => Text::_('GROUPS_RIGHTS'),
+            'title'      => Text::_('RIGHTS'),
             'type'       => 'value'
         ];
     }

@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-namespace THM\Groups\Layouts;
+namespace THM\Groups\Layouts\HTML;
 
 use Joomla\CMS\Form\FormHelper;
 use THM\Groups\Adapters\Application;

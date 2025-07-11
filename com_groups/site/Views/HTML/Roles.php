@@ -10,10 +10,10 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use stdClass;
-use THM\Groups\Layouts\ListItem;
+use THM\Groups\Adapters\Text;
+use THM\Groups\Layouts\HTML\Row;
 
 /**
  * View class for displaying available roles.
@@ -41,19 +41,19 @@ class Roles extends ListView
             'check'    => ['type' => 'check'],
             'ordering' => ['type' => 'ordering'],
             'name'     => [
-                'link'       => ListItem::DIRECT,
+                'link'       => Row::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_ROLE'),
+                'title'      => Text::_('ROLE'),
                 'type'       => 'value'
             ],
             'plural'   => [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_PLURAL'),
+                'title'      => Text::_('PLURAL'),
                 'type'       => 'text'
             ],
             'groups'   => [
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_GROUPS'),
+                'title'      => Text::_('GROUPS'),
                 'type'       => 'value'
             ]
         ];

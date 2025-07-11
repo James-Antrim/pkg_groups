@@ -10,12 +10,11 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Language\Text;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use stdClass;
-use THM\Groups\Adapters\HTML;
+use THM\Groups\Adapters\{HTML, Text};
 use THM\Groups\Helpers\Templates as Helper;
-use THM\Groups\Layouts\ListItem;
+use THM\Groups\Layouts\HTML\Row;
 
 /**
  * View class for displaying available roles.
@@ -40,7 +39,7 @@ class Templates extends ListView
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
         $icon             = HTML::icon('fa fa-list-ol');
-        $tip              = Text::_('GROUPS_TEMPLATE_ATTRIBUTES_TIP');
+        $tip              = Text::_('TEMPLATE_ATTRIBUTES_TIP');
         $item->attributes = HTML::tip($icon, "attributes-tip-$item->id", $tip, [], $item->attributes);
         $item->cards      = HTML::toggle($index, Helper::CARDS[$item->cards], 'Templates');
         $item->roles      = HTML::toggle($index, Helper::ROLES[$item->roles], 'Templates');
@@ -61,29 +60,29 @@ class Templates extends ListView
         $this->headers = [
             'check'      => ['type' => 'check'],
             'name'       => [
-                'link'       => ListItem::DIRECT,
+                'link'       => Row::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_TEMPLATE'),
+                'title'      => Text::_('TEMPLATE'),
                 'type'       => 'value'
             ],
             'attributes' => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_ATTRIBUTES'),
+                'title'      => Text::_('ATTRIBUTES'),
                 'type'       => 'value'
             ],
             'cards'      => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_CARDS'),
+                'title'      => Text::_('CARDS'),
                 'type'       => 'value'
             ],
             'roles'      => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_ROLES'),
+                'title'      => Text::_('ROLES'),
                 'type'       => 'value'
             ],
             'vcards'     => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('GROUPS_VCARDS'),
+                'title'      => Text::_('VCARDS'),
                 'type'       => 'value'
             ]
         ];

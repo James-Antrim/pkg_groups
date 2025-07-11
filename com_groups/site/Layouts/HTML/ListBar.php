@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-namespace THM\Groups\Layouts;
+namespace THM\Groups\Layouts\HTML;
 
 use THM\Groups\Views\HTML\ListView;
 
@@ -18,32 +18,30 @@ use THM\Groups\Views\HTML\ListView;
  */
 class ListBar
 {
-	/**
-	 * Renders the list bar.
-	 *
-	 * @param   ListView  $view
-	 */
-	public static function render(ListView $view)
-	{
-		if (empty($view->filterForm))
-		{
-			return;
-		}
+    /**
+     * Renders the list bar.
+     *
+     * @param   ListView  $view
+     */
+    public static function render(ListView $view): void
+    {
+        if (empty($view->filterForm)) {
+            return;
+        }
 
-		if (!$list = $view->filterForm->getGroup('list'))
-		{
-			return;
-		}
+        if (!$list = $view->filterForm->getGroup('list')) {
+            return;
+        }
 
-		?>
+        ?>
         <div class="ordering-select">
-			<?php foreach ($list as $field) : ?>
+            <?php foreach ($list as $field) : ?>
                 <div class="js-stools-field-list">
                     <span class="visually-hidden"><?php echo $field->__get('label'); ?></span>
-					<?php echo $field->__get('input'); ?>
+                    <?php echo $field->__get('input'); ?>
                 </div>
-			<?php endforeach; ?>
+            <?php endforeach; ?>
         </div>
-		<?php
-	}
+        <?php
+    }
 }
