@@ -36,7 +36,7 @@ class THM_GroupsViewProfile_Manager extends THM_GroupsViewList
      * @return void
      * @throws Exception
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         if (!Can::manage()) {
             $exc = new Exception(JText::_('JLIB_RULES_NOT_ALLOWED'), 401);
@@ -48,7 +48,7 @@ class THM_GroupsViewProfile_Manager extends THM_GroupsViewList
             'roles'    => JPATH_COMPONENT_ADMINISTRATOR . '/views/profile_manager/tmpl/default_roles.php'
         ];
 
-        $this->groups = THM_GroupsHelperBatch::getGroupOptions();
+        $this->groups = THM_GroupsHelperBatch::groups();
 
         parent::display($tpl);
     }
@@ -58,7 +58,7 @@ class THM_GroupsViewProfile_Manager extends THM_GroupsViewList
      *
      * @return void
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         $this->title('PROFILES');
 
@@ -96,7 +96,7 @@ class THM_GroupsViewProfile_Manager extends THM_GroupsViewList
      *
      * @return  void  modifies the document
      */
-    protected function modifyDocument()
+    protected function modifyDocument(): void
     {
         parent::modifyDocument();
 

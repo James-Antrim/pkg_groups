@@ -38,7 +38,7 @@ class THM_GroupsViewGroup_Manager extends THM_GroupsViewList
      * @return void
      * @throws Exception
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         if (!Can::manage()) {
             $exc = new Exception(JText::_('JLIB_RULES_NOT_ALLOWED'), 401);
@@ -53,7 +53,7 @@ class THM_GroupsViewGroup_Manager extends THM_GroupsViewList
             return $role->value != MEMBER;
         }
 
-        $this->roles = array_filter(THM_GroupsHelperBatch::getRoles(), 'filterMemberRole');
+        $this->roles = array_filter(THM_GroupsHelperBatch::roles(), 'filterMemberRole');
 
         parent::display($tpl);
     }
@@ -63,7 +63,7 @@ class THM_GroupsViewGroup_Manager extends THM_GroupsViewList
      *
      * @return void
      */
-    protected function addToolbar()
+    protected function addToolbar(): void
     {
         $this->title('GROUPS');
 
@@ -88,7 +88,7 @@ class THM_GroupsViewGroup_Manager extends THM_GroupsViewList
      *
      * @return  void  modifies the document
      */
-    protected function modifyDocument()
+    protected function modifyDocument(): void
     {
         parent::modifyDocument();
 

@@ -10,8 +10,7 @@
 
 namespace THM\Groups\Helpers;
 
-use Joomla\Database\ParameterType;
-use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\{Database as DB};
 
 /**
  *  Constants and functions for dealing with groups from an external read context.
@@ -29,17 +28,14 @@ class RoleAssociations
      */
     public static function byGroupID(int $groupID): array
     {
-        $db        = Application::database();
-        $condition = $db->quoteName('m.id') . ' = ' . $db->quoteName('ra.mapID');
+        $query = DB::query();
+        $query->select(DB::qn('ra') . '.*')
+            ->from(DB::qn('#__groups_role_associations', 'ra'))
+            ->innerJoin(DB::qn('#__user_usergroup_map', 'm'), DB::qc('m.id', 'ra.mapID'))
+            ->where(DB::qc('m.group_id', $groupID));
+        DB::set($query);
 
-        $query = $db->getQuery(true);
-        $query->select($db->quoteName('ra') . '.*')
-            ->from($db->quoteName('#__groups_role_associations', 'ra'))
-            ->join('inner', $db->quoteName('#__user_usergroup_map', 'm'), $condition)
-            ->where($db->quoteName('m.group_id') . " = $groupID");
-        $db->setQuery($query);
-
-        return $db->loadAssocList('id', 'roleID');
+        return DB::arrays('id', 'roleID');
     }
 
     /**
@@ -51,13 +47,10 @@ class RoleAssociations
      */
     public static function byRoleID(int $roleID): array
     {
-        $db        = Application::database();
-        $query     = $db->getQuery(true);
-        $ras       = $db->quoteName('#__groups_role_associations');
-        $rIDColumn = $db->quoteName('roleID');
-        $query->select('*')->from($ras)->where("$rIDColumn = :roleID")->bind(':roleID', $roleID, ParameterType::INTEGER);
-        $db->setQuery($query);
+        $query = DB::query();
+        $query->select('*')->from(DB::qn('#__groups_role_associations'))->where(DB::qc('roleID', $roleID));
+        DB::set($query);
 
-        return $db->loadAssocList('id', 'groupID');
+        return DB::arrays('id', 'groupID');
     }
 }

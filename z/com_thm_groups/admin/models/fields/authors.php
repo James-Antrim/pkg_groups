@@ -8,18 +8,17 @@
  * @link        www.thm.de
  */
 
+use Joomla\CMS\Form\Field\ListField;
+use THM\Groups\Adapters\{Database as DB, HTML};
 use THM\Groups\Helpers\Categories;
 
-defined('_JEXEC') or die;
-JFormHelper::loadFieldClass('list');
 require_once HELPERS . 'content.php';
 
 /**
  * Class JFormFieldAuthors which returns authors of specific content.
  */
-class JFormFieldAuthors extends JFormFieldList
+class JFormFieldAuthors extends ListField
 {
-
     protected $type = 'authors';
 
     /**
@@ -27,70 +26,46 @@ class JFormFieldAuthors extends JFormFieldList
      *
      * @var    array
      */
-    protected static $options = [];
+    protected static array $options = [];
 
     /**
-     * Returns a list of all authors associated with THM Groups, even they don't have
-     * articles in their categories
+     * Returns a list of all authors associated with groups content.
      *
-     * @return  mixed  array on success, otherwise false
-     * @throws Exception
+     * @return  array[]
      */
-    public function getAuthors()
+    private function authors(): array
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('DISTINCT pa1.profileID as value, pa1.value as surname, pa2.value as forename')
-            ->from('#__thm_groups_profile_attributes as pa1')
-            ->innerJoin('#__thm_groups_profile_attributes as pa2 on pa2.profileID = pa1.profileID')
-            ->innerJoin('#__thm_groups_content as content on content.profileID = pa1.profileID')
-            ->where("pa1.attributeID = '2'")
-            ->where("pa2.attributeID = '1'")
-            ->order('surname, forename');
+        $query = DB::query();
+        $query->select('DISTINCT ' . DB::qn('u') . '*')
+            ->from(DB::qn('#__users', 'u'))
+            ->innerJoin(DB::qn('#__groups_content', 'c'), DB::qc('c.userID', 'u.id'))
+            ->order(DB::qn(['surnames', 'forenames']));
+        DB::set($query);
 
-        $dbo->setQuery($query);
-
-        try {
-            $profiles = $dbo->loadAssocList();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
+        foreach ($authors = DB::arrays() as $index => $author) {
+            $authors[$index]['text']  = $author['forenames'] ?
+                "{$author['surnames']}, {$author['forenames']}" : $author['surnames'];
+            $authors[$index]['value'] = $author['id'];
         }
 
-        foreach ($profiles as $index => $profile) {
-            $profiles[$index]['text'] = empty($profile['forename']) ?
-                $profile['surname'] : "{$profile['surname']}, {$profile['forename']}";
-        }
-
-        return $profiles;
+        return $authors;
     }
 
-    /**
-     * Method to get the options to populate to populate list
-     *
-     * @return  array  The field option objects.
-     *
-     * @throws Exception
-     */
-    protected function getOptions()
+    /** @inheritDoc */
+    protected function getOptions(): array
     {
-        $options = [];
-
+        $default      = parent::getOptions();
         $rootCategory = Categories::root();
 
         if (empty($rootCategory)) {
-            return parent::getOptions();
+            return $default;
         }
 
-        $profiles = $this->getAuthors();
-
-        // Convert array to options
-        foreach ($profiles as $key => $value) {
-            $options[] = JHTML::_('select.option', $value['value'], $value['text']);
+        $options = [];
+        foreach ($this->authors() as $value) {
+            $options[] = HTML::_($value['value'], $value['text']);
         }
 
-        return array_merge(parent::getOptions(), $options);
+        return array_merge($default, $options);
     }
 }

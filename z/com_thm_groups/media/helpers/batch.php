@@ -9,7 +9,8 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\Database as DB;
+use THM\Groups\Adapters\{Database as DB, HTML};
+use THM\Groups\Helpers\Groups;
 
 /**
  * Class providing helper functions for batch select options
@@ -21,22 +22,19 @@ class THM_GroupsHelperBatch
      *
      * @return  array  an array of options for drop-down list
      */
-    public static function getRoles()
+    public static function roles(): array
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true)
-            ->select('id AS value, name AS text')
-            ->from('#__thm_groups_roles')
-            ->order('id');
-        $dbo->setQuery($query);
+        $query = DB::query();
+        $query->select(DB::qn(['id', 'name'], ['value', 'text']))->from(DB::qn('#__groups_roles'))->order(DB::qn('id'));
+        DB::set($query);
 
-        $options = DB::objects();
+        $options = [];
 
-        for ($i = 0, $n = count($options); $i < $n; $i++) {
-            $roles[] = JHtml::_('select.option', $options[$i]->value, $options[$i]->text);
+        foreach (DB::objects() as $role) {
+            $options[] = HTML::option($role->value, $role->text);
         }
 
-        return $roles;
+        return $options;
     }
 
     /**
@@ -47,36 +45,21 @@ class THM_GroupsHelperBatch
      * @return array
      * @throws Exception
      */
-    public static function getGroupOptions()
+    public static function groups(): array
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
+        $query = DB::query();
 
-        // TODO: Explain the logic behind this
-        $select = 'ug.id, ug.title, COUNT(DISTINCT ugTemp.id) AS level';
-        $query->select($select);
-        $query->from('#__usergroups AS ug');
-        $query->leftJoin('#__usergroups AS ugTemp ON ug.lft > ugTemp.lft AND ug.rgt < ugTemp.rgt');
-        $query->group('ug.id, ug.title, ug.lft, ug.rgt');
-        $query->order('ug.lft ASC');
+        $query->select([DB::qn('ug.id'), DB::qn('ug.title'), 'COUNT(DISTINCT ' . DB::qn('ugTemp.id') . ') AS ' . DB::qn('level')])
+            ->from(DB::qn('#__usergroups', 'ug'))
+            ->leftJoin(DB::qn('#__usergroups', 'ugTemp'), DB::qcs([['ug.lft', 'ugTemp.lft', '>'], ['ug.rgt', 'ugTemp.rgt', '<']]))
+            ->group(DB::qn(['ug.id', 'ug.title', 'ug.lft', 'ug.rgt']))
+            ->order('ug.lft ASC');
+        DB::set($query);
 
-        $dbo->setQuery($query);
-
-        try {
-            $groups = $dbo->loadAssocList();
-        }
-        catch (Exception $exc) {
-            JFactory::getApplication()->enqueueMessage($exc->getMessage(), 'error');
-
-            return [];
-        }
-
-        $standardGroupIDS = [1, 2, 3, 4, 5, 6, 7, 8];
-        $options          = [];
-        foreach ($groups as $group) {
-            $label     = str_repeat('- ', $group['level']) . $group['title'];
-            $attribs   = in_array($group['id'], $standardGroupIDS) ? ['disable' => true] : [];
-            $options[] = JHtml::_('select.option', $group['id'], $label, $attribs);
+        $options = [];
+        foreach (DB::arrays() as $group) {
+            $prefix    = str_repeat('- ', $group['level']);
+            $options[] = HTML::option($group['id'], $prefix . $group['title'], in_array($group['id'], Groups::STANDARD_GROUPS));
         }
 
         return $options;

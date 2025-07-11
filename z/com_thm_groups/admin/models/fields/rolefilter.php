@@ -8,54 +8,34 @@
  * @link        www.thm.de
  */
 
-defined('_JEXEC') or die;
-JFormHelper::loadFieldClass('list');
+use Joomla\CMS\Form\Field\ListField;
+use THM\Groups\Adapters\{Database as DB, Input};
 
-class JFormFieldRoleFilter extends JFormFieldList
+class JFormFieldRoleFilter extends ListField
 {
 
     protected $type = 'rolefilter';
 
-    /**
-     * Method to get the options to populate to populate list
-     *
-     * @return  array  The field option objects.
-     *
-     * @throws Exception
-     */
-    protected function getOptions()
+    /** @inheritDoc */
+    protected function getOptions(): array
     {
-
         $defaultOptions = parent::getOptions();
 
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
+        $query = DB::query();
+        $query->select(['DISTINCT ' . DB::qn('r.id'), DB::qn('r.name')])
+            ->from(DB::qn('#__groups_roles', 'r'))
+            ->innerJoin(DB::qn('#__thm_groups_role_associations', 'ra'), DB::qc('r.id', 'ra.roleID'))
+            ->innerJoin(DB::qn('#__thm_groups_profile_associations', 'pa'), DB::qc('ra.id', 'pa.role_associationID'))
+            ->order(DB::qn('r.name'));
 
-        $query
-            ->select('DISTINCT r.id, r.name')
-            ->from('#__thm_groups_roles AS r')
-            ->innerJoin('#__thm_groups_role_associations AS ra ON r.id = ra.roleID')
-            ->innerJoin('#__thm_groups_profile_associations AS pa ON ra.id = pa.role_associationID')
-            ->order('r.name ASC');
-
-        $list = JFactory::getApplication()->input->post->get('list', [], 'array');
-        if (!empty($list['groupID'])) {
-            $query->where("ra.groupID = '{$list['groupID']}'");
+        if ($groupID = Input::integer('groupID')) {
+            $query->where(DB::qc('ra.groupID', $groupID));
         }
 
-        $dbo->setQuery($query);
-
-        try {
-            $roles = $dbo->loadAssocList();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return $defaultOptions;
-        }
+        DB::set($query);
 
         $options = [];
-        foreach ($roles as $role) {
+        foreach (DB::arrays() as $role) {
             $options[] = JHTML::_('select.option', $role['id'], $role['name']);
         }
 

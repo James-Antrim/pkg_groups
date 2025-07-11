@@ -435,7 +435,7 @@ class Migration
         }
 
         // todo migrate menu assignments
-        // todo migrate
+        // todo migrate profile content associations
     }
 
     /**

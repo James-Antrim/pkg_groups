@@ -12,7 +12,7 @@ namespace THM\Groups\Tools;
 
 use CurlHandle;
 use stdClass;
-use THM\Groups\Adapters\{Application, Input};
+use THM\Groups\Adapters\{Application, Database as DB, Input};
 use THM\Groups\Helpers\Groups;
 use THM\Groups\Tables\Users;
 use THM\Groups\Tools\FIS\{Cards, Persons};
@@ -217,22 +217,18 @@ class Integration
 
     private static function getUsers(bool $resolved): array
     {
-        $db        = Application::database();
-        $condition = $db->quoteName('m.user_id') . ' = ' . $db->quoteName('u.id');
-        $query     = $db->getQuery(true);
-
-        $query->select('DISTINCT ' . $db->quoteName('u') . '.*')
-            ->from($db->quoteName('#__users', 'u'))
-            ->join('inner', $db->quoteName('#__user_usergroup_map', 'm'), $condition)
-            ->whereNotIn($db->quoteName('m.group_id'), Groups::STANDARD_GROUPS);
-
-        $where = $db->quoteName('u.converisID');
+        $where = DB::qn('u.converisID');
         $where .= $resolved ? ' IS NOT NULL' : ' IS NULL';
-        $query->where($where);
 
-        $db->setQuery($query);
+        $query = DB::query();
+        $query->select('DISTINCT ' . DB::qn('u') . '.*')
+            ->from(DB::qn('#__users', 'u'))
+            ->innerJoin(DB::qn('#__user_usergroup_map', 'm'), DB::qc('m.user_id', 'u.id'))
+            ->whereNotIn(DB::qn('m.group_id'), Groups::STANDARD_GROUPS)
+            ->where($where);
+        DB::set($query);
 
-        return $resolved ? $db->loadAssocList('username', 'converisID') : $db->loadAssocList('username', 'id');
+        return $resolved ? DB::arrays('username', 'converisID') : DB::arrays('username', 'id');
     }
 
     private static function processPersons(array $users, array $persons): void

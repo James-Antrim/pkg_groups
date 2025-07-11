@@ -12,10 +12,6 @@ use THM\Groups\Adapters\{Database as DB, Input, Text};
 use THM\Groups\Helpers\{Can, Users};
 use THM\Groups\Tables\Content as Table;
 
-define('PUBLISH', 1);
-define('UNPUBLISH', 0);
-define('ARCHIVE', 2);
-define('TRASH', -2);
 
 /**
  * Class providing helper functions for batch select options
@@ -23,36 +19,27 @@ define('TRASH', -2);
 class THM_GroupsHelperContent
 {
     /**
-     * Associates content with a given profile
+     * Associates content with a given user:
      *
      * @param   int  $contentID  the id of the content
-     * @param   int  $profileID  the id of the profile to be associated with the content
+     * @param   int  $userID     the id of the user to be associated with the content
      *
      * @return  bool  true if the content was associated, otherwise false
      * @throws Exception
      */
-    public static function associate($contentID, $profileID)
+    public static function associate(int $contentID, int $userID): bool
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
+        $query = DB::query();
 
         if (self::isAssociated($contentID)) {
-            $query->update('#__thm_groups_content')->set("profileID = '$profileID'")->where("id = '$contentID'");
+            $query->update(DB::qn('#__groups_content'))->set(DB::qc('userID', $userID))->where(DB::qc('id', $contentID));
         }
         else {
-            $query->insert('#__thm_groups_content')->columns('id, profileID')->values("'$contentID', '$profileID'");
+            $query->insert(DB::qn('#__groups_content'))->columns(DB::qn(['id', 'userID']))->values([$contentID, $userID]);
         }
 
-        $dbo->setQuery($query);
-
-        try {
-            return $dbo->execute();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
+        DB::set($query);
+        return DB::execute();
     }
 
     /**
@@ -128,39 +115,29 @@ class THM_GroupsHelperContent
      *
      * @throws Exception
      */
-    public static function correctContent()
+    public static function correctContent(): void
     {
-        $dbo         = JFactory::getDbo();
-        $selectQuery = $dbo->getQuery(true);
-        $selectQuery->select('DISTINCT content.id AS contentID, content.created_by AS authorID')
-            ->from('#__content AS content')
-            ->select('groupsContent.profileID AS groupsContentAuthorID')
-            ->leftJoin('#__thm_groups_content AS groupsContent ON groupsContent.id = content.id')
-            ->select(' categories.profileID AS profileID')
-            ->innerJoin('#__thm_groups_categories AS categories ON categories.id = content.catid');
-        $dbo->setQuery($selectQuery);
+        $query = DB::query();
+        $query->select('content.id AS contentID, content.created_by AS authorID')
+            ->select('gc.userID AS gAuthorID')
+            ->select('categories.created_user_id AS catUserID')
+            ->from(DB::qn('#__content', 'content'))
+            ->innerJoin(DB::qn('#__categories', 'categories'), DB::qc('categories.id', 'content.catid'))
+            ->leftJoin(DB::qn('#__thm_groups_content', 'groupsContent'), DB::qc('gc.id', 'content.id'));
+        DB::set($query);
 
-        try {
-            $associations = $dbo->loadAssocList();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return;
-        }
-
-        if (empty($associations)) {
-            return;
-        }
-
-        foreach ($associations as $association) {
-            if ($association['authorID'] !== $association['profileID']) {
-                self::setAuthor($association['contentID'], $association['profileID']);
+        foreach (DB::arrays() as $association) {
+            // The content author isn't set as the user associated with its parent category.
+            if ($association['authorID'] !== $association['catUserID']) {
+                $table = new Table();
+                if ($table->load($association['contentID'])) {
+                    $table->created_by = $association['catUserID'];
+                    $table->store();
+                }
             }
 
-            if (empty($association['groupsContentAuthorID'])
-                or $association['groupsContentAuthorID'] !== $association['authorID']) {
-                self::associate($association['contentID'], $association['profileID']);
+            if (empty($association['gAuthorID']) or $association['gAuthorID'] !== $association['authorID']) {
+                self::associate($association['contentID'], $association['catUserID']);
             }
         }
     }
@@ -520,24 +497,6 @@ class THM_GroupsHelperContent
         }
 
         return true;
-    }
-
-    /**
-     * Method to check whether the content is published
-     *
-     * @param   int  $contentID  the content id
-     * @param   int  $profileID  the id of the profile with which it should be associated
-     *
-     * @return  boolean  true on success, otherwise false
-     */
-    public static function setAuthor($contentID, $profileID)
-    {
-        JTable::addIncludePath(JPATH_ROOT . '/libraries/legacy/table');
-        $content = JTable::getInstance('Content');
-        $content->load($contentID);
-        $content->created_by = $profileID;
-
-        return $content->store();
     }
 
     /**
