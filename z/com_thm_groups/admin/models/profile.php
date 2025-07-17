@@ -457,7 +457,7 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         foreach ($profileIDs as $profileID) {
             foreach ($batchData as $groupData) {
-                $values[] = "'$profileID', '{$groupData['id']}'";
+                $values[] = [$profileID, $groupData['id']];
             }
         }
 

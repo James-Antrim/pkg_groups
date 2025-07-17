@@ -357,8 +357,7 @@ abstract class ListModel extends Base
         $where  = [];
 
         foreach ($columnNames as $name) {
-            $name    = DB::qn($name);
-            $where[] = "$name LIKE '$search'";
+            $where[] = DB::qc($name, $search, 'LIKE', true);
         }
 
         $query->andWhere($where);

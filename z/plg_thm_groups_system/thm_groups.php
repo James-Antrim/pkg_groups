@@ -48,7 +48,7 @@ class plgSystemTHM_Groups extends CMSPlugin
     {
         $dbo   = JFactory::getDbo();
         $query = $dbo->getQuery(true);
-        $query->select('*')->from('#__menu')->where("path = '$alias'");
+        $query->select('*')->from('#__menu')->where(DB::qc('path', $alias));
         $dbo->setQuery($query);
 
         $row = DB::array();
@@ -381,7 +381,7 @@ class plgSystemTHM_Groups extends CMSPlugin
 
         foreach ($userNames as $key => $userName) {
             $query->clear('where');
-            $query->where("users.username = '$userName'");
+            $query->where(DB::qc('users.username', $userName));
 
             $dbo->setQuery((string) $query);
 

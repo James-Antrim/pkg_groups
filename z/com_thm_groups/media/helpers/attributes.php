@@ -97,11 +97,10 @@ class THM_GroupsHelperAttributes
             ->innerJoin('#__thm_groups_attribute_types AS at ON at.id = a.typeID')
             ->innerJoin("#__thm_groups_profile_attributes AS pat ON pat.attributeID = a.id")
             ->leftJoin("#__viewlevels AS vl ON vl.id = a.viewLevelID")
-            ->where("a.id = $attributeID")
-            ->where("pat.profileID = '$profileID'");
+            ->where(DB::qcs([['a.id', $attributeID],['pat.profileID', $profileID]]));
 
         if ($published) {
-            $query->where("pat.published = '$published'");
+            $query->where(DB::qc('pat.published', Input::YES));
         }
 
         // Get the name of the default view level just

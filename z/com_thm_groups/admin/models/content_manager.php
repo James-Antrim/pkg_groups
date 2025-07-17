@@ -13,6 +13,7 @@ defined('_JEXEC') or die;
 require_once HELPERS . 'content.php';
 require_once JPATH_SITE . '/media/com_thm_groups/models/list.php';
 
+use THM\Groups\Adapters\Database as DB;
 use THM\Groups\Helpers\Categories;
 
 /**
@@ -64,9 +65,7 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
             ->innerJoin('#__users AS users ON users.id = pCats.profileID')
             ->innerJoin('#__thm_groups_profile_attributes AS pa1 ON pa1.profileID = pCats.profileID')
             ->innerJoin('#__thm_groups_profile_attributes AS pa2 ON pa2.profileID = pCats.profileID')
-            ->where("cCats.parent_id= '$rootCategory' ")
-            ->where("pa1.attributeID = '2' ")
-            ->where("pa2.attributeID = '1' ");
+            ->where(DB::qcs([['cCats.parent_id', $rootCategory],['pa1.attributeID', 2],['pa2.attributeID', 1]]));
 
         $search = $this->getState('filter.search');
         if (!empty($search)) {
@@ -76,7 +75,7 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
 
         $authorID = $this->getState('filter.author');
         if (!empty($authorID)) {
-            $query->where("pCats.profileID = '$authorID'");
+            $query->where(DB::qc('pCats.profileID', $authorID));
         }
 
         $featured = $this->getState('filter.featured');
