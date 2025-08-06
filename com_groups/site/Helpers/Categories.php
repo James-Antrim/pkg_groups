@@ -15,8 +15,13 @@ use THM\Groups\Adapters\Database as DB;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Tables\Categories as Table;
 
+/**
+ * Class for the handling of category related information.
+ */
 class Categories
 {
+    use Published;
+
     /**
      * Retrieves the id of the root category if configured.
      *

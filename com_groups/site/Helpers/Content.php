@@ -10,17 +10,11 @@
 
 namespace THM\Groups\Helpers;
 
+/**
+ * Class for the handling of content related information.
+ */
 class Content
 {
     use Persistent;
-
-    public const ARCHIVED = 2, PUBLISHED = 1, TRASHED = -2, UNPUBLISHED = 0;
-
-    // Attributes protected because of their special role in template output
-    public const STATES = [
-        self::ARCHIVED,
-        self::PUBLISHED,
-        self::TRASHED,
-        self::UNPUBLISHED
-    ];
+    use Published;
 }
