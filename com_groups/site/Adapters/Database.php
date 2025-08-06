@@ -24,7 +24,7 @@ class Database
     /**
      * Get the number of affected rows for the previous executed SQL statement.
      *
-     * @return  integer
+     * @return  int
      */
     public static function affected(): int
     {
@@ -138,6 +138,18 @@ class Database
 
             return [];
         }
+    }
+
+    /**
+     * Escapes a string for usage in an SQL statement.
+     *
+     * @param   string  $text
+     *
+     * @return  string
+     */
+    public static function escape(string $text): string
+    {
+        return Application::database()->escape($text);
     }
 
     /**
