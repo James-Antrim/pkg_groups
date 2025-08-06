@@ -10,10 +10,11 @@
 
 namespace THM\Groups\Controllers;
 
-use THM\Groups\Adapters\{Database as DB, User as UAdapter};
-use THM\Groups\Helpers\{Categories as Helper, Profiles, Users as UHelper};
+use THM\Groups\Adapters\Database as DB;
+use THM\Groups\Helpers\{Categories as Helper, Groups, Profiles, Users as UHelper};
 use THM\Groups\Tables\{Categories as Table};
 
+/** @inheritDoc */
 class Category extends Controller
 {
     /**
@@ -36,7 +37,7 @@ class Category extends Controller
         }
 
         $category                  = new Table();
-        $category->access          = UAdapter::PUBLIC;
+        $category->access          = Groups::PUBLIC;
         $category->alias           = $alias;
         $category->created_user_id = $userID;
         $category->extension       = 'com_content';
