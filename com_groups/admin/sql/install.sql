@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS `#__groups_groups` (
 
 CREATE TABLE IF NOT EXISTS `#__groups_pages` (
     `id`        INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
-    `contentID` INT(11) UNSIGNED    NOT NULL,
+    `contentID` INT(10) UNSIGNED    NOT NULL,
     `userID`    INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
     `featured`  TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
     `ordering`  INT(4) UNSIGNED     NOT NULL DEFAULT 0,
