@@ -31,6 +31,19 @@ CREATE TABLE IF NOT EXISTS `#__groups_groups` (
     DEFAULT CHARSET = utf8mb4
     COLLATE = utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `#__groups_pages` (
+    `id`        INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
+    `contentID` INT(11) UNSIGNED    NOT NULL,
+    `userID`    INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
+    `featured`  TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+    `ordering`  INT(4) UNSIGNED     NOT NULL DEFAULT 0,
+    PRIMARY KEY (`ID`),
+    UNIQUE KEY `entry` (`contentID`, `userID`)
+)
+    ENGINE = InnoDB
+    DEFAULT CHARSET = utf8mb4
+    COLLATE = utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `#__groups_profile_attributes` (
     `id`          INT(11) UNSIGNED    NOT NULL AUTO_INCREMENT,
     `attributeID` INT(11) UNSIGNED    NOT NULL,
@@ -257,6 +270,14 @@ ALTER TABLE `#__groups_attributes`
 
 ALTER TABLE `#__groups_groups`
     ADD CONSTRAINT `fk_groups_groupID` FOREIGN KEY (`id`) REFERENCES `#__usergroups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `#__groups_pages`
+    ADD CONSTRAINT `fk_pages_contentID` FOREIGN KEY (`contentID`) REFERENCES `#__content` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    ADD CONSTRAINT `fk_pages_userID` FOREIGN KEY (`userID`) REFERENCES `#__users` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE;
 
 ALTER TABLE `#__groups_profile_attributes`
     ADD CONSTRAINT `fk_pAttribs_attributeID` FOREIGN KEY (`attributeID`) REFERENCES `#__groups_attributes` (`id`)
