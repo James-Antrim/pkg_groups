@@ -31,9 +31,9 @@ class Users extends User
 
     /**
      * VARCHAR(255) DEFAULT NULL
-     * @var null|string
+     * @var string|null
      */
-    public $alias;
+    public string|null $alias = null;
 
     /**
      * VARCHAR(100) NOT NULL DEFAULT ''
@@ -44,25 +44,28 @@ class Users extends User
 
     /**
      * TINYINT(4) NOT NULL DEFAULT 0
-     * @var bool
+     * @var int
+     * @bool
      */
     public $block;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
-     * @var bool
+     * @var int
+     * @bool
      */
     public $content;
 
     /**
      * INT(11) DEFAULT NULL
-     * @var int
+     * @var int|null
      */
-    public $converisID;
+    public int|null $converisID = null;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
-     * @var bool
+     * @var int
+     * @bool
      */
     public $editing;
 
@@ -76,9 +79,9 @@ class Users extends User
     /**
      * VARCHAR(255) DEFAULT null
      * The default is null because this field will be left blank by a certain subset of accounts.
-     * @var null|string
+     * @var string|null
      */
-    public $forenames;
+    public string|null $forenames = null;
 
     /**
      * INT(11) NOT NULL
@@ -160,15 +163,16 @@ class Users extends User
     /**
      * TINYINT(4) DEFAULT 0
      * Magic property in parent.
-     * @var bool
+     * @var int
+     * @bool
      */
     public $sendEmail;
 
     /**
      * VARCHAR(255) DEFAULT NULL
-     * @var null|string
+     * @var string|null
      */
-    public $surnames;
+    public string|null $surnames = null;
 
     /**
      * VARCHAR(150) NOT NULL DEFAULT ''

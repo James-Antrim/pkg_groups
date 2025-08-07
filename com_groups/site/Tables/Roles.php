@@ -37,7 +37,8 @@ class Roles extends Table
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
-     * @var bool
+     * @var int
+     * @bool
      */
     public $protected;
 

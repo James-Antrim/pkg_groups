@@ -18,13 +18,13 @@ trait Named
      * VARCHAR(100) NOT NULL
      * @var string
      */
-    public $name_de;
+    public string $name_de;
 
     /**
      * VARCHAR(100) NOT NULL
      * @var string
      */
-    public $name_en;
+    public string $name_en;
 
     /**
      * Gets the localized entry name.

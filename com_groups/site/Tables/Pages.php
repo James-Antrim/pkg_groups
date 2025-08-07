@@ -1,10 +1,9 @@
-<?php /** @noinspection PhpMissingFieldTypeInspection */
-
+<?php
 /**
  * @package     Groups
  * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
- * @copyright   2022 TH Mittelhessen
+ * @copyright   2025 TH Mittelhessen
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
@@ -17,36 +16,36 @@ use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
 
 /**
- * Class representing the template attributes table.
+ * Class representing the pages table.
  */
-class TemplateAttributes extends Table
+class Pages extends Table
 {
-    use Incremented, Ordered;
+    use Incremented;
 
     /**
-     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+     * INT(11) UNSIGNED NOT NULL (fk_pages_contentID -> content.id)
      * @var int
      */
-    public $attributeID;
+    public int $contentID;
 
     /**
-     * TINYINT(1) UNSIGNED  NOT NULL DEFAULT 0
+     * INT(11) NOT NULL (fk_pages_userID -> users.id)
      * @var int
-     * @bool
      */
-    public $showLabel;
+    public int $userID;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var int
+     * @bool
      */
-    public $showIcon;
+    public int $featured = 0;
 
     /**
-     * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
+     * INT(4) UNSIGNED NOT NULL DEFAULT 0
      * @var int
      */
-    public $templateID;
+    public int $ordering = 0;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)
@@ -54,6 +53,6 @@ class TemplateAttributes extends Table
         $dbo = $dbo ?? Application::database();
 
         /** @var DatabaseDriver $dbo */
-        parent::__construct('#__groups_template_attributes', 'id', $dbo);
+        parent::__construct('#__groups_pages', 'id', $dbo);
     }
 }
