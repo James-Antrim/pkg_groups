@@ -47,7 +47,7 @@ class Categories extends Category
     public int $asset_id = 0;
 
     /**
-     * INT(10) unsigned DEFAULT NULL
+     * INT(10) UNSIGNED DEFAULT NULL
      * @var int|null
      * @KEY idx_checkout (`checked_out`)
      */
@@ -68,7 +68,7 @@ class Categories extends Category
     public string $created_time = '';
 
     /**
-     * INT(10) unsigned NOT NULL DEFAULT 0
+     * INT(10) UNSIGNED NOT NULL DEFAULT 0
      * @var int|null
      * @CORRECTED INT(11) DEFAULT NULL
      */
@@ -151,7 +151,7 @@ class Categories extends Category
     public string $modified_time = '';
 
     /**
-     * INT(10) unsigned NOT NULL DEFAULT 0
+     * INT(10) UNSIGNED NOT NULL DEFAULT 0
      * @var int|null
      * @CORRECTED INT(11) DEFAULT NULL
      */
@@ -217,7 +217,7 @@ class Categories extends Category
     public string $title = '';
 
     /**
-     * INT(10) unsigned NOT NULL DEFAULT 1
+     * INT(10) UNSIGNED NOT NULL DEFAULT 1
      * @var int
      */
     public int $version = 1;
