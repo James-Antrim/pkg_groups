@@ -36,7 +36,6 @@ CREATE TABLE IF NOT EXISTS `#__groups_pages` (
     `contentID` INT(10) UNSIGNED    NOT NULL,
     `userID`    INT(11)             NOT NULL COMMENT 'Signed because of users table \'id\' fk.',
     `featured`  TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-    `ordering`  INT(4) UNSIGNED     NOT NULL DEFAULT 0,
     PRIMARY KEY (`ID`),
     UNIQUE KEY `entry` (`contentID`, `userID`)
 )

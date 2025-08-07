@@ -41,12 +41,6 @@ class Pages extends Table
      */
     public int $featured = 0;
 
-    /**
-     * INT(4) UNSIGNED NOT NULL DEFAULT 0
-     * @var int
-     */
-    public int $ordering = 0;
-
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)
     {
