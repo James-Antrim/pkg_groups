@@ -14,7 +14,7 @@ use Exception;
 use JetBrains\PhpStorm\NoReturn;
 use Joomla\CMS\Application\{CMSApplication, CMSApplicationInterface, WebApplication};
 use Joomla\CMS\{Component\ComponentHelper, Document\Document, Factory, Language\Language};
-use Joomla\CMS\{Menu\MenuItem, Plugin\PluginHelper, Session\Session, Uri\Uri};
+use Joomla\CMS\{Menu\MenuItem, Pathway\Pathway, Plugin\PluginHelper, Session\Session, Uri\Uri};
 use Joomla\CMS\Extension\{ComponentInterface, ExtensionHelper};
 use Joomla\Database\DatabaseDriver;
 use Joomla\DI\Container;
@@ -319,6 +319,25 @@ class Application
             return self::pluginParameters(str_replace('plg_', '', $extension));
         }
         return ComponentHelper::getParams($extension);
+    }
+
+    /**
+     * Returns the application Pathway object.
+     *
+     * @return  Pathway
+     */
+    public static function pathway(): Pathway
+    {
+        try {
+            /** @var CMSApplication $app */
+            $app = self::instance();
+            return $app->getPathway();
+        }
+        catch (Exception $exception) {
+            self::handleException($exception);
+        }
+
+        return new Pathway();
     }
 
     /**

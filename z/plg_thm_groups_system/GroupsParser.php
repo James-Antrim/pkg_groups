@@ -13,7 +13,7 @@
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
 
 use Joomla\CMS\Language\Text;
-use THM\Groups\Helpers\{Categories, Users};
+use THM\Groups\Helpers\{Categories, Pages, Users};
 
 class GroupsParser
 {
@@ -103,7 +103,7 @@ class GroupsParser
                         return [];
                     }
 
-                    $return['profileID'] = THM_GroupsHelperContent::getProfileID($return['id']);
+                    $return['profileID'] = Pages::authorID($return['id']);
 
                     $return['view'] = $pathItems[0];
                     break;
@@ -128,7 +128,7 @@ class GroupsParser
 
             // Invalid profile id, but valid content id => use the profileID associated with the content
             if (empty($return['profileID']) and !empty($return['id'])) {
-                $return['profileID'] = THM_GroupsHelperContent::getProfileID($return['id']);
+                $return['profileID'] = Pages::authorID($return['id']);
             }
 
             $return['view'] = 'content';

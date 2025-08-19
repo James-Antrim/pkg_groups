@@ -11,9 +11,8 @@
 require_once 'content.php';
 
 use Joomla\CMS\Uri\Uri;
-use THM\Groups\Adapters\Database as DB;
-use THM\Groups\Helpers\{Categories, Profiles, Users};
-use THM\Groups\Adapters\Input;
+use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
+use THM\Groups\Helpers\{Categories, Pages, Profiles, Users};
 
 /**
  * Class providing helper functions for batch select options
@@ -26,10 +25,10 @@ class THM_GroupsHelperRouter
      * @param   array  $params    the parameters used to build internal links
      * @param   bool   $asString  true if the url should be functional, false if an array of segments
      *
-     * @return mixed string if the URL should be complete, otherwise an array of terms to use in the URL
+     * @return array|string string if the URL should be complete, otherwise an array of terms to use in the URL
      * @throws Exception
      */
-    public static function build($params, $asString = true)
+    public static function build(array $params, bool $asString = true): array|string
     {
         $default = $asString ? '' : [];
         if (empty($params['view']) or empty($params['profileID'])) {
@@ -39,9 +38,6 @@ class THM_GroupsHelperRouter
         $params['profileAlias'] = Users::alias($params['profileID']);
         if (empty($params['profileAlias'])) {
             return $default;
-        }
-        elseif (empty($params['view'])) {
-            $params['view'] = 'profile';
         }
 
         return !empty(JFactory::getConfig()->get('sef')) ?
@@ -54,10 +50,10 @@ class THM_GroupsHelperRouter
      * @param   array  $params    the parameters used to build internal links
      * @param   bool   $complete  true if the url should be functional, false if an array of segments
      *
-     * @return mixed string if the URL should be complete, otherwise an array of terms to use in the URL
+     * @return array|string string if the URL should be complete, otherwise an array of terms to use in the URL
      * @throws Exception
      */
-    private static function buildRawURL($params, $complete)
+    private static function buildRawURL(array $params, bool $complete): array|string
     {
         $invalidContent = (empty($params['id']) or empty(THM_GroupsHelperContent::getAlias($params['id'])));
         if ($params['view'] === 'content' and $invalidContent) {
@@ -81,10 +77,10 @@ class THM_GroupsHelperRouter
      * @param   array  $params    the parameters used to build internal links
      * @param   bool   $complete  true if the url should be functional, false if an array of segments
      *
-     * @return mixed string if the URL should be complete, otherwise an array of terms to use in the URL
+     * @return array|string string if the URL should be complete, otherwise an array of terms to use in the URL
      * @throws Exception
      */
-    private static function buildSEFURL($params, $complete)
+    private static function buildSEFURL(array $params, bool $complete): array|string
     {
         $return   = [];
         $return[] = $params['profileAlias'];
@@ -95,7 +91,7 @@ class THM_GroupsHelperRouter
                 }
                 break;
             case 'content_manager':
-                $return[] = JText::_('COM_THM_GROUPS_CONTENT_MANAGER_ALIAS');
+                $return[] = Text::_('CONTENT_MANAGER_ALIAS');
                 break;
             case 'profile':
                 if (!empty($params['format'])) {
@@ -103,7 +99,7 @@ class THM_GroupsHelperRouter
                 }
                 break;
             case 'profile_edit':
-                $return[] = JText::_('COM_THM_GROUPS_EDIT_ALIAS');
+                $return[] = Text::_('EDIT_ALIAS');
                 break;
         }
 
@@ -143,7 +139,7 @@ class THM_GroupsHelperRouter
      *
      * @return array the relevant items in the url path
      */
-    public static function getPathItems($url)
+    public static function getPathItems(string $url): array
     {
         $rawPath = str_replace(URI::base(), '', $url);
 
@@ -167,19 +163,16 @@ class THM_GroupsHelperRouter
      * @return void sets the pathway items
      * @throws Exception
      */
-    public static function setPathway()
+    public static function setPathway(): void
     {
-        $app       = JFactory::getApplication();
-        $profileID = Input::integer('profileID');
-
-        if (empty($profileID)) {
+        if (!$profileID = Input::integer('profileID')) {
             return;
         }
 
         // Get the pathway and empty and default items from Joomla
 
         $contentID   = Input::id();
-        $pathway     = $app->getPathway();
+        $pathway     = Application::pathway();
         $profileName = Profiles::name($profileID);
         $profileURL  = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID]);
         $session     = JFactory::getSession();
@@ -196,7 +189,7 @@ class THM_GroupsHelperRouter
                 $referrerName = $session->get('referrerName', '', 'thm_groups');
                 $referrerURL  = $session->get('referrerUrl', '', 'thm_groups');
                 if (empty($referrerName) or empty($referrerURL)) {
-                    $pathway->addItem(JText::_('COM_THM_GROUPS_HOME'), URI::base());
+                    $pathway->addItem(Text::_('HOME'), URI::base());
                 }
                 else {
                     $pathway->addItem($referrerName, $referrerURL);
@@ -206,7 +199,7 @@ class THM_GroupsHelperRouter
                 $possibleMenuPath = implode('/', $pathItems);
                 $menu             = self::getMenuByPath($possibleMenuPath);
                 if (empty($menu)) {
-                    $pathway->addItem(JText::_('COM_THM_GROUPS_HOME'), URI::base());
+                    $pathway->addItem(Text::_('HOME'), URI::base());
                 }
                 else {
                     $session->set('referrerName', $menu['title'], 'thm_groups');
@@ -222,7 +215,7 @@ class THM_GroupsHelperRouter
             $referrerName = $session->get('referrerName', '', 'thm_groups');
             $referrerURL  = $session->get('referrerUrl', '', 'thm_groups');
             if (empty($referrerName) or empty($referrerURL)) {
-                $pathway->addItem(JText::_('COM_THM_GROUPS_HOME'), URI::base());
+                $pathway->addItem(Text::_('HOME'), URI::base());
             }
             else {
                 $pathway->addItem($referrerName, $referrerURL);
@@ -240,13 +233,15 @@ class THM_GroupsHelperRouter
     /**
      * Translates content parameters into Groups parameters as relevant.
      *
-     * @param $query
+     * @param   array &$query
      *
      * @return bool
      * @throws Exception
      */
-    public static function translateContent(&$query)
+    public static function translateContent(array &$query): bool
     {
+        $contentID     = 0;
+        $profileID     = 0;
         $relevantViews = ['article', 'category'];
         if (!empty($query['view']) and !in_array($query['view'], $relevantViews)) {
             return false;
@@ -278,7 +273,7 @@ class THM_GroupsHelperRouter
             }
             elseif ($contentID) {
                 $query['id']        = $contentID;
-                $query['profileID'] = THM_GroupsHelperContent::getProfileID($contentID);
+                $query['profileID'] = Pages::authorID($contentID);
                 $query['view']      = 'content';
                 unset($query['catid']);
             }
@@ -312,7 +307,7 @@ class THM_GroupsHelperRouter
         if (empty($profileID)) {
             return false;
         }
-        elseif ($profileID and $profileID === true) {
+        elseif ($profileID === true) {
             $query['search'] = '';
             $query['view']   = 'overview';
         }

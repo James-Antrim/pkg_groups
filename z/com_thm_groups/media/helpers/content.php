@@ -8,9 +8,8 @@
  * @link        www.thm.de
  */
 
-use Joomla\CMS\Table\Content as CoreTable;
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text, User as UAdapter};
-use THM\Groups\Helpers\{Can, Users as UHelper};
+use THM\Groups\Helpers\{Can, Pages, Users as UHelper};
 use THM\Groups\Tables\Content as Table;
 
 
@@ -57,7 +56,7 @@ class THM_GroupsHelperContent
 
         $canEdit    = UAdapter::authorise('core.edit', "com_content.article.$contentID");
         $canEditOwn = UAdapter::authorise('core.edit.own', "com_content.article.$contentID");
-        $profileID  = self::getProfileID($contentID);
+        $profileID  = Pages::authorID($contentID);
         $isOwn      = $profileID === UAdapter::id();
 
         // Regardless of configuration only administrators and content owners should be able to edit
@@ -188,23 +187,6 @@ class THM_GroupsHelperContent
     }
 
     /**
-     * Retrieves the profile id associated with the given content id
-     *
-     * @param   int  $contentID  the id of the content
-     *
-     * @return  int the id of the associated profile
-     */
-    public static function getProfileID(int $contentID): int
-    {
-        $query = DB::query();
-        $query->select(DB::qn('profileID'))
-            ->from(DB::qn('#__thm_groups_content'))
-            ->where(DB::qc('id', $contentID));
-        DB::set($query);
-        return DB::integer();
-    }
-
-    /**
      * Returns dropdown for changing content status
      *
      * @param   int|string  $index  the current row index
@@ -283,7 +265,7 @@ class THM_GroupsHelperContent
      */
     public static function isPublished(int $contentID): bool
     {
-        $table = new CoreTable(Application::database());
+        $table = new Table();
         $table->load($contentID);
 
         return $table->state === 1;
@@ -315,7 +297,7 @@ class THM_GroupsHelperContent
         // Unarchive and untrash equate to unpublish.
         $statusValue = Joomla\Utilities\ArrayHelper::getValue($validStatuses, $status, 0, 'int');
 
-        $table = new CoreTable(Application::database());
+        $table = new Table();
         if ($table->publish($contentID, $statusValue, UAdapter::id())) {
             return true;
         }
