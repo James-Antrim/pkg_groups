@@ -9,7 +9,7 @@
  */
 
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text, User as UAdapter};
-use THM\Groups\Helpers\{Can, Pages, Users as UHelper};
+use THM\Groups\Helpers\Can;
 use THM\Groups\Tables\Content as Table;
 
 /**
@@ -119,25 +119,6 @@ class THM_GroupsHelperContent
         $query->delete(DB::qn('#__thm_groups_content'))->where(DB::qc('id', $contentID));
         DB::set($query);
         return DB::execute();
-    }
-
-    /**
-     * Retrieves the id for the given content by its associated alias
-     *
-     * @param   string  $alias      the alias associated with the content
-     * @param   int     $profileID  the id of the profile which is associated with this content
-     *
-     * @return  int the id of the content
-     */
-    public static function getIDByAlias(string $alias, int $profileID): int
-    {
-        $query = DB::query();
-        $query->select(DB::qn('cc.id'))
-            ->from(DB::qn('#__content AS cc'))
-            ->innerJoin(DB::qn('#__thm_groups_content', 'gc'), DB::qc('gc.id', 'cc.id'))
-            ->where(DB::qcs([['alias', $alias, '=', true], ['profileID', $profileID]]));
-        DB::set($query);
-        return DB::integer();
     }
 
     /**

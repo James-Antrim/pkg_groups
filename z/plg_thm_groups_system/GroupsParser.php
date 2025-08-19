@@ -203,7 +203,7 @@ class GroupsParser
             $profileID = Users::idByAlias($secondLastItem);
             if (!empty($profileID)) {
                 $query['profileID'] = $profileID;
-                $contentID          = THM_GroupsHelperContent::getIDByAlias($lastItem, $profileID);
+                $contentID          = Pages::id($lastItem, $profileID);
                 if (empty($contentID)) {
                     $query['view'] = 'profile';
                 }

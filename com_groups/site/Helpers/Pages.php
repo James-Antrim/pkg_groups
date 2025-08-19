@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Helpers;
 
+use THM\Groups\Adapters\Database as DB;
 use THM\Groups\Tables\Content as CTable;
 
 /**
@@ -92,5 +93,24 @@ class Pages
             return $table->catid;
         }
         return 0;
+    }
+
+    /**
+     * Gets the id of the content with the given alias.
+     *
+     * @param   string  $alias   the parsed alias
+     * @param   int     $userID  the parsed user id
+     *
+     * @return int
+     */
+    public static function id(string $alias, int $userID): int
+    {
+        $query = DB::query();
+        $query->select(DB::qn('c.id'))
+            ->from(DB::qn('#__content AS c'))
+            ->innerJoin(DB::qn('#__groups_pages', 'p'), DB::qc('p.content', 'c.id'))
+            ->where(DB::qcs([['c.alias', $alias, '=', true], ['p.userID', $userID]]));
+        DB::set($query);
+        return DB::integer();
     }
 }
