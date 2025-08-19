@@ -20,7 +20,7 @@ use THM\Groups\Tables\Categories as Table;
  */
 class Categories
 {
-    use Published;
+    public const PUBLISHED = 1;
 
     /**
      * Retrieves the id of the root category if configured.
