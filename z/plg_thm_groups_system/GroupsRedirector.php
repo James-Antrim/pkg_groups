@@ -12,12 +12,9 @@
 
 defined('_JEXEC') or die;
 
-require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
-require_once JPATH_ROOT . '/media/com_thm_groups/helpers/profiles.php';
-
 use Joomla\CMS\{Application\CMSApplication, Language\Text, Uri\Uri};
 use THM\Groups\Adapters\Application;
-use THM\Groups\Helpers\Users;
+use THM\Groups\Helpers\{Pages, Users};
 
 class GroupsRedirector
 {
@@ -102,7 +99,7 @@ class GroupsRedirector
         switch ($query['view']) {
             case 'content':
                 $pathParts[] = $profileAlias;
-                $pathParts[] = THM_GroupsHelperContent::getAlias($query['id']);
+                $pathParts[] = Pages::alias($query['id']);
                 break;
             case 'content_manager':
                 $pathParts[] = $profileAlias;

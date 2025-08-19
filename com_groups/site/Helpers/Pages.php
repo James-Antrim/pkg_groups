@@ -47,7 +47,23 @@ class Pages
     ];
 
     /**
-     * Gets the id of the category associated with the content.
+     * Gets the content alias.
+     *
+     * @param   int  $contentID
+     *
+     * @return string
+     */
+    public static function alias(int $contentID): string
+    {
+        $table = new CTable();
+        if ($table->load($contentID)) {
+            return $table->alias;
+        }
+        return '';
+    }
+
+    /**
+     * Gets the id of the author associated with the content.
      *
      * @param   int  $contentID
      *

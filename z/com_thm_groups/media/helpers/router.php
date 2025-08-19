@@ -55,7 +55,7 @@ class THM_GroupsHelperRouter
      */
     private static function buildRawURL(array $params, bool $complete): array|string
     {
-        $invalidContent = (empty($params['id']) or empty(THM_GroupsHelperContent::getAlias($params['id'])));
+        $invalidContent = (empty($params['id']) or empty(Pages::alias($params['id'])));
         if ($params['view'] === 'content' and $invalidContent) {
             $params['view'] = 'profile';
         }
@@ -87,7 +87,7 @@ class THM_GroupsHelperRouter
         switch ($params['view']) {
             case 'content':
                 if (!empty($params['id'])) {
-                    $return[] = THM_GroupsHelperContent::getAlias($params['id']);
+                    $return[] = Pages::alias($params['id']);
                 }
                 break;
             case 'content_manager':

@@ -15,6 +15,8 @@ use THM\Groups\Helpers\Users;
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/profiles.php';
 
+use THM\Groups\Helpers\Pages;
+
 class GroupsValidator
 {
     /**
@@ -55,7 +57,7 @@ class GroupsValidator
                 return 0;
             }
 
-            if (!empty($query['id']) and THM_GroupsHelperContent::getAlias($query['id'])) {
+            if (!empty($query['id']) and Pages::alias($query['id'])) {
                 $profileID = empty($query['profileID']) ?
                     THM_GroupsHelperContent::isAssociated($query['id']) :
                     THM_GroupsHelperContent::isAssociated($query['id'], $query['profileID']);
@@ -108,7 +110,7 @@ class GroupsValidator
                     }
 
                     // Success
-                    if (THM_GroupsHelperContent::getAlias($query['id'])) {
+                    if (Pages::alias($query['id'])) {
                         return true;
                     }
 
