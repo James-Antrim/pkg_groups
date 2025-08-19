@@ -10,29 +10,19 @@
  */
 defined('_JEXEC') or die;
 
-require_once HELPERS . 'content.php';
-require_once JPATH_SITE . '/media/com_thm_groups/models/list.php';
-
-use THM\Groups\Adapters\Database as DB;
-use THM\Groups\Helpers\Categories;
+use Joomla\Database\DatabaseQuery;
+use THM\Groups\Adapters\{Application, Database as DB, HTML, Text};
+use THM\Groups\Helpers\{Can, Categories, Pages};
+use THM\Groups\Models\ListModel;
 
 /**
  * THM_GroupsModelContent_Manager is a class which deals with the information preparation for the administrator view.
  */
-class THM_GroupsModelContent_Manager extends THM_GroupsModelList
+class THM_GroupsModelContent_Manager extends ListModel
 {
+    protected string $defaultOrdering = 'author_name';
 
-    protected $defaultOrdering = 'author_name';
-
-    protected $defaultDirection = 'ASC';
-
-    /**
-     * Constructor.
-     *
-     * @param   array  $config  An optional associative array of configuration settings.
-     *
-     * @throws Exception
-     */
+    /** @inheritDoc */
     public function __construct($config = [])
     {
         parent::__construct($config);
@@ -40,14 +30,10 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
         THM_GroupsHelperContent::correctContent();
     }
 
-    /**
-     * Method to build an SQL query to load the list data.
-     *
-     * @return      string  An SQL query
-     */
-    protected function getListQuery()
+    /** @inheritDoc */
+    protected function getListQuery(): DatabaseQuery
     {
-        $query = $this->_db->getQuery(true);
+        $query = DB::query();
 
         $rootCategory = Categories::root();
 
@@ -65,7 +51,7 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
             ->innerJoin('#__users AS users ON users.id = pCats.profileID')
             ->innerJoin('#__thm_groups_profile_attributes AS pa1 ON pa1.profileID = pCats.profileID')
             ->innerJoin('#__thm_groups_profile_attributes AS pa2 ON pa2.profileID = pCats.profileID')
-            ->where(DB::qcs([['cCats.parent_id', $rootCategory],['pa1.attributeID', 2],['pa2.attributeID', 1]]));
+            ->where(DB::qcs([['cCats.parent_id', $rootCategory], ['pa1.attributeID', 2], ['pa2.attributeID', 1]]));
 
         $search = $this->getState('filter.search');
         if (!empty($search)) {
@@ -91,18 +77,13 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
             $query->where('content.state = ' . (int) $state);
         }
 
-        $this->setOrdering($query);
+        $this->orderBy($query);
 
         return $query;
     }
 
-    /**
-     * Function to feed the data in the table body correctly to the list view
-     *
-     * @return array consisting of items in the body
-     * @throws Exception
-     */
-    public function getItems()
+    /** @inheritDoc */
+    public function getItems(): array
     {
         $rootCategory = Categories::root();
 
@@ -112,8 +93,7 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
             $items = parent::getItems();
         }
         else {
-            JFactory::getApplication()->enqueueMessage(JText::_('COM_THM_GROUPS_ROOT_CATEGORY_NOT_CONFIGURED'),
-                'notice');
+            Application::message(Text::_('ROOT_CATEGORY_NOT_CONFIGURED'), Application::NOTICE);
 
             return $return;
         }
@@ -154,10 +134,10 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
 
             $return[$index][0] = JHtml::_('grid.id', $index, $item->id) . " $item->id";
 
-            $canEdit = THM_GroupsHelperContent::canEdit($item->id);
+            $canEdit = Can::edit('com_content.article', $item->id);
 
             if ($canEdit) {
-                $url               = JRoute::_("index.php?option=com_content&task=article.edit&id={$item->id}");
+                $url               = JRoute::_("index.php?option=com_content&task=article.edit&id=$item->id");
                 $return[$index][1] = JHtml::link($url, $item->title, ['target' => '_blank']);
                 $return[$index][1] .= " <span class=\"icon-edit\"></span>";
             }
@@ -166,8 +146,8 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
             }
 
             $authorParts       = explode('->', $item->author_name);
-            $return[$index][2] = count($authorParts) > 1 ? "{$authorParts[0]}, {$authorParts[1]}" : $authorParts[0];
-            $return[$index][3] = $this->getToggle($item->id, $item->featured, 'content', '', 'featured');
+            $return[$index][2] = count($authorParts) > 1 ? "$authorParts[0], $authorParts[1]" : $authorParts[0];
+            $return[$index][3] = HTML::toggle($item->id, Pages::featureStates[$item->featured], 'pages');
             $return[$index][4] = THM_GroupsHelperContent::getStatusDropdown($index, $item);
 
             $index++;
@@ -181,7 +161,7 @@ class THM_GroupsModelContent_Manager extends THM_GroupsModelList
      *
      * @return array including headers
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         $ordering  = $this->state->get('list.ordering');
         $direction = $this->state->get('list.direction');

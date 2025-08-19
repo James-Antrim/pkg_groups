@@ -12,7 +12,6 @@ use THM\Groups\Adapters\{Application, Database as DB, Input, Text, User as UAdap
 use THM\Groups\Helpers\{Can, Pages, Users as UHelper};
 use THM\Groups\Tables\Content as Table;
 
-
 /**
  * Class providing helper functions for batch select options
  */
@@ -42,33 +41,6 @@ class THM_GroupsHelperContent
     }
 
     /**
-     * Checks whether the user is authorized to edit the given content
-     *
-     * @param   int  $contentID  the id of the content
-     *
-     * @return bool
-     */
-    public static function canEdit(int $contentID): bool
-    {
-        if (Can::manage()) {
-            return true;
-        }
-
-        $canEdit    = UAdapter::authorise('core.edit', "com_content.article.$contentID");
-        $canEditOwn = UAdapter::authorise('core.edit.own', "com_content.article.$contentID");
-        $profileID  = Pages::authorID($contentID);
-        $isOwn      = $profileID === UAdapter::id();
-
-        // Regardless of configuration only administrators and content owners should be able to edit
-        $editEnabled    = (($canEdit or $canEditOwn) and $isOwn);
-        $isPublished    = UHelper::published($profileID);
-        $contentEnabled = UHelper::content($profileID);
-        $profileEnabled = ($isPublished and $contentEnabled);
-
-        return ($editEnabled and $profileEnabled);
-    }
-
-    /**
      * Method which checks user edit state permissions for content.
      *
      * @param   int  $contentID  the id of the content
@@ -77,7 +49,7 @@ class THM_GroupsHelperContent
      */
     public static function canEditState(int $contentID): bool
     {
-        if (self::canEdit($contentID)) {
+        if (Can::edit('com_content.article', $contentID)) {
             return true;
         }
 

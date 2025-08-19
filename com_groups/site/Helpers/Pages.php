@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Helpers;
 
-use THM\Groups\Tables\{Content as CTable, Pages as PTable};
+use THM\Groups\Tables\Content as CTable;
 
 /**
  * Class for the handling of content related information.
@@ -26,13 +26,13 @@ class Pages
             'class'  => 'publish',
             'column' => 'featured',
             'task'   => 'unfeature',
-            'tip'    => 'GROUPS_TOGGLE_TIP_FEATURED'
+            'tip'    => 'TOGGLE_TIP_FEATURED'
         ],
         self::UNFEATURED => [
             'class'  => 'unpublish',
-            'column' => 'showIcon',
-            'task'   => 'showIcon',
-            'tip'    => 'GROUPS_TOGGLE_TIP_UNFEATURED'
+            'column' => 'featured',
+            'task'   => 'feature',
+            'tip'    => 'TOGGLE_TIP_UNFEATURED'
         ]
     ];
 

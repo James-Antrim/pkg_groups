@@ -71,39 +71,43 @@ class Can
      * Checks whether the user has access to create component resources.
      *
      * @param   string  $context     the context in which access is being checked
-     * @param   int     $categoryID  the id of the category context as applicable
+     * @param   int     $resourceID  the id of the category context as applicable
      *
      * @return bool
      */
-    public static function create(string $context = 'com_users', int $categoryID = 0): bool
+    public static function create(string $context = 'com_users', int $resourceID = 0): bool
     {
-        $user = User::instance();
-
         // Basic context rights
         if (
-            $user->authorise('core.admin', $context)
-            or $user->authorise('core.manage', $context)
-            or $user->authorise('core.create', $context)) {
+            User::authorise('core.admin', $context)
+            or User::authorise('core.manage', $context)
+            or User::authorise('core.create', $context)) {
             return true;
         }
 
-        switch ($context) {
-            case 'com_content':
-                return false;
-            case 'com_content.category':
-                // Basic resource rights
-                $asset = $categoryID ? "$context.$categoryID" : $context;
-                if ($user->authorise('core.create', $asset)) {
-                    return true;
-                }
+        if (empty($resourceID)) {
+            return false;
+        }
 
-                if (empty($categoryID)) {
+        switch ($context) {
+            case 'com_content.article':
+                if (!$resourceID = Pages::categoryID($resourceID)) {
                     return false;
                 }
 
-                // Rights specific to the groups component, publication state ignored because of identity at this level.
-                $userID = Categories::userID($categoryID);
-                return ($userID === $user->id and Users::content($userID));
+                if (User::authorise('core.create', "com_content.category.$resourceID")) {
+                    return true;
+                }
+
+                $userID = Categories::userID($resourceID);
+                return ($userID === User::id() and Users::content($userID));
+            case 'com_content.category':
+                if (User::authorise('core.create', "$context.$resourceID")) {
+                    return true;
+                }
+
+                $userID = Categories::userID($resourceID);
+                return ($userID === User::id() and Users::content($userID));
             default:
                 return false;
 
@@ -137,41 +141,43 @@ class Can
     /**
      * Checks whether the user has access to create component resources.
      *
-     * @param   string  $context  the context in which access is being checked
-     * @param   int     $id       the id of a specific resource as relevant
+     * @param   string  $context     the context in which access is being checked
+     * @param   int     $resourceID  the id of a specific resource as relevant
      *
      * @return bool
      */
-    public static function edit(string $context = 'com_users', int $id = 0): bool
+    public static function edit(string $context = 'com_users', int $resourceID = 0): bool
     {
-        $user = User::instance();
-
         // Basic context rights
         if (
-            $user->authorise('core.admin', $context)
-            or $user->authorise('core.manage', $context)
-            or $user->authorise('core.edit', $context)
-            or $user->authorise('core.edit.own', $context)) {
+            User::authorise('core.admin', $context)
+            or User::authorise('core.manage', $context)
+            or User::authorise('core.edit', $context)) {
             return true;
         }
 
+        // If no resource id was given there is nothing more to check
+        if (empty($resourceID)) {
+            return false;
+        }
+
         switch ($context) {
-            case 'com_content':
-                return false;
-            case 'com_content.category':
-                // Basic resource rights
-                $asset = $id ? "$context.$id" : $context;
-                if ($user->authorise('core.edit', $asset) or $user->authorise('core.edit.own', $asset)) {
+            case 'com_content.article':
+                if (User::authorise('core.edit', "com_content.article.$resourceID")) {
                     return true;
                 }
 
-                if (empty($id)) {
-                    return false;
+                $userID = Pages::authorID($resourceID);
+                return ($userID === User::id() and Users::content($userID));
+            case 'com_content.category':
+                $asset = "$context.$resourceID";
+                if (User::authorise('core.edit', $asset) or User::authorise('core.edit.own', $asset)) {
+                    return true;
                 }
 
                 // Rights specific to the groups component, publication state ignored because of identity at this level.
-                $userID = Categories::userID($id);
-                return ($userID === $user->id and Users::content($userID));
+                $userID = Categories::userID($resourceID);
+                return ($userID === User::id() and Users::content($userID));
             default:
                 return false;
 
