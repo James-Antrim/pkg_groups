@@ -17,7 +17,8 @@ use THM\Groups\Adapters\{Application, Database as DB, Text};
  */
 class Roles extends Selectable
 {
-    use Named, Persistent;
+    use Named;
+    use Persistent;
 
     public const MEMBER = 'MEMBER', MEMBERS = 'MEMBERS';
 
