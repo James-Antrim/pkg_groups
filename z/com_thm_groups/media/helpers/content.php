@@ -239,21 +239,6 @@ class THM_GroupsHelperContent
     }
 
     /**
-     * Method to check whether the content is published
-     *
-     * @param   int  $contentID  the id of the content
-     *
-     * @return  bool  true on success, otherwise false
-     */
-    public static function isPublished(int $contentID): bool
-    {
-        $table = new Table();
-        $table->load($contentID);
-
-        return $table->state === 1;
-    }
-
-    /**
      * Method to change the core published state of THM Groups articles.
      *
      * @return  bool
