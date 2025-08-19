@@ -158,7 +158,7 @@ class Users
         }
 
         // Global restriction or content to be edited does not belong to the user.
-        if (!Input::parameters()->get('content') or $accountID != $userID) {
+        if (!Input::parameters()->get('content') or $accountID !== $userID) {
             return false;
         }
 
