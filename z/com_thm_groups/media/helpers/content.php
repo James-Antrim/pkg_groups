@@ -9,37 +9,15 @@
  */
 
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text, User as UAdapter};
+use THM\Groups\Controllers\Page as Controller;
 use THM\Groups\Helpers\{Can, Pages};
-use THM\Groups\Tables\Content as Table;
+use THM\Groups\Tables\Content as CTable;
 
 /**
  * Class providing helper functions for batch select options
  */
 class THM_GroupsHelperContent
 {
-    /**
-     * Associates content with a given user:
-     *
-     * @param   int  $contentID  the id of the content
-     * @param   int  $userID     the id of the user to be associated with the content
-     *
-     * @return  bool
-     */
-    public static function associate(int $contentID, int $userID): bool
-    {
-        $query = DB::query();
-
-        if (Pages::userID($contentID)) {
-            $query->update(DB::qn('#__groups_content'))->set(DB::qc('userID', $userID))->where(DB::qc('id', $contentID));
-        }
-        else {
-            $query->insert(DB::qn('#__groups_content'))->columns(DB::qn(['id', 'userID']))->values([$contentID, $userID]);
-        }
-
-        DB::set($query);
-        return DB::execute();
-    }
-
     /**
      * Method which checks user edit state permissions for content.
      *
@@ -82,26 +60,25 @@ class THM_GroupsHelperContent
     {
         $query = DB::query();
         $query->select(DB::qn(
-            ['content.id', 'content.created_by', 'gc.userID', 'categories.created_user_id'],
-            ['contentID', 'authorID', 'gAuthorID', 'catUserID']
+            ['co.id', 'co.created_by', 'p.userID', 'categories.created_user_id'],
+            ['contentID', 'coUserID', 'pUserID', 'caUserID']
         ))
-            ->from(DB::qn('#__content', 'content'))
-            ->innerJoin(DB::qn('#__categories', 'categories'), DB::qc('categories.id', 'content.catid'))
-            ->leftJoin(DB::qn('#__thm_groups_content', 'groupsContent'), DB::qc('gc.id', 'content.id'));
+            ->from(DB::qn('#__content', 'co'))
+            ->innerJoin(DB::qn('#__categories', 'ca'), DB::qc('ca.id', 'co.catid'))
+            ->leftJoin(DB::qn('#__groups_pages', 'p'), DB::qc('p.contentID', 'co.id'));
         DB::set($query);
 
-        foreach (DB::arrays() as $association) {
-            // The content author isn't set as the user associated with its parent category.
-            if ($association['authorID'] !== $association['catUserID']) {
-                $table = new Table();
-                if ($table->load($association['contentID'])) {
-                    $table->created_by = $association['catUserID'];
+        foreach (DB::arrays() as $result) {
+            if ($result['coUserID'] !== $result['caUserID']) {
+                $table = new CTable();
+                if ($table->load($result['contentID'])) {
+                    $table->created_by = $result['caUserID'];
                     $table->store();
                 }
             }
 
-            if (empty($association['gAuthorID']) or $association['gAuthorID'] !== $association['authorID']) {
-                self::associate($association['contentID'], $association['catUserID']);
+            if (empty($result['pUserID']) or $result['pUserID'] !== $result['caUserID']) {
+                Controller::associate($result['contentID'], $result['caUserID']);
             }
         }
     }
@@ -132,7 +109,7 @@ class THM_GroupsHelperContent
     public static function getStatusDropdown(int|string $index, stdClass $item): string
     {
         $status    = '';
-        $canChange = THM_GroupsHelperContent::canEditState($item->id);
+        $canChange = self::canEditState($item->id);
 
         $task = 'content.publish';
 
@@ -196,7 +173,7 @@ class THM_GroupsHelperContent
         // Unarchive and untrash equate to unpublish.
         $statusValue = Joomla\Utilities\ArrayHelper::getValue($validStatuses, $status, 0, 'int');
 
-        $table = new Table();
+        $table = new CTable();
         if ($table->publish($contentID, $statusValue, UAdapter::id())) {
             return true;
         }
@@ -245,7 +222,7 @@ class THM_GroupsHelperContent
             return false;
         }
 
-        $table      = new Table();
+        $table      = new CTable();
         $conditions = [];
 
         // Update ordering values
