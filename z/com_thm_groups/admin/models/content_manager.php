@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 use Joomla\Database\DatabaseQuery;
 use THM\Groups\Adapters\{Application, Database as DB, HTML, Text, User};
+use THM\Groups\Controllers\Pages as Controller;
 use THM\Groups\Helpers\{Can, Categories, Pages};
 use THM\Groups\Models\ListModel;
 
@@ -27,7 +28,7 @@ class THM_GroupsModelContent_Manager extends ListModel
     {
         parent::__construct($config);
 
-        THM_GroupsHelperContent::correctContent();
+        Controller::clean();
     }
 
     /** @inheritDoc */

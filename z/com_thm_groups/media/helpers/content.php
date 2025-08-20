@@ -9,7 +9,6 @@
  */
 
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text, User as UAdapter};
-use THM\Groups\Controllers\Page as Controller;
 use THM\Groups\Helpers\{Can, Pages};
 use THM\Groups\Tables\Content as CTable;
 
@@ -50,37 +49,6 @@ class THM_GroupsHelperContent
         }
 
         return true;
-    }
-
-    /**
-     * Corrects invalid content => author associations which occur because Joomla does not call events from batch
-     * processing.
-     */
-    public static function correctContent(): void
-    {
-        $query = DB::query();
-        $query->select(DB::qn(
-            ['co.id', 'co.created_by', 'p.userID', 'categories.created_user_id'],
-            ['contentID', 'coUserID', 'pUserID', 'caUserID']
-        ))
-            ->from(DB::qn('#__content', 'co'))
-            ->innerJoin(DB::qn('#__categories', 'ca'), DB::qc('ca.id', 'co.catid'))
-            ->leftJoin(DB::qn('#__groups_pages', 'p'), DB::qc('p.contentID', 'co.id'));
-        DB::set($query);
-
-        foreach (DB::arrays() as $result) {
-            if ($result['coUserID'] !== $result['caUserID']) {
-                $table = new CTable();
-                if ($table->load($result['contentID'])) {
-                    $table->created_by = $result['caUserID'];
-                    $table->store();
-                }
-            }
-
-            if (empty($result['pUserID']) or $result['pUserID'] !== $result['caUserID']) {
-                Controller::associate($result['contentID'], $result['caUserID']);
-            }
-        }
     }
 
     /**
