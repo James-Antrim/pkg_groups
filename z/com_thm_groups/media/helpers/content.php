@@ -9,7 +9,7 @@
  */
 
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text, User as UAdapter};
-use THM\Groups\Helpers\Can;
+use THM\Groups\Helpers\{Can, Pages};
 use THM\Groups\Tables\Content as Table;
 
 /**
@@ -29,7 +29,7 @@ class THM_GroupsHelperContent
     {
         $query = DB::query();
 
-        if (self::isAssociated($contentID)) {
+        if (Pages::userID($contentID)) {
             $query->update(DB::qn('#__groups_content'))->set(DB::qc('userID', $userID))->where(DB::qc('id', $contentID));
         }
         else {
@@ -171,27 +171,6 @@ class THM_GroupsHelperContent
     }
 
     /**
-     * Checks if the content is already associated with THM_Groups
-     *
-     * @param   int  $contentID  the id of the content
-     * @param   int  $profileID  the id of the profile associated with the content
-     *
-     * @return  int  the profileID of the associated profile if associated, otherwise 0
-     */
-    public static function isAssociated(int $contentID, int $profileID = 0): int
-    {
-        $query = DB::query();
-        $query->select(DB::qn('profileID'))->from(DB::qn('#__thm_groups_content'))->where(DB::qc('id', $contentID));
-
-        if ($profileID) {
-            $query->where(DB::qc('profileID', $profileID));
-        }
-
-        DB::set($query);
-        return DB::integer();
-    }
-
-    /**
      * Method to change the core published state of THM Groups articles.
      *
      * @return  bool
@@ -231,11 +210,11 @@ class THM_GroupsHelperContent
      * Parses the given string to check for content associated with the component
      *
      * @param   string  $potentialContent  the segment being checked
-     * @param   int     $profileID         the ID of the profile with which this content should be associated
+     * @param   int     $userID            the ID of the profile with which this content should be associated
      *
      * @return int the id of the associated content if existent, otherwise 0
      */
-    public static function resolve(string $potentialContent, int $profileID = 0): int
+    public static function resolve(string $potentialContent, int $userID = 0): int
     {
         $contentID = 0;
         if (is_numeric($potentialContent)) {
@@ -249,9 +228,7 @@ class THM_GroupsHelperContent
             return $contentID;
         }
 
-        $profileID = self::isAssociated($contentID, $profileID);
-
-        return self::isAssociated($contentID, $profileID) ? $contentID : 0;
+        return Pages::userID($contentID, $userID) ? $contentID : 0;
     }
 
     /**
@@ -323,8 +300,8 @@ class THM_GroupsHelperContent
     {
         $query = DB::query();
 
-        if (self::isAssociated($contentID)) {
-            $query->update(DB::qn('#__thm_groups_content'))->set(DB::qc('featured', $value))->where(DB::qc('id', $contentID));
+        if (Pages::userID($contentID)) {
+            $query->update(DB::qn('#__groups_content'))->set(DB::qc('featured', $value))->where(DB::qc('id', $contentID));
         }
         else {
             $query->insert(DB::qn('#__thm_groups_content'))

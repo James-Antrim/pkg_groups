@@ -11,7 +11,7 @@
 namespace THM\Groups\Helpers;
 
 use THM\Groups\Adapters\Database as DB;
-use THM\Groups\Tables\Content as CTable;
+use THM\Groups\Tables\{Content as CTable, Pages as PTable};
 
 /**
  * Class for the handling of content related information.
@@ -22,7 +22,7 @@ class Pages
 
     public const FEATURED = 1, UNFEATURED = 0;
 
-    public const featureStates = [
+    public const FEATURED_STATES = [
         self::FEATURED   => [
             'class'  => 'publish',
             'column' => 'featured',
@@ -40,7 +40,7 @@ class Pages
     public const ARCHIVED = 2, PUBLISHED = 1, TRASHED = -2, UNPUBLISHED = 0;
 
     // todo joomla has some kind of drop down here
-    public const publishedStates = [
+    public const STATES = [
         self::ARCHIVED,
         self::PUBLISHED,
         self::TRASHED,
@@ -61,22 +61,6 @@ class Pages
             return $table->alias;
         }
         return '';
-    }
-
-    /**
-     * Gets the id of the author associated with the content.
-     *
-     * @param   int  $contentID
-     *
-     * @return int
-     */
-    public static function authorID(int $contentID): int
-    {
-        $table = new CTable();
-        if ($table->load($contentID)) {
-            return $table->created_by;
-        }
-        return 0;
     }
 
     /**
@@ -112,5 +96,25 @@ class Pages
             ->where(DB::qcs([['c.alias', $alias, '=', true], ['p.userID', $userID]]));
         DB::set($query);
         return DB::integer();
+    }
+
+    /**
+     * Gets the id of the author associated with the content.
+     *
+     * @param   int  $contentID
+     * @param   int  $userID
+     *
+     * @return int
+     */
+    public static function userID(int $contentID, int $userID = 0): int
+    {
+        $table = new PTable();
+        if ($table->load(['contentID' => $contentID])) {
+            if ($userID) {
+                return $userID === $table->userID ? $table->userID : 0;
+            }
+            return $table->userID;
+        }
+        return 0;
     }
 }

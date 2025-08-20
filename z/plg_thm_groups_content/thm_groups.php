@@ -10,13 +10,13 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Helpers\Categories;
-
 defined('_JEXEC') or die;
 
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/renderer.php';
-require_once JPATH_ROOT . '/media/com_thm_groups/helpers/router.php';
+
+use THM\Groups\Adapters\Application;
+use THM\Groups\Helpers\{Categories, Pages};
 
 /**
  * THM Groups content plugin
@@ -29,44 +29,41 @@ class PlgContentThm_Groups extends JPlugin
     /**
      * Ensures consistency for content saved in the context of com_thm_groups
      *
-     * @param   string   $context  The context of the content passed to the plugin
-     * @param   object   $article  A JTableContent object
-     * @param   boolean  $isNew    If the content is just about to be created
+     * @param   string  $context  The context of the content passed to the plugin
+     * @param   object  $article  A JTableContent object
+     * @param   bool    $isNew    If the content is just about to be created
      *
-     * @return  boolean   true if the groups associations were saved correctly or irrelevant, otherwise false
+     * @return  bool
      */
-    public function onContentAfterSave($context, $article, $isNew)
+    public function onContentAfterSave(string $context, $article, bool $isNew = false): bool
     {
         // Don't run this plugin when the content context is not correct or dependencies are missing
         if (($context != 'com_content.form' and $context != 'com_content.article')) {
             return true;
         }
 
-        $profileID = Categories::userID($article->catid);
-
         // Irrelevant
-        if (empty($profileID)) {
+        if (!$userID = Categories::userID($article->catid)) {
             return true;
         }
 
-        $associationExists = THM_GroupsHelperContent::isAssociated($article->id, $profileID);
-        if ($associationExists) {
+        if (Pages::userID($article->id, $userID)) {
             return true;
         }
 
-        return THM_GroupsHelperContent::associate($article->id, $profileID);
+        return THM_GroupsHelperContent::associate($article->id, $userID);
     }
 
     /**
      * Ensures consistency for content saved in the context of com_thm_groups
      *
-     * @param   string   $context  The context of the content passed to the plugin
-     * @param   object   $article  A JTableContent object
-     * @param   boolean  $isNew    If the content is just about to be created
+     * @param   string  $context  The context of the content passed to the plugin
+     * @param   object  $article  A JTableContent object
+     * @param   bool    $isNew    If the content is just about to be created
      *
-     * @return  boolean   true if the groups associations were saved correctly or irrelevant, otherwise false
+     * @return  bool
      */
-    public function onContentBeforeSave($context, $article, $isNew)
+    public function onContentBeforeSave(string $context, $article, bool $isNew = false): bool
     {
         // Don't run this plugin when the content context is not correct or dependencies are missing
         if (($context != 'com_content.form' and $context != 'com_content.article')) {
@@ -90,19 +87,19 @@ class PlgContentThm_Groups extends JPlugin
      *
      * @param   string   $context  The context of the content being passed to the plugin.
      * @param   mixed   &$row      An object with a "text" property or the string to be removed.
-     * @param   integer  $page     Optional page number. Unused. Defaults to zero.
+     * @param   int      $page     Optional page number. Unused. Defaults to zero.
      *
-     * @return  boolean    True on success.
+     * @return  bool    True on success.
      * @throws Exception
      */
-    public function onContentPrepare($context, &$row, $page = 0)
+    public function onContentPrepare(string $context, &$row, int $page = 0): bool
     {
         // Don't run this plugin when the content is being indexed or dependencies are missing
         if ($context == 'com_finder.indexer') {
             return true;
         }
 
-        $sef = JFactory::getConfig()->get('sef', 1);
+        $sef = Application::configuration()->get('sef', 1);
 
         if (is_object($row)) {
             THM_GroupsHelperRenderer::contentURLS($row->text);

@@ -10,13 +10,13 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Helpers\Users;
-
-require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/profiles.php';
 
-use THM\Groups\Helpers\Pages;
+use THM\Groups\Helpers\{Pages, Users};
 
+/**
+ * Validates URL parameters.
+ */
 class GroupsValidator
 {
     /**
@@ -57,12 +57,9 @@ class GroupsValidator
                 return 0;
             }
 
+            $profileID = empty($query['profileID']) ? 0 : $query['profileID'];
             if (!empty($query['id']) and Pages::alias($query['id'])) {
-                $profileID = empty($query['profileID']) ?
-                    THM_GroupsHelperContent::isAssociated($query['id']) :
-                    THM_GroupsHelperContent::isAssociated($query['id'], $query['profileID']);
-
-                if (empty($profileID)) {
+                if (!$profileID = Pages::userID($query['id'], $profileID)) {
                     return false;
                 }
 
@@ -71,7 +68,7 @@ class GroupsValidator
 
                 return true;
             }
-            elseif (!empty($query['profileID']) and Users::alias($query['profileID'])) {
+            elseif ($profileID and Users::alias($profileID)) {
                 $query['view'] = 'profile';
 
                 return true;

@@ -13,8 +13,12 @@
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
 
 use Joomla\CMS\Language\Text;
+use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\{Categories, Pages, Users};
 
+/**
+ * Parses URL parameters.
+ */
 class GroupsParser
 {
     /**
@@ -103,7 +107,7 @@ class GroupsParser
                         return [];
                     }
 
-                    $return['profileID'] = Pages::authorID($return['id']);
+                    $return['profileID'] = Pages::userID($return['id']);
 
                     $return['view'] = $pathItems[0];
                     break;
@@ -128,7 +132,7 @@ class GroupsParser
 
             // Invalid profile id, but valid content id => use the profileID associated with the content
             if (empty($return['profileID']) and !empty($return['id'])) {
-                $return['profileID'] = Pages::authorID($return['id']);
+                $return['profileID'] = Pages::userID($return['id']);
             }
 
             $return['view'] = 'content';
@@ -157,7 +161,7 @@ class GroupsParser
         $secondLastItem = array_pop($pathItems);
         $secondLastItem = rawurldecode($secondLastItem ?: '');
 
-        $lang = JFactory::getLanguage();
+        $lang = Application::language();
         $lang->load('com_thm_groups');
 
         // Resolve modern sef links first
@@ -301,7 +305,7 @@ class GroupsParser
             }
         }
         elseif ($contentID = THM_GroupsHelperContent::resolve($lastItem)) {
-            if ($profileID = THM_GroupsHelperContent::isAssociated($contentID)) {
+            if ($profileID = Pages::userID($contentID)) {
                 $query['id']        = $contentID;
                 $query['profileID'] = $profileID;
                 $query['view']      = 'content';

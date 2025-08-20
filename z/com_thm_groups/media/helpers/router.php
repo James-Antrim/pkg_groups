@@ -40,7 +40,7 @@ class THM_GroupsHelperRouter
             return $default;
         }
 
-        return !empty(JFactory::getConfig()->get('sef')) ?
+        return !empty(Application::configuration()->get('sef')) ?
             self::buildSEFURL($params, $asString) : self::buildRawURL($params, $asString);
     }
 
@@ -68,7 +68,7 @@ class THM_GroupsHelperRouter
             $query['format'] = $params['format'];
         }
 
-        return $complete ? URI::base() . '?' . http_build_query($query) : $query;
+        return $complete ? Uri::base() . '?' . http_build_query($query) : $query;
     }
 
     /**
@@ -107,7 +107,7 @@ class THM_GroupsHelperRouter
             return $return;
         }
 
-        return URI::base() . implode('/', $return);
+        return Uri::base() . implode('/', $return);
     }
 
     /**
@@ -119,17 +119,15 @@ class THM_GroupsHelperRouter
      */
     public static function getMenuByPath(string $possibleMenuPath): array
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
+        $query = DB::query();
 
-        $query->select('id, title')->select($query->concatenate(["'" . Uri::base() . "'", 'path']) . ' AS URL')
-            ->from('#__menu')
-            ->where("path = '$possibleMenuPath'")->where("link LIKE '%option=com_thm_groups%'");
-        $dbo->setQuery($query);
+        $query->select(DB::qn(['id', 'title']))
+            ->select($query->concatenate(["'" . Uri::base() . "'", 'path']) . ' AS URL')
+            ->from(DB::qn('#__menu'))
+            ->where(DB::qcs([['path', $possibleMenuPath, '=', true], ['link', '%option=com_groups%', 'LIKE', true]]));
+        DB::set($query);
 
-        $menu = DB::array();
-
-        return empty($menu) ? [] : $menu;
+        return DB::array();
     }
 
     /**
@@ -141,7 +139,7 @@ class THM_GroupsHelperRouter
      */
     public static function getPathItems(string $url): array
     {
-        $rawPath = str_replace(URI::base(), '', $url);
+        $rawPath = str_replace(Uri::base(), '', $url);
 
         // The URL is external and therefore irrelevant
         if ($rawPath === $url) {
@@ -175,7 +173,7 @@ class THM_GroupsHelperRouter
         $pathway     = Application::pathway();
         $profileName = Profiles::name($profileID);
         $profileURL  = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID]);
-        $session     = JFactory::getSession();
+        $session     = Application::session();
 
         $pathway->setPathway([]);
 
@@ -189,7 +187,7 @@ class THM_GroupsHelperRouter
                 $referrerName = $session->get('referrerName', '', 'thm_groups');
                 $referrerURL  = $session->get('referrerUrl', '', 'thm_groups');
                 if (empty($referrerName) or empty($referrerURL)) {
-                    $pathway->addItem(Text::_('HOME'), URI::base());
+                    $pathway->addItem(Text::_('HOME'), Uri::base());
                 }
                 else {
                     $pathway->addItem($referrerName, $referrerURL);
@@ -199,7 +197,7 @@ class THM_GroupsHelperRouter
                 $possibleMenuPath = implode('/', $pathItems);
                 $menu             = self::getMenuByPath($possibleMenuPath);
                 if (empty($menu)) {
-                    $pathway->addItem(Text::_('HOME'), URI::base());
+                    $pathway->addItem(Text::_('HOME'), Uri::base());
                 }
                 else {
                     $session->set('referrerName', $menu['title'], 'thm_groups');
@@ -215,7 +213,7 @@ class THM_GroupsHelperRouter
             $referrerName = $session->get('referrerName', '', 'thm_groups');
             $referrerURL  = $session->get('referrerUrl', '', 'thm_groups');
             if (empty($referrerName) or empty($referrerURL)) {
-                $pathway->addItem(Text::_('HOME'), URI::base());
+                $pathway->addItem(Text::_('HOME'), Uri::base());
             }
             else {
                 $pathway->addItem($referrerName, $referrerURL);
@@ -273,7 +271,7 @@ class THM_GroupsHelperRouter
             }
             elseif ($contentID) {
                 $query['id']        = $contentID;
-                $query['profileID'] = Pages::authorID($contentID);
+                $query['profileID'] = Pages::userID($contentID);
                 $query['view']      = 'content';
                 unset($query['catid']);
             }

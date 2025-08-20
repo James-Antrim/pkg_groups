@@ -14,6 +14,9 @@ namespace THM\Groups\Helpers;
 use Joomla\CMS\Helper\ContentHelper;
 use THM\Groups\Adapters\{Application, User};
 
+/**
+ * Determines user permissions.
+ */
 class Can
 {
     /**
@@ -167,7 +170,7 @@ class Can
                     return true;
                 }
 
-                $userID = Pages::authorID($resourceID);
+                $userID = Pages::userID($resourceID);
                 return ($userID === User::id() and Users::content($userID));
             case 'com_content.category':
                 $asset = "$context.$resourceID";

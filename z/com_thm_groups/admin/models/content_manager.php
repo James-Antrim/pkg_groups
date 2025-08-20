@@ -11,7 +11,7 @@
 defined('_JEXEC') or die;
 
 use Joomla\Database\DatabaseQuery;
-use THM\Groups\Adapters\{Application, Database as DB, HTML, Text};
+use THM\Groups\Adapters\{Application, Database as DB, HTML, Text, User};
 use THM\Groups\Helpers\{Can, Categories, Pages};
 use THM\Groups\Models\ListModel;
 
@@ -105,14 +105,13 @@ class THM_GroupsModelContent_Manager extends ListModel
         $generalOrder    = '<input type="text" style="display:none" name="order[]" ';
         $generalOrder    .= 'value="XX" class="width-20 text-area-order " />';
         $generalSortIcon = '<span class="sortable-handlerXXX"><i class="icon-menu"></i></span>';
-        $canSort         = JFactory::getUser()->authorise('core.edit', 'com_thm_groups');
+        $canSort         = User::authorise('core.edit', 'com_thm_groups');
         $orderingActive  = $this->state->get('list.ordering') == 'content.ordering';
-        $user            = JFactory::getUser();
 
         $index = 0;
 
         foreach ($items as $item) {
-            $canEdit   = $user->authorise('core.edit', 'com_content.article.' . $item->id);
+            $canEdit   = User::authorise('core.edit', 'com_content.article.' . $item->id);
             $iconClass = '';
 
             if (!$canEdit) {
@@ -147,7 +146,7 @@ class THM_GroupsModelContent_Manager extends ListModel
 
             $authorParts       = explode('->', $item->author_name);
             $return[$index][2] = count($authorParts) > 1 ? "$authorParts[0], $authorParts[1]" : $authorParts[0];
-            $return[$index][3] = HTML::toggle($item->id, Pages::featureStates[$item->featured], 'pages');
+            $return[$index][3] = HTML::toggle($item->id, Pages::FEATURED_STATES[$item->featured], 'pages');
             $return[$index][4] = THM_GroupsHelperContent::getStatusDropdown($index, $item);
 
             $index++;
