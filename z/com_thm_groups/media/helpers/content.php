@@ -130,24 +130,6 @@ class THM_GroupsHelperContent
     }
 
     /**
-     * Retrieves the title for the given content id
-     *
-     * @param   int  $contentID  the id of the content
-     *
-     * @return  string the alias of the content
-     */
-    public static function getTitle(int $contentID): string
-    {
-        $query = DB::query();
-        $query->select(DB::qn('cc.title'))
-            ->from(DB::qn('#__content', 'cc'))
-            ->innerJoin(DB::qn('#__thm_groups_content', 'gc'), DB::qc('gc.id', 'cc.id'))
-            ->where(DB::qc('cc.id', $contentID));
-        DB::set($query);
-        return DB::string();
-    }
-
-    /**
      * Method to change the core published state of THM Groups articles.
      *
      * @return  bool

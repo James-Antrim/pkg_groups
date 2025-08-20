@@ -99,6 +99,22 @@ class Pages
     }
 
     /**
+     * Gets the title of the content with the given id.
+     *
+     * @param   int  $contentID
+     *
+     * @return string
+     */
+    public static function title(int $contentID): string
+    {
+        $table = new CTable();
+        if ($table->load($contentID)) {
+            return $table->title;
+        }
+        return '';
+    }
+
+    /**
      * Gets the id of the author associated with the content.
      *
      * @param   int  $contentID

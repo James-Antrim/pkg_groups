@@ -221,7 +221,7 @@ class THM_GroupsHelperRouter
 
             $pathway->addItem($profileName, $profileURL);
 
-            $contentTitle  = THM_GroupsHelperContent::getTitle($contentID);
+            $contentTitle  = Pages::title($contentID);
             $contentParams = ['view' => 'content', 'profileID' => $profileID, 'id' => $contentID];
             $contentURL    = THM_GroupsHelperRouter::build($contentParams);
             $pathway->addItem($contentTitle, $contentURL);
