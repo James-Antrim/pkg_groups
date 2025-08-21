@@ -33,37 +33,6 @@ class THM_GroupsHelperContent
     }
 
     /**
-     * Returns dropdown for changing content status
-     *
-     * @param   int|string  $index  the current row index
-     * @param   stdClass    $item   the content item being iterated
-     *
-     * @return  string the HTML for the status selection dialog
-     */
-    public static function getStatusDropdown(int|string $index, stdClass $item): string
-    {
-        $status    = '';
-        $canChange = Can::changeState("com_content.article", $item->id);
-
-        $task = 'content.publish';
-
-        $status .= '<div class="btn-group">';
-        $status .= JHtml::_('jgrid.published', $item->state, $index, "$task.", $canChange, 'cb', $item->publish_up,
-            $item->publish_down);
-
-        $archive = $item->state == 2 ? 'unarchive' : 'archive';
-        $status  .= JHtml::_('actionsdropdown.' . $archive, 'cb' . $index, $task);
-
-        $trash  = $item->state == -2 ? 'untrash' : 'trash';
-        $status .= JHtml::_('actionsdropdown.' . $trash, 'cb' . $index, $task);
-
-        $status .= JHtml::_('actionsdropdown.render', DB::escape($item->title));
-        $status .= "</div>";
-
-        return $status;
-    }
-
-    /**
      * Method to change the core published state of THM Groups articles.
      *
      * @return  bool

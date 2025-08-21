@@ -41,10 +41,30 @@ class Pages
 
     // todo joomla has some kind of drop down here
     public const STATES = [
-        self::ARCHIVED,
-        self::PUBLISHED,
-        self::TRASHED,
-        self::UNPUBLISHED
+        self::ARCHIVED    => [
+            'class'  => 'archive',
+            'column' => 'state',
+            'task'   => 'hide',
+            'tip'    => 'TOGGLE_TIP_ARCHIVED'
+        ],
+        self::PUBLISHED   => [
+            'class'  => 'publish',
+            'column' => 'state',
+            'task'   => 'unpublish',
+            'tip'    => 'TOGGLE_TIP_PUBLISHED'
+        ],
+        self::TRASHED     => [
+            'class'  => 'trash',
+            'column' => 'state',
+            'task'   => 'publish',
+            'tip'    => 'TOGGLE_TIP_TRASHED'
+        ],
+        self::UNPUBLISHED => [
+            'class'  => 'unpublish',
+            'column' => 'state',
+            'task'   => 'publish',
+            'tip'    => 'TOGGLE_TIP_UNPUBLISHED'
+        ],
     ];
 
     /**

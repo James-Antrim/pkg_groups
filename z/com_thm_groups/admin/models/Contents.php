@@ -19,7 +19,7 @@ use THM\Groups\Models\ListModel;
 /**
  * THM_GroupsModelContent_Manager is a class which deals with the information preparation for the administrator view.
  */
-class THM_GroupsModelContent_Manager extends ListModel
+class Contents extends ListModel
 {
     protected string $defaultOrdering = 'author_name';
 
@@ -148,7 +148,7 @@ class THM_GroupsModelContent_Manager extends ListModel
             $authorParts       = explode('->', $item->author_name);
             $return[$index][2] = count($authorParts) > 1 ? "$authorParts[0], $authorParts[1]" : $authorParts[0];
             $return[$index][3] = HTML::toggle($item->id, Pages::FEATURED_STATES[$item->featured], 'pages');
-            $return[$index][4] = THM_GroupsHelperContent::getStatusDropdown($index, $item);
+            $return[$index][4] = HTML::toggle($item->id, Pages::STATES[$item->status], 'pages');
 
             $index++;
         }

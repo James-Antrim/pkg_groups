@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Views\HTML;
 
+use Exception;
 use Joomla\CMS\MVC\View\ListView as Core;
 use Joomla\CMS\Uri\Uri;
 use stdClass;
@@ -138,12 +139,23 @@ abstract class ListView extends Core
         }
     }
 
-    /** @inheritDoc */
+    /**
+     * Execute and display a template script.
+     *
+     * @param   string  $tpl  The name of the template file to parse; automatically searches through the template paths.
+     *
+     * @return  void
+     */
     public function display($tpl = null): void
     {
         $this->authorize();
 
-        parent::display($tpl);
+        try {
+            parent::display($tpl);
+        }
+        catch (Exception $exception) {
+            Application::error($exception->getCode());
+        }
     }
 
     /**

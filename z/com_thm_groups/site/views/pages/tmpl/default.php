@@ -9,16 +9,16 @@
  * @link        www.thm.de
  */
 
-// No direct access to this file
-defined('_JEXEC') or die;
+use Joomla\CMS\Uri\Uri;
+use THM\Groups\Adapters\Text;
 
-$saveOrderingUrl = JUri::base() . '?option=com_thm_groups&task=content.saveOrderAjax&tmpl=component';
+$saveOrderingUrl = Uri::base() . '?option=com_thm_groups&task=content.saveOrderAjax&tmpl=component';
 JHtml::_('sortablelist.sortable', 'content_manager-list', 'adminForm', null, $saveOrderingUrl);
 $rowClass = $this->canEdit ? 'order dndlist-sortable' : '';
 
 ?>
 <div id="j-main-container" class="manager-page">
-    <form action="<?php echo JURI::base(); ?>" id="adminForm" method="post" name="adminForm">
+    <form action="<?php echo Uri::base(); ?>" id="adminForm" method="post" name="adminForm">
         <div class="page-header">
             <h2 class="groups-toolbar">
                 <?php echo $this->pageTitle; ?>
@@ -35,14 +35,14 @@ $rowClass = $this->canEdit ? 'order dndlist-sortable' : '';
                         <th class="btn-column"></th>
                     <?php endif; ?>
                     <th>
-                        <?php echo JText::_('COM_THM_GROUPS_TITLE'); ?>
+                        <?php echo Text::_('TITLE'); ?>
                     </th>
                     <?php if ($this->canEdit) : ?>
-                        <th class="hasTip publish-column" title="<?php echo JText::_('COM_THM_GROUPS_STATUS_TIP') ?>">
-                            <?php echo JText::_('COM_THM_GROUPS_STATUS'); ?>
+                        <th class="hasTip publish-column" title="<?php echo Text::_('STATUS_TIP') ?>">
+                            <?php echo Text::_('STATUS'); ?>
                         </th>
-                        <th class="hasTip btn-column" title="<?php echo JText::_('COM_THM_GROUPS_MENU_TIP') ?>">
-                            <?php echo JText::_('COM_THM_GROUPS_MENU'); ?>
+                        <th class="hasTip btn-column" title="<?php echo Text::_('MENU_TIP') ?>">
+                            <?php echo Text::_('MENU'); ?>
                         </th>
                     <?php endif; ?>
                 </tr>
