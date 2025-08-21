@@ -10,12 +10,10 @@
 
 namespace THM\Groups\Controllers;
 
-use Joomla\CMS\Table\Table;
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\Input;
+use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Helpers\Can;
-use THM\Groups\Tables\Incremented;
 
+/** @inheritDoc */
 class User extends FormController
 {
     use Associated;
@@ -25,7 +23,7 @@ class User extends FormController
     /** @inheritDoc */
     protected function authorize(): void
     {
-        if (!Can::saveUser(Input::id())) {
+        if (!Can::save('com_users', Input::id())) {
             Application::error(403);
         }
     }
@@ -95,24 +93,4 @@ class User extends FormController
 
         return $this->store($table, $data, $id);
     }
-
-    /** @inheritDoc */
-    protected function store(Table $table, array $data, int $id = 0): int
-    {
-        if ($id and !$table->load($id)) {
-            Application::message('GROUPS_412', Application::ERROR);
-
-            return $id;
-        }
-
-        if ($table->save($data)) {
-            /** @var Incremented $table */
-            return $table->id;
-        }
-
-        Application::message($table->getError(), Application::ERROR);
-
-        return $id;
-    }
-
 }

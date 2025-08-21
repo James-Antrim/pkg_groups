@@ -18,40 +18,6 @@ use THM\Groups\Tables\Content as CTable;
 class THM_GroupsHelperContent
 {
     /**
-     * Method which checks user edit state permissions for content.
-     *
-     * @param   int  $contentID  the id of the content
-     *
-     * @return  bool
-     */
-    public static function canEditState(int $contentID): bool
-    {
-        if (Can::edit('com_content.article', $contentID)) {
-            return true;
-        }
-
-        return UAdapter::authorise('core.edit.state', "com_content.article.$contentID");
-    }
-
-    /**
-     * Checks whether the user has permission to edit the content associated with the ids provided.
-     *
-     * @param   array  $contentIDs  the content ids submitted by the form
-     *
-     * @return bool
-     */
-    private static function canReorder(array $contentIDs): bool
-    {
-        foreach ($contentIDs as $contentID) {
-            if (!self::canEditState($contentID)) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Disassociates content
      *
      * @param   int  $contentID  the id of the content
@@ -77,7 +43,7 @@ class THM_GroupsHelperContent
     public static function getStatusDropdown(int|string $index, stdClass $item): string
     {
         $status    = '';
-        $canChange = self::canEditState($item->id);
+        $canChange = Can::changeState("com_content.article", $item->id);
 
         $task = 'content.publish';
 
@@ -110,7 +76,7 @@ class THM_GroupsHelperContent
 
         $contentID = $contentIDs[0];
 
-        if (!self::canEditState($contentID)) {
+        if (!Can::changeState('com_content.article', $contentID)) {
             Application::message(Text::_('JLIB_RULES_NOT_ALLOWED'), Application::ERROR);
 
             return false;
@@ -168,7 +134,7 @@ class THM_GroupsHelperContent
      */
     public static function saveorder(array $contentIDs, array $order): bool
     {
-        if (empty($contentIDs) or !self::canReorder($contentIDs)) {
+        if (empty($contentIDs) or !Can::reorderPages($contentIDs)) {
             return false;
         }
 

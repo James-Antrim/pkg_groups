@@ -11,8 +11,7 @@
 
 namespace THM\Groups\Helpers;
 
-use Joomla\CMS\Helper\ContentHelper;
-use THM\Groups\Adapters\{Application, User};
+use THM\Groups\Adapters\User;
 
 /**
  * Determines user permissions.
@@ -28,7 +27,7 @@ class Can
      */
     public static function administrate(string $context = 'com_users'): bool
     {
-        return ContentHelper::getActions($context)->get('core.admin');
+        return (User::authorise() or User::authorise('core.admin', $context));
     }
 
     /**
@@ -44,21 +43,56 @@ class Can
             return true;
         }
 
-        $actions = ContentHelper::getActions($context);
-
-        return ($actions->get('core.create') and $actions->get('core.edit') and $actions->get('core.edit.state'));
+        return (
+            User::authorise('core.create', $context)
+            and User::authorise('core.edit', $context)
+            and User::authorise('core.edit.state', $context)
+        );
     }
 
     /**
      * Checks whether the user has access to change resource states.
      *
-     * @param   string  $context  the context in which access is being checked
+     * @param   string  $context     the context of the access request
+     * @param   int     $resourceID  the id of the resource if relevant
      *
      * @return bool true if the user has 'create' access, otherwise false
      */
-    public static function changeState(string $context = 'com_users'): bool
+    public static function changeState(string $context = 'com_users', int $resourceID = 0): bool
     {
-        return (self::administrate($context) or ContentHelper::getActions($context)->get('core.edit.state'));
+        if (
+            User::authorise('core.admin', $context)
+            or User::authorise('core.manage', $context)
+            or User::authorise('core.edit', $context)
+            or User::authorise('core.edit.state', $context)) {
+            return true;
+        }
+
+        // If no resource id was given there is nothing more to check
+        if (empty($resourceID)) {
+            return false;
+        }
+
+        switch ($context) {
+            case 'com_content.article':
+                if (User::authorise('core.edit.state', "com_content.article.$resourceID")) {
+                    return true;
+                }
+
+                $userID = Pages::userID($resourceID);
+                return ($userID === User::id() and Users::content($userID));
+            case 'com_content.category':
+                $asset = "$context.$resourceID";
+                if (User::authorise('core.edit.state', $asset) or User::authorise('core.edit.own', $asset)) {
+                    return true;
+                }
+
+                // Rights specific to the groups component, publication state ignored because of identity at this level.
+                $userID = Categories::userID($resourceID);
+                return ($userID === User::id() and Users::content($userID));
+            default:
+                return false;
+        }
     }
 
     /**
@@ -67,20 +101,19 @@ class Can
      */
     public static function configure(): bool
     {
-        return (self::administrate() or ContentHelper::getActions('com_users')->get('core.options'));
+        return (self::administrate() or User::authorise('core.options', 'com_users'));
     }
 
     /**
      * Checks whether the user has access to create component resources.
      *
-     * @param   string  $context     the context in which access is being checked
-     * @param   int     $resourceID  the id of the category context as applicable
+     * @param   string  $context     the context of the access request
+     * @param   int     $resourceID  the id of the resource if relevant
      *
      * @return bool
      */
     public static function create(string $context = 'com_users', int $resourceID = 0): bool
     {
-        // Basic context rights
         if (
             User::authorise('core.admin', $context)
             or User::authorise('core.manage', $context)
@@ -113,7 +146,6 @@ class Can
                 return ($userID === User::id() and Users::content($userID));
             default:
                 return false;
-
         }
     }
 
@@ -138,14 +170,14 @@ class Can
      */
     public static function delete(string $context = 'com_users'): bool
     {
-        return (self::administrate($context) or ContentHelper::getActions($context)->get('core.delete'));
+        return (self::administrate($context) or User::authorise('core.delete', $context));
     }
 
     /**
      * Checks whether the user has access to create component resources.
      *
-     * @param   string  $context     the context in which access is being checked
-     * @param   int     $resourceID  the id of a specific resource as relevant
+     * @param   string  $context     the context of the access request
+     * @param   int     $resourceID  the id of the resource if relevant
      *
      * @return bool
      */
@@ -183,7 +215,6 @@ class Can
                 return ($userID === User::id() and Users::content($userID));
             default:
                 return false;
-
         }
     }
 
@@ -205,72 +236,73 @@ class Can
      */
     public static function manage(string $context = 'com_users'): bool
     {
-        return (self::administrate() or ContentHelper::getActions($context)->get('core.manage'));
+        return (self::administrate() or User::authorise('core.manage', $context));
     }
 
     /**
-     * Checks whether the user has access to publish users or a specific user.
-     * @return bool true if the user has 'manage' access, otherwise false
+     * Checks whether the user is authorized to reorder the resources in the given context.
+     *
+     * @param   string  $context     the context of the access request
+     * @param   int     $resourceID  the id of the resource if relevant
+     *
+     * @return bool
      */
-    public static function publish(int $id = 0): bool
+    public static function reorder(string $context = 'com_content', int $resourceID = 0): bool
     {
-        if (self::changeState()) {
+        if (self::administrate($context) or self::manage($context) or self::changeState($context, $resourceID)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether the user is authorized to reorder the resources in the given context.
+     *
+     * @param   array  $resourceIDs  the ids of the resources
+     *
+     * @return bool
+     */
+    public static function reorderPages(array $resourceIDs): bool
+    {
+        if (self::reorder()) {
             return true;
         }
 
-        if (!$id) {
-            return false;
+        foreach ($resourceIDs as $resourceID) {
+            if (!Can::changeState("com_content.article", $resourceID)) {
+                return false;
+            }
         }
 
-        // People may update their own status attributes.
-        return self::identity($id);
+        return true;
     }
 
     /**
      * Check whether the user has the access required to save the resource.
      *
-     * @param   int     $id       the id of the resource to save
-     * @param   string  $context  the context in which access is being checked
+     * @param   string  $context     the context of the access request
+     * @param   int     $resourceID  the id of the resource if relevant
      *
      * @return bool
      */
-    public static function save(string $context, int $id = 0): bool
+    public static function save(string $context, int $resourceID = 0): bool
     {
-        if (self::administrate($context)) {
+        if (self::administrate($context) or self::manage($context)) {
             return true;
         }
 
         switch ($context) {
-            // Someone creating or editing content or the profile associated category
-            case 'com_content.category':
-                // user is groups-associated with category and global or individual enable
-                // user can edit or save in with content permissions on this category
-                return false;
             case 'com_content':
-                // groups related content
-                return (self::edit($context, $id) or self::create($context));
-            case 'com_groups':
-                if (self::manage()) {
-                    return true;
-                }
-                return (self::edit($context, $id) or self::create($context));
+            case 'com_groups' :
+                return $resourceID ? self::edit($context, $resourceID) : self::create($context);
             case 'com_users':
-                return (self::edit($context, $id) or self::create($context) or ($id and self::identity($id)));
+                if ($resourceID) {
+                    return (self::edit($context, $resourceID) or self::identity($resourceID));
+                }
+                return self::create($context);
             default:
                 return false;
         }
-    }
-
-    /**
-     * Check whether the user has the access required to save a person as a resource.
-     *
-     * @param   int  $id
-     *
-     * @return bool
-     */
-    public static function saveUser(int $id): bool
-    {
-        return (self::save('com_users', $id) or ($id and self::identity($id)));
     }
 
     /**
@@ -286,23 +318,14 @@ class Can
             return true;
         }
 
-        $public = !Application::backend();
-
         // todo: square this with admin menu generation
         return match ($view) {
             // Administrative views and admin access was already checked
             'Attribute', 'Attributes',
             'Role', 'Roles',
             'Template', 'Templates' => false,
-
-            // com users rights and no public display
-            'Group', 'Groups' => self::manage(),
-
-            // com content rights or public display
-            'Content', 'Contents' => ($public or self::manage('com_content')),
-
-            // com users rights or public display
-            'Persons' => ($public or self::manage()),
+            'Group', 'Groups', 'User', 'Users' => self::manage(),
+            'Content', 'Contents' => self::manage('com_content'),
 
             // Development queue
             //'Level', 'Levels' => false,
@@ -311,20 +334,4 @@ class Can
             default => true,
         };
     }
-
-    /**
-     * com_user hard coded permissions
-     * -------------------------------
-     * Admin:
-     * mail:???
-     * notes (category based)
-     * - add - core.create (this category, but none works for whatever reason?)
-     * - actions - not empty state (?) + (core.admin or core.edit.state)
-     * -- archive, checkin, publish, unpublish - core.edit.state
-     * -- trash - !trash state and core.edit.state
-     * - delete - trash state and core.delete
-     * note (category based)
-     * - apply & save - core.create (any category) or core.edit (this category)
-     * - version - core.edit (w/ com_contenthistory)
-     */
 }
