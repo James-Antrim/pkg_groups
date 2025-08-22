@@ -49,5 +49,4 @@ class Pages extends ListController
             }
         }
     }
-
 }

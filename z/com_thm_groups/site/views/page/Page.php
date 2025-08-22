@@ -2,17 +2,12 @@
 /**
  * @package     THM_Groups
  * @extension   com_thm_groups
- * @author      Alexander Boll, <alexander.boll@mni.thm.de>
- * @author      Ilja Michajlow, <ilja.michajlow@mni.thm.de>
+ * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
 
-// No direct access
-use THM\Groups\Views\HTML\Titled;
-
-defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 require_once HELPERS . 'profiles.php';
@@ -22,14 +17,18 @@ require_once JPATH_COMPONENT . '/../com_content/models/article.php';
 
 jimport('joomla.application.component.helper');
 
+use Joomla\CMS\Component\ComponentHelper;
+use THM\Groups\Adapters\Text;
+use THM\Groups\Views\HTML\Titled;
+
 /**
  * View class for a list of articles
  */
-class THM_GroupsViewContent extends JViewLegacy
+class Page extends JViewLegacy
 {
     use Titled;
 
-    protected $item;
+    protected stdClass $item;
 
     protected $params;
 
@@ -45,7 +44,7 @@ class THM_GroupsViewContent extends JViewLegacy
      * @return void
      * @throws Exception
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
         // Initialise variables.
         $app   = JFactory::getApplication();
@@ -58,7 +57,7 @@ class THM_GroupsViewContent extends JViewLegacy
         $this->print = $input->get('print', false, 'BOOL');
         $this->state = $this->get('State');
 
-        $comContentParams = JComponentHelper::getParams('com_content');
+        $comContentParams = ComponentHelper::getParams('com_content');
 
         $this->state->params              = $comContentParams;
         $this->state->params->display_num = '10';
@@ -120,7 +119,7 @@ class THM_GroupsViewContent extends JViewLegacy
 
         // Check the view access to the article (the model has already computed the values).
         if ($item->params->get('access-view') != true && (($item->params->get('show_noauth') != true && $user->get('guest')))) {
-            JError::raiseWarning(401, JText::_('JERROR_ALERTNOAUTHOR'));
+            JError::raiseWarning(401, Text::_('JERROR_ALERTNOAUTHOR'));
 
             return;
 
@@ -195,7 +194,7 @@ class THM_GroupsViewContent extends JViewLegacy
         if (!empty($this->item->page_title)) {
             $this->item->title = $this->item->title . ' - ' . $this->item->page_title;
             $pageTitle         = $this->item->title . ' - ';
-            $pageTitle         .= JText::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM',
+            $pageTitle         .= Text::sprintf('PLG_CONTENT_PAGEBREAK_PAGE_NUM',
                 $this->state->get('list.offset') + 1);
             $this->title($pageTitle);
         }
@@ -223,12 +222,13 @@ class THM_GroupsViewContent extends JViewLegacy
 
         // Process the content plugins.
         JPluginHelper::importPlugin('content');
-        $dispatcher->trigger(
+        $results = $dispatcher->trigger(
             'onContentPrepare',
             ['com_content.article', &$this->item, &$this->params, $pageNo]
         );
 
-        $this->item->event = new stdClass;
+        $this->item->event                   = new stdClass;
+        $this->item->event->onContentPrepare = trim(implode("\n", $results));
 
         $results = $dispatcher->trigger(
             'onContentAfterTitle',
