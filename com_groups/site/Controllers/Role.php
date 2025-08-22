@@ -10,11 +10,10 @@
 
 namespace THM\Groups\Controllers;
 
-use Joomla\CMS\Table\Table;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Roles as Helper;
-use THM\Groups\Tables\Incremented;
+use THM\Groups\Tables\Table;
 
 class Role extends FormController
 {
@@ -46,7 +45,6 @@ class Role extends FormController
         }
 
         if ($table->save($data)) {
-            /** @var Incremented $table */
             return $table->id;
         }
 

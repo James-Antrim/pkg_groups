@@ -11,7 +11,6 @@
 
 namespace THM\Groups\Tables;
 
-use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
@@ -21,8 +20,6 @@ use THM\Groups\Adapters\Application;
  */
 class RoleAssociations extends Table
 {
-    use Incremented;
-
     /**
      * INT(11) UNSIGNED NOT NULL (fk: user_usergroups_map.id)
      * @var int

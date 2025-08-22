@@ -10,11 +10,10 @@
 
 namespace THM\Groups\Controllers;
 
-use Joomla\CMS\Table\Table;
 use Joomla\Utilities\ArrayHelper;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
-use THM\Groups\Tables\{Incremented, ViewLevels, UserGroups};
+use THM\Groups\Tables\{Table, ViewLevels, UserGroups};
 
 class Group extends FormController
 {
@@ -103,7 +102,6 @@ class Group extends FormController
 
         }
 
-        /** @var Incremented $table */
         return $table->id;
     }
 

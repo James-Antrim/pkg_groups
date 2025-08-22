@@ -11,7 +11,6 @@
 
 namespace THM\Groups\Tables;
 
-use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
@@ -21,8 +20,6 @@ use THM\Groups\Adapters\Application;
  */
 class UserUsergroupMap extends Table
 {
-    use Incremented;
-
     /**
      * INT(10) UNSIGNED NOT NULL (user_usergroup_map.group_id -> usergroups.id)
      * @var int

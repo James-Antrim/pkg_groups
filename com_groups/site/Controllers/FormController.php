@@ -18,7 +18,7 @@ use ReflectionNamedType;
 use ReflectionObject;
 use ReflectionUnionType;
 use THM\Groups\Adapters\{Application, Input};
-use THM\Groups\Tables\Incremented;
+use THM\Groups\Tables\Table;
 
 /**
  * Handles authorization, display, data persistence and redirection for form views.
@@ -234,14 +234,13 @@ abstract class FormController extends Controller
     /**
      * Reusable function to store data in an Incremented table.
      *
-     * @param   CoreTable  $table  an Incremented table
-     * @param   array      $data   the data to store
-     * @param   int        $id     the id of the row in which to store the data
+     * @param   Table  $table  an Incremented table
+     * @param   array  $data   the data to store
+     * @param   int    $id     the id of the row in which to store the data
      *
      * @return int the id of the table row on success, otherwise the id parameter
-     * @uses Incremented
      */
-    protected function store(CoreTable $table, array $data, int $id = 0): int
+    protected function store(Table $table, array $data, int $id = 0): int
     {
         if ($id and !$table->load($id)) {
             Application::message('412', Application::ERROR);
@@ -251,7 +250,7 @@ abstract class FormController extends Controller
 
         if ($table->save($data)) {
             Application::message('SAVED');
-            /** @var Incremented $table */
+            /** @var Table $table */
             return $table->id;
         }
 

@@ -11,7 +11,6 @@
 
 namespace THM\Groups\Tables;
 
-use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
@@ -21,7 +20,6 @@ use THM\Groups\Adapters\Application;
  */
 class ProfileAttributes extends Table
 {
-    use Incremented;
     use Published;
 
     /**

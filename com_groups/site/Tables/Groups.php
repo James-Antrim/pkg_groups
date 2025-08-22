@@ -11,7 +11,6 @@
 
 namespace THM\Groups\Tables;
 
-use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
@@ -27,7 +26,7 @@ class Groups extends Table
      * INT(10) UNSIGNED NOT NULL (fk_groups_groupID -> usergroups.id)
      * @var int
      */
-    public $id;
+    public int $id;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)

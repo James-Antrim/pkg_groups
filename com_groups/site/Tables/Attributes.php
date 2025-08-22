@@ -11,7 +11,6 @@
 
 namespace THM\Groups\Tables;
 
-use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
@@ -21,7 +20,7 @@ use THM\Groups\Adapters\Application;
  */
 class Attributes extends Table
 {
-    use Incremented, Ordered;
+    use Ordered;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group'

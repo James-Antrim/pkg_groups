@@ -10,10 +10,9 @@
 
 namespace THM\Groups\Controllers;
 
-use Joomla\CMS\Table\Table;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Input;
-use THM\Groups\Tables\Incremented;
+use THM\Groups\Tables\Table;
 
 class Template extends FormController
 {
@@ -40,7 +39,6 @@ class Template extends FormController
      * @param   int    $id     the id of the row in which to store the data
      *
      * @return int the id of the table row on success, otherwise the id parameter
-     * @uses Incremented
      */
     protected function store(Table $table, array $data, int $id = 0): int
     {
@@ -59,7 +57,6 @@ class Template extends FormController
         }
 
         if ($table->save($data)) {
-            /** @var Incremented $table */
             return $table->id;
         }
 

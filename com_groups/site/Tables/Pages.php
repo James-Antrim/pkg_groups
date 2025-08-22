@@ -10,7 +10,6 @@
 
 namespace THM\Groups\Tables;
 
-use Joomla\CMS\Table\Table;
 use Joomla\Database\DatabaseDriver;
 use Joomla\Database\DatabaseInterface;
 use THM\Groups\Adapters\Application;
@@ -20,8 +19,6 @@ use THM\Groups\Adapters\Application;
  */
 class Pages extends Table
 {
-    use Incremented;
-
     /**
      * INT(11) UNSIGNED NOT NULL (fk_pages_contentID -> content.id)
      * @var int
