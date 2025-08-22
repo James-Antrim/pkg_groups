@@ -1,17 +1,14 @@
 <?php
 /**
- * @package     THM_Groups
- * @extension   com_thm_groups
- * @author      Dennis Priefer, <dennis.priefer@mni.thm.de>
- * @author      Niklas Simonis, <niklas.simonis@mni.thm.de>
- * @author      Alexander Boll, <alexander.boll@mni.thm.de>
+ * @package     Groups
+ * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
 
-use THM\Groups\Helpers\Roles;
+namespace THM\Groups\Views\HTML;
 
 require_once HELPERS . 'profiles.php';
 
@@ -20,10 +17,12 @@ define('NO', 0);
 define('ALPHASORT', 1);
 define('YES', 1);
 
+use THM\Groups\Helpers\Roles;
+
 /**
  * THMGroupsViewAdvanced class for component com_thm_groups
  */
-class THM_GroupsViewAdvanced extends JViewLegacy
+class Advanced extends BaseView
 {
     public $columns;
 
@@ -47,7 +46,7 @@ class THM_GroupsViewAdvanced extends JViewLegacy
         $this->model  = $this->getModel();
         $params       = $this->model->params;
 
-        $this->profiles    = $this->model->getProfiles();
+        $this->profiles    = $this->model->profiles();
         $defaultTemplateID = 1;
         $menuTemplateID    = $this->params->get('templateID', 0);
         $this->suppress    = $this->params->get('suppress', true);
