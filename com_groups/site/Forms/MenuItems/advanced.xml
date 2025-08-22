@@ -18,6 +18,17 @@
                 <option value="1">JYES</option>
                 <option value="0">JNO</option>
             </field>
+            <field name="columns" type="integer" label="GROUPS_COLUMN_NUMBER" first="1" last="3" step="1" default="2"/>
+            <!-- todo field: templates -->
+            <!--<field name="templateID" type="Templates" label="GROUPS_TEMPLATE" default="1"/> -->
+            <field name="sort" type="radio" label="GROUPS_SORT_BY" default="1">
+                <option value="1">GROUPS_BY_NAME</option>
+                <option value="0">GROUPS_BY_ROLE</option>
+            </field>
+            <field name="suppress" type="radio" label="GROUPS_SUPPRESS_TEXT" default="1">
+                <option value="1">JYES</option>
+                <option value="0">JNO</option>
+            </field>
         </fieldset>
     </fields>
 </form>

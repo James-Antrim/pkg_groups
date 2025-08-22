@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <menu>
+        <options var="view">
+            <option name="GROUPS_ADVANCED" msg="GROUPS_ADVANCED_DESC" value="advanced"/>
+            <option name="GROUPS_OVERVIEW" msg="GROUPS_OVERVIEW_DESC" value="overview"/>
+        </options>
+    </menu>
+</metadata>

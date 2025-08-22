@@ -40,30 +40,25 @@ class Overview extends BaseDatabaseModel
      */
     public function profiles(): array
     {
-        $query = DB::query();
-        $query->select(DB::qn(['u.id', 'surnames', 'forenames', 'alias']));
+        $select  = DB::qn(['surnames', 'forenames', 'alias']);
+        $aliased = DB::qn([['u.id', 'post.value', 'pre.value'], ['userID', 'post', 'pre']]);
+        $gc      = ['GROUP_CONCAT(DISTINCT ' . DB::qn('ra.id') . ' AS ' . DB::qn('roles')];
+        $query   = DB::query();
+        $query->select(array_merge($aliased, $gc, $select));
         $query->from(DB::qn('#__users', 'u'))
             ->innerJoin(DB::qn('#__user_usergroup_map', 'uugm'), DB::qc('uugm.user_id', 'u.id'))
+            ->leftJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('ra.mapID', 'uugm.mapID'))
+            ->leftJoin(
+                DB::qn('#__groups_profile_attributes', 'post'),
+                DB::qcs([['post.attributeID', Attributes::SUPPLEMENT_POST], ['post.userID', 'u.id']])
+            )
+            ->leftJoin(
+                DB::qn('#__groups_profile_attributes', 'pre'),
+                DB::qcs([['pre.attributeID', Attributes::SUPPLEMENT_PRE], ['pre.userID', 'u.id']])
+            )
             ->where(DB::qc('u.published', Users::PUBLISHED))
+            ->group(DB::qn('u.id'))
             ->order(implode(',', DB::qn(['u.surnames', 'u.forenames'])));
-
-        if (Input::parameters()->get('showTitles', Input::YES)) {
-            $query->select(DB::qn(['post.value', 'pre.value'], ['post', 'pre']))
-                ->leftJoin(
-                    DB::qn('#__groups_profile_attributes', 'post'),
-                    DB::qcs([
-                        ['post.attributeID', Attributes::SUPPLEMENT_POST],
-                        ['post.userID', 'u.id']
-                    ])
-                )
-                ->leftJoin(
-                    DB::qn('#__groups_profile_attributes', 'pre'),
-                    DB::qcs([
-                        ['pre.attributeID', Attributes::SUPPLEMENT_PRE],
-                        ['pre.userID', 'u.id']
-                    ])
-                );
-        }
 
         if ($terms = Input::string('search') and $terms = Text::trim($terms)) {
             $terms      = Text::filter(Text::transliterate($terms));
@@ -71,7 +66,7 @@ class Overview extends BaseDatabaseModel
             foreach ($conditions as $key => $term) {
                 $conditions[$key] = DB::qc('alias', "%$term%", 'LIKE', true);
             }
-            $query->where($conditions);
+            $query->where($conditions)->whereNotIn(DB::qn('uugm.group_id'), array_keys(Groups::STANDARD_GROUPS));
         }
         elseif ($this->groups) {
             $query->whereIn(DB::qn('uugm.group_id'), array_keys($this->groups));
@@ -82,6 +77,8 @@ class Overview extends BaseDatabaseModel
 
         DB::set($query);
 
+        // todo add this back as necessary for role resolution
+        //$addContext = (count($this->groups) !== 1);
         $profiles = [];
         foreach (DB::arrays() as $profile) {
             switch ($letter = strtoupper(mb_substr($profile['surnames'], 0, 1))) {
@@ -98,6 +95,9 @@ class Overview extends BaseDatabaseModel
             if (!array_key_exists($letter, $profiles)) {
                 $profiles[$letter] = [];
             }
+
+            // todo see if this is an actual iterable array or needs to be parsed into one
+            echo "<pre>" . print_r($profile['roles'], true) . "</pre>";
             $profiles[$letter][] = $profile;
         }
 

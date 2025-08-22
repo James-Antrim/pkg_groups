@@ -16,7 +16,7 @@ foreach ($this->profiles as $roleAssociations) {
     $groupSpan = $showGroups ? '<span class="group-title">' . $roleAssociations['name'] . '</span>' : '';
 
     // Only show roles if there are multiple, one index is taken by the name
-    $showRoles = (count($roleAssociations) - 1) > 1;
+    $showRoles = count($roleAssociations) > 1;
 
     foreach ($roleAssociations as $assocID => $role) {
 
