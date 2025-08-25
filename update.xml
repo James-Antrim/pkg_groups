@@ -22,6 +22,28 @@
         </downloads>
     </update>
     <update>
+        <name>Groups Component - Content Plugin</name>
+        <description>Removes Groups parameters from displayed content and ensures content is dis-/associated from/with user profiles as appropriate.
+        </description>
+        <maintainer>James Antrim</maintainer>
+        <maintainerurl>https://www.thm.de/organizer</maintainerurl>
+        <version>5.0.0</version>
+        <infourl title="THM Homepage">https://www.thm.de/site</infourl>
+        <tags>
+            <tag>stable</tag>
+        </tags>
+        <targetplatform name="joomla" version="5.[0123456789]"/>
+        <php_minimum>8.1</php_minimum>
+        <element>plg_content_groups</element>
+        <type>plugin</type>
+        <folder>content</folder>
+        <downloads>
+            <downloadurl type="full" format="zip">
+                https://github.com/James-Antrim/pkg_groups/raw/main/updates/plg_content_groups_500.zip
+            </downloadurl>
+        </downloads>
+    </update>
+    <update>
         <name>Groups Component - User Plugin</name>
         <description>This plugin performs functions on several user related events synchronizing data with the Groups
             Component.
@@ -35,13 +57,12 @@
         </tags>
         <targetplatform name="joomla" version="5.[0123456789]"/>
         <php_minimum>8.1</php_minimum>
-        <element>plg_groups_user</element>
+        <element>plg_user_groups</element>
         <type>plugin</type>
         <folder>user</folder>
-        <client>site</client>
         <downloads>
             <downloadurl type="full" format="zip">
-                https://github.com/James-Antrim/pkg_groups/raw/main/updates/plg_groups_user_500.zip
+                https://github.com/James-Antrim/pkg_groups/raw/main/updates/plg_user_groups_500.zip
             </downloadurl>
         </downloads>
     </update>

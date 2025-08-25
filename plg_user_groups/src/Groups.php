@@ -8,12 +8,14 @@
  * @link        www.thm.de
  */
 
-defined('_JEXEC') or die;
+
+namespace THM\Plugin\User\Groups\Extension;
 
 require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/autoloader.php';
 
+use Joomla\CMS\Event\{Model\AfterSaveEvent as modelASE, User\AfterSaveEvent as userASE};
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\CMS\Event\Model\AfterSaveEvent;
+use Joomla\Event\SubscriberInterface;
 use Joomla\Utilities\ArrayHelper;
 use THM\Groups\Controllers\Profile as Controller;
 use THM\Groups\Helpers\{Groups as GH, Users as UH};
@@ -23,55 +25,24 @@ use THM\Groups\Adapters\Application;
 /**
  * Groups User Plugin
  */
-class PlgUserGroups extends CMSPlugin
+class Groups extends CMSPlugin implements SubscriberInterface
 {
-    /**
-     * Method fills user related table information.
-     *
-     * @param   array  $properties  the user table properties
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function onUserAfterSave(array $properties): void
+    public static function getSubscribedEvents(): array
     {
-        $accountID = $properties['id'];
-        $user      = new UT();
-
-        if (!$user->load($accountID)) {
-            return;
-        }
-
-        $groupIDs  = ArrayHelper::toInteger($properties['groups']);
-        $displayed = (bool) array_diff($groupIDs, GH::STANDARD_GROUPS);
-
-        // The person is only associated with default groups and should therefore irrelevant to Groups
-        if (!$displayed) {
-
-            // Since role associations fk the map table there is no longer any need to delete them.
-
-            // If the person is no longer associated with a displayable group unpublish their profile.
-            if ($user->published) {
-                $user->published = UH::UNPUBLISHED;
-                $user->store();
-            }
-
-            return;
-        }
-
-        if (empty($user->surnames)) {
-            Controller::create($user->id);
-        }
+        return [
+            'onUserAfterSave'      => 'supplementUser',
+            'onUserAfterSaveGroup' => 'supplementGroup',
+        ];
     }
 
     /**
      * Creates a groups group entry. The current language anchors the default name column.
      *
-     * @param   AfterSaveEvent  $event  the event triggered by the dispatcher after saving the user group
+     * @param   modelASE  $event  the event triggered by the dispatcher
      *
      * @return void
      */
-    public function onUserAfterSaveGroup(AfterSaveEvent $event): void
+    public function supplementGroup(modelASE $event): void
     {
         $usergroups = $event->getItem();
         $groupID    = $usergroups->id;
@@ -104,5 +75,40 @@ class PlgUserGroups extends CMSPlugin
 
         $data = ['id' => $groupID, 'name_de' => $title, 'name_en' => $title];
         $group->save($data);
+    }
+
+    /**
+     * Method fills user related table information.
+     *
+     * @param   userASE  $event  the event triggered by the dispatcher
+     *
+     * @return void
+     */
+    public function supplementUser(userASE $event): void
+    {
+        $properties = $event->getUser();
+        $user       = new UT();
+
+        if (!$user->load($properties['id'])) {
+            return;
+        }
+
+        $groupIDs  = ArrayHelper::toInteger($properties['groups']);
+        $displayed = (bool) array_diff($groupIDs, GH::STANDARD_GROUPS);
+
+        // The person is only associated with default groups and should therefore irrelevant to Groups
+        if (!$displayed) {
+            // If the person is no longer associated with a displayable group unpublish their profile.
+            if ($user->published) {
+                $user->published = UH::UNPUBLISHED;
+                $user->store();
+            }
+
+            return;
+        }
+
+        if (empty($user->surnames)) {
+            Controller::create($user->id);
+        }
     }
 }

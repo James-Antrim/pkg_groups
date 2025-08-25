@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension group="user" method="upgrade" type="plugin">
+<extension group="content" method="upgrade" type="plugin">
     <author>James Antrim</author>
     <authorEmail>james.antrim@nm.thm.de</authorEmail>
     <authorUrl>www.thm.de</authorUrl>
-    <copyright>TH Mittelhessen 2023</copyright>
-    <creationDate>April 2023</creationDate>
+    <copyright>TH Mittelhessen 2020</copyright>
+    <creationDate>February 2020</creationDate>
     <dependencies>
         <dependency before="true" type="component" minversion="5.*">com_groups</dependency>
     </dependencies>
-    <description>PLG_USER_GROUPS_DESC</description>
+    <description>PLG_CONTENT_GROUPS_DESC</description>
     <files>
         <folder plugin="groups">services</folder>
         <folder>src</folder>
     </files>
     <languages folder="language">
-        <language tag="de-DE">de-DE/plg_user_groups.sys.ini</language>
-        <language tag="en-GB">en-GB/plg_user_groups.sys.ini</language>
+        <language tag="de-DE">de-DE/plg_content_groups.sys.ini</language>
+        <language tag="en-GB">en-GB/plg_content_groups.sys.ini</language>
     </languages>
     <licence>GNU GPL v.3</licence>
-    <name>plg_user_groups</name>
-    <namespace path="src">THM\Plugin\Content\Groups</namespace>
+    <name>plg_content_groups</name>
+    <namespace path="src">THM\Plugin\User\Groups</namespace>
     <updateservers>
         <server type="extension" name="Groups User Plugin Update Site" priority="1">
             https://github.com/James-Antrim/pkg_groups/raw/main/update.xml

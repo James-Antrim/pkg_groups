@@ -35,4 +35,21 @@ class Page extends FormController
 
         return $table->save(['contentID' => $contentID, 'userID' => $userID]);
     }
+
+    /**
+     * Removed the groups association for the given content.
+     *
+     * @param   int  $contentID
+     *
+     * @return bool
+     */
+    public static function disassociate(int $contentID): bool
+    {
+        $table = new PTable();
+        if ($table->load(['contentID' => $contentID])) {
+            return $table->delete();
+        }
+
+        return true;
+    }
 }

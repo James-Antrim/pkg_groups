@@ -18,21 +18,6 @@ use THM\Groups\Tables\Content as CTable;
 class THM_GroupsHelperContent
 {
     /**
-     * Disassociates content
-     *
-     * @param   int  $contentID  the id of the content
-     *
-     * @return  bool
-     */
-    public static function disassociate(int $contentID): bool
-    {
-        $query = DB::query();
-        $query->delete(DB::qn('#__thm_groups_content'))->where(DB::qc('id', $contentID));
-        DB::set($query);
-        return DB::execute();
-    }
-
-    /**
      * Method to change the core published state of THM Groups articles.
      *
      * @return  bool
