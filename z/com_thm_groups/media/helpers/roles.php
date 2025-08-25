@@ -1,7 +1,7 @@
 <?php
 /**
- * @package     THM_Groups
- * @extension   com_thm_groups
+ * @package     Groups
+ * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.2
@@ -9,6 +9,7 @@
  */
 
 use THM\Groups\Adapters\Database as DB;
+use THM\Groups\Helpers\Roles;
 
 /**
  * Class providing helper functions role entities
@@ -22,13 +23,11 @@ class THM_GroupsHelperRoles
      * @param   int     $resourceID  the id of the resource with which the role is associated
      * @param   string  $resource    the context of
      *
-     * @return int the id of the association on success, otherwise 0
-     * @throws Exception
+     * @return int
      */
-    public static function getAssocID($roleID, $resourceID, $resource)
+    public static function getAssocID(int $roleID, int $resourceID, string $resource): int
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
+        $query = DB::query();
 
         $query->select('id');
         if ($resource === 'group') {
@@ -45,18 +44,8 @@ class THM_GroupsHelperRoles
             return 0;
         }
 
-        $dbo->setQuery($query);
-
-        try {
-            $result = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return 0;
-        }
-
-        return empty($result) ? 0 : $result;
+        DB::set($query);
+        return DB::integer();
     }
 
     /**
@@ -67,23 +56,21 @@ class THM_GroupsHelperRoles
      *
      * @return  string the name of the role referenced in the association
      */
-    public static function getNameByAssoc($assocID, $block): string
+    public static function getNameByAssoc(int $assocID, bool $block): string
     {
-        $dbo = JFactory::getDbo();
-
-        $query = $dbo->getQuery(true);
+        $query = DB::query();
         $query
             ->select("roles.name, roles.id")
             ->from('#__thm_groups_role_associations AS ra')
             ->innerJoin('#__thm_groups_roles AS roles ON roles.id = ra.roleID')
             ->where("ra.id = '$assocID'");
 
-        $dbo->setQuery($query);
+        DB::set($query);
 
         $role = DB::array();
 
         // Role ID 1 is member which is implicitly true and therefore should not be explicitly stated
-        $hideMemberRole = ($block and $role['id'] === MEMBER);
+        $hideMemberRole = ($block and $role['id'] === Roles::MEMBER);
 
         return (empty($role['name']) or $hideMemberRole) ? '' : $role['name'];
     }

@@ -1,13 +1,15 @@
 <?php
 /**
- * @package     THM_Groups
- * @extension   com_thm_groups
+ * @package     Groups
+ * @extension   com_groups
  * @author      Ilja Michajlow, <ilja.michajlow@mni.thm.de>
  * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
 
+use Joomla\CMS\Editor\Editor;
+use THM\Groups\Adapters\{Application, Database as DB, Form, Text};
 
 /**
  * Class providing options
@@ -17,12 +19,12 @@ class THM_GroupsHelperFields
     /**
      * Configures the form for the relevant field
      *
-     * @param   int     $fieldID  the id of the field to be configured to
-     * @param   object &$form     the form being modified
+     * @param   int   $fieldID  the id of the field to be configured to
+     * @param   Form  $form     the form being modified
      *
-     * @return void configures the form for the relevant field
+     * @return void
      */
-    public static function configureForm($fieldID, &$form)
+    public static function configureForm(int $fieldID, Form $form): void
     {
         // Remove unique irrelevant field property fields
         if ($fieldID != CALENDAR) {
@@ -57,10 +59,9 @@ class THM_GroupsHelperFields
      * @param   int    $profileID  the id of the profile
      * @param   array  $attribute  the image attribute
      *
-     * @return string the HTML of the cropper field
-     * @throws Exception
+     * @return string
      */
-    public static function getCropper($profileID, $attribute)
+    public static function getCropper(int $profileID, array $attribute): string
     {
         $attributeID = $attribute['id'];
         $mode        = $attribute['mode'];
@@ -85,11 +86,11 @@ class THM_GroupsHelperFields
         $button        .= 'data-toggle="modal" data-target="#modal-' . $attributeID . '">';
         if ($hasPicture) {
             $button .= '<span class="icon-edit"></span>';
-            $button .= JText::_('COM_THM_GROUPS_IMAGE_BUTTON_CHANGE');
+            $button .= Text::_('IMAGE_BUTTON_CHANGE');
         }
         else {
             $button .= '<span class="icon-upload"></span>';
-            $button .= JText::_('COM_THM_GROUPS_IMAGE_BUTTON_UPLOAD');
+            $button .= Text::_('IMAGE_BUTTON_UPLOAD');
         }
         $button .= '</button>';
         $html   .= $button;
@@ -99,7 +100,7 @@ class THM_GroupsHelperFields
             $button = '<button id="' . $attributeID . '_del" class="btn image-button" ';
             $button .= 'onclick="deletePic(\'' . $attributeID . '\', \'' . $profileID . '\');" ';
             $button .= 'type="button">';
-            $button .= '<span class="icon-delete"></span>' . JText::_('COM_THM_GROUPS_IMAGE_BUTTON_DELETE');
+            $button .= '<span class="icon-delete"></span>' . Text::_('IMAGE_BUTTON_DELETE');
             $button .= '</button>';
             $html   .= $button;
         }
@@ -118,10 +119,9 @@ class THM_GroupsHelperFields
      * @param   int    $profileID  the id of the profile with which the attribute is associated
      * @param   array  $attribute  the attribute for which to render the input field
      *
-     * @return string the HTML of the attribute input
-     * @throws Exception
+     * @return string
      */
-    public static function getInput($profileID, $attribute)
+    public static function getInput(int $profileID, array $attribute): string
     {
         $attributeID = $attribute['id'];
         $fieldID     = $attribute['fieldID'];
@@ -130,7 +130,7 @@ class THM_GroupsHelperFields
         $typeID      = $attribute['typeID'];
         $value       = $attribute['value'];
 
-        if ($fieldID == CALENDAR) {
+        if ($fieldID === CALENDAR) {
             $attribs = [];
             if (!empty($attribute['regex'])) {
                 $attribs['class'] = "validate-{$attribute['regex']}";
@@ -139,17 +139,17 @@ class THM_GroupsHelperFields
                 $attribs['showtime']   = true;
                 $attribs['timeformat'] = empty($attribute['timeformat']) ? '24' : $attribute['timeformat'];
             }
-            if ($typeID = DATE_EU) {
-                $attribs['message'] = JText::_('COM_THM_GROUPS_INVALID_DATE_EU');
+            if ($typeID === DATE_EU) {
+                $attribs['message'] = Text::_('INVALID_DATE_EU');
             }
 
             return JHtml::calendar($value, $name, $formID, $attribute['calendarformat'], $attribs);
         }
 
-        if ($fieldID == EDITOR) {
-            $editorName = JFactory::getConfig()->get('editor');
-            $editor     = JEditor::getInstance($editorName);
-            $buttons    = $attribute['buttons'] === '0' ? false : true;
+        if ($fieldID === EDITOR) {
+            $editorName = Application::configuration()->get('editor');
+            $editor     = Editor::getInstance($editorName);
+            $buttons    = $attribute['buttons'] !== '0';
             if ($buttons and !empty($attribute['hide'])) {
                 $buttons = explode(',', $attribute['hide']);
             }
@@ -162,24 +162,12 @@ class THM_GroupsHelperFields
             return self::getCropper($profileID, $attribute);
         }
 
-        switch ($attribute['fieldID']) {
-            case EMAIL:
-                $type = 'email';
-                break;
-
-            case TELEPHONE:
-                $type = 'tel';
-                break;
-
-            case URL:
-                $type = 'url';
-                break;
-
-            case TEXT:
-            default:
-                $type = 'text';
-                break;
-        }
+        $type = match ($attribute['fieldID']) {
+            EMAIL => 'email',
+            TELEPHONE => 'tel',
+            URL => 'url',
+            default => 'text',
+        };
 
         $class       = empty($attribute['regex']) ? '' : 'class="validate-' . $attribute['regex'] . '" ';
         $formID      = 'id="' . $formID . '" ';
@@ -191,9 +179,7 @@ class THM_GroupsHelperFields
         $type        = 'type="' . $type . '"';
         $value       = 'value="' . $value . '" ';
 
-        $html = "<input $class $formID $maxLength $message $name $placeHolder $required $type $value >";
-
-        return $html;
+        return "<input $class $formID $maxLength $message $name $placeHolder $required $type $value >";
     }
 
     /**
@@ -202,27 +188,17 @@ class THM_GroupsHelperFields
      * @param   int    $fieldID  the field type id
      * @param   array  $options  the input data to be mapped to configured properties
      *
-     * @return  array the field options set with form values if available
-     * @throws Exception
+     * @return  array
      */
-    public static function getOptions($fieldID, $options = null)
+    public static function getOptions(int $fieldID, array $options = []): array
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
+        $query = DB::query();
         $query->select('options')->from('#__thm_groups_fields')->where("id = $fieldID");
-        $dbo->setQuery($query);
-
-        try {
-            $fieldOptions = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return [];
-        }
+        DB::set($query);
+        $fieldOptions = DB::string();
 
         $fieldOptions = json_decode($fieldOptions, true);
-        if (empty($fieldOptions)) {
+        if (empty($fieldOptions) or !is_array($fieldOptions)) {
             return [];
         }
 

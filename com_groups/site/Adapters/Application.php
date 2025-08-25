@@ -231,6 +231,22 @@ class Application
     }
 
     /**
+     * Method to set a response header. If the replace-parameter is set then all headers with the given name will be replaced by the new one. The headers are stored in an internal array to be sent when the site is sent to the browser.
+     *
+     * @param   string  $name     the name of the header property to set
+     * @param   string  $value    the value to set
+     * @param   bool    $replace  whether to replace existing
+     *
+     * @return void
+     */
+    public static function header(string $name, string $value, bool $replace = false): void
+    {
+        /** @var CMSApplication $app */
+        $app = self::instance();
+        $app->setHeader($name, $value, $replace);
+    }
+
+    /**
      * Surrounds the call to the application with a try catch so that not every function needs to have a throws tag. If
      * the application has an error it would have never made it to the component in the first place, so the error would
      * not have been thrown in this call regardless.

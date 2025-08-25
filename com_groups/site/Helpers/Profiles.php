@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Helpers;
 
+use THM\Groups\Adapters\User;
 use THM\Groups\Tables\ProfileAttributes as Table;
 
 class Profiles
@@ -99,6 +100,36 @@ class Profiles
         }
 
         return $results;
+    }
+
+    /**
+     * Retrieves the attributes for a given profile id in their raw format.
+     *
+     * @param   int   $userID
+     * @param   bool  $published  whether only published values should be returned
+     *
+     * @return array the profile attributes
+     */
+    public static function raw(int $userID, bool $published = true): array
+    {
+        $attributes   = [];
+        $attributeIDs = Attributes::ids();
+        $levels       = User::levels();
+
+        foreach ($attributeIDs as $attributeID) {
+
+            $attribute = Attributes::raw($attributeID, $userID, $published);
+
+            $emptyValue   = (empty($attribute['value']) or empty(trim($attribute['value'])));
+            $unAuthorized = !in_array($attribute['levelID'], $levels);
+            if ($emptyValue or $unAuthorized) {
+                continue;
+            }
+
+            $attributes[$attribute['id']] = $attribute;
+        }
+
+        return $attributes;
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 /**
- * @package     THM_Groups
- * @extension   com_thm_groups
+ * @package     Groups
+ * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.2
@@ -26,7 +26,6 @@ class THM_GroupsHelperRouter
      * @param   bool   $asString  true if the url should be functional, false if an array of segments
      *
      * @return array|string string if the URL should be complete, otherwise an array of terms to use in the URL
-     * @throws Exception
      */
     public static function build(array $params, bool $asString = true): array|string
     {
@@ -51,7 +50,6 @@ class THM_GroupsHelperRouter
      * @param   bool   $complete  true if the url should be functional, false if an array of segments
      *
      * @return array|string string if the URL should be complete, otherwise an array of terms to use in the URL
-     * @throws Exception
      */
     private static function buildRawURL(array $params, bool $complete): array|string
     {
@@ -60,7 +58,7 @@ class THM_GroupsHelperRouter
             $params['view'] = 'profile';
         }
 
-        $query = ['option' => 'com_thm_groups', 'view' => $params['view'], 'profileID' => $params['profileID']];
+        $query = ['option' => 'com_groups', 'view' => $params['view'], 'profileID' => $params['profileID']];
         if ($query['view'] === 'content') {
             $query['id'] = $params['id'];
         }
@@ -78,7 +76,6 @@ class THM_GroupsHelperRouter
      * @param   bool   $complete  true if the url should be functional, false if an array of segments
      *
      * @return array|string string if the URL should be complete, otherwise an array of terms to use in the URL
-     * @throws Exception
      */
     private static function buildSEFURL(array $params, bool $complete): array|string
     {
@@ -159,7 +156,6 @@ class THM_GroupsHelperRouter
      * Sets the path for dynamic groups content
      *
      * @return void sets the pathway items
-     * @throws Exception
      */
     public static function setPathway(): void
     {
@@ -234,7 +230,6 @@ class THM_GroupsHelperRouter
      * @param   array &$query
      *
      * @return bool
-     * @throws Exception
      */
     public static function translateContent(array &$query): bool
     {
@@ -285,7 +280,7 @@ class THM_GroupsHelperRouter
                 $query['view']      = 'profile';
                 unset($query['id']);
             }
-            $query['option'] = 'com_thm_groups';
+            $query['option'] = 'com_groups';
             unset($query['a_id'], $query['catid'], $query['lang'], $query['layout']);
 
             return true;
@@ -313,7 +308,7 @@ class THM_GroupsHelperRouter
             $query['profileID'] = $profileID;
             $query['view']      = 'profile';
         }
-        $query['option'] = 'com_thm_groups';
+        $query['option'] = 'com_groups';
         unset($query['a_id'], $query['id'], $query['lang'], $query['layout']);
 
         return true;

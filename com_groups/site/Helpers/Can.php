@@ -1,5 +1,4 @@
-<?php /** @noinspection GrazieInspection */
-
+<?php
 /**
  * @package     Groups
  * @extension   com_groups
@@ -225,7 +224,7 @@ class Can
      *
      * @return bool
      */
-    private static function identity(int $id = 0): bool
+    public static function identity(int $id = 0): bool
     {
         return ($id and User::id() === $id);
     }

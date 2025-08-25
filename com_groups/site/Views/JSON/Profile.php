@@ -1,26 +1,26 @@
 <?php
 /**
- * @package     THM_Groups
- * @extension   com_thm_groups
+ * @package     Groups
+ * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
 
+use Joomla\CMS\MVC\View\AbstractView;
+use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\Input;
 use THM\Groups\Helpers\Users;
 
-defined('_JEXEC') or die;
-
-require_once HELPERS . 'profiles.php';
 require_once HELPERS . 'menu.php';
 
 use THM\Groups\Helpers\Profiles as Helper;
 
 /**
- * THMGroupsViewProfile class for component com_thm_groups
+ * JSON Profile View
  */
-class THM_GroupsViewProfile extends JViewLegacy
+class Profile extends AbstractView
 {
     /**
      * Method to get display
@@ -28,19 +28,14 @@ class THM_GroupsViewProfile extends JViewLegacy
      * @param   Object  $tpl  template
      *
      * @return void
-     * @throws Exception
      */
-    public function display($tpl = null)
+    public function display($tpl = null): void
     {
-        $profileID = JFactory::getApplication()->input->getint('profileID', 0);
-        $published = empty($profileID) ? false : Users::published($profileID);
-
-        if (!$published) {
-            $exc = new Exception(JText::_('COM_THM_GROUPS_PROFILE_NOT_FOUND'), '404');
-            JErrorPage::render($exc);
+        if (!$profileID = Input::integer('profileID') or !Users::published($profileID)) {
+            Application::error(404);
         }
 
-        if (!$profile = THM_GroupsHelperProfiles::getRawProfile($profileID)) {
+        if (!$profile = Helper::raw($profileID)) {
             echo json_encode([]);
 
             return;
@@ -54,7 +49,7 @@ class THM_GroupsViewProfile extends JViewLegacy
             'profileLink' => THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID])
         ];
 
-        if (THM_GroupsHelperMenu::contentEnabled($profileID)) {
+        if (Users::content($profileID)) {
             $contentParams           = ['view' => 'content', 'profileID' => $profileID];
             $contents                = THM_GroupsHelperMenu::getContent($profileID);
             $json['profileContents'] = [];

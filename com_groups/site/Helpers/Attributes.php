@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Helpers;
 
-use THM\Groups\Adapters\{Application, Database as DB, Text};
+use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
 use THM\Groups\Tables\Attributes as Table;
 
 class Attributes extends Selectable
@@ -42,13 +42,13 @@ class Attributes extends Selectable
             'class'  => 'publish',
             'column' => 'showIcon',
             'task'   => 'hideIcon',
-            'tip'    => 'GROUPS_TOGGLE_TIP_SHOWN'
+            'tip'    => 'TOGGLE_TIP_SHOWN'
         ],
         self::HIDDEN => [
             'class'  => 'unpublish',
             'column' => 'showIcon',
             'task'   => 'showIcon',
-            'tip'    => 'GROUPS_TOGGLE_TIP_HIDDEN'
+            'tip'    => 'TOGGLE_TIP_HIDDEN'
         ]
     ];
 
@@ -57,13 +57,13 @@ class Attributes extends Selectable
             'class'  => 'publish',
             'column' => 'showLabel',
             'task'   => 'hideLabel',
-            'tip'    => 'GROUPS_TOGGLE_TIP_SHOWN'
+            'tip'    => 'TOGGLE_TIP_SHOWN'
         ],
         self::HIDDEN => [
             'class'  => 'unpublish',
             'column' => 'showLabel',
             'task'   => 'showLabel',
-            'tip'    => 'GROUPS_TOGGLE_TIP_HIDDEN'
+            'tip'    => 'TOGGLE_TIP_HIDDEN'
         ]
     ];
 
@@ -97,6 +97,57 @@ class Attributes extends Selectable
         $attribute = new Table();
 
         return $attribute->load($attributeID) ? json_decode($attribute->options, true) : [];
+    }
+
+    /**
+     * Gets the base properties of an attribute, if a user is specified and valid, the user specific properties are
+     * supplemented.
+     *
+     * @param   int   $attributeID
+     * @param   int   $userID
+     * @param   bool  $published  whether to filter to published information
+     *
+     * @return array
+     */
+    public static function raw(int $attributeID, int $userID, bool $published = true): array
+    {
+        $tag      = Application::tag();
+        $aliased  = DB::qn(
+            ['a.id', "a,label_$tag", 'a.viewLevelID', 'vl.title'],
+            ['attributeID', 'label', 'properties', 'levelID', 'level']
+        );
+        $selected = DB::qn([
+            'a.icon',
+            'a.options',
+            'a.showIcon',
+            'a.showLabel',
+            'a.typeID',
+            'pa.published',
+            'pa.userID',
+            'pa.value'
+        ]);
+        $query    = DB::query();
+        $query->select(array_merge($aliased, $selected))
+            ->from(DB::qn('#__groups_attributes', 'a'))
+            ->innerJoin(DB::qn('#__groups_profile_attributes', 'pa'), DB::qc('pa.attributeID', 'a.id'))
+            ->leftJoin(DB::qn('#__viewlevels', 'vl'), DB::qc('vl.id', 'a.viewLevelID'))
+            ->where(DB::qcs([['a.id', $attributeID], ['pa.userID', $userID]]));
+
+        if ($published) {
+            $query->where(DB::qc('pa.published', Input::YES));
+        }
+
+        $subQuery = DB::query();
+        $subQuery->select(DB::qn('title'))->from(DB::qn('#__viewlevels', 'vl2'))->where(DB::qc('vl2.id', self::PUBLIC));
+        $query->select('(' . $subQuery . ') AS ' . DB::qn('defaultLevel'));
+
+        DB::set($query);
+
+        if (!$attribute = DB::array()) {
+            return [];
+        }
+
+        return array_merge($attribute, json_decode($attribute['options']), Types::TYPES[$attribute['typeID']]);
     }
 
     /** @inheritDoc */

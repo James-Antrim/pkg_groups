@@ -37,6 +37,19 @@ class Document
     }
 
     /**
+     * Sets the document MIME encoding that is sent to the browser.
+     *
+     * @param   string   $type  The document type to be sent
+     * @param   boolean  $sync  Should the type be synced with HTML?
+     *
+     * @return  void
+     */
+    public static function mime(string $type = '', bool $sync = true): void
+    {
+        Application::document()->setMimeEncoding($type, $sync);
+    }
+
+    /**
      * Gets the path for the given file and type.
      *
      * @param   string  $file  the name of the file

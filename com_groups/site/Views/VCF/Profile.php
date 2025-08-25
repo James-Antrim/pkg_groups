@@ -1,42 +1,31 @@
 <?php
 /**
- * @package     THM_Groups
- * @extension   com_thm_groups
+ * @package     Groups
+ * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
 
-defined('_JEXEC') or die;
+namespace THM\Groups\Views\VCF;
 
-require_once HELPERS . 'profiles.php';
-
-use \JFactory as Factory;
-use THM\Groups\Helpers\Profiles as Helper;
-use THM\Groups\Views\HTML\Users;
+use Joomla\CMS\MVC\View\AbstractView;
+use THM\Groups\Helpers\{Profiles as Helper, Users};
+use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\Document;
+use THM\Groups\Adapters\Input;
 
 /**
- * THMGroupsViewProfile class for component com_thm_groups
+ * VCF Profile View
  */
-class THM_GroupsViewProfile extends JViewLegacy
+class Profile extends AbstractView
 {
-    /**
-     * Method to get display
-     *
-     * @param   Object  $tpl  template
-     *
-     * @return void
-     * @throws Exception
-     */
-    public function display($tpl = null)
+    /** @inheritDoc */
+    public function display($tpl = null): void
     {
-        $profileID = JFactory::getApplication()->input->getint('profileID', 0);
-        $published = empty($profileID) ? false : Users::published($profileID);
-
-        if (!$published) {
-            $exc = new Exception(JText::_('COM_THM_GROUPS_PROFILE_NOT_FOUND'), '404');
-            JErrorPage::render($exc);
+        if (!$profileID = Input::integer('profileID') and !Users::published($profileID)) {
+            Application::error(404);
         }
 
         $addressIdentifiers   = ['ADDRESS', 'ADRESSE', 'ANSCHRIFT'];
@@ -50,7 +39,7 @@ class THM_GroupsViewProfile extends JViewLegacy
         $image                = '';
         $officeIdentifiers    = ['BÜRO', 'OFFICE', 'RAUM'];
         $office               = '';
-        $profile              = THM_GroupsHelperProfiles::getRawProfile($profileID);
+        $profile              = Helper::raw($profileID);
         $telephoneIdentifiers = ['TELEFON', 'TELEPHONE'];
         $telephone            = '';
         foreach ($profile as $attributeID => $attribute) {
@@ -109,10 +98,10 @@ class THM_GroupsViewProfile extends JViewLegacy
         $title       = empty($profile[TITLE]['value']) ? '' : $profile[TITLE]['value'];
         $title       .= empty($profile[POSTTITLE]['value']) ? '' : $profile[POSTTITLE]['value'];
 
-        Factory::getDocument()->setMimeEncoding('text/directory', true);
+        Document::mime('text/directory');
 
         $headerValue = 'attachment; filename="' . $cardName . '.vcf"';
-        Factory::getApplication()->setHeader('Content-disposition', $headerValue, true);
+        Application::header('Content-disposition', $headerValue, true);
 
         $vcard   = [];
         $vcard[] .= 'BEGIN:VCARD';
@@ -141,7 +130,7 @@ class THM_GroupsViewProfile extends JViewLegacy
      *
      * @return string the cleaned address
      */
-    private function cleanAddress($address)
+    private function cleanAddress(string $address): string
     {
         $address      = str_replace(['<br>', '<br/>', '<br />', '</p><p>'], "XXX", $address);
         $address      = strip_tags($address);

@@ -1,14 +1,14 @@
 <?php
 /**
- * @package     THM_Groups
- * @extension   com_thm_groups
+ * @package     Groups
+ * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
+use THM\Groups\Adapters\{Application, Database as DB, Form, Input, Text};
 use THM\Groups\Helpers\{Attributes as Helper, Profiles};
 
 require_once 'attribute_types.php';
@@ -23,13 +23,12 @@ class THM_GroupsHelperAttributes
     /**
      * Configures the form for the relevant attribute type
      *
-     * @param   int     $attributeID  the id of the attribute to be configured to
-     * @param   object &$form         the form being modified
+     * @param   int   $attributeID  the id of the attribute to be configured to
+     * @param   Form  $form         the form being modified
      *
      * @return void configures the form for the relevant field
-     * @throws Exception
      */
-    public static function configureForm(int $attributeID, &$form): void
+    public static function configureForm(int $attributeID, Form $form): void
     {
         $typeID = self::getAttributeTypeID($attributeID);
 
@@ -76,82 +75,18 @@ class THM_GroupsHelperAttributes
     }
 
     /**
-     * Retrieves a single attribute
-     *
-     * @param   int   $attributeID  the attribute to be retrieved
-     * @param   int   $profileID    the id of the profile as necessary
-     * @param   bool  $published    whether the profile attribute must be published
-     *
-     * @return array the attribute information
-     */
-    public static function getAttribute(int $attributeID, int $profileID, bool $published): array
-    {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('a.id, a.typeID, a.label, a.ordering, a.required, a.viewLevelID')
-            ->select('a.icon, a.showIcon, a.showLabel')
-            ->select('at.fieldID, at.message')
-            ->select('pat.published, pat.value, pat.profileID')
-            ->select('vl.title AS viewLevel')
-            ->from('#__thm_groups_attributes AS a')
-            ->innerJoin('#__thm_groups_attribute_types AS at ON at.id = a.typeID')
-            ->innerJoin("#__thm_groups_profile_attributes AS pat ON pat.attributeID = a.id")
-            ->leftJoin("#__viewlevels AS vl ON vl.id = a.viewLevelID")
-            ->where(DB::qcs([['a.id', $attributeID],['pat.profileID', $profileID]]));
-
-        if ($published) {
-            $query->where(DB::qc('pat.published', Input::YES));
-        }
-
-        // Get the name of the default view level just
-        $subQuery = $dbo->getQuery(true);
-        $subQuery->select("title")->from("#__viewlevels AS vl2")->where("vl2.id = 1");
-
-        $query->select('(' . $subQuery . ') AS defaultLevel');
-
-        $dbo->setQuery($query);
-
-        $attribute = DB::array();
-
-        if (empty($attribute)) {
-            return [];
-        }
-
-        $options = Helper::parameters($attributeID);
-
-        return array_merge($attribute, $options);
-    }
-
-    /**
      * Retrieves the ID of the field type associated with the abstract attribute
      *
      * @param   int  $attributeID  the id of the attribute
      *
-     * @return int the id of the field type associated with the abstract attribute
-     *
-     * @throws Exception
+     * @return int
      */
-    public static function getAttributeTypeID(int $attributeID)
+    public static function getAttributeTypeID(int $attributeID): int
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
+        $query = DB::query()->select(DB::qn('typeID'))->from(DB::qn('#__groups_attributes'))->where(DB::qc('id', $attributeID));
+        DB::set($query);
 
-        $query
-            ->select('typeID')
-            ->from('#__thm_groups_attributes')
-            ->where('id = ' . $attributeID);
-        $dbo->setQuery($query);
-
-        try {
-            $result = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        return empty($result) ? 0 : $result;
+        return DB::integer();
     }
 
     /**
@@ -161,11 +96,8 @@ class THM_GroupsHelperAttributes
      * @param $suppress
      *
      * @return array|string|string[]
-     *
-     * @throws Exception
-     * @since version
      */
-    public static function getDisplay($attribute, $suppress)
+    public static function getDisplay($attribute, $suppress): array|string
     {
         $html = '<div class="attribute-DISPLAYTYPE">LABELCONTENTS<div class="clearFix"></div></div>';
 
@@ -218,30 +150,21 @@ class THM_GroupsHelperAttributes
      * @param   int    $attributeID  the attributeID
      *
      * @return string the image HTML
-     * @throws Exception
      */
     public static function getImage(array $attribute, int $profileID = 0, int $attributeID = 0): string
     {
-        if (!empty($attribute) and !empty($attribute['value'])) {
+        if ($attribute and !empty($attribute['value'])) {
             $value = $attribute['value'];
         }
-        elseif (!empty($profileID) and !empty($attributeID)) {
-            $dbo   = JFactory::getDbo();
-            $query = $dbo->getQuery(true);
+        elseif ($profileID and $attributeID) {
+            $query = DB::query();
             $query->select('value')
                 ->from('#__thm_groups_profile_attributes')
                 ->where("profileID = $profileID")
                 ->where("attributeID = $attributeID");
-            $dbo->setQuery($query);
+            DB::set($query);
 
-            try {
-                $value = $dbo->loadResult();
-            }
-            catch (Exception $exception) {
-                JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-                return '';
-            }
+            $value = DB::string();
 
         }
         else {
@@ -261,7 +184,7 @@ class THM_GroupsHelperAttributes
             $random = rand(1, 100);
             $url    = JUri::root() . $relativePath . "?force=$random";
 
-            $alt = empty($profileID) ? Text::_('COM_THM_GROUPS_PROFILE_IMAGE') : Profiles::name($profileID);
+            $alt = empty($profileID) ? Text::_('PROFILE_IMAGE') : Profiles::name($profileID);
 
             return JHtml::image($url, $alt, ['class' => 'edit_img']);
         }
@@ -276,11 +199,10 @@ class THM_GroupsHelperAttributes
      * @param   int  $profileID    the id of the profile with which the attribute is associated
      *
      * @return string the HTML of the attribute input aggregate
-     * @throws Exception
      */
     public static function getInput(int $attributeID, int $profileID): string
     {
-        $attribute = self::getAttribute($attributeID, $profileID, false);
+        $attribute = Helper::raw($attributeID, $profileID, false);
 
         $label            = self::getLabel($attribute, true);
         $input            = THM_GroupsHelperFields::getInput($profileID, $attribute);
@@ -392,7 +314,6 @@ class THM_GroupsHelperAttributes
      * @param   bool   $suppress   whether lengthy text should be initially hidden.
      *
      * @return string the HTML for the value container
-     * @throws Exception
      */
     private static function getValueDisplay(array $attribute, bool $suppress = true): string
     {

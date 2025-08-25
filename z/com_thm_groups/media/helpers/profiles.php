@@ -1,7 +1,7 @@
 <?php
 /**
- * @package     THM_Groups
- * @extension   com_thm_groups
+ * @package     Groups
+ * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.2
@@ -9,15 +9,14 @@
  */
 
 use THM\Groups\Adapters\{Database as DB, HTML, Text};
-use THM\Groups\Helpers\{Attributes, Profiles as Helper, Types};
+use THM\Groups\Helpers\{Attributes, Profiles as Helper, Templates, Types};
+use THM\Groups\Controllers\Profile;
+use THM\Groups\Tables\Users;
 
 require_once 'attributes.php';
 require_once 'router.php';
 require_once JPATH_ROOT . '/administrator/components/com_thm_groups/tables/profiles.php';
 require_once JPATH_ROOT . '/administrator/components/com_thm_groups/tables/profile_attributes.php';
-
-use THM\Groups\Helpers\Templates;
-
 
 /**
  * Class providing helper functions for batch select options
@@ -30,39 +29,27 @@ class THM_GroupsHelperProfiles
      * @param   int  $profileID  the id of the profile to associate
      * @param   int  $assocID    the id of the group/role association with which to associate it
      *
-     * @return bool
-     *
-     * @throws Exception
+     * @return int
      */
-    public static function associateRole($profileID, $assocID)
+    public static function associateRole(int $profileID, int $assocID): int
     {
         if ($existingID = THM_GroupsHelperRoles::getAssocID($assocID, $profileID, 'profile')) {
             return $existingID;
         }
 
-        $profiles = JTable::getInstance('profiles', 'thm_groupsTable');
+        $table = new Users();
 
         // Profile is new
-        if (!$profiles->load($profileID)) {
-            $controller = new Controller();
-            $controller->create($profileID);
+        if (!$table->load($profileID) and empty($table->surnames)) {
+            Profile::create($profileID);
         }
 
-        $dbo   = JFactory::getDbo();
         $query = DB::query();
-        $query->insert('#__thm_groups_profile_associations')
+        $query->insert(DB::qn('#__groups_profile_associations'))
             ->columns(['profileID', 'role_associationID'])
-            ->values("$profileID, $assocID");
+            ->values([$profileID, $assocID]);
         DB::set($query);
-
-        try {
-            $dbo->execute();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
+        DB::execute();
 
         return THM_GroupsHelperRoles::getAssocID($assocID, $profileID, 'profile');
     }
@@ -76,9 +63,8 @@ class THM_GroupsHelperProfiles
      * @param   bool  $showImage   whether to suppress image attributes
      *
      * @return string the HTML of the profile
-     * @throws Exception
      */
-    public static function getDisplay($profileID, $templateID = 0, $suppress = false, $showImage = true)
+    public static function getDisplay(int $profileID, int $templateID = 0, bool $suppress = false, bool $showImage = true): string
     {
         $preRendered     = [Attributes::SUPPLEMENT_PRE, Attributes::SUPPLEMENT_POST];
         $attributes      = [];
@@ -92,7 +78,7 @@ class THM_GroupsHelperProfiles
                 continue;
             }
 
-            $attribute = THM_GroupsHelperAttributes::getAttribute($attributeID, $profileID, true);
+            $attribute = Attributes::raw($attributeID, $profileID);
 
             if (empty($attribute['value']) or empty(trim($attribute['value']))) {
                 continue;
@@ -120,9 +106,8 @@ class THM_GroupsHelperProfiles
      * @param   bool  $newTab     whether the profile should open in a new tab
      *
      * @return string the HTML string containing name information
-     * @throws Exception
      */
-    public static function getNameContainer($profileID, $newTab = false)
+    public static function getNameContainer(int $profileID, bool $newTab = false): string
     {
         $text    = Helper::name($profileID, true, true);
         $url     = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID]);
@@ -141,10 +126,7 @@ class THM_GroupsHelperProfiles
      *
      * @param   string  $username  the username
      *
-     * @return mixed int the profile id on distinct success, string if multiple profiles were found inconclusively,
-     * otherwise 0
-     *
-     * @throws Exception
+     * @return mixed
      */
     public static function getProfileIDByUserName(string $username): int
     {
@@ -160,43 +142,11 @@ class THM_GroupsHelperProfiles
     }
 
     /**
-     * Retrieves the attributes for a given profile id in their raw format
-     *
-     * @param   int   $profileID  the id whose values are sought
-     * @param   bool  $published  whether only published values should be returned
-     *
-     * @return array the profile attributes
-     * @throws Exception
-     */
-    public static function getRawProfile(int $profileID, bool $published = true): array
-    {
-        $attributes           = [];
-        $attributeIDs         = Attributes::ids(true);
-        $authorizedViewAccess = JFactory::getUser()->getAuthorisedViewLevels();
-
-        foreach ($attributeIDs as $attributeID) {
-
-            $attribute = THM_GroupsHelperAttributes::getAttribute($attributeID, $profileID, $published);
-
-            $emptyValue   = (empty($attribute['value']) or empty(trim($attribute['value'])));
-            $unAuthorized = (empty($attribute['value']) or !in_array($attribute['viewLevelID'], $authorizedViewAccess));
-            if ($emptyValue or $unAuthorized) {
-                continue;
-            }
-
-            $attributes[$attribute['id']] = $attribute;
-        }
-
-        return $attributes;
-    }
-
-    /**
      * Gets the role association ids associated with the profile
      *
      * @param   int  $profileID  the id of the profile
      *
      * @return array the role association ids associated with the profile
-     * @throws Exception
      */
     public static function getRoleAssociations(int $profileID): array
     {
@@ -215,7 +165,6 @@ class THM_GroupsHelperProfiles
      * @param   int  $profileID  the id of the profile
      *
      * @return string the HTML string containing name information
-     * @throws Exception
      */
     public static function getVCardLink(int $profileID): string
     {

@@ -1,12 +1,15 @@
 <?php
 /**
- * @package     THM_Groups
- * @extension   com_thm_groups
+ * @package     Groups
+ * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
+
+use THM\Groups\Adapters\Database as DB;
+use THM\Groups\Adapters\Form;
 
 require_once 'fields.php';
 
@@ -18,14 +21,13 @@ class THM_GroupsHelperAttribute_Types
     /**
      * Configures the form for the relevant attribute type
      *
-     * @param   int     $typeID      the id of the attribute type to be configured to
-     * @param   object &$form        the form being modified
-     * @param   bool    $inTypeForm  whether or not the function was called from the type form context
+     * @param   int   $typeID      the id of the attribute type to be configured to
+     * @param   Form  $form        the form being modified
+     * @param   bool  $inTypeForm  whether the function was called from the type form context
      *
-     * @return void configures the form for the relevant field
-     * @throws Exception
+     * @return void
      */
-    public static function configureForm($typeID, &$form, $inTypeForm = false)
+    public static function configureForm(int $typeID, Form $form, bool $inTypeForm = false): void
     {
         $fieldID = self::getFieldID($typeID);
         THM_GroupsHelperFields::configureForm($fieldID, $form);
@@ -65,72 +67,43 @@ class THM_GroupsHelperAttribute_Types
      *
      * @param   int  $typeID  the id of the abstract attribute
      *
-     * @return int the id of the field type associated with the abstract attribute
-     *
-     * @throws Exception
+     * @return int
      */
-    public static function getFieldID($typeID)
+    public static function getFieldID(int $typeID): int
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-
-        $query
-            ->select('fieldID')
-            ->from('#__thm_groups_attribute_types')
-            ->where('id = ' . (int) $typeID);
-        $dbo->setQuery($query);
-
-        try {
-            $result = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        return empty($result) ? 0 : $result;
+        $query = DB::query()->select(DB::qn('fieldID'))->from(DB::qn('#__groups_attribute_types'))->where(DB::qc('id', $typeID));
+        DB::set($query);
+        return DB::integer();
     }
 
     /**
      * Returns specific field type options mapped with attribute type data and optionally mapped with form data
      *
-     * @param   int    $typeID   the attribute type id
-     * @param   array  $options  the options to be mapped from user input
+     * @param   int  $typeID
      *
-     * @return  array the field options set with form values if available
-     * @throws Exception
+     * @return  array
      */
-    public static function getOptions($typeID, $options = null)
+    public static function getOptions(int $typeID): array
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('options')->from('#__thm_groups_attribute_types')->where("id = $typeID");
-        $dbo->setQuery($query);
+        $query = DB::query()->select(DB::qn('options'))->from(DB::qn('#__groups_attribute_types'))->where(DB::qc('id', $typeID));
+        DB::set($query);
 
-        try {
-            $atOptions = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
+        if (!$options = DB::string()) {
             return [];
         }
 
-        $atOptions = json_decode($atOptions, true);
-        if (empty($atOptions)) {
-            $atOptions = [];
+        $options = json_decode($options, true);
+
+        if (!is_array($options)) {
+            return [];
         }
 
-        // Accepts all data, later restricted by the field configuration
-        if ($options) {
-            foreach ($options as $property => $value) {
-                if ($value !== '') {
-                    $atOptions[$property] = $value;
-                }
+        foreach ($options as $property => $value) {
+            if ($value !== '') {
+                $options[$property] = $value;
             }
         }
 
-        return THM_GroupsHelperFields::getOptions(self::getFieldID($typeID), $atOptions);
+        return THM_GroupsHelperFields::getOptions(self::getFieldID($typeID), $options);
     }
 }

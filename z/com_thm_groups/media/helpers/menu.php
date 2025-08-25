@@ -1,6 +1,6 @@
 <?php
 /**
- * @package     THM_Groups
+ * @package     Groups
  * @extension   mod_thm_groups_menu
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
@@ -8,10 +8,10 @@
  * @link        www.thm.de
  */
 
-use Joomla\CMS\Factory as Factory;
-use Joomla\CMS\HTML\HTMLHelper;
-use THM\Groups\Adapters\Database as DB;
-use THM\Groups\Helpers\Users;
+require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/autoloader.php';
+
+use THM\Groups\Adapters\{Database as DB, HTML};
+use THM\Groups\Helpers\{Pages, Users};
 
 /**
  * Data retrieval class for the THM Groups menu module.
@@ -22,34 +22,6 @@ use THM\Groups\Helpers\Users;
 class THM_GroupsHelperMenu
 {
     /**
-     * Checks whether personal content is activated for the given profile
-     *
-     * @param   int  $profileID  the profile id
-     *
-     * @return  bool  true if enabled, otherwise false
-     * @throws Exception
-     */
-    public static function contentEnabled($profileID)
-    {
-        $dbo   = Factory::getDBO();
-        $query = $dbo->getQuery(true);
-
-        $query->select('contentEnabled')->from('#__thm_groups_profiles')->where("id = '$profileID'");
-        $dbo->setQuery($query);
-
-        try {
-            $result = $dbo->loadResult();
-        }
-        catch (Exception $exception) {
-            Factory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-
-        return empty($result) ? false : true;
-    }
-
-    /**
      * Returns published content information for the profile's content category.
      *
      * @param   int  $profileID  the id of the profile
@@ -59,39 +31,41 @@ class THM_GroupsHelperMenu
     public static function getContent(int $profileID): array
     {
         $categoryID = Users::categoryID($profileID);
-        // Load the parameters
-        $dbo        = Factory::getDBO();
-        $date       = Factory::getDate();
-        $quotedDate = $dbo->quote($date->toSql());
+        $date       = date('Y-m-d H:i:s');
+        $notExpired = '(' . DB::qcs([
+                ['content.publish_down', $date, '>=', true],
+                ['content.publish_down', 0],
+                ['content.publish_down', '0000-00-00 00:00:00', '=', true]
+            ], 'OR') . ')';
 
-        $query = $dbo->getQuery(true);
-        $query->select('content.id, content.title, content.alias, content.catid');
-        $query->from('#__content AS content');
-        $query->innerJoin('#__thm_groups_content AS pContent ON pContent.id = content.id');
-        $query->where("content.catid = '$categoryID'");
-        $query->where("content.state = '1'");
-        $query->where("pContent.featured = '1'");
-        $query->where("content.publish_up <= $quotedDate");
-        $query->where("( content.publish_down >= $quotedDate OR content.publish_down = '0' OR content.publish_down = '0000-00-00 00:00:00')");
+        $query = DB::query();
+        $query->select(DB::qn(['content.id', 'content.title', 'content.alias', 'content.catid']));
+        $query->from(DB::qn('#__content', 'content'));
+        $query->innerJoin(DB::qn('#__groups_content', 'pContent'), DB::qc('pContent.id', 'content.id'));
+        $query->where(DB::qcs([
+            ['content.catid', $categoryID],
+            ['content.publish_up', $date, '<=', true],
+            ['content.state', Pages::PUBLISHED],
+            ['pContent.featured', Pages::FEATURED]
+        ]));
+        $query->where($notExpired);
         $query->order('content.ordering ASC');
 
-        $dbo->setQuery($query);
+        DB::set($query);
 
-        $contents = DB::objects();
-
-        return empty($contents) ? [] : $contents;
+        return DB::objects();
     }
 
     /**
      * Creates a list item with a link
      *
-     * @param   bool    $active  whether or not the link is currently active
+     * @param   bool    $active  whether the link is currently active
      * @param   array   $params  the parameters used to generate the link
      * @param   string  $text    the text to be displayed in the link
      *
      * @return string the HTML for the list item
      */
-    public static function getItem($active, $params, $text)
+    public static function getItem(bool $active, array $params, string $text): string
     {
         $attribs = [];
 
@@ -99,11 +73,9 @@ class THM_GroupsHelperMenu
             $attribs['class'] = 'active_link current_link';
         }
 
-        $href = THM_GroupsHelperRouter::build($params, true);
+        $href = THM_GroupsHelperRouter::build($params);
         $text = '<span class="item-title">' . $text . "</span>";
 
-        $item = HTMLHelper::_('link', $href, $text, $attribs);
-
-        return $item;
+        return HTML::link($href, $text, $attribs);
     }
 }
