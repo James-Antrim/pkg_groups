@@ -19,9 +19,9 @@
     </languages>
     <licence>GNU GPL v.3</licence>
     <name>plg_content_groups</name>
-    <namespace path="src">THM\Plugin\User\Groups</namespace>
+    <namespace path="src">THM\Plugin\Content\Groups</namespace>
     <updateservers>
-        <server type="extension" name="Groups User Plugin Update Site" priority="1">
+        <server type="extension" name="Groups Content Plugin Update Site" priority="1">
             https://github.com/James-Antrim/pkg_groups/raw/main/update.xml
         </server>
     </updateservers>
