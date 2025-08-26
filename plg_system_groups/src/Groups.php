@@ -1,18 +1,23 @@
 <?php
 /**
- * @category    Joomla plugin
- * @package     THM_Organizer
- * @subpackage  plg_thm_groups_system.site
- * @name        plgSystemTHM_Groups
+ * @package     Groups
+ * @extension   plg_groups_system
  * @author      James Antrim, <james.antrim@nm.thm.de>
- * @copyright   2015 TH Mittelhessen
+ * @copyright   2022 TH Mittelhessen
  * @license     GNU GPL v.2
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\Database as DB;
+namespace THM\Plugin\System\Groups\Extension;
 
-defined('_JEXEC') or die;
+require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/autoloader.php';
+
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Plugin\CMSPlugin;
+use Joomla\CMS\Uri\Uri;
+use Joomla\Event\SubscriberInterface;
+use THM\Groups\Adapters\{Application, Database as DB, Input, User};
+use THM\Groups\Helpers\{Groups as GH, Pages, Profiles, Users};
 
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/profiles.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/renderer.php';
@@ -21,20 +26,10 @@ require_once 'GroupsParser.php';
 require_once 'GroupsRedirector.php';
 require_once 'GroupsValidator.php';
 
-use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Uri\Uri;
-use THM\Groups\Helpers\{Profiles, Users};
-use THM\Groups\Adapters\Application;
-
 /**
  * Class tries to resolve teacher stub calls from thm organizer to thm groups profiles.
- *
- * @category    Joomla.Plugin.System
- * @package     thm_groups
- * @subpackage  plg_thm_groups_system.site
  */
-class plgSystemTHM_Groups extends CMSPlugin
+class Groups extends CMSPlugin implements SubscriberInterface
 {
     /**
      * Determines whether the given path is a menu alias.
@@ -46,45 +41,33 @@ class plgSystemTHM_Groups extends CMSPlugin
      */
     private function isMenu(string $alias): int
     {
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('*')->from('#__menu')->where(DB::qc('path', $alias));
-        $dbo->setQuery($query);
+        $query = DB::query()->select('*')->from(DB::qn('#__menu'))->where(DB::qc('path', $alias));
+        DB::set($query);
 
-        $row = DB::array();
-
-        if (empty($row)) {
+        if (!$row = DB::array()) {
             return 0;
         }
 
-        if ($row['link'] !== 'index.php?option=com_thm_groups&view=profile') {
+        if ($row['link'] !== 'index.php?option=com_groups&view=profile') {
             return $row['id'];
         }
 
         $this->loadLanguage();
-        $app        = JFactory::getApplication();
-        $defaultURL = $app->input->server->getString('HTTP_REFERER');
-        $userID     = JFactory::getUser()->id;
-        $profileID  = 0;
+        $referrer = Input::referrer();
+        $user     = User::instance();
 
-        if (!$userID) {
-            $app->enqueueMessage(Text::_('PLG_SYSTEM_THM_GROUPS_NOT_AUTHENTICATED'), 'error');
-            Application::redirect($defaultURL, 401);
+        if (!$userID = $user->id) {
+            Application::message('401', 'error');
+            Application::redirect($referrer, 401);
         }
 
-        $query = $dbo->getQuery(true);
-        $query->select('id')->from('#__thm_groups_profiles')->where("id = $userID");
-        $dbo->setQuery($query);
-
-        $profileID = DB::integer();
-
-        if (empty($profileID)) {
-            $app->enqueueMessage(Text::_('PLG_SYSTEM_THM_GROUPS_NOT_EXISTENT'), 'error');
-            Application::redirect($defaultURL, 404);
+        if (!array_diff(array_keys($user->groups), GH::STANDARD_GROUPS)) {
+            Application::message('404', 'error');
+            Application::redirect($referrer, 404);
         }
 
-        $items = ['option' => 'com_thm_groups', 'view' => 'profile', 'profileID' => $profileID];
-        GroupsRedirector::redirect($items);
+        $items = ['option' => 'com_thm_groups', 'view' => 'profile', 'profileID' => $userID];
+        Redirector::redirect($items);
 
         return 0;
     }
@@ -235,11 +218,11 @@ class plgSystemTHM_Groups extends CMSPlugin
                     }
                     break;
                 case 'overview':
-                    $disambiguation = Text::_('COM_THM_GROUPS_DISAMBIGUATION_ALIAS');
+                    $disambiguation = Text::_('DISAMBIGUATION_ALIAS');
                     $translated     = in_array($disambiguation, $pItems);
 
                     // No unfiltered listing right now
-                    //$overview       = Text::_('COM_THM_GROUPS_OVERVIEW_ALIAS');
+                    //$overview       = Text::_('OVERVIEW_ALIAS');
                     //$translated = ($translated or in_array($overview, $pItems));
                     if (!$translated) {
                         GroupsRedirector::redirect($query);
@@ -353,6 +336,92 @@ class plgSystemTHM_Groups extends CMSPlugin
     }
 
     /**
+     * Redirects the user according to the query.
+     *
+     * @param   array  $query
+     *
+     * @return void
+     */
+    private static function redirect(array $query): void
+    {
+        $lang = Application::language();
+        $lang-> load('com_groups');
+
+        $msg     = '';
+        $msgType = 'message';
+        $url     = URI::root();
+
+        if (Application::configuration()->get('sef', Input::YES)) {
+            $code = 308;
+            $pathParts    = [];
+            $profileAlias = empty($query['profileID']) ? '' : Users::alias($query['profileID']);
+
+            switch ($query['view']) {
+                case 'page':
+                    $pathParts[] = $profileAlias;
+                    $pathParts[] = Pages::alias($query['id']);
+                    break;
+                case 'pages':
+                    $pathParts[] = $profileAlias;
+                    $pathParts[] = Text::_('PAGES_ALIAS');
+                    break;
+                case 'profile':
+                    $pathParts[] = $profileAlias;
+                    if (!empty($query['layout']) and $query['layout'] == 'edit') {
+                        $pathParts[] = Text::_('EDIT_ALIAS');
+                    }
+                    elseif (!empty($query['format'])) {
+                        $pathParts[] = $query['format'];
+                        unset($query['format']);
+                    }
+                    break;
+                case 'overview':
+                    // The given names did not deliver a distinct result
+                    if (!empty($query['search'])) {
+                        $code        = 409;
+                        $msg         = Text::_('409');
+                        $msgType     = Application::NOTICE;
+                        $pathParts[] = Text::_('DISAMBIGUATION_ALIAS');
+                        $pathParts[] = $query['search'];
+                    }
+                    break;
+            }
+
+            $url .= implode('/', $pathParts);
+
+            unset($query['id'], $query['lang'], $query['option'], $query['profileID'], $query['search'], $query['view']);
+
+            if (count($query)) {
+                ksort($query);
+                $url .= '?' . http_build_query($query);
+            }
+        }
+        else {
+            $code = 301;
+            $url  .= '?';
+            unset($query['lang']);
+            ksort($query);
+            $url .= http_build_query($query);
+            if (!empty($query['search'])) {
+                $code = 409;
+                $lang = Application::language();
+                $lang->load('com_groups');
+                $msg     = Text::_('_409');
+                $msgType = Application::NOTICE;
+                $url     .= "&search={$query['search']}";
+            }
+        }
+
+        http_response_code($code);
+
+        if ($msg) {
+            Application::message($msg, $msgType);
+        }
+
+        Application::redirect($url, $code);
+    }
+
+    /**
      * Replaces organizer stubs referencing persons via the username with profile links
      *
      * @param   string &$output  the output used for the application
@@ -368,32 +437,22 @@ class plgSystemTHM_Groups extends CMSPlugin
             return;
         }
 
-        $spans      = $matches[0];
-        $userNames  = $matches[1];
-        $names      = $matches[2];
+        $spans     = $matches[0];
+        $userNames = $matches[1];
+        $names     = $matches[2];
+
+        $query = DB::query()
+            ->select(DB::qn('id'))
+            ->from(DB::qn('#__users', 'users'))
+            ->where(DB::qc('username', ':username'))
+            ->bind(':username', $userName);
+
         $profileIDs = [];
-
-        $dbo   = JFactory::getDbo();
-        $query = $dbo->getQuery(true);
-        $query->select('profiles.id')
-            ->from('#__thm_groups_profiles AS profiles')
-            ->innerJoin('#__users AS users ON users.id = profiles.id');
-
         foreach ($userNames as $key => $userName) {
-            $query->clear('where');
-            $query->where(DB::qc('users.username', $userName));
+            DB::set($query);
 
-            $dbo->setQuery((string) $query);
-
-            try {
-                $result = $dbo->loadResult();
-            }
-            catch (Exception $exc) {
-                return;
-            }
-
-            if (!empty($result)) {
-                $profileIDs[$key] = $result;
+            if ($userID = DB::integer()) {
+                $profileIDs[$key] = $userID;
             }
         }
 

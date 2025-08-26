@@ -1,9 +1,7 @@
 <?php
 /**
- * @category    Joomla plugin
- * @package     THM_Groups
- * @subpackage  plg_thm_groups_system.site
- * @name        GroupsParser
+ * @package     Groups
+ * @extension   plg_groups_system
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2019 TH Mittelhessen
  * @license     GNU GPL v.2
@@ -165,23 +163,23 @@ class GroupsParser
         $lang->load('com_thm_groups');
 
         // Resolve modern sef links first
-        if ($lastItem === Text::_('COM_THM_GROUPS_OVERVIEW_ALIAS')) {
+        if ($lastItem === Text::_('OVERVIEW_ALIAS')) {
             // No unfiltered listing right now
             //$query['search'] = '';
             //$query['view']   = 'overview';
         }
-        elseif ($secondLastItem === Text::_('COM_THM_GROUPS_DISAMBIGUATION_ALIAS')) {
+        elseif ($secondLastItem === Text::_('DISAMBIGUATION_ALIAS')) {
             $query['search'] = $lastItem;
             $query['view']   = 'overview';
         }
-        elseif ($lastItem === Text::_('COM_THM_GROUPS_CONTENT_MANAGER_ALIAS')) {
+        elseif ($lastItem === Text::_('PAGES_ALIAS')) {
             $profileID = Users::idByAlias($secondLastItem);
             if (!empty($profileID)) {
                 $query['view']      = 'content_manager';
                 $query['profileID'] = $profileID;
             }
         }
-        elseif ($lastItem === Text::_('COM_THM_GROUPS_EDIT_ALIAS')) {
+        elseif ($lastItem === Text::_('EDIT_ALIAS')) {
             $profileID = Users::idByAlias($secondLastItem);
             if (!empty($profileID)) {
                 $query['view']      = 'profile_edit';

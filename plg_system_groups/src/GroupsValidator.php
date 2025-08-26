@@ -1,8 +1,7 @@
 <?php
 /**
- * @category    Joomla plugin
- * @package     THM_Groups
- * @subpackage  plg_thm_groups_system.site
+ * @package     Groups
+ * @extension   plg_groups_system
  * @name        GroupsParser
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2019 TH Mittelhessen

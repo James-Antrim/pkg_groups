@@ -88,7 +88,7 @@ class THM_GroupsHelperRouter
                 }
                 break;
             case 'content_manager':
-                $return[] = Text::_('CONTENT_MANAGER_ALIAS');
+                $return[] = Text::_('PAGES_ALIAS');
                 break;
             case 'profile':
                 if (!empty($params['format'])) {
