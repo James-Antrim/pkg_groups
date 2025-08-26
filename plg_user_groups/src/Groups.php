@@ -27,6 +27,7 @@ use THM\Groups\Adapters\Application;
  */
 class Groups extends CMSPlugin implements SubscriberInterface
 {
+    /** @inheritDoc */
     public static function getSubscribedEvents(): array
     {
         return [

@@ -24,6 +24,7 @@ use THM\Groups\Helpers\{Categories, Pages};
  */
 class Groups extends CMSPlugin implements SubscriberInterface
 {
+    /** @inheritDoc */
     public static function getSubscribedEvents(): array
     {
         return [
