@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension group="system" method="upgrade" type="plugin">
+    <author>James Antrim</author>
+    <authorEmail>james.antrim@nm.thm.de</authorEmail>
+    <authorUrl>www.thm.de</authorUrl>
+    <copyright>TH Mittelhessen 2021</copyright>
+    <creationDate>June 2021</creationDate>
+    <dependencies>
+        <dependency before="true" type="component" minversion="5.*">com_groups</dependency>
+    </dependencies>
+    <description>PLG_SYSTEM_GROUPS_DESC</description>
+    <files>
+        <folder plugin="groups">services</folder>
+        <folder>src</folder>
+    </files>
+    <languages folder="language">
+        <language tag="de-DE">de-DE/plg_system_groups.sys.ini</language>
+        <language tag="en-GB">en-GB/plg_system_groups.sys.ini</language>
+    </languages>
+    <licence>GNU GPL v.3</licence>
+    <name>plg_system_groups</name>
+    <namespace path="src">THM\Plugin\System\Groups</namespace>
+    <updateservers>
+        <server type="extension" name="Groups System Plugin Update Site" priority="1">
+            https://github.com/James-Antrim/pkg_groups/raw/main/update.xml
+        </server>
+    </updateservers>
+    <version>5.0.0</version>
+</extension>
