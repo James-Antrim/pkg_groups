@@ -1,8 +1,8 @@
 <?php
 /**
- * @package     THM_Groups
- * @extension   plg_thm_groups_editor_xtd_profiles
- * @author      James Antrim, <james.antrim@mni.thm.de>
+ * @package     Groups
+ * @extension   plg_groups_editor_xtd_profiles
+ * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2019 TH Mittelhessen
  * @license     GNU GPL v.2
  * @link        www.thm.de
@@ -12,10 +12,6 @@ defined('_JEXEC') or die;
 
 /**
  * Class adds a button for the insertion of THM Groups profile links/parameter hooks in editor fields.
- *
- * @category    Joomla.Plugin.Editors
- * @package     thm_groups
- * @subpackage  plg_thm_groups_editor_xtd_profiles.site
  */
 class PlgButtonTHM_Groups_Profiles extends JPlugin
 {

@@ -32,7 +32,7 @@ abstract class BaseView extends HtmlView
 
     /**
      * Inheritance stems from BaseDatabaseModel, not BaseModel. BaseDatabaseModel is higher in the Joomla internal
-     * hierarchy used for Joomla Admin, Form, List, ... models which in turn are the parents for the Organizer abstract
+     * hierarchy used for Joomla Admin, Form, List, ... models which in turn are the parents for the Groups abstract
      * classes of similar names.
      * @var BaseDatabaseModel
      */

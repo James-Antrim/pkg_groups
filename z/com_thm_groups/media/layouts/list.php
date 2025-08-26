@@ -1,8 +1,7 @@
 <?php
 /**
- * @package     THM_Groups
- * @author      James Antrim, <james.antrim@mni.thm.de>
- * @author      Ilja Michajlow, <Ilja.Michajlow@mni.thm.de>
+ * @package     Groups
+ * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.2
  * @link        www.thm.de

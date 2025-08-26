@@ -1,6 +1,6 @@
 <?php
 /**
- * @package     THM_Groups
+ * @package     Groups
  * @extension   mod_thm_groups_profiles
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
@@ -15,9 +15,6 @@ use THM\Groups\Helpers\{Groups, Profiles as Helper};
 
 /**
  * Data retrieval class for the THM Groups profile module.
- *
- * @category  Joomla.Module
- * @package   thm_groups
  */
 class THM_GroupsHelperProfilesModule
 {

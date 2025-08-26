@@ -1,7 +1,7 @@
 <?php
 /**
  * @package     Groups
- * @subpackage  plg_content_groups
+ * @extension   plg_content_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2017 TH Mittelhessen
  * @license     GNU GPL v.2
@@ -21,9 +21,6 @@ use THM\Groups\Helpers\{Categories, Pages};
 
 /**
  * Groups content plugin
- *
- * @category  Joomla.Plugin.Content
- * @package   THM_Groups
  */
 class Groups extends CMSPlugin implements SubscriberInterface
 {

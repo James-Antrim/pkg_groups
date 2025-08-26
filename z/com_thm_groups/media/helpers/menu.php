@@ -15,9 +15,6 @@ use THM\Groups\Helpers\{Pages, Users};
 
 /**
  * Data retrieval class for the THM Groups menu module.
- *
- * @category  Joomla.Module.Site
- * @package   thm_groups
  */
 class THM_GroupsHelperMenu
 {

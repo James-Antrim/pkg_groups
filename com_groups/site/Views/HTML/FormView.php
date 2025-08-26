@@ -59,7 +59,7 @@ abstract class FormView extends Core
             $this->layout = $config['layout'];
         }
 
-        $this->baseURL = $this->baseURL ?: Uri::base() . 'index.php?option=com_organizer';
+        $this->baseURL = $this->baseURL ?: Uri::base() . 'index.php?option=com_groups';
 
         parent::__construct($config);
 

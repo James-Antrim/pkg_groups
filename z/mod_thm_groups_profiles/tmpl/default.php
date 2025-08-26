@@ -1,8 +1,7 @@
 <?php
 /**
- * @category    Joomla module
- * @package     THM_Groups
- * @subpackage  mod_thm_groups_profiles
+ * @package     Groups
+ * @extension   mod_groups_profiles
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2017 TH Mittelhessen
  * @license     GNU GPL v.2

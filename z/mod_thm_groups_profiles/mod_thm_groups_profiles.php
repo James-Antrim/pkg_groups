@@ -1,6 +1,6 @@
 <?php
 /**
- * @package     THM_Groups
+ * @package     Groups
  * @extension   mod_thm_groups_profiles
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen

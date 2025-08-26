@@ -5,7 +5,7 @@
             related to the persons of an organization.
         </description>
         <maintainer>James Antrim</maintainer>
-        <maintainerurl>https://www.thm.de/organizer</maintainerurl>
+        <maintainerurl>https://www.thm.de</maintainerurl>
         <version>5.0.0</version>
         <infourl title="THM Homepage">https://www.thm.de/site</infourl>
         <tags>
@@ -26,7 +26,7 @@
         <description>Removes Groups parameters from displayed content and ensures content is dis-/associated from/with user profiles as appropriate.
         </description>
         <maintainer>James Antrim</maintainer>
-        <maintainerurl>https://www.thm.de/organizer</maintainerurl>
+        <maintainerurl>https://www.thm.de</maintainerurl>
         <version>5.0.0</version>
         <infourl title="THM Homepage">https://www.thm.de/site</infourl>
         <tags>
@@ -49,7 +49,7 @@
             Component.
         </description>
         <maintainer>James Antrim</maintainer>
-        <maintainerurl>https://www.thm.de/organizer</maintainerurl>
+        <maintainerurl>https://www.thm.de</maintainerurl>
         <version>5.0.0</version>
         <infourl title="THM Homepage">https://www.thm.de/site</infourl>
         <tags>
