@@ -17,12 +17,8 @@ use Joomla\Event\SubscriberInterface;
 use THM\Groups\Adapters\{Application, Database as DB, HTML, Input, Text, User};
 use THM\Groups\Helpers\{Groups as GH, Pages, Profiles, Users};
 
-require_once JPATH_ROOT . '/media/com_thm_groups/helpers/profiles.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/renderer.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/router.php';
-require_once 'GroupsParser.php';
-require_once 'GroupsRedirector.php';
-require_once 'GroupsValidator.php';
 
 /**
  * Class tries to resolve teacher stub calls from thm organizer to thm groups profiles.
@@ -33,33 +29,34 @@ class Groups extends CMSPlugin implements SubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            'onAfterInitialise'   => 'resolve',
-            'onContentBeforeSave' => 'disassociate',
-            'onContentPrepare'    => 'replace'
+            'onAfterInitialise' => 'resolve',
+            'onAfterRender'     => 'replace'
         ];
     }
 
     /**
-     * Determines whether the given path is a menu alias.
+     * Determines whether the given path is a menu alias not referencing the profile view.
      *
      * @param   string  $alias  the potential menu alias.
      *
-     * @return int int the id of the menu item or 0
+     * @return bool
      */
-    private function isMenu(string $alias): int
+    private function isMenuItem(string $alias): bool
     {
-        $query = DB::query()->select('*')->from(DB::qn('#__menu'))->where(DB::qc('path', $alias));
+        $query = DB::query()->select(DB::qn(['id', 'link']))->from(DB::qn('#__menu'))->where(DB::qc('path', $alias));
         DB::set($query);
 
+        // Not a menu item.
         if (!$row = DB::array()) {
-            return 0;
+            return false;
         }
 
+        // Basic menu item
         if ($row['link'] !== 'index.php?option=com_groups&view=profile') {
-            return $row['id'];
+            return true;
         }
 
-        $this->loadLanguage();
+        // Personal profile as item
         $referrer = Input::referrer();
         $user     = User::instance();
 
@@ -74,7 +71,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
         }
 
         $items = ['option' => 'com_thm_groups', 'view' => 'profile', 'profileID' => $userID];
-        self::redirect($items);
+        $this->redirect($items);
 
         return 0;
     }
@@ -83,10 +80,8 @@ class Groups extends CMSPlugin implements SubscriberInterface
      * Attempts to log in the user using the nested form data from the login module.
      *
      * @return void
-     * @noinspection PhpUnused
-     * @noinspection PhpUnusedPrivateMethodInspection
      */
-    private static function login(): void
+    private function login(): void
     {
         $password   = Input::string('password');
         $referrer   = Input::referrer();
@@ -108,192 +103,11 @@ class Groups extends CMSPlugin implements SubscriberInterface
      * Attempts to log in the user using the nested form data from the login module.
      *
      * @return void
-     * @noinspection PhpUnused
-     * @noinspection PhpUnusedPrivateMethodInspection
      */
-    public static function logout(): void
+    public function logout(): void
     {
         Application::logout();
         Application::redirect(Input::referrer());
-    }
-
-    /**
-     * Checks whether profile users were directly addressed in the url
-     *
-     * @return void
-     */
-    public function resolve(): void
-    {
-        if (Application::backend()) {
-            return;
-        }
-
-        $uri    = Uri::getInstance();
-        $pItems = THM_GroupsHelperRouter::getPathItems($uri::current());
-        $qItems = $uri->getQuery(true);
-
-        // Language switch performed on a menu item
-        $onlyLanguage = (count($qItems) === 1 and !empty($qItems['lang']));
-        $path         = implode('/', $pItems);
-        if ($this->isMenu($path) and (empty($qItems) or $onlyLanguage)) {
-            return;
-        }
-
-        // Link to site
-        if (empty($pItems) and empty($qItems['option'])) {
-            $qItems['option'] = 'com_content';
-        }
-
-        $relevantTasks = ['user.login' => 'login', 'user.logout' => 'logout'];
-        $task          = Input::task();
-        if ($task and !array_key_exists($task, $relevantTasks)) {
-            return;
-        }
-        elseif ($task) {
-            $wrapperFunction = $relevantTasks[$task];
-            self::$wrapperFunction();
-        }
-
-        $relevant = ['content', 'groups'];
-
-        if ($qItems and !empty($qItems['option']) and $qItems['option'] === 'com_content') {
-            // Relevant content
-            if (THM_GroupsHelperRouter::translateContent($qItems)) {
-                GroupsRedirector::redirect($qItems);
-            }
-            else {
-                return;
-            }
-        }
-
-        $sef = Application::configuration()->get('sef', Input::YES);
-
-        if ($sef and $pItems and in_array('component', $pItems) and !array_intersect($relevant, $pItems)) {
-            return;
-        }
-
-        $validQuery = GroupsValidator::validate($qItems);
-        if ($validQuery === false) {
-            // The query is flagrantly invalid.
-            return;
-        }
-        elseif ($validQuery) {
-            if ($sef) {
-                // The query is valid but the formatting requires a redirect.
-                GroupsRedirector::redirect($qItems);
-            }
-
-            // The query is valid and SEF is inactive.
-            self::route($qItems);
-
-            return;
-        }
-
-        $query     = GroupsParser::groupsSEF($pItems);
-        $validPath = GroupsValidator::validate($query);
-
-        // No parameters should be lost.
-        $query = array_merge($query, $qItems);
-        if ($validPath === false) {
-            // The path is flagrantly invalid.
-            return;
-        }
-        elseif ($validPath) {
-            if (!$sef) {
-                // The query is valid but the formatting requires a redirect. Temporary redirect because we want SEF.
-                GroupsRedirector::redirect($query);
-            }
-
-            // The SEF URL is valid and SEF is active.
-            switch ($query['view']) {
-                case 'content':
-                case 'content_manager':
-                case 'profile':
-                case 'profile_edit':
-                    $profileAlias = Users::alias($query['profileID']);
-                    if (!in_array($profileAlias, $pItems)) {
-                        GroupsRedirector::redirect($query);
-                    }
-                    break;
-                case 'overview':
-                    $disambiguation = Text::_('DISAMBIGUATION_ALIAS');
-                    $translated     = in_array($disambiguation, $pItems);
-
-                    // No unfiltered listing right now
-                    //$overview       = Text::_('OVERVIEW_ALIAS');
-                    //$translated = ($translated or in_array($overview, $pItems));
-                    if (!$translated) {
-                        GroupsRedirector::redirect($query);
-                    }
-                    break;
-            }
-
-            self::route($query);
-
-            return;
-        }
-
-        // SEF and query taken together are valid.
-        if (GroupsValidator::validate($query)) {
-            GroupsRedirector::redirect($query);
-        }
-
-        $query           = GroupsParser::groupsLegacySEF($pItems);
-        $validLegacyPath = GroupsValidator::validate($query);
-        if ($validLegacyPath === false) {
-            return;
-        }
-        elseif ($validLegacyPath) {
-            $query = array_merge($query, $qItems);
-            GroupsRedirector::redirect($query);
-        }
-
-        // Attempt to resolve for standard joomla sef construction of old links
-        $query           = GroupsParser::groupsJoomla($pItems);
-        $validJoomlaPath = GroupsValidator::validate($query);
-        if ($validJoomlaPath === false) {
-            return;
-        }
-        elseif ($validJoomlaPath) {
-            $query = array_merge($query, $qItems);
-            GroupsRedirector::redirect($query);
-        }
-
-        if (count($pItems) >= 2) {
-            $query             = GroupsParser::category(end($pItems));
-            $validCategoryPath = GroupsValidator::validate($query);
-            if ($validCategoryPath) {
-                $query = array_merge($query, $qItems);
-                GroupsRedirector::redirect($query);
-            }
-        }
-    }
-
-    /**
-     * Replaces user stubs with the corresponding configured output
-     *
-     * @return void
-     */
-    public function onAfterRender(): void
-    {
-        if (Application::backend()) {
-            return;
-        }
-
-        $output = Application::body();
-        $this->replaceStubs($output);
-
-        THM_GroupsHelperRenderer::contentURLS($output);
-
-        if (Input::view() !== 'form') {
-            THM_GroupsHelperRenderer::modProfilesParams($output);
-        }
-
-        if (Application::configuration()->get('sef', Input::YES)) {
-            THM_GroupsHelperRenderer::groupsQueries($output);
-        }
-
-        Application::body($output);
     }
 
     /**
@@ -335,7 +149,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
      *
      * @return void
      */
-    private static function redirect(array $query): void
+    private function redirect(array $query): void
     {
         $lang = Application::language();
         $lang->load('com_groups');
@@ -412,6 +226,186 @@ class Groups extends CMSPlugin implements SubscriberInterface
         }
 
         Application::redirect($url, $code);
+    }
+
+    /**
+     * Replaces user stubs with the corresponding configured output
+     *
+     * @return void
+     */
+    public function replace(): void
+    {
+        if (Application::backend()) {
+            return;
+        }
+
+        $output = Application::body();
+        $this->replaceStubs($output);
+
+        THM_GroupsHelperRenderer::contentURLS($output);
+
+        if (Input::view() !== 'form') {
+            THM_GroupsHelperRenderer::modProfilesParams($output);
+        }
+
+        if (Application::configuration()->get('sef', Input::YES)) {
+            THM_GroupsHelperRenderer::groupsQueries($output);
+        }
+
+        Application::body($output);
+    }
+
+    /**
+     * Checks whether profile users were directly addressed in the url
+     *
+     * @return void
+     */
+    public function resolve(): void
+    {
+        if (Application::backend()) {
+            return;
+        }
+
+        $uri    = Uri::getInstance();
+        $pItems = THM_GroupsHelperRouter::getPathItems($uri::current());
+        $qItems = $uri->getQuery(true);
+
+        // Language switch performed on a menu item
+        $onlyLanguage = (count($qItems) === 1 and !empty($qItems['lang']));
+        $path         = implode('/', $pItems);
+        if ($this->isMenuItem($path) and (empty($qItems) or $onlyLanguage)) {
+            return;
+        }
+
+        // Link to site
+        if (empty($pItems) and empty($qItems['option'])) {
+            $qItems['option'] = 'com_content';
+        }
+
+        if ($task = Input::task()) {
+            if ($task === 'user.login') {
+                $this->login();
+            }
+            elseif ($task === 'user.logout') {
+                $this->logout();
+            }
+            else {
+                return;
+            }
+        }
+
+        $relevant = ['content', 'groups'];
+
+        if ($qItems and !empty($qItems['option']) and $qItems['option'] === 'com_content') {
+            // Relevant content
+            if (THM_GroupsHelperRouter::translateContent($qItems)) {
+                $this->redirect($qItems);
+            }
+            else {
+                return;
+            }
+        }
+
+        $sef = Application::configuration()->get('sef', Input::YES);
+
+        if ($sef and $pItems and in_array('component', $pItems) and !array_intersect($relevant, $pItems)) {
+            return;
+        }
+
+        $validQuery = $this->validate($qItems);
+        if ($validQuery === false) {
+            // The query is flagrantly invalid.
+            return;
+        }
+        elseif ($validQuery) {
+            if ($sef) {
+                // The query is valid but the formatting requires a redirect.
+                $this->redirect($qItems);
+            }
+
+            // The query is valid and SEF is inactive.
+            $this->route($qItems);
+
+            return;
+        }
+
+        $query     = Parser::groupsSEF($pItems);
+        $validPath = $this->validate($query);
+
+        // No parameters should be lost.
+        $query = array_merge($query, $qItems);
+        if ($validPath === false) {
+            // The path is flagrantly invalid.
+            return;
+        }
+        elseif ($validPath) {
+            if (!$sef) {
+                // The query is valid but the formatting requires a redirect. Temporary redirect because we want SEF.
+                $this->redirect($query);
+            }
+
+            // The SEF URL is valid and SEF is active.
+            switch ($query['view']) {
+                case 'content':
+                case 'content_manager':
+                case 'profile':
+                case 'profile_edit':
+                    $profileAlias = Users::alias($query['profileID']);
+                    if (!in_array($profileAlias, $pItems)) {
+                        $this->redirect($query);
+                    }
+                    break;
+                case 'overview':
+                    $disambiguation = Text::_('DISAMBIGUATION_ALIAS');
+                    $translated     = in_array($disambiguation, $pItems);
+
+                    $overview   = Text::_('OVERVIEW_ALIAS');
+                    $translated = ($translated or in_array($overview, $pItems));
+                    if (!$translated) {
+                        $this->redirect($query);
+                    }
+                    break;
+            }
+
+            $this->route($query);
+
+            return;
+        }
+
+        // SEF and query taken together are valid.
+        if ($this->validate($query)) {
+            $this->redirect($query);
+        }
+
+        $query           = Parser::groupsLegacySEF($pItems);
+        $validLegacyPath = $this->validate($query);
+        if ($validLegacyPath === false) {
+            return;
+        }
+        elseif ($validLegacyPath) {
+            $query = array_merge($query, $qItems);
+            $this->redirect($query);
+        }
+
+        // Attempt to resolve for standard joomla sef construction of old links
+        $query           = Parser::groupsJoomla($pItems);
+        $validJoomlaPath = $this->validate($query);
+        if ($validJoomlaPath === false) {
+            return;
+        }
+        elseif ($validJoomlaPath) {
+            $query = array_merge($query, $qItems);
+            $this->redirect($query);
+        }
+
+        if (count($pItems) >= 2) {
+            $query             = Parser::category(end($pItems));
+            $validCategoryPath = $this->validate($query);
+            if ($validCategoryPath) {
+                $query = array_merge($query, $qItems);
+                $this->redirect($query);
+            }
+        }
     }
 
     /**
@@ -492,5 +486,107 @@ class Groups extends CMSPlugin implements SubscriberInterface
         }
 
         Application::router()->attachParseRule([$this, 'parse'], Router::PROCESS_BEFORE);
+    }
+
+    /**
+     * Validates the query against the dynamic content parameters
+     *
+     * @param   array &$query  the query parameters
+     *
+     * @return ?bool true if the query has all required parameters, and they are valid, false if the query is invalid,
+     *               int 0 if the validity could not be determined due to missing parameters.
+     */
+    private function validate(array &$query): ?bool
+    {
+        if (!$query) {
+            return null;
+        }
+
+        // Ignore calls to irrelevant components
+        if (!empty($query['option'])) {
+            switch ($query['option']) {
+                case 'com_thm_groups' :
+                    break;
+                case 'com_content' :
+                    if (empty($query['view'])) {
+                        return false;
+                    }
+                    return match ($query['view']) {
+                        'article', 'category' => 0,
+                        default => false,
+                    };
+                default:
+                    return false;
+            }
+        }
+
+        if (empty($query['view'])) {
+            if (empty($query['id']) and empty($query['profileID'])) {
+                return null;
+            }
+
+            $profileID = empty($query['profileID']) ? 0 : $query['profileID'];
+            if (!empty($query['id']) and Pages::alias($query['id'])) {
+                if (!$profileID = Pages::userID($query['id'], $profileID)) {
+                    return false;
+                }
+
+                $query['profileID'] = $profileID;
+                $query['view']      = 'content';
+
+                return true;
+            }
+            elseif ($profileID and Users::alias($profileID)) {
+                $query['view'] = 'profile';
+
+                return true;
+            }
+
+            return false;
+        }
+        else {
+            switch ($query['view']) {
+                case 'content_manager':
+                case 'profile':
+                case 'profile_edit':
+
+                    $username = $query['username'] ?? '';
+                    if ($username and $profileID = User::id($username)) {
+                        $query['profileID'] = $profileID;
+                        unset($query['username']);
+                    }
+
+                    // Inconclusive
+                    if (empty($query['profileID'])) {
+                        return null;
+                    }
+
+                    // Success
+                    if (Users::alias($query['profileID'])) {
+                        return true;
+                    }
+
+                    // Irrelevant
+                    return false;
+                case 'content':
+                    // Inconclusive
+                    if (empty($query['id'])) {
+                        return null;
+                    }
+
+                    // Success
+                    if (Pages::alias($query['id'])) {
+                        return true;
+                    }
+
+                    // Irrelevant
+                    return false;
+                case 'overview':
+                    // Success
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }

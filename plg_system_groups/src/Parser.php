@@ -8,6 +8,8 @@
  * @link        www.thm.de
  */
 
+namespace THM\Plugin\System\Groups\Extension;
+
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
 
 use Joomla\CMS\Language\Text;
@@ -17,7 +19,7 @@ use THM\Groups\Helpers\{Categories, Pages, Users};
 /**
  * Parses URL parameters.
  */
-class GroupsParser
+class Parser
 {
     /**
      * Checks whether the second last path item to a groups profile item
@@ -25,7 +27,6 @@ class GroupsParser
      * @param   string  $possibleCategory  the path segment being checked
      *
      * @return array the query items which could be resolved
-     * @throws Exception
      */
     public static function category(string $possibleCategory): array
     {
@@ -55,7 +56,6 @@ class GroupsParser
      * @param   array  $pathItems  the segments of the path
      *
      * @return array the parsed attributes
-     * @throws Exception
      */
     public static function groupsLegacySEF(array $pathItems): array
     {
@@ -145,7 +145,6 @@ class GroupsParser
      * @param   array &$pathItems  the segments of the path
      *
      * @return array the query
-     * @throws Exception
      */
     public static function groupsSEF(array $pathItems): array
     {
@@ -164,9 +163,8 @@ class GroupsParser
 
         // Resolve modern sef links first
         if ($lastItem === Text::_('OVERVIEW_ALIAS')) {
-            // No unfiltered listing right now
-            //$query['search'] = '';
-            //$query['view']   = 'overview';
+            $query['search'] = '';
+            $query['view']   = 'overview';
         }
         elseif ($secondLastItem === Text::_('DISAMBIGUATION_ALIAS')) {
             $query['search'] = $lastItem;
@@ -238,7 +236,6 @@ class GroupsParser
      * @param   array &$pathItems  the segments of the path
      *
      * @return array the query
-     * @throws Exception
      */
     public static function groupsJoomla(array $pathItems): array
     {

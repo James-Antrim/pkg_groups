@@ -122,26 +122,6 @@ class THM_GroupsHelperProfiles
     }
 
     /**
-     * Retrieves the id of the profile associated with the given alias.
-     *
-     * @param   string  $username  the username
-     *
-     * @return mixed
-     */
-    public static function getProfileIDByUserName(string $username): int
-    {
-        $query = DB::query();
-        $query->select('DISTINCT p.id')
-            ->from('#__thm_groups_profiles AS p')
-            ->innerJoin('#__users AS u on u.id = p.id')
-            ->where(DB::qc('u.username', $username, '=', true));
-
-        DB::set($query);
-
-        return DB::integer() ?: 0;
-    }
-
-    /**
      * Gets the role association ids associated with the profile
      *
      * @param   int  $profileID  the id of the profile
