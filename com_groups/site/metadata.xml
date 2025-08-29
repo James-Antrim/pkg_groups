@@ -4,6 +4,7 @@
         <options var="view">
             <option name="GROUPS_ADVANCED" msg="GROUPS_ADVANCED_DESC" value="advanced"/>
             <option name="GROUPS_OVERVIEW" msg="GROUPS_OVERVIEW_DESC" value="overview"/>
+            <option name="GROUPS_MY_PROFILE" msg="GROUPS_MY_PROFILE_DESC" value="overview"/>
         </options>
     </menu>
 </metadata>
