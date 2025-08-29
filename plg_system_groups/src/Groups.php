@@ -12,11 +12,9 @@ namespace THM\Plugin\System\Groups\Extension;
 
 require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/autoloader.php';
 
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\CMS\Uri\Uri;
+use Joomla\CMS\{Plugin\CMSPlugin, Router\Router, Session\Session, Uri\Uri};
 use Joomla\Event\SubscriberInterface;
-use THM\Groups\Adapters\{Application, Database as DB, Input, User};
+use THM\Groups\Adapters\{Application, Database as DB, HTML, Input, Text, User};
 use THM\Groups\Helpers\{Groups as GH, Pages, Profiles, Users};
 
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/profiles.php';
@@ -31,13 +29,22 @@ require_once 'GroupsValidator.php';
  */
 class Groups extends CMSPlugin implements SubscriberInterface
 {
+    /** @inheritDoc */
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            'onAfterInitialise'   => 'resolve',
+            'onContentBeforeSave' => 'disassociate',
+            'onContentPrepare'    => 'replace'
+        ];
+    }
+
     /**
      * Determines whether the given path is a menu alias.
      *
      * @param   string  $alias  the potential menu alias.
      *
      * @return int int the id of the menu item or 0
-     * @throws Exception
      */
     private function isMenu(string $alias): int
     {
@@ -67,7 +74,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
         }
 
         $items = ['option' => 'com_thm_groups', 'view' => 'profile', 'profileID' => $userID];
-        Redirector::redirect($items);
+        self::redirect($items);
 
         return 0;
     }
@@ -76,25 +83,22 @@ class Groups extends CMSPlugin implements SubscriberInterface
      * Attempts to log in the user using the nested form data from the login module.
      *
      * @return void
-     * @throws Exception
      * @noinspection PhpUnused
      * @noinspection PhpUnusedPrivateMethodInspection
      */
     private static function login(): void
     {
-        $app        = JFactory::getApplication();
-        $input      = $app->input;
-        $password   = $input->getString('password');
-        $referrer   = $input->server->getString('HTTP_REFERER');
-        $username   = $input->get('username');
-        $validToken = (JSession::checkToken() or JSession::checkToken('get'));
+        $password   = Input::string('password');
+        $referrer   = Input::referrer();
+        $username   = Input::string('username');
+        $validToken = (Session::checkToken() or Session::checkToken('get'));
 
         // Error messages due to false credentials are handled in the login function
         if ($validToken and $username and $password) {
-            $app->login(['username' => $username, 'password' => $password]);
+            Application::login(['username' => $username, 'password' => $password]);
         }
         elseif (!$validToken) {
-            $app->enqueueMessage(Text::_('JINVALID_TOKEN_NOTICE'), 'warning');
+            Application::message('JINVALID_TOKEN_NOTICE', Application::WARNING);
         }
 
         Application::redirect($referrer);
@@ -104,28 +108,22 @@ class Groups extends CMSPlugin implements SubscriberInterface
      * Attempts to log in the user using the nested form data from the login module.
      *
      * @return void
-     * @throws Exception
      * @noinspection PhpUnused
      * @noinspection PhpUnusedPrivateMethodInspection
      */
-    private static function logout(): void
+    public static function logout(): void
     {
-        $app = JFactory::getApplication();
-        $app->logout();
-        $referrer = $app->input->server->getString('HTTP_REFERER');
-        Application::redirect($referrer);
+        Application::logout();
+        Application::redirect(Input::referrer());
     }
 
     /**
      * Checks whether profile users were directly addressed in the url
      *
-     * @return void sets application variables
-     * @throws Exception
+     * @return void
      */
-    public function onAfterInitialise(): void
+    public function resolve(): void
     {
-        // Only trigger for front end requests
-        $app = JFactory::getApplication();
         if (Application::backend()) {
             return;
         }
@@ -147,7 +145,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
         }
 
         $relevantTasks = ['user.login' => 'login', 'user.logout' => 'logout'];
-        $task          = $app->input->get('task', '');
+        $task          = Input::task();
         if ($task and !array_key_exists($task, $relevantTasks)) {
             return;
         }
@@ -168,7 +166,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
             }
         }
 
-        $sef = JFactory::getConfig()->get('sef', 1);
+        $sef = Application::configuration()->get('sef', Input::YES);
 
         if ($sef and $pItems and in_array('component', $pItems) and !array_intersect($relevant, $pItems)) {
             return;
@@ -275,61 +273,56 @@ class Groups extends CMSPlugin implements SubscriberInterface
      * Replaces user stubs with the corresponding configured output
      *
      * @return void
-     * @throws Exception
      */
     public function onAfterRender(): void
     {
-        // Only trigger for front end requests
-        $app = JFactory::getApplication();
         if (Application::backend()) {
             return;
         }
 
-        $output = $app->getBody();
+        $output = Application::body();
         $this->replaceStubs($output);
 
         THM_GroupsHelperRenderer::contentURLS($output);
 
-        if ($app->input->get('view') !== 'form') {
+        if (Input::view() !== 'form') {
             THM_GroupsHelperRenderer::modProfilesParams($output);
         }
 
-        if (JFactory::getConfig()->get('sef', 1)) {
+        if (Application::configuration()->get('sef', Input::YES)) {
             THM_GroupsHelperRenderer::groupsQueries($output);
         }
 
-        $app->setBody($output);
+        Application::body($output);
     }
 
     /**
      * Add parse rule to router.
      *
-     * @param   JRouter  &$router  JRouter object.
-     * @param   JUri     &$uri     JUri object.
+     * @param   Router  $router  JRouter object.
+     * @param   Uri     $uri     JUri object.
      *
      * @return array
-     * @throws Exception
      * @noinspection PhpUnusedParameterInspection
      */
-    public function parse(JRouter &$router, JUri &$uri): array
+    public function parse(Router $router, Uri $uri): array
     {
-        $input  = JFactory::getApplication()->input;
-        $return = ['option' => 'com_thm_groups', 'view' => $input->getString('view')];
+        $return = ['option' => 'com_thm_groups', 'view' => Input::view()];
 
-        if (!empty($input->getInt('id'))) {
-            $return['id'] = $input->getInt('id');
+        if ($id = Input::id()) {
+            $return['id'] = $id;
         }
 
-        if (!empty($input->getString('format'))) {
-            $return['format'] = $input->getString('format');
+        if ($format = Input::format()) {
+            $return['format'] = $format;
         }
 
-        if (!empty($input->getInt('profileID'))) {
-            $return['profileID'] = $input->getInt('profileID');
+        if ($profileID = Input::integer('profileID')) {
+            $return['profileID'] = $profileID;
         }
 
-        if (!empty($input->getInt('search'))) {
-            $return['search'] = $input->getString('search');
+        if ($search = Input::string('search')) {
+            $return['search'] = $search;
         }
 
         return $return;
@@ -345,14 +338,14 @@ class Groups extends CMSPlugin implements SubscriberInterface
     private static function redirect(array $query): void
     {
         $lang = Application::language();
-        $lang-> load('com_groups');
+        $lang->load('com_groups');
 
         $msg     = '';
         $msgType = 'message';
         $url     = URI::root();
 
         if (Application::configuration()->get('sef', Input::YES)) {
-            $code = 308;
+            $code         = 308;
             $pathParts    = [];
             $profileAlias = empty($query['profileID']) ? '' : Users::alias($query['profileID']);
 
@@ -427,7 +420,6 @@ class Groups extends CMSPlugin implements SubscriberInterface
      * @param   string &$output  the output used for the application
      *
      * @return void modifies the output
-     * @throws Exception
      */
     private function replaceStubs(string &$output): void
     {
@@ -475,7 +467,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
             }
 
             $url    = THM_GroupsHelperRouter::build(['view' => 'profile', 'profileID' => $profileID]);
-            $link   = JHtml::_('link', $url, $displayName, ['target' => '_blank']);
+            $link   = HTML::link($url, $displayName, ['target' => '_blank']);
             $output = str_replace($spans[$key], $link, $output);
         }
 
@@ -484,25 +476,21 @@ class Groups extends CMSPlugin implements SubscriberInterface
     /**
      * Prepares the input object to route correctly.
      *
-     * @param $parameters
+     * @param   array  $parameters
      *
      * @return void
-     * @throws Exception
      */
-    private function route($parameters): void
+    private function route(array $parameters): void
     {
-        $input = JFactory::getApplication()->input;
-
-        $input->set('option', 'com_thm_groups');
-        if ($defaultMenuID = JComponentHelper::getParams('com_thm_groups')->get('dynamicContext')) {
-            $input->set('Itemid', $defaultMenuID);
+        Input::set('option', 'com_groups');
+        if ($defaultMenuID = Input::parameters()->get('dynamicContext')) {
+            Input::set('Itemid', $defaultMenuID);
         }
 
         foreach ($parameters as $key => $value) {
-            $input->set($key, $value);
+            Input::set($key, $value);
         }
 
-        $router = JApplicationCms::getInstance('site')::getRouter('site');
-        $router->attachParseRule([$this, 'parse']);
+        Application::router()->attachParseRule([$this, 'parse'], Router::PROCESS_BEFORE);
     }
 }

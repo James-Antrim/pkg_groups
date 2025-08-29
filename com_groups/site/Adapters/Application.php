@@ -13,8 +13,8 @@ namespace THM\Groups\Adapters;
 use Exception;
 use JetBrains\PhpStorm\NoReturn;
 use Joomla\CMS\Application\{CMSApplication, CMSApplicationInterface, WebApplication};
-use Joomla\CMS\{Component\ComponentHelper, Document\Document, Factory, Language\Language};
-use Joomla\CMS\{Menu\MenuItem, Pathway\Pathway, Plugin\PluginHelper, Session\Session, Uri\Uri};
+use Joomla\CMS\{Component\ComponentHelper, Document\Document, Factory, Language\Language, Menu\MenuItem};
+use Joomla\CMS\{Pathway\Pathway, Plugin\PluginHelper, Router\Router, Session\Session, Uri\Uri};
 use Joomla\CMS\Extension\{ComponentInterface, ExtensionHelper};
 use Joomla\Database\DatabaseDriver;
 use Joomla\DI\Container;
@@ -58,6 +58,26 @@ class Application
     public static function backend(): bool
     {
         return self::instance()->isClient('administrator');
+    }
+
+    /**
+     * Retrieves the contents of the response body.
+     *
+     * @param   string  $body  the modified contents of the body to set as applicable
+     *
+     * @return string
+     */
+    public static function body(string $body = ''): string
+    {
+        /** @var CMSApplication $app */
+        $app = self::instance();
+
+        if ($body) {
+            $app->setBody($body);
+            return '';
+        }
+
+        return $app->getBody();
     }
 
     /**
@@ -276,6 +296,45 @@ class Application
     }
 
     /**
+     * Login authentication function.
+     *
+     * @param   array  $credentials  array('username' => string, 'password' => string)
+     * @param   array  $options      array('remember' => boolean)
+     *
+     * @return  bool
+     * @see CMSApplication::login()
+     */
+    public static function login(array $credentials, array $options = []): bool
+    {
+        /** @var CMSApplication $app */
+        $app      = self::instance();
+        $response = $app->login($credentials, $options);
+
+        if (is_bool($response)) {
+            return $response;
+        }
+
+        Application::message($response->getMessage(), Application::ERROR);
+        return false;
+    }
+
+    /**
+     * Logout authentication function.
+     *
+     * @param   int|string  $userID   user id, can technically also be the username
+     * @param   array       $options  array('clientid' => array of client id's)
+     *
+     * @return  bool
+     * @see CMSApplication::logout()
+     */
+    public static function logout(int|string $userID = 0, array $options = []): bool
+    {
+        /** @var CMSApplication $app */
+        $app = self::instance();
+        return $app->logout($userID, $options);
+    }
+
+    /**
      * Gets the current menu item.
      * @return MenuItem|null the current menu item or null
      */
@@ -385,6 +444,17 @@ class Application
         /** @var CMSApplication $app */
         $app = self::instance();
         $app->redirect($url, $status);
+    }
+
+    /**
+     * Returns the container's router.
+     *
+     * @return  Router
+     */
+    public static function router(): Router
+    {
+        $container = self::container();
+        return $container->get('Router');
     }
 
     /**

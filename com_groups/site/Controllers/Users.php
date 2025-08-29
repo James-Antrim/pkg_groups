@@ -535,7 +535,7 @@ class Users extends ListController
 
                 // Log the user out.
                 if ($block) {
-                    $app->logout($users->id, $options);
+                    Application::logout($users->id, $options);
                 }
             }
         }
