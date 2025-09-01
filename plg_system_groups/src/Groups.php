@@ -17,7 +17,6 @@ use Joomla\Event\SubscriberInterface;
 use THM\Groups\Adapters\{Application, Database as DB, HTML, Input, Text, User};
 use THM\Groups\Helpers\{Groups as GH, Pages, Profiles, Users};
 
-require_once JPATH_ROOT . '/media/com_thm_groups/helpers/renderer.php';
 require_once JPATH_ROOT . '/media/com_thm_groups/helpers/router.php';
 
 /**
@@ -242,14 +241,14 @@ class Groups extends CMSPlugin implements SubscriberInterface
         $output = Application::body();
         $this->replaceStubs($output);
 
-        THM_GroupsHelperRenderer::contentURLS($output);
+        Pages::replaceContentURLS($output);
 
         if (Input::view() !== 'form') {
-            THM_GroupsHelperRenderer::modProfilesParams($output);
+            Pages::removeProfileParameters($output);
         }
 
         if (Application::configuration()->get('sef', Input::YES)) {
-            THM_GroupsHelperRenderer::groupsQueries($output);
+            Pages::replaceGroupsQueries($output);
         }
 
         Application::body($output);

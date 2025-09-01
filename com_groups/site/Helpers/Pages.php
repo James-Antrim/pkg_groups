@@ -3,13 +3,14 @@
  * @package     Groups
  * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
- * @copyright   2025 TH Mittelhessen
+ * @copyright   2018 TH Mittelhessen
  * @license     GNU GPL v.3
  * @link        www.thm.de
  */
 
 namespace THM\Groups\Helpers;
 
+use Joomla\CMS\Uri\Uri;
 use THM\Groups\Adapters\Database as DB;
 use THM\Groups\Tables\{Content as CTable, Pages as PTable};
 
@@ -39,7 +40,6 @@ class Pages
 
     public const ARCHIVED = 2, PUBLISHED = 1, TRASHED = -2, HIDDEN = 0;
 
-    // todo joomla has some kind of drop down here
     public const STATES = [
         self::ARCHIVED  => [
             'class'  => 'archive',
@@ -66,6 +66,8 @@ class Pages
             'tip'    => 'TOGGLE_TIP_UNPUBLISHED'
         ],
     ];
+
+    private const URL = 1, PATH = 2, QUERY = 3;
 
     /**
      * Gets the content alias.
@@ -116,6 +118,89 @@ class Pages
             ->where(DB::qcs([['c.alias', $alias, '=', true], ['p.userID', $userID]]));
         DB::set($query);
         return DB::integer();
+    }
+
+    /**
+     * Removes profile parameter stubs from content.
+     *
+     * @param   string  $html
+     *
+     * @return void
+     */
+    public static function removeProfileParameters(string &$html): void
+    {
+        $pattern = '/{(thm[_]?)?groups[A-Za-z0-9]*\s.*?}/';
+        $html    = preg_replace($pattern, "", $html);
+    }
+
+    /**
+     * Replaces relevant links to categories and articles with links to profiles and pages.
+     *
+     * @param   string  $html  the string containing potential links to alter
+     *
+     * @return void
+     */
+    public static function replaceContentURLS(string &$html): void
+    {
+        if (!preg_match_all('/href="(([^"]+)\?([^"]+(category|article)[^"]+))"/', $html, $matches)) {
+            return;
+        }
+
+        foreach (array_unique($matches[self::URL]) as $index => $url) {
+            // Menu item or pre-resolved URL item
+            if (THM_GroupsHelperRouter::getPathItems($matches[self::PATH][$index])) {
+                continue;
+            }
+
+            $query = html_entity_decode($matches[self::QUERY][$index]);
+            parse_str($query, $params);
+
+            if (!empty($params['option']) and $params['option'] !== 'com_content') {
+                continue;
+            }
+
+            $params['option'] = 'com_content';
+            if (empty($params['view']) or !in_array($params['view'], ['article', 'category'])) {
+                continue;
+            }
+
+            if (THM_GroupsHelperRouter::translateContent($params)) {
+                $newURL = THM_GroupsHelperRouter::build($params);
+                $html   = str_replace($url, $newURL, $html);
+            }
+        }
+    }
+
+    /**
+     * Replaces groups URLS with queries with groups SEF-URLs.
+     *
+     * @param   string  $html
+     *
+     * @return void
+     */
+    public static function replaceGroupsQueries(string &$html): void
+    {
+        if (!preg_match_all('/href="([^"]+\?[^"]+(thm_)?groups[^"]+)"/', $html, $matches)) {
+            return;
+        }
+
+        $modalViews = ['select-profiles'];
+        $queries    = array_unique($matches[1]);
+
+        foreach ($queries as $query) {
+            $uri = Uri::getInstance($query);
+            $uri->parse($query);
+            $params = $uri->getQuery(true);
+
+            if ((!empty($params['view']) and in_array($params['view'], $modalViews))
+                or !empty($params['task'])) {
+                continue;
+            }
+
+            if ($url = THM_GroupsHelperRouter::build($params)) {
+                $html = str_replace($query, $url, $html);
+            }
+        }
     }
 
     /**

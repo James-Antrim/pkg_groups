@@ -107,11 +107,11 @@ class Groups extends CMSPlugin implements SubscriberInterface
 
         $sef = Application::configuration()->get('sef', Input::YES);
 
-        THM_GroupsHelperRenderer::contentURLS($article->text);
-        THM_GroupsHelperRenderer::modProfilesParams($article->text);
+        Pages::replaceContentURLS($article->text);
+        Pages::removeProfileParameters($article->text);
 
         if ($sef) {
-            THM_GroupsHelperRenderer::groupsQueries($article->text);
+            Pages::replaceGroupsQueries($article->text);
         }
     }
 }
