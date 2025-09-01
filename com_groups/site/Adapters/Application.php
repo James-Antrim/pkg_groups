@@ -494,7 +494,8 @@ class Application
 
         return match ($name) {
             // Compound nouns
-            'templateattributes' => 'TemplateAttributes',
+            'select-profiles' => 'ProfileSelect',
+            'template-attributes' => 'TemplateAttributes',
             default => ucfirst($name),
         };
     }

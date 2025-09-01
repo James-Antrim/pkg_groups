@@ -44,7 +44,7 @@ class Templates extends ListModel
             // Management access is a prerequisite of accessing this view at all.
             $item->access     = true;
             $item->editLink   = Route::_('index.php?option=com_groups&view=template&id=' . $item->id);
-            $item->attributes = Route::_('index.php?option=com_groups&view=templateattributes&id=' . $item->id);
+            $item->attributes = Route::_('index.php?option=com_groups&view=template-attributes&id=' . $item->id);
         }
 
         return $items;

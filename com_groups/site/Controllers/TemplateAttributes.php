@@ -111,7 +111,7 @@ class TemplateAttributes extends Attributed
         parse_str($referrer, $params);
 
         $url = $this->baseURL;
-        $url .= empty($params['id']) ? '&view=templates' : "&view=templateattributes&id={$params['id']}";
+        $url .= empty($params['id']) ? '&view=templates' : "&view=template-attributes&id={$params['id']}";
 
         $this->setRedirect($url);
     }
