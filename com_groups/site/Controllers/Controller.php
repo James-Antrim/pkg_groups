@@ -54,7 +54,7 @@ class Controller extends BaseController
     }
 
     /**
-     * Default authorization check. Level component administrator. Override for nuance.
+     * Checks user authorization to perform ordering / state change operations.
      * @return void
      */
     protected function authorizeAJAX(): void

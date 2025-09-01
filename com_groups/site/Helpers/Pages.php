@@ -37,29 +37,29 @@ class Pages
         ]
     ];
 
-    public const ARCHIVED = 2, PUBLISHED = 1, TRASHED = -2, UNPUBLISHED = 0;
+    public const ARCHIVED = 2, PUBLISHED = 1, TRASHED = -2, HIDDEN = 0;
 
     // todo joomla has some kind of drop down here
     public const STATES = [
-        self::ARCHIVED    => [
+        self::ARCHIVED  => [
             'class'  => 'archive',
             'column' => 'state',
             'task'   => 'hide',
             'tip'    => 'TOGGLE_TIP_ARCHIVED'
         ],
-        self::PUBLISHED   => [
+        self::PUBLISHED => [
             'class'  => 'publish',
             'column' => 'state',
-            'task'   => 'unpublish',
+            'task'   => 'hide',
             'tip'    => 'TOGGLE_TIP_PUBLISHED'
         ],
-        self::TRASHED     => [
+        self::TRASHED   => [
             'class'  => 'trash',
             'column' => 'state',
             'task'   => 'publish',
             'tip'    => 'TOGGLE_TIP_TRASHED'
         ],
-        self::UNPUBLISHED => [
+        self::HIDDEN    => [
             'class'  => 'unpublish',
             'column' => 'state',
             'task'   => 'publish',
@@ -116,6 +116,30 @@ class Pages
             ->where(DB::qcs([['c.alias', $alias, '=', true], ['p.userID', $userID]]));
         DB::set($query);
         return DB::integer();
+    }
+
+    /**
+     * Parses the given string to check for content associated with the component
+     *
+     * @param   int|string  $potentialContent  the segment being checked
+     *
+     * @return int the id of the associated content if existent, otherwise 0
+     */
+    public static function resolve(int|string $potentialContent, int $userID = 0): int
+    {
+        $contentID = 0;
+        if (is_numeric($potentialContent)) {
+            $contentID = (int) $potentialContent;
+        }
+        elseif (preg_match('/^(\d+)\-[a-zA-Z\-]+$/', $potentialContent, $matches)) {
+            $contentID = (int) $matches[1];
+        }
+
+        if (!$contentID) {
+            return $contentID;
+        }
+
+        return Pages::userID($contentID, $userID) ? $contentID : 0;
     }
 
     /**

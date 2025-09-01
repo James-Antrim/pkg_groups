@@ -8,8 +8,6 @@
  * @link        www.thm.de
  */
 
-require_once 'content.php';
-
 use Joomla\CMS\Uri\Uri;
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
 use THM\Groups\Helpers\{Categories, Pages, Profiles, Users};
@@ -243,21 +241,21 @@ class THM_GroupsHelperRouter
         if (empty($query['view']) or $query['view'] === 'article') {
             if (!empty($query['catid'])) {
                 if (is_numeric($query['catid'])) {
-                    $profileID = THM_GroupsHelperContent::resolve($query['catid']);
+                    $profileID = Categories::resolve((int) $query['catid']);
                 }
                 elseif (preg_match('/^(\d+)/', $query['catid'], $matches)) {
                     // true for root, false for irrelevant, otherwise profileID
-                    $profileID = Categories::resolve($matches[0]);
+                    $profileID = Categories::resolve((int) $matches[0]);
                 }
             }
             if (!empty($query['a_id']) or !empty($query['id'])) {
                 $tmpID = empty($query['a_id']) ? $query['id'] : $query['a_id'];
                 if (is_numeric($tmpID)) {
-                    $contentID = THM_GroupsHelperContent::resolve($tmpID);
+                    $contentID = Pages::resolve((int) $tmpID);
                 }
                 elseif (preg_match('/^(\d+)/', $tmpID, $matches)) {
                     //0 or contentID
-                    $contentID = THM_GroupsHelperContent::resolve($matches[0]);
+                    $contentID = Pages::resolve((int) $matches[0]);
                 }
             }
 

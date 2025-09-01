@@ -10,8 +10,6 @@
 
 namespace THM\Plugin\System\Groups\Extension;
 
-require_once JPATH_ROOT . '/media/com_thm_groups/helpers/content.php';
-
 use Joomla\CMS\Language\Text;
 use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\{Categories, Pages, Users};
@@ -99,7 +97,7 @@ class Parser
             switch ($secondLastItem) {
                 case 'content':
                 case 'singlearticle':
-                    $return['id'] = THM_GroupsHelperContent::resolve($lastItem);
+                    $return['id'] = Pages::resolve($lastItem);
 
                     if (empty($return['id'])) {
                         return [];
@@ -126,7 +124,7 @@ class Parser
         }
         else {
             $return['profileID'] = Users::resolve($secondLastItem);
-            $return['id']        = THM_GroupsHelperContent::resolve($lastItem);
+            $return['id']        = Pages::resolve($lastItem);
 
             // Invalid profile id, but valid content id => use the profileID associated with the content
             if (empty($return['profileID']) and !empty($return['id'])) {
@@ -250,7 +248,7 @@ class Parser
                 $query['view']      = $secondLastItem;
             }
             elseif ($profileID = Users::resolve($secondLastItem)) {
-                if ($contentID = THM_GroupsHelperContent::resolve($lastItem, $profileID)) {
+                if ($contentID = Pages::resolve($lastItem, $profileID)) {
                     $query['id']   = $contentID;
                     $query['view'] = 'content';
                 }
@@ -266,7 +264,7 @@ class Parser
                     $query['view']      = 'profile';
                 }
                 else {
-                    if ($contentID = THM_GroupsHelperContent::resolve($lastItem, $profileID)) {
+                    if ($contentID = Pages::resolve($lastItem, $profileID)) {
                         $query['id']   = $contentID;
                         $query['view'] = 'content';
                     }
@@ -299,7 +297,7 @@ class Parser
                 $query['view']      = 'profile';
             }
         }
-        elseif ($contentID = THM_GroupsHelperContent::resolve($lastItem)) {
+        elseif ($contentID = Pages::resolve($lastItem)) {
             if ($profileID = Pages::userID($contentID)) {
                 $query['id']        = $contentID;
                 $query['profileID'] = $profileID;
