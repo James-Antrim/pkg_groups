@@ -30,7 +30,7 @@ class Users extends ListView
 
         /*if (Can::create())
         {
-            $toolbar->addNew('Person.add');
+            $toolbar->addNew('users.add');
         }*/
 
         if (Can::administrate() or Can::changeState()) {

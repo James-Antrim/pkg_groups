@@ -8,11 +8,10 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\{Database as DB, Text};
-use THM\Groups\Helpers\{Can, Profiles as Helper};
+use Joomla\Database\DatabaseQuery;
+use THM\Groups\Adapters\{Database as DB, HTML, Text};
+use THM\Groups\Helpers\{Can, Profiles as Helper, Users};
 use THM\Groups\Models\ListModel;
-
-defined('_JEXEC') or die;
 
 /**
  * THM_GroupsModelProfile_Manager class for component com_thm_groups
@@ -24,12 +23,11 @@ class THM_GroupsModelProfile_Manager extends ListModel
     /**
      * Return groups with roles of a user by ID
      *
-     * @param   int profileID the user ID
+     * @param   int  $userID
      *
-     * @return  array the association IDs
-     * @throws Exception
+     * @return  array
      */
-    private function getAssociations($profileID)
+    private function getAssociations(int $userID): array
     {
         $query    = DB::query();
         $template = 'GROUP_CONCAT(DISTINCT %s ORDER BY %s SEPARATOR ", ") AS %s';
@@ -45,7 +43,7 @@ class THM_GroupsModelProfile_Manager extends ListModel
             ->leftJoin(DB::qn('#__groups_role_associations', 'ra'), DB::qc('pa.role_associationID', 'ra.id'))
             ->leftJoin(DB::qn('#__usergroups', 'ug'), DB::qc('ug.id', 'ra.groupID'))
             ->leftJoin(DB::qn('#__groups_roles', 'roles'), DB::qc('ra.roleID', 'roles.id'))
-            ->where(DB::qcs([['pa.profileID', $profileID], ['ra.groupID', 1, '>']]))
+            ->where(DB::qcs([['pa.profileID', $userID], ['ra.groupID', 1, '>']]))
             ->group(DB::qn('groupID'));
         DB::set($query);
 
@@ -61,7 +59,7 @@ class THM_GroupsModelProfile_Manager extends ListModel
      * @return  string the HTML output
      * @throws Exception
      */
-    private function getAssocLinks(int $profileID, bool $canEdit)
+    private function getAssocLinks(int $profileID, bool $canEdit): string
     {
         $associations = $this->getAssociations($profileID);
         $result       = "";
@@ -141,39 +139,20 @@ class THM_GroupsModelProfile_Manager extends ListModel
      *
      * @return array including headers
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         $ordering  = $this->state->get('list.ordering');
         $direction = $this->state->get('list.direction');
 
-        $headers                   = [];
-        $headers['checkbox']       = '';
-        $headers['surname']        = JHtml::_('searchtools.sort', Text::_('NAME'), 'surname, forename', $direction, $ordering);
-        $headers['published']      = JHtml::_('searchtools.sort', Text::_('PUBLISHED'), 'published', $direction, $ordering);
-        $headers['canEdit']        = JHtml::_('searchtools.sort', Text::_('PROFILE_EDIT'), 'canEdit', $direction, $ordering);
-        $headers['contentEnabled'] = JHtml::_(
-            'searchtools.sort', Text::_('CONTENT_ENABLED'), 'contentEnabled', $direction, $ordering
-        );
-        $headers['gnr']            = Text::_('ASSOCIATED_GROUPS_AND_ROLES');
+        $headers              = [];
+        $headers['checkbox']  = '';
+        $headers['surname']   = JHtml::_('searchtools.sort', Text::_('NAME'), 'surname, forename', $direction, $ordering);
+        $headers['published'] = JHtml::_('searchtools.sort', Text::_('PUBLISHED'), 'published', $direction, $ordering);
+        $headers['editing']   = JHtml::_('searchtools.sort', Text::_('PROFILE_EDIT'), 'editing', $direction, $ordering);
+        $headers['content']   = JHtml::_('searchtools.sort', Text::_('CONTENT_ENABLED'), 'content', $direction, $ordering);
+        $headers['gnr']       = Text::_('ASSOCIATED_GROUPS_AND_ROLES');
 
         return $headers;
-    }
-
-    /**
-     * Returns custom hidden fields for page
-     *
-     * @return array
-     */
-    public function getHiddenFields()
-    {
-        $fields = [];
-
-        // Hidden fields for batch processing
-        $fields[] = '<input type="hidden" name="groupID" value="">';
-        $fields[] = '<input type="hidden" name="profileID" value="">';
-        $fields[] = '<input type="hidden" name="roleID" value="">';
-
-        return $fields;
     }
 
     /**
@@ -182,7 +161,7 @@ class THM_GroupsModelProfile_Manager extends ListModel
      * @return array consisting of items in the body
      * @throws Exception
      */
-    public function getItems()
+    public function getItems(): array
     {
         $return = [];
         $items  = parent::getItems();
@@ -199,10 +178,9 @@ class THM_GroupsModelProfile_Manager extends ListModel
             $return[$index][0] = JHtml::_('grid.id', $index, $item->profileID);
             $return[$index][1] = JHtml::_('link', $url, Helper::lnfName($item->profileID));
 
-            $return[$index][2] = $this->getToggle($item->profileID, $item->published, 'profile', '', 'published');
-            $return[$index][3] = $this->getToggle($item->profileID, $item->canEdit, 'profile', '', 'canEdit');
-            $return[$index][4] = $this->getToggle($item->profileID, $item->contentEnabled, 'profile', '',
-                'contentEnabled');
+            $return[$index][2] = HTML::toggle($index, Users::publishedStates[$item->published], 'users');
+            $return[$index][3] = HTML::toggle($index, Users::editingStates[$item->editing], 'users');
+            $return[$index][4] = HTML::toggle($index, Users::contentStates[$item->content], 'users');
             $return[$index][5] = $this->getAssocLinks($item->profileID, $canEdit);
 
             $index++;
@@ -211,17 +189,10 @@ class THM_GroupsModelProfile_Manager extends ListModel
         return $return;
     }
 
-    /**
-     * Method to build an SQL query to load the list data.
-     *
-     * @return      string  An SQL query
-     */
-    protected function getListQuery()
+    /** @inheritDoc */
+    protected function getListQuery(): DatabaseQuery
     {
         $query = DB::query();
-
-        $select = 'DISTINCT profile.id as profileID, profile.published, profile.canEdit, profile.contentEnabled, ';
-        $select .= 'forenames, surnames, email';
 
         $query->select('*');
         $query->from(DB::qn('#__users', 'u'));

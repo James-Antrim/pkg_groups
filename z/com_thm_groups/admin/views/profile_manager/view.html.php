@@ -8,24 +8,20 @@
  * @link        www.thm.de
  */
 
+use THM\Groups\Adapters\{Application, Document, Text, Toolbar};
 use THM\Groups\Helpers\Can;
-use THM\Groups\Views\HTML\Titled;
-
-defined('_JEXEC') or die;
+use THM\Groups\Views\HTML\ListView;
 
 require_once HELPERS . 'batch.php';
-require_once JPATH_ROOT . '/media/com_thm_groups/views/list.php';
 
 /**
  * THM_GroupsViewProfile_Manager class for component com_thm_groups
  */
-class THM_GroupsViewProfile_Manager extends THM_GroupsViewList
+class THM_GroupsViewProfile_Manager extends ListView
 {
-    use Titled;
+    public array $batch;
 
-    public $batch;
-
-    public $groups;
+    public array $groups;
 
     /**
      * Method to get display
@@ -38,8 +34,7 @@ class THM_GroupsViewProfile_Manager extends THM_GroupsViewList
     public function display($tpl = null): void
     {
         if (!Can::manage()) {
-            $exc = new Exception(JText::_('JLIB_RULES_NOT_ALLOWED'), 401);
-            JErrorPage::render($exc);
+            Application::error(401);
         }
 
         $this->batch = [
@@ -59,49 +54,45 @@ class THM_GroupsViewProfile_Manager extends THM_GroupsViewList
      */
     protected function addToolbar(): void
     {
-        $this->title('PROFILES');
-
-        $bar = JToolBar::getInstance('toolbar');
+        $toolbar = Toolbar::instance();
 
         $script           = 'onclick="jQuery(\'#modal-profiles\').modal(\'show\'); return true;"';
         $newProfileButton = '<button id="profiles" data-toggle="modal" class="btn btn-small" ' . $script . '>';
-        $title            = JText::_('COM_THM_GROUPS_ADD_PROFILES');
+        $title            = Text::_('ADD_PROFILES');
         $newProfileButton .= '<span class="icon-new" title="' . $title . '"></span>' . " $title";
         $newProfileButton .= '</button>';
-        $bar->appendButton('Custom', $newProfileButton, 'profiles');
+        $toolbar->customButton($newProfileButton, 'profiles');
 
-        JToolBarHelper::editList('profile.edit');
-        JToolBarHelper::publishList('profile.publish', 'COM_THM_GROUPS_PUBLISH_PROFILE');
-        JToolBarHelper::unpublishList('profile.unpublish', 'COM_THM_GROUPS_UNPUBLISH_PROFILE');
-        JToolBarHelper::publishList('profile.publishContent', 'COM_THM_GROUPS_ACTIVATE_CONTENT_MANAGEMENT');
-        JToolBarHelper::unpublishList('profile.unpublishContent', 'COM_THM_GROUPS_DEACTIVATE_CONTENT_MANAGEMENT');
+        $toolbar->edit('profile.edit')->listCheck(true);
+        $toolbar->publish('profile.publish', Text::_('PUBLISH_PROFILE'))->listCheck(true);
+        $toolbar->unpublish('profile.hide', Text::_('HIDE_PROFILE'))->listCheck(true);
+        $toolbar->publish('profile.publishContent', Text::_('ACTIVATE_CONTENT_MANAGEMENT'))->listCheck(true);
+        $toolbar->unpublish('profile.hideContent', Text::_('DEACTIVATE_CONTENT_MANAGEMENT'))->listCheck(true);
 
         $layout = new JLayoutFile('joomla.toolbar.batch');
-        $title  = JText::_('COM_THM_GROUPS_ADD_ROLES');
+        $title  = Text::_('ADD_ROLES');
         $batch  = $layout->render(['title' => $title]);
 
-        $bar->appendButton('Custom', $batch, 'roles');
+        $toolbar->customButton($batch, 'roles');
 
-        if (Can::administrate()) {
-            JToolBarHelper::preferences('com_thm_groups');
-        }
-
-        JToolbarHelper::help('COM_THM_GROUPS_TEMPLATES_DOCUMENTATION', '',
+        JToolbarHelper::help('COM_GROUPS_TEMPLATES_DOCUMENTATION', '',
             JUri::root() . 'media/com_thm_groups/documentation/profile_manager.php');
+
+        parent::addToolbar();
     }
 
-    /**
-     * Adds styles and scripts to the document
-     *
-     * @return  void  modifies the document
-     */
+    /** @inheritDoc */
     protected function modifyDocument(): void
     {
         parent::modifyDocument();
+        Document::script('jquery.chained.remote');
+        Document::script('profile_manager');
+        Document::script('remove_association');
+    }
 
-        $document = JFactory::getDocument();
-        $document->addScript(JURI::root(true) . '/media/com_thm_groups/js/jquery.chained.remote.js');
-        $document->addScript(JURI::root(true) . '/media/com_thm_groups/js/profile_manager.js');
-        $document->addScript(JURI::root(true) . '/media/com_thm_groups/js/remove_association.js');
+    /** @inheritDoc */
+    protected function initializeColumns(): void
+    {
+        // TODO: Implement initializeColumns() method.
     }
 }

@@ -10,37 +10,31 @@
 
 use Joomla\CMS\Log\Log;
 use THM\Groups\Adapters\{Application, Database as DB, Input};
-use THM\Groups\Controllers\Category;
-use THM\Groups\Helpers\{Attributes, Can, Users};
+use THM\Groups\Controllers\Category as CategoryController;
+use THM\Groups\Helpers\{Attributes, Can, Categories, Groups, Pages, Users};
+use THM\Groups\Tables\{Categories as CategoriesTable, UserUsergroupMap, Users as UsersTable};
 
-defined('_JEXEC') or die;
 require_once HELPERS . 'profiles.php';
-require_once HELPERS . 'roles.php';
 
 /**
  * Class loads form data to edit an entry.
  */
 class THM_GroupsModelProfile extends JModelLegacy
 {
-    const IMAGE_PATH = JPATH_ROOT . IMAGE_PATH;
-
     /**
      * Associates a group and potentially multiple roles with the selected users
      *
      * @return  bool true on success, otherwise false.
-     * @throws Exception
      */
-    public function batch()
+    public function batch(): bool
     {
-        $app = JFactory::getApplication();
-
         if (!Can::manage()) {
             Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
 
             return false;
         }
 
-        $newProfileData  = $app->getUserStateFromRequest('.profiles', 'profiles', [], 'array');
+        $newProfileData  = Application::userRequestState('.profiles', 'profiles', [], 'array');
         $requestedAssocs = json_decode(urldecode(Input::string('batch-data')), true);
         $selectedIDs     = Input::selectedIDs();
 
@@ -48,7 +42,8 @@ class THM_GroupsModelProfile extends JModelLegacy
             return $this->batchRoles($selectedIDs, $requestedAssocs);
         }
         elseif (!empty($newProfileData['groupIDs']) and !empty($newProfileData['profileIDs'])) {
-            return $this->batchProfiles($newProfileData['groupIDs'], $newProfileData['profileIDs']);
+            $this->batchProfiles($newProfileData['groupIDs'], $newProfileData['profileIDs']);
+            return true;
         }
 
         Application::message('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION', Application::ERROR);
@@ -59,43 +54,44 @@ class THM_GroupsModelProfile extends JModelLegacy
     /**
      * Associates the profiles with the given groups default group/role association.
      *
-     * @param   array  $groupIDs    the ids of the selected groups
-     * @param   array  $profileIDs  the ids of the selected profiles
+     * @param   int[]  $groupIDs  the ids of the selected groups
+     * @param   int[]  $userIDs   the ids of the selected profiles
      *
-     * @return bool
-     * @throws Exception
+     * @return void
      */
-    private function batchProfiles($groupIDs, $profileIDs)
+    private function batchProfiles(array $groupIDs, array $userIDs): void
     {
         foreach ($groupIDs as $groupID) {
-            $memberAssocID = THM_GroupsHelperRoles::getAssocID(MEMBER, $groupID, 'group');
+            $assignedIDs   = Groups::profileIDs($groupID);
+            $unassignedIDs = array_diff($userIDs, $assignedIDs);
 
-            foreach ($profileIDs as $profileID) {
-                if (!THM_GroupsHelperProfiles::associateRole($profileID, $memberAssocID)) {
-                    return false;
+            foreach ($unassignedIDs as $userID) {
+                $assoc = ['group_id' => $groupID, 'user_id' => $userID];
+                $map   = new UserUsergroupMap();
+                if ($map->load($assoc)) {
+                    continue;
                 }
+
+                $map->save($assoc);
             }
         }
-
-        return true;
     }
 
     /**
-     * Associates the selected profiles with the selected group/role associations.
+     * Associates the selected users with the selected group/role associations.
      *
-     * @param   array  $profileIDs       the selected profileIDs
+     * @param   array  $userIDs
      * @param   array  $requestedAssocs  the ids of the group/role association with which the profiles should be associated
      *
      * @return bool
-     * @throws Exception
      */
-    private function batchRoles($profileIDs, $requestedAssocs)
+    private function batchRoles(array $userIDs, array $requestedAssocs): bool
     {
-        if (!$this->setJoomlaAssociations($profileIDs, $requestedAssocs)) {
+        if (!$this->setJoomlaAssociations($userIDs, $requestedAssocs)) {
             return false;
         }
 
-        return $this->setGroupsAssociations($profileIDs, $requestedAssocs);
+        return $this->setGroupsAssociations($userIDs, $requestedAssocs);
     }
 
     /**
@@ -104,10 +100,9 @@ class THM_GroupsModelProfile extends JModelLegacy
      * @param   int  $profileID    the id of the profile with which the picture is associated.
      * @param   int  $attributeID  the id of the attribute under which the value is stored.
      *
-     * @return mixed
-     * @throws Exception
+     * @return bool
      */
-    public function deletePicture($profileID = 0, $attributeID = 0)
+    public function deletePicture(int $profileID = 0, int $attributeID = 0): bool
     {
         $profileID   = Input::integer('profileID', $profileID);
         $attributeID = Input::integer('attributeID', $attributeID);
@@ -130,15 +125,13 @@ class THM_GroupsModelProfile extends JModelLegacy
             return true;
         }
 
-        if (file_exists(self::IMAGE_PATH . $fileName)) {
-            unlink(self::IMAGE_PATH . $fileName);
+        if (file_exists(Attributes::IMAGE_PATH . $fileName)) {
+            unlink(Attributes::IMAGE_PATH . $fileName);
         }
 
         // Update new picture filename
-        $query = DB::query();
-
-        // Update the database with new picture information
-        $query->update('#__groups_profile_attributes')
+        $query = DB::query()
+            ->update('#__groups_profile_attributes')
             ->set(DB::qc('value', '', '=', true))
             ->where(DB::qcs([['attributeID', $attributeID], ['profileID', $profileID]]));
         DB::set($query);
@@ -152,10 +145,9 @@ class THM_GroupsModelProfile extends JModelLegacy
      *
      * @param   array  $requestedAssocs  An array with groups and roles
      *
-     * @return  array with ids
-     * @throws Exception
+     * @return  array
      */
-    private function getGroupAssociations($requestedAssocs)
+    private function getGroupAssociations(array $requestedAssocs): array
     {
         $assocs = [];
 
@@ -176,12 +168,11 @@ class THM_GroupsModelProfile extends JModelLegacy
     }
 
     /**
-     * Allows public display of personal content. Access checks are performed in toggle.
+     * Hides the public display of the user's profile. Access checks are performed in toggle.
      *
      * @return bool
-     * @throws Exception
      */
-    public function publishContent()
+    public function hideContent(): bool
     {
         if (!Can::manage()) {
             Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
@@ -192,18 +183,46 @@ class THM_GroupsModelProfile extends JModelLegacy
         $profileIDs = Input::selectedIDs();
         foreach ($profileIDs as $profileID) {
             if (!$categoryID = Users::categoryID($profileID)) {
-                $category   = new Category();
+                continue;
+            }
+
+            $categoryDisabled = $this->toggleCategory($categoryID, Categories::HIDDEN);
+            $contentDisabled  = $this->toggleColumn($profileID, 'content', Pages::HIDDEN);
+
+            if (!$categoryDisabled or !$contentDisabled) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Allows public display of personal content. Access checks are performed in toggle.
+     *
+     * @return bool
+     */
+    public function publishContent(): bool
+    {
+        if (!Can::manage()) {
+            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
+
+            return false;
+        }
+
+        $profileIDs = Input::selectedIDs();
+        $value      = Attributes::PUBLISHED;
+        foreach ($profileIDs as $profileID) {
+            if (!Users::published($profileID)) {
+                continue;
+            }
+
+            if (!$categoryID = Users::categoryID($profileID)) {
+                $category   = new CategoryController();
                 $categoryID = $category->create($profileID);
             }
 
-            if (!Users::published($profileID)) {
-                return false;
-            }
-
-            $categoryEnabled = $this->updateCategoryPublishing($categoryID, 1);
-            $contentEnabled  = $this->updateBinaryValue($profileID, 'contentEnabled', 1);
-
-            if (!$categoryEnabled or !$contentEnabled) {
+            if (!$this->toggleCategory($categoryID, $value) or !$this->toggleColumn($profileID, 'content', $value)) {
                 return false;
             }
         }
@@ -214,14 +233,12 @@ class THM_GroupsModelProfile extends JModelLegacy
     /**
      * Saves user profile information
      *
-     * @return  mixed  int profile ID on success, otherwise false
-     * @throws Exception
+     * @return  bool|int
      */
-    public function save()
+    public function save(): bool|int
     {
         $data = Input::post();
 
-        // Ensuring int will fail access checks on manipulated ids.
         $profileID = $data['profileID'];
 
         if (!Users::editing($profileID)) {
@@ -246,13 +263,13 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         $query = DB::query();
         $query->update(DB::qn('#__users'))
-            ->set([
-                DB::qc('alias', $alias),
-                DB::qc('forenames', $forenames),
-                DB::qc('name', $names),
-                DB::qc('published', $published),
-                DB::qc('surnames', $surnames),
-            ])
+            ->set(DB::qcs([
+                ['alias', $alias],
+                ['forenames', $forenames],
+                ['name', $names],
+                ['published', $published],
+                ['surnames', $surnames]
+            ]))
             ->where(DB::qc('id', $profileID));
         DB::set($query);
 
@@ -266,12 +283,10 @@ class THM_GroupsModelProfile extends JModelLegacy
     /**
      * Saves the cropped image that was uploaded via ajax in the profile_edit.view
      *
-     * @return  bool|mixed|string
-     * @throws Exception
+     * @return  bool|string
      */
-    public function saveCropped()
+    public function saveCropped(): bool|string
     {
-        $app       = JFactory::getApplication();
         $profileID = Input::integer('profileID');
 
         if (!Users::editing($profileID)) {
@@ -291,8 +306,7 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         // TODO: Make these configurable
         $allowedExtensions = ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'BMP', 'GIF', 'JPG', 'JPEG', 'PNG'];
-        $invalid           = ($file['size'] > 10000000 or !in_array(pathinfo($filename, PATHINFO_EXTENSION),
-                $allowedExtensions));
+        $invalid           = ($file['size'] > 10000000 or !in_array(pathinfo($filename, PATHINFO_EXTENSION), $allowedExtensions));
 
         if ($invalid) {
             return false;
@@ -300,7 +314,7 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         $attributeID = Input::integer('attributeID');
         $newFileName = $profileID . "_" . $attributeID . "." . strtolower(pathinfo($filename, PATHINFO_EXTENSION));
-        $path        = self::IMAGE_PATH . "/$newFileName";
+        $path        = Attributes::IMAGE_PATH . "/$newFileName";
 
         // Out with the old
         $deleted = $this->deletePicture($profileID, $attributeID);
@@ -333,9 +347,8 @@ class THM_GroupsModelProfile extends JModelLegacy
      * @param   array  $formData  the submitted form data
      *
      * @return  bool true on success, otherwise false
-     * @throws Exception
      */
-    private function saveValues($formData)
+    private function saveValues(array $formData): bool
     {
         $profileID = $formData['profileID'];
 
@@ -359,20 +372,17 @@ class THM_GroupsModelProfile extends JModelLegacy
 
                 $message = 'Script tags are not allowed due to the danger of persistent cross-site scripting.<br>';
                 $message .= 'Your username and your script "' . htmlentities($rawValue) . '" have been logged.';
-                JFactory::getApplication()->enqueueMessage($message, 'error');
+                Application::message($message, Application::ERROR);
 
                 return false;
             }
 
-            $value     = DB::quote(Input::removeEmptyTags($rawValue));
-            $published = empty($attribute['published']) ? Attributes::UNPUBLISHED : Attributes::PUBLISHED;
+            $value     = Input::removeEmptyTags($rawValue);
+            $published = empty($attribute['published']) ? Attributes::HIDDEN : Attributes::PUBLISHED;
 
             $query = DB::query();
             $query->update('#__groups_profile_attributes')
-                ->set([
-                    DB::qc('value', $value),
-                    DB::qc('published', $published),
-                ])
+                ->set(DB::qcs([['value', $value], ['published', $published]]))
                 ->where(DB::qcs([['attributeID', $attributeID], ['profileID', $profileID]]));
             DB::set($query);
 
@@ -390,10 +400,9 @@ class THM_GroupsModelProfile extends JModelLegacy
      * @param   array  $profileIDs       the profile IDs which assignments are being edited
      * @param   array  $requestedAssocs  an array of groups and roles
      *
-     * @return  boolean  True on success, false on failure
-     * @throws Exception
+     * @return  bool
      */
-    private function setGroupsAssociations($profileIDs, $requestedAssocs)
+    private function setGroupsAssociations(array $profileIDs, array $requestedAssocs): bool
     {
         // Can only occur by manipulation.
         if (empty($profileIDs) or empty($requestedAssocs)) {
@@ -424,14 +433,14 @@ class THM_GroupsModelProfile extends JModelLegacy
         }
 
         if ($completeSuccess) {
-            return $completeSuccess;
+            return true;
         }
 
         // Is also a partial fail.
         if ($partialSuccess) {
-            JFactory::getApplication()->enqueueMessage('COM_THM_GROUPS_PARTIAL_ASSOCIATION_FAIL', 'warning');
+            Application::message('PARTIAL_ASSOCIATION_FAIL', Application::WARNING);
 
-            return $partialSuccess;
+            return true;
         }
 
         return false;
@@ -443,10 +452,9 @@ class THM_GroupsModelProfile extends JModelLegacy
      * @param   array  $profileIDs  an array with profile ids (joomla user ids)
      * @param   array  $batchData   an array with groups and roles
      *
-     * @return bool true on success, otherwise false
-     * @throws Exception
+     * @return bool
      */
-    private function setJoomlaAssociations($profileIDs, $batchData)
+    private function setJoomlaAssociations(array $profileIDs, array $batchData): bool
     {
         $existingQuery = DB::query();
         $existingQuery->select('id')->from('#__user_usergroup_map')
@@ -463,81 +471,55 @@ class THM_GroupsModelProfile extends JModelLegacy
 
         $query->values($values);
         DB::set($query);
-
-        try {
-            return DB::execute();
-        }
-        catch (Exception $exception) {
-            // Ignore duplicate entry exception
-            if ($exception->getCode() === 1062) {
-                return true;
-            }
-            else {
-                JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-                return false;
-            }
-        }
+        return DB::execute();
     }
 
     /**
      * Toggles a binary entity property value
      *
-     * @return  boolean  true on success, otherwise false
-     * @throws Exception
+     * @return  bool
      */
-    public function toggle()
+    public function toggle(): bool
     {
         if (!Can::manage()) {
             Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
-
             return false;
         }
 
-        if (!$profileID = Input::id()) {
+        if (!$userID = Input::id()) {
             return false;
         }
 
-        // Toggle is called using the current value.
         $value = !Input::bool('value');
+        $value = (int) $value;
 
         switch (Input::cmd('attribute')) {
-            case 'canEdit':
-                return $this->updateBinaryValue($profileID, 'canEdit', $value);
-            case 'contentEnabled':
+            case 'editing':
+                return $this->toggleColumn($userID, 'editing', $value);
+            case 'content':
 
-                if (!$categoryID = Users::categoryID($profileID)) {
-                    $category   = new Category();
-                    $categoryID = $category->create($profileID);
+                if (!$categoryID = Users::categoryID($userID)) {
+                    $category   = new CategoryController();
+                    $categoryID = $category->create($userID);
                 }
 
-                if (!Users::published($profileID)) {
+                if (!Users::published($userID)) {
                     return false;
                 }
 
-                if ($value) {
-                    $categoryEnabled = $this->updateCategoryPublishing($categoryID, 1);
-                    $contentEnabled  = $this->updateBinaryValue($profileID, 'contentEnabled', 1);
-
-                    return $categoryEnabled and $contentEnabled;
-                }
-
-                $categoryDisabled = $this->updateCategoryPublishing($categoryID, 0);
-                $contentDisabled  = $this->updateBinaryValue($profileID, 'contentEnabled', 0);
-
-                return $categoryDisabled and $contentDisabled;
+                return $this->toggleCategory($categoryID, $value) and $this->toggleColumn($userID, 'content', $value);
             case 'published':
 
                 if ($value) {
-                    return $this->updateBinaryValue($profileID, 'published', 1);
+                    return $this->toggleColumn($userID, 'published', 1);
                 }
 
-                if ($categoryID = Users::categoryID($profileID)) {
-                    $this->updateCategoryPublishing($categoryID, 0);
+                if ($categoryID = Users::categoryID($userID)) {
+                    $this->toggleCategory($categoryID, Categories::HIDDEN);
                 }
 
-                $profileDisabled = $this->updateBinaryValue($profileID, 'published', 0);
-                $contentDisabled = $this->updateBinaryValue($profileID, 'contentEnabled', 0);
+                $profileDisabled = $this->toggleColumn($userID, 'published', 0);
+                $contentDisabled = $this->toggleColumn($userID, 'content', 0);
 
                 return $contentDisabled and $profileDisabled;
             default:
@@ -546,76 +528,39 @@ class THM_GroupsModelProfile extends JModelLegacy
     }
 
     /**
-     * Updates a binary value.
+     * Toggles the category's published value.
      *
-     * @param   int     $profileID  the profile id
-     * @param   string  $column     the name of the column to update
-     * @param   mixed   $value      the new value to assign
+     * @param   int  $categoryID
+     * @param   int  $value
      *
-     * @return bool true if the query executed successfully, otherwise false
-     * @throws Exception
+     * @return bool
      */
-    private function updateBinaryValue($profileID, $column, $value)
+    private function toggleCategory(int $categoryID, int $value): bool
     {
-        $value = empty($value) ? 0 : 1;
-        $query = DB::query();
-        $query->update('#__thm_groups_profiles')->set("$column = $value")->where("id = $profileID");
-        DB::set($query);
-
-        try {
-            return DB::bool();
+        $table = new CategoriesTable();
+        if ($table->load($categoryID)) {
+            $table->published = $value;
+            return $table->store();
         }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
-    }
-
-    private function updateCategoryPublishing($categoryID, $value)
-    {
-        $query = DB::query();
-        $query->update('#__categories')->set("published = $value")->where("id = $categoryID");
-        DB::set($query);
-
-        try {
-            return DB::bool();
-        }
-        catch (Exception $exception) {
-            JFactory::getApplication()->enqueueMessage($exception->getMessage(), 'error');
-
-            return false;
-        }
+        return false;
     }
 
     /**
-     * Hides the public display of the user's profile. Access checks are performed in toggle.
+     * Updates a binary column value in the users table.
+     *
+     * @param   int     $userID
+     * @param   string  $column
+     * @param   int     $value
      *
      * @return bool
-     * @throws Exception
      */
-    public function unpublishContent()
+    private function toggleColumn(int $userID, string $column, int $value): bool
     {
-        if (!Can::manage()) {
-            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
-
-            return false;
+        $table = new UsersTable();
+        if ($table->load($userID)) {
+            $table->{$column} = $value;
+            return $table->store();
         }
-
-        $profileIDs = Input::selectedIDs();
-        foreach ($profileIDs as $profileID) {
-            if (!$categoryID = Users::categoryID($profileID)) {
-                continue;
-            }
-
-            $categoryDisabled = $this->updateCategoryPublishing($categoryID, 0);
-            $contentDisabled  = $this->updateBinaryValue($profileID, 'contentEnabled', 0);
-
-            if (!$categoryDisabled or !$contentDisabled) {
-                return false;
-            }
-        }
-
-        return true;
+        return false;
     }
 }

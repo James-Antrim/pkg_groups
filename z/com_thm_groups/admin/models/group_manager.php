@@ -8,7 +8,8 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\Input;
+use Joomla\Database\DatabaseQuery;
+use THM\Groups\Adapters\{Database as DB, Input, Text};
 use THM\Groups\Models\ListModel;
 
 /**
@@ -18,16 +19,14 @@ class THM_GroupsModelGroup_Manager extends ListModel
 {
     protected string $defaultOrdering = 'ug1.lft';
 
-    protected $defaultDirection = 'ASC';
-
     /**
      * Method to build an SQL query to load the list data.
      *
-     * @return      string  An SQL query
+     * @return DatabaseQuery
      */
-    protected function getListQuery()
+    protected function getListQuery(): DatabaseQuery
     {
-        $query = $this->_db->getQuery(true);
+        $query = DB::query();
 
         // Select the required fields from the table.
         $query->select($this->getState('list.select', 'ug1.*'))
@@ -41,8 +40,8 @@ class THM_GroupsModelGroup_Manager extends ListModel
 
 
         $this->setSearchFilter($query, ['ug1.title']);
-        $this->setIDFilter($query, 'ra.roleID', ['filter.roles']);
-        $this->setOrdering($query);
+        $this->setIDFilter($query, 'ra.roleID', 'filter.roles');
+        $this->orderBy($query);
 
         return $query;
     }
@@ -53,7 +52,7 @@ class THM_GroupsModelGroup_Manager extends ListModel
      * @return array consisting of items in the body
      * @throws Exception
      */
-    public function getItems()
+    public function getItems(): array
     {
         $items  = parent::getItems();
         $return = [];
@@ -68,10 +67,10 @@ class THM_GroupsModelGroup_Manager extends ListModel
         $index         = 0;
 
         $protectedNotice = '<i class="icon-lock hasTooltip" title="XXXX"></i>';
-        $protectedNotice = str_replace('XXXX', JText::_('COM_THM_GROUPS_DEFAULT_GROUP_NOTICE'), $protectedNotice);
+        $protectedNotice = str_replace('XXXX', Text::_('DEFAULT_GROUP_NOTICE'), $protectedNotice);
 
-        foreach ($items as &$item) {
-            $url = JRoute::_("index.php?option=com_users&task=group.edit&id={$item->id}");
+        foreach ($items as $item) {
+            $url = JRoute::_("index.php?option=com_users&task=group.edit&id=$item->id");
 
             $return[$index][0] = in_array($item->id, $defaultGroups) ?
                 $protectedNotice : JHtml::_('grid.id', $index, $item->id, false);
@@ -95,7 +94,7 @@ class THM_GroupsModelGroup_Manager extends ListModel
      *
      * @return array including headers
      */
-    public function getHeaders()
+    public function getHeaders(): array
     {
         $ordering  = $this->state->get('list.ordering');
         $direction = $this->state->get('list.direction');
@@ -105,7 +104,7 @@ class THM_GroupsModelGroup_Manager extends ListModel
         $headers['structure'] = JHtml::_('searchtools.sort', 'COM_THM_GROUPS_ORDER', 'ug1.lft', $direction, 'ASC');
 
         $headers['name']    = JHtml::_('searchtools.sort', 'COM_THM_GROUPS_NAME', 'ug1.title', $direction, $ordering);
-        $headers['roles']   = JText::_('COM_THM_GROUPS_ROLES');
+        $headers['roles']   = Text::_('ROLES');
         $headers['members'] = JHtml::_('searchtools.sort', 'COM_THM_GROUPS_MEMBERS', 'members',
             $direction,
             $ordering);
@@ -122,7 +121,7 @@ class THM_GroupsModelGroup_Manager extends ListModel
      * @return void
      * @throws Exception
      */
-    protected function populateState($ordering = null, $direction = null)
+    protected function populateState($ordering = null, $direction = null): void
     {
         $app = JFactory::getApplication();
 
@@ -135,22 +134,5 @@ class THM_GroupsModelGroup_Manager extends ListModel
         $this->setState('filter.search', $search);
 
         parent::populateState("ug1.lft", "ASC");
-    }
-
-    /**
-     * Returns custom hidden fields for page
-     *
-     * @return array
-     */
-    public function getHiddenFields()
-    {
-        $fields = [];
-
-        // Hidden fields for batch processing
-        $fields[] = '<input type="hidden" name="groupID" value="">';
-        $fields[] = '<input type="hidden" name="profileID" value="">';
-        $fields[] = '<input type="hidden" name="roleID" value="">';
-
-        return $fields;
     }
 }

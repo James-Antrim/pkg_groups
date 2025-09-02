@@ -14,7 +14,6 @@ use THM\Groups\Helpers\{Attributes as Helper, Profiles};
 require_once 'attribute_types.php';
 require_once 'fields.php';
 
-
 /**
  * Class providing helper functions for batch select options
  */
@@ -30,7 +29,7 @@ class THM_GroupsHelperAttributes
      */
     public static function configureForm(int $attributeID, Form $form): void
     {
-        $typeID = self::getAttributeTypeID($attributeID);
+        $typeID = Helper::typeID($attributeID);
 
         THM_GroupsHelperAttribute_Types::configureForm($typeID, $form);
 
@@ -72,21 +71,6 @@ class THM_GroupsHelperAttributes
                 $form->setFieldAttribute($option, 'readonly', 'true');
             }
         }
-    }
-
-    /**
-     * Retrieves the ID of the field type associated with the abstract attribute
-     *
-     * @param   int  $attributeID  the id of the attribute
-     *
-     * @return int
-     */
-    public static function getAttributeTypeID(int $attributeID): int
-    {
-        $query = DB::query()->select(DB::qn('typeID'))->from(DB::qn('#__groups_attributes'))->where(DB::qc('id', $attributeID));
-        DB::set($query);
-
-        return DB::integer();
     }
 
     /**
@@ -175,7 +159,7 @@ class THM_GroupsHelperAttributes
             return '';
         }
 
-        $relativePath = IMAGE_PATH . $value;
+        $relativePath = Helper::IMAGE_PATH . $value;
         $file         = JPATH_ROOT . "/$relativePath";
 
         if (file_exists($file)) {
@@ -367,7 +351,7 @@ class THM_GroupsHelperAttributes
             case IMAGE:
 
                 $fileName     = strtolower(trim($attribute['value']));
-                $relativePath = IMAGE_PATH . $fileName;
+                $relativePath = Helper::IMAGE_PATH . $fileName;
                 $file         = JPATH_ROOT . "/$relativePath";
 
                 if (file_exists($file)) {

@@ -18,37 +18,37 @@ use Joomla\CMS\Helper\ModuleHelper;
 use THM\Groups\Adapters\{Input, Text};
 use THM\Groups\Helpers\{Can, Profiles, Users};
 
-$profileID = Input::integer('profileID');
+$userID = Input::integer('profileID');
 
-if (!empty($profileID)) {
-    $contentEnabled = Users::content($profileID);
-
-    if ($contentEnabled) {
-        $contents = THM_GroupsHelperMenu::getContent($profileID);
+if (!empty($userID)) {
+    // used in layout file
+    $content = Users::content($userID);
+    if ($content) {
+        $contents = THM_GroupsHelperMenu::getContent($userID);
     }
 
     $contentExists = !empty($contents);
     $view          = Input::view();
-    $showAdmin     = Users::editing($profileID);
+    $showAdmin     = Users::editing($userID);
     $showSubMenu   = false;
 
-    $isOwner        = Can::identity($profileID);
+    $isOwner        = Can::identity($userID);
     $displayedTitle = $params->get('displayedTitle', 'module_title');
     if ($displayedTitle == 'profile_name') {
         if ($showAdmin) {
-            $name          = Profiles::name($profileID);
+            $name          = Profiles::name($userID);
             $module->title = Text::sprintf('MOD_THM_GROUPS_ADMINISTRATION', $name);
         }
         else {
             $showTitles    = $params->get('showTitles', 1);
-            $module->title = Profiles::name($profileID, $showTitles);
+            $module->title = Profiles::name($userID, $showTitles);
         }
     }
 
     $contentID     = Input::id();
-    $contentParams = ['view' => 'content', 'profileID' => $profileID];
-    $managerParams = ['view' => 'content_manager', 'profileID' => $profileID];
-    $profileParams = ['view' => 'profile', 'profileID' => $profileID];
+    $contentParams = ['view' => 'content', 'profileID' => $userID];
+    $managerParams = ['view' => 'content_manager', 'profileID' => $userID];
+    $profileParams = ['view' => 'profile', 'profileID' => $userID];
 
     if ($showAdmin and $contentExists) {
         $showSubMenu   = true;

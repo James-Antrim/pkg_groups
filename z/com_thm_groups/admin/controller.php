@@ -18,7 +18,7 @@ defined('_JEXEC') or die;
  */
 class THM_GroupsController extends JControllerLegacy
 {
-    private $resource;
+    private string $resource;
 
     /**
      * Class constructor
@@ -319,9 +319,9 @@ class THM_GroupsController extends JControllerLegacy
      * @return void
      * @throws Exception
      */
-    public function unpublishContent(): void
+    public function hideContent(): void
     {
-        if ($this->getModel($this->resource)->unpublishContent()) {
+        if ($this->getModel($this->resource)->hideContent()) {
             Application::message('SAVE_SUCCESS');
         }
         else {

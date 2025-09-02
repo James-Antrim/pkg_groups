@@ -163,6 +163,10 @@ class Database
             return $dbo->execute();
         }
         catch (Exception $exception) {
+            // Ignore duplicate entry exception
+            if ($exception->getCode() === 1062) {
+                return true;
+            }
             self::logException($exception);
             Application::message($exception->getMessage(), Application::ERROR);
 

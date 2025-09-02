@@ -87,6 +87,7 @@ abstract class ListView extends Core
     /** @inheritDoc */
     protected function addToolBar(): void
     {
+        $this->toDo[] = 'Add help to the toolbar dynamically.';
         // MVC name identity is now the internal standard
         $controller = $this->getName();
         $this->title(strtoupper($controller));
