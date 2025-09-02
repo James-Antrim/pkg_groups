@@ -17,7 +17,7 @@ class Attributes extends Selectable
 {
     use Persistent;
 
-    public const PUBLISHED = 1, UNPUBLISHED = 0;
+    public const HIDDEN = 0, PUBLISHED = 1;
 
     public const PUBLIC = 1;
 
@@ -35,16 +35,17 @@ class Attributes extends Selectable
         self::SUPPLEMENT_PRE
     ];
 
-    public const SHOWN = 1, HIDDEN = 0;
+    // todo create folder and migrate files
+    public const IMAGE_PATH = JPATH_ROOT . '/images/com_groups/';
 
     public const showIconStates = [
-        self::SHOWN  => [
+        self::PUBLISHED => [
             'class'  => 'publish',
             'column' => 'showIcon',
             'task'   => 'hideIcon',
-            'tip'    => 'TOGGLE_TIP_SHOWN'
+            'tip'    => 'TOGGLE_TIP_PUBLISHED'
         ],
-        self::HIDDEN => [
+        self::HIDDEN    => [
             'class'  => 'unpublish',
             'column' => 'showIcon',
             'task'   => 'showIcon',
@@ -53,13 +54,13 @@ class Attributes extends Selectable
     ];
 
     public const showLabelStates = [
-        self::SHOWN  => [
+        self::PUBLISHED => [
             'class'  => 'publish',
             'column' => 'showLabel',
             'task'   => 'hideLabel',
-            'tip'    => 'TOGGLE_TIP_SHOWN'
+            'tip'    => 'TOGGLE_TIP_PUBLISHED'
         ],
-        self::HIDDEN => [
+        self::HIDDEN    => [
             'class'  => 'unpublish',
             'column' => 'showLabel',
             'task'   => 'showLabel',

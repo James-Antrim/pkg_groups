@@ -49,9 +49,9 @@ class Users extends ListView
                     ->icon('fa fa-eye')
                     ->task('users.publish')
                     ->listCheck(true);
-                $childBar->standardButton('unblock', 'GROUPS_UNPUBLISH_PROFILE')
+                $childBar->standardButton('unblock', 'GROUPS_HIDE_PROFILE')
                     ->icon('fa fa-eye-slash')
-                    ->task('users.unpublish')
+                    ->task('users.hide')
                     ->listCheck(true);
                 $childBar->standardButton('enableEditing', 'GROUPS_ENABLE_EDITING')
                     ->icon('fa fa-edit')

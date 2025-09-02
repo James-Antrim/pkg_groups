@@ -24,7 +24,7 @@ class Users
     public const ACTIVATED = true, PENDING = false;
     public const ENABLED = 1, DISABLED = 0;
     public const BLOCKED = 1, UNBLOCKED = 0;
-    public const PUBLISHED = 1, UNPUBLISHED = 0;
+    public const PUBLISHED = 1, HIDDEN = 0;
 
     // Pending state comes into effect through user interaction with the login component.
     public const activatedStates = [
@@ -97,17 +97,17 @@ class Users
     ];
 
     public const publishedStates = [
-        self::PUBLISHED   => [
+        self::PUBLISHED => [
             'class'  => 'publish',
             'column' => 'published',
-            'task'   => 'unpublish',
+            'task'   => 'hide',
             'tip'    => 'GROUPS_TOGGLE_TIP_PROFILE_PUBLISHED'
         ],
-        self::UNPUBLISHED => [
+        self::HIDDEN    => [
             'class'  => 'unpublish',
             'column' => 'published',
             'task'   => 'publish',
-            'tip'    => 'GROUPS_TOGGLE_TIP_PROFILE_UNPUBLISHED'
+            'tip'    => 'GROUPS_TOGGLE_TIP_PROFILE_HIDDEN'
         ]
     ];
 

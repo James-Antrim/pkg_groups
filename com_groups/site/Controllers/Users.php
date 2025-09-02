@@ -412,6 +412,15 @@ class Users extends ListController
     }
 
     /**
+     * Hides the selected accounts' profiles.
+     * @return void
+     */
+    public function hide(): void
+    {
+        $this->togglePublished(false);
+    }
+
+    /**
      * Publishes the selected accounts' profiles.
      * @return void
      */
@@ -578,14 +587,5 @@ class Users extends ListController
     public function unblock(): void
     {
         $this->toggleBlock(false);
-    }
-
-    /**
-     * Unpublishes the selected accounts' profiles.
-     * @return void
-     */
-    public function unpublish(): void
-    {
-        $this->togglePublished(false);
     }
 }

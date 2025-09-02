@@ -99,7 +99,7 @@ class Profile extends FormController
             if (!$pat->load(['attributeID' => $emailID, 'userID' => $userID])) {
                 $pat->save([
                     'attributeID' => $emailID,
-                    'published'   => AH::UNPUBLISHED,
+                    'published'   => AH::HIDDEN,
                     'userID'      => $userID,
                     'value'       => $user->email
                 ]);

@@ -63,7 +63,7 @@ class Pages
             'class'  => 'unpublish',
             'column' => 'state',
             'task'   => 'publish',
-            'tip'    => 'TOGGLE_TIP_UNPUBLISHED'
+            'tip'    => 'TOGGLE_TIP_HIDDEN'
         ],
     ];
 

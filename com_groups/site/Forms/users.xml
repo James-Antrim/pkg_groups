@@ -35,7 +35,7 @@
         <field name="published" type="list" label="GROUPS_PROFILE_PUBLISHED" onchange="this.form.submit();">
             <option value="">GROUPS_PROFILE_PUBLISHED_SELECT</option>
             <option value="1">GROUPS_PROFILE_PUBLISHED</option>
-            <option value="0">GROUPS_PROFILE_UNPUBLISHED</option>
+            <option value="0">GROUPS_PROFILE_HIDDEN</option>
         </field>
         <field name="editing" type="list" label="GROUPS_EDITING_SELECT" onchange="this.form.submit();">
             <option value="">GROUPS_EDITING_SELECT</option>

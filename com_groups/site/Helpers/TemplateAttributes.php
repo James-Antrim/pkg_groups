@@ -16,40 +16,42 @@ class TemplateAttributes
 {
     use Persistent;
 
-    public const SHOWN = 1, HIDDEN = 0;
+    public const HIDDEN = 0, PUBLISHED = 1;
 
     public const showIconStates = [
-        self::SHOWN => [
-            'class' => 'publish',
+        self::HIDDEN    => [
+            'class'  => 'unpublish',
             'column' => 'showIcon',
-            'task' => 'hideIcon',
-            'tip' => 'GROUPS_TOGGLE_TIP_SHOWN'
+            'task'   => 'showIcon',
+            'tip'    => 'GROUPS_TOGGLE_TIP_HIDDEN'
         ],
-        self::HIDDEN => [
-            'class' => 'unpublish',
+        self::PUBLISHED => [
+            'class'  => 'publish',
             'column' => 'showIcon',
-            'task' => 'showIcon',
-            'tip' => 'GROUPS_TOGGLE_TIP_HIDDEN'
-        ]];
+            'task'   => 'hideIcon',
+            'tip'    => 'GROUPS_TOGGLE_TIP_PUBLISHED'
+        ]
+    ];
 
     public const showLabelStates = [
-        self::SHOWN => [
-            'class' => 'publish',
+        self::PUBLISHED => [
+            'class'  => 'publish',
             'column' => 'showLabel',
-            'task' => 'hideLabel',
-            'tip' => 'GROUPS_TOGGLE_TIP_SHOWN'
+            'task'   => 'hideLabel',
+            'tip'    => 'GROUPS_TOGGLE_TIP_PUBLISHED'
         ],
-        self::HIDDEN => [
-            'class' => 'unpublish',
+        self::HIDDEN    => [
+            'class'  => 'unpublish',
             'column' => 'showLabel',
-            'task' => 'showLabel',
-            'tip' => 'GROUPS_TOGGLE_TIP_HIDDEN'
-        ]];
+            'task'   => 'showLabel',
+            'tip'    => 'GROUPS_TOGGLE_TIP_HIDDEN'
+        ]
+    ];
 
     /**
      * Gets the attribute id if the association.
      *
-     * @param int $id the id of the association
+     * @param   int  $id  the id of the association
      *
      * @return int
      */

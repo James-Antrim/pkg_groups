@@ -42,7 +42,7 @@ class Templates extends Selectable
             'class'  => 'publish',
             'column' => 'roles',
             'task'   => 'hideRoles',
-            'tip'    => 'GROUPS_TOGGLE_TIP_ROLES_SHOWN'
+            'tip'    => 'GROUPS_TOGGLE_TIP_ROLES_PUBLISHED'
         ],
         self::NOT     => [
             'class'  => 'unpublish',

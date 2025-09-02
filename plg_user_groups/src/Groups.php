@@ -99,9 +99,9 @@ class Groups extends CMSPlugin implements SubscriberInterface
 
         // The person is only associated with default groups and should therefore irrelevant to Groups
         if (!$displayed) {
-            // If the person is no longer associated with a displayable group unpublish their profile.
+            // If the person is no longer associated with a displayable group hide their profile.
             if ($user->published) {
-                $user->published = UH::UNPUBLISHED;
+                $user->published = UH::HIDDEN;
                 $user->store();
             }
 
