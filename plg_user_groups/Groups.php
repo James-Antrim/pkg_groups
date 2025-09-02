@@ -8,10 +8,7 @@
  * @link        www.thm.de
  */
 
-
-namespace THM\Plugin\User\Groups\Extension;
-
-require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/autoloader.php';
+namespace THM\Groups\Plugin\User;
 
 use Joomla\CMS\Event\{Model\AfterSaveEvent as modelASE, User\AfterSaveEvent as userASE};
 use Joomla\CMS\Plugin\CMSPlugin;
@@ -25,7 +22,7 @@ use THM\Groups\Adapters\Application;
 /**
  * Groups User Plugin
  */
-class Groups extends CMSPlugin implements SubscriberInterface
+final class Groups extends CMSPlugin implements SubscriberInterface
 {
     /** @inheritDoc */
     public static function getSubscribedEvents(): array

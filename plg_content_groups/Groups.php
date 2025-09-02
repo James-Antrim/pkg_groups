@@ -8,9 +8,7 @@
  * @link        www.thm.de
  */
 
-namespace THM\Plugin\Content\Groups\Extension;
-
-require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/autoloader.php';
+namespace THM\Groups\Plugin\Content;
 
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Table\Content as CoreTable;

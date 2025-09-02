@@ -20,15 +20,28 @@ spl_autoload_register(function ($originalClassName) {
         return;
     }
 
-    $className = array_pop($classNameParts);
-
-    if (reset($classNameParts) === 'Admin') {
+    //THM\Groups\Plugin\<Type>\Groups
+    if (reset($classNameParts) === 'Plugin') {
         array_shift($classNameParts);
+        $type     = strtolower(array_shift($classNameParts));
+        $filepath = JPATH_ROOT . "/plugins/$type/groups/Groups.php";
     }
-
-    $classNameParts[] = empty($className) ? 'Component' : $className;
-
-    $filepath = JPATH_ROOT . '/components/com_groups/' . implode('/', $classNameParts) . '.php';
+    //THM\Groups\Module\<Name>\Path..
+    elseif (reset($classNameParts) === 'Module') {
+        array_shift($classNameParts);
+        $name      = strtolower(array_shift($classNameParts));
+        $extension = array_search($name, ['mod_groups_menu' => 'Menu', 'mod_groups_profiles' => 'Profiles']);
+        $filepath  = JPATH_ROOT . "/modules/$extension/" . implode('/', $classNameParts) . '.php';
+    }
+    else {
+        // Namespaced classes are all in the site directory
+        if (reset($classNameParts) === 'Admin') {
+            array_shift($classNameParts);
+        }
+        $className        = array_pop($classNameParts);
+        $classNameParts[] = empty($className) ? 'Component' : $className;
+        $filepath         = JPATH_ROOT . '/components/com_groups/' . implode('/', $classNameParts) . '.php';
+    }
 
     if (is_file($filepath)) {
         require_once $filepath;

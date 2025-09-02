@@ -10,8 +10,8 @@
     </dependencies>
     <description>PLG_CONTENT_GROUPS_DESC</description>
     <files>
+        <file>Groups.php</file>
         <folder plugin="groups">services</folder>
-        <folder>src</folder>
     </files>
     <languages folder="language">
         <language tag="de-DE">de-DE/plg_content_groups.sys.ini</language>
@@ -19,7 +19,6 @@
     </languages>
     <licence>GNU GPL v.3</licence>
     <name>plg_content_groups</name>
-    <namespace path="src">THM\Plugin\Content\Groups</namespace>
     <updateservers>
         <server type="extension" name="Groups Content Plugin Update Site" priority="1">
             https://github.com/James-Antrim/pkg_groups/raw/main/update.xml
