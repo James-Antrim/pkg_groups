@@ -179,4 +179,17 @@ class Attributes extends Selectable
 
         return DB::integers();
     }
+
+    /**
+     * Gets the id of the type associated with the given attribute.
+     *
+     * @param   int  $attributeID
+     *
+     * @return int
+     */
+    public static function typeID(int $attributeID): int
+    {
+        $table = new Table();
+        return $table->load($attributeID) ? $table->typeID : 0;
+    }
 }
