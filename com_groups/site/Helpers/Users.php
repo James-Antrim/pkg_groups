@@ -32,7 +32,7 @@ class Users
             'class'  => 'publish',
             'column' => 'activated',
             'task'   => '',
-            'tip'    => 'GROUPS_TOGGLE_TIP_USER_ACTIVATED'
+            'tip'    => 'GROUPS_TOGGLE_TIP_ACTIVATED'
         ],
         self::PENDING   => [
             'class'  => 'unpublish',
@@ -48,7 +48,7 @@ class Users
             'class'  => 'unpublish',
             'column' => 'block',
             'task'   => 'unblock',
-            'tip'    => 'GROUPS_TOGGLE_TIP_USER_BLOCKED'
+            'tip'    => 'GROUPS_TOGGLE_TIP_BLOCKED'
         ],
         self::UNBLOCKED => [
             'class'  => 'publish',

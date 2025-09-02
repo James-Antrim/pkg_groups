@@ -28,69 +28,77 @@ class Users extends ListView
         // Get the toolbar object instance
         $toolbar = Toolbar::instance();
 
-        /*if (Can::create())
-        {
+        if (Can::create()) {
             $toolbar->addNew('users.add');
-        }*/
+        }
 
         if (Can::administrate() or Can::changeState()) {
-            /** @var DropdownButton $dropdown */
-            $dropdown = $toolbar->dropdownButton('status-group')
-                ->text('JTOOLBAR_CHANGE_STATUS')
+            /** @var DropdownButton $accDD */
+            $accDD = $toolbar->dropdownButton('account-group')
+                ->text('GROUPS_USER_ACTIONS')
                 ->icon('icon-ellipsis-h')
                 ->buttonClass('btn btn-action')
                 ->listCheck(true);
-            $dropdown->toggleSplit(false);
+            $accDD->toggleSplit(false);
+            $accBar = $accDD->getChildToolbar();
 
-            $childBar = $dropdown->getChildToolbar();
+            /** @var DropdownButton $profileDD */
+            $profileDD = $toolbar->dropdownButton('profile-group')
+                ->text('GROUPS_PROFILE_ACTIONS')
+                ->icon('icon-ellipsis-h')
+                ->buttonClass('btn btn-action')
+                ->listCheck(true);
+            $profileDD->toggleSplit(false);
+            $profileBar = $profileDD->getChildToolbar();
 
             if (Can::changeState()) {
-                $childBar->standardButton('publish', 'GROUPS_PUBLISH_PROFILE')
-                    ->icon('fa fa-eye')
-                    ->task('users.publish')
-                    ->listCheck(true);
-                $childBar->standardButton('unblock', 'GROUPS_HIDE_PROFILE')
-                    ->icon('fa fa-eye-slash')
-                    ->task('users.hide')
-                    ->listCheck(true);
-                $childBar->standardButton('enableEditing', 'GROUPS_ENABLE_EDITING')
-                    ->icon('fa fa-edit')
-                    ->task('users.enableEditing')
-                    ->listCheck(true);
-                $childBar->standardButton('disableEditing', 'GROUPS_DISABLE_EDITING')
-                    ->icon('fa fa-minus-circle')
-                    ->task('users.disableEditing')
-                    ->listCheck(true);
-                $childBar->standardButton('enableContent', 'GROUPS_ENABLE_CONTENT')
-                    ->icon('fa fa-folder-open')
-                    ->task('users.enableContent')
-                    ->listCheck(true);
-                $childBar->standardButton('disableContent', 'GROUPS_DISABLE_CONTENT')
-                    ->icon('fa fa-folder')
-                    ->task('users.disableContent')
-                    ->listCheck(true);
-                $childBar->standardButton('unblock', 'GROUPS_UNBLOCK_USER')
-                    ->icon('fa fa-door-open')
-                    ->task('users.block')
-                    ->listCheck(true);
-                $childBar->standardButton('block', 'GROUPS_BLOCK_USER')
+                $accBar->standardButton('block', 'GROUPS_BLOCK_USER')
                     ->icon('fa fa-door-closed')
                     ->task('users.block')
                     ->listCheck(true);
-                $childBar->standardButton('activate', 'GROUPS_ACTIVATE_USER')
+                $accBar->standardButton('unblock', 'GROUPS_UNBLOCK_USER')
+                    ->icon('fa fa-door-open')
+                    ->task('users.unblock')
+                    ->listCheck(true);
+                $accBar->standardButton('activate', 'GROUPS_ACTIVATE_USER')
                     ->icon('fa fa-check-square')
                     ->task('users.activate')
                     ->listCheck(true);
 
+                $profileBar->standardButton('publish', 'GROUPS_PUBLISH_PROFILE')
+                    ->icon('fa fa-eye')
+                    ->task('users.publish')
+                    ->listCheck(true);
+                $profileBar->standardButton('hide', 'GROUPS_HIDE_PROFILE')
+                    ->icon('fa fa-eye-slash')
+                    ->task('users.hide')
+                    ->listCheck(true);
+                $profileBar->standardButton('enableEditing', 'GROUPS_ENABLE_EDITING')
+                    ->icon('fa fa-edit')
+                    ->task('users.enableEditing')
+                    ->listCheck(true);
+                $profileBar->standardButton('disableEditing', 'GROUPS_DISABLE_EDITING')
+                    ->icon('fa fa-minus-circle')
+                    ->task('users.disableEditing')
+                    ->listCheck(true);
+                $profileBar->standardButton('enableContent', 'GROUPS_ENABLE_CONTENT')
+                    ->icon('fa fa-folder-open')
+                    ->task('users.enableContent')
+                    ->listCheck(true);
+                $profileBar->standardButton('disableContent', 'GROUPS_DISABLE_CONTENT')
+                    ->icon('fa fa-folder')
+                    ->task('users.disableContent')
+                    ->listCheck(true);
+
                 if (Can::batchProcess()) {
-                    $childBar->popupButton('batch')
+                    $accBar->popupButton('batch')
                         ->selector('collapseModal')
                         ->text('GROUPS_BATCH_PROCESSING')
                         ->listCheck(true);
                 }
 
                 if (Can::delete()) {
-                    $childBar->delete('users.delete')
+                    $accBar->delete('users.delete')
                         ->message('GROUPS_DELETE_MESSAGE')
                         ->text('GROUPS_DELETE_USER')
                         ->listCheck(true);
@@ -181,7 +189,7 @@ class Users extends ListView
                 'column'     => 'surnames, forenames',
                 'link'       => Row::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('PROFILE'),
+                'title'      => Text::_('USER'),
                 'type'       => 'sort'
             ],
             'groups'        => [
@@ -206,12 +214,12 @@ class Users extends ListView
             ],
             'block'         => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('USER_ENABLED'),
+                'title'      => Text::_('ENABLED'),
                 'type'       => 'value'
             ],
             'activated'     => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('USER_ACTIVATION'),
+                'title'      => Text::_('ACTIVATED'),
                 'type'       => 'value'
             ],
             'lastvisitDate' => [

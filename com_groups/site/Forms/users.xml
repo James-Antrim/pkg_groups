@@ -49,12 +49,12 @@
         </field>
         <field name="block" type="list" label="GROUPS_BLOCK_SELECT" onchange="this.form.submit();">
             <option value="">GROUPS_USER_BLOCK_SELECT</option>
-            <option value="0">GROUPS_USER_ENABLED</option>
-            <option value="1">GROUPS_USER_BLOCKED</option>
+            <option value="0">GROUPS_ENABLED</option>
+            <option value="1">GROUPS_BLOCKED</option>
         </field>
         <field name="activation" type="list" label="GROUPS_USER_ACTIVATION_SELECT" onchange="this.form.submit();">
             <option value="">GROUPS_USER_ACTIVATION_SELECT</option>
-            <option value="1">GROUPS_USER_ACTIVATED</option>
+            <option value="1">GROUPS_ACTIVATED</option>
             <option value="0">GROUPS_USER_PENDING</option>
         </field>
         <field name="visited" type="lastvisitdaterange" label="GROUPS_VISITED" onchange="this.form.submit();">
