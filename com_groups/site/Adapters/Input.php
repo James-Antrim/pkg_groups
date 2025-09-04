@@ -324,7 +324,7 @@ class Input
      */
     public static function removeEmptyTags(string $original): string
     {
-        $pattern = "/<[^\/>]*>([\s|\&nbsp;]?)*<\/[^>]*>/";
+        $pattern = "/<[^\/>]*>([\s|&nbsp;]?)*<\/[^>]*>/";
         $cleaned = preg_replace($pattern, '', $original);
 
         // If the text remains unchanged there is no more to be done => bubble up
@@ -440,15 +440,6 @@ class Input
         }
 
         return self::filter($default);
-    }
-
-    /**
-     * Retrieves the batch items from the request and creates a registry with the data.
-     * @return Registry
-     */
-    public static function supplements(): Registry
-    {
-        return new Registry(self::array('supplement'));
     }
 
     /**
