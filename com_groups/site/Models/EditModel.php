@@ -57,9 +57,10 @@ abstract class EditModel extends FormModel
     public function getItem(): object
     {
         if (!$this->item) {
-            $rowID = Input::selectedID();
             $table = $this->getTable();
-            $table->load($rowID);
+            if ($rowID = Input::selectedID()) {
+                $table->load($rowID);
+            }
             $properties = $table->getProperties();
 
             $this->item = ArrayHelper::toObject($properties);

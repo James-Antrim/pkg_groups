@@ -21,11 +21,13 @@ use THM\Groups\Adapters\Application;
  */
 class UserGroups extends Usergroup
 {
+    use Resettable;
+
     /**
      * INT(10) UNSIGNED NOT NULL COMMENT 'Primary Key'
      * @var int
      */
-    public $id;
+    public $id = 0;
 
     /**
      * INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Nested set lft.'

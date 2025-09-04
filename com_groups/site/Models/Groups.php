@@ -56,15 +56,15 @@ class Groups extends ListModel
     /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
-        $query  = DB::query();
+        $query = DB::query();
         $query->select([
-            'DISTINCT ' . DB::qn('g.id', 'id'),
+            'DISTINCT ' . DB::qn('ug.id', 'id'),
             DB::quote(1) . ' AS ' . DB::qn('access'),
             DB::qn('g.name_' . Application::tag(), 'name'),
             DB::qn('ug.parent_id')
         ])
-            ->from(DB::qn('#__groups_groups', 'g'))
-            ->innerJoin(DB::qn('#__usergroups', 'ug'), DB::qc('ug.id', 'g.id'))
+            ->from(DB::qn('#__usergroups', 'ug'))
+            ->leftJoin(DB::qn('#__groups_groups', 'g'), DB::qc('g.id', 'ug.id'))
             ->leftJoin(
                 DB::qn('#__usergroups', 'p'),
                 DB::qn('p.lft') . '<' . DB::qn('ug.lft') . ' AND ' . DB::qn('ug.rgt') . '<' . DB::qn('p.rgt')

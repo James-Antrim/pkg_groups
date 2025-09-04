@@ -22,12 +22,17 @@ class Group extends EditModel
     public function getItem(): stdClass
     {
         if ($item = parent::getItem()) {
-            $groupID          = $item->id;
-            $group            = UGH::getInstance()->get($groupID);
-            $item->title      = $group->title;
-            $item->parent_id  = $group->parent_id;
-            $levels           = Helper::levels($groupID);
-            $item->viewLevels = array_keys($levels);
+            if ($groupID = $item->id) {
+                $group            = UGH::getInstance()->get($groupID);
+                $item->title      = $group->title;
+                $item->parent_id  = $group->parent_id;
+                $item->viewLevels = array_keys(Helper::levels($groupID));
+            }
+            else {
+                $item->title      = '';
+                $item->parent_id  = null;
+                $item->viewLevels = [];
+            }
         }
 
         return $item;

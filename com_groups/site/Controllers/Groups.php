@@ -10,7 +10,8 @@
 
 namespace THM\Groups\Controllers;
 
-use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\{Application, Input};
+use THM\Groups\Tables\UserGroups;
 
 class Groups extends ListController
 {
@@ -20,6 +21,27 @@ class Groups extends ListController
     /** @inheritDoc */
     public function delete(): void
     {
-        Application::message('GROUPS_503');
+        $this->checkToken();
+        $this->authorize();
+
+        if (!$selectedIDs = Input::selectedIDs()) {
+            Application::message('NO_SELECTION', Application::WARNING);
+
+            return;
+        }
+
+        $selected = count($selectedIDs);
+
+        $deleted = 0;
+
+        foreach ($selectedIDs as $selectedID) {
+            $table = new UserGroups();
+
+            if ($table->delete($selectedID)) {
+                $deleted++;
+            }
+        }
+
+        $this->farewell($selected, $deleted, true);
     }
 }

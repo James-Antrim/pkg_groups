@@ -11,7 +11,7 @@
 namespace THM\Groups\Controllers;
 
 use Exception;
-use Joomla\CMS\{Application\CMSApplication, Table\Table as CoreTable};
+use Joomla\CMS\Application\CMSApplication;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Input\Input as CoreInput;
 use ReflectionNamedType;
@@ -101,9 +101,9 @@ abstract class FormController extends Controller
 
     /**
      * Instances a table object corresponding to the registered list.
-     * @return CoreTable
+     * @return Table
      */
-    protected function getTable(): CoreTable
+    protected function getTable(): Table
     {
         $fqName = 'THM\\Groups\\Tables\\' . $this->list;
 
@@ -250,7 +250,6 @@ abstract class FormController extends Controller
 
         if ($table->save($data)) {
             Application::message('SAVED');
-            /** @var Table $table */
             return $table->id;
         }
 
