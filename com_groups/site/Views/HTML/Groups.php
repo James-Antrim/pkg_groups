@@ -10,11 +10,12 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Helper\{ContentHelper as CoreAccess, UserGroupsHelper as UGH};
+use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\Router\Route;
+use Joomla\CMS\Toolbar\Button\DropdownButton;
 use stdClass;
 use THM\Groups\Adapters\{HTML, Text, Toolbar};
-use THM\Groups\Helpers\Groups as Helper;
+use THM\Groups\Helpers\{Can, Groups as Helper};
 use THM\Groups\Layouts\HTML\Row;
 
 /**
@@ -25,57 +26,41 @@ class Groups extends ListView
     /** @inheritDoc */
     protected function addToolbar(): void
     {
-        $actions = CoreAccess::getActions('com_users');
+        $this->toDo[] = 'Finish controller implementation for batch level assignments.';
+
         $toolbar = Toolbar::instance();
 
-        if ($actions->get('core.create')) {
-            $toolbar->addNew('Group.add');
+        if (Can::create()) {
+            $toolbar->addNew('groups.add');
         }
 
-        $dropdown = $toolbar->dropdownButton('status-group');
-        $dropdown->text('GROUPS_ACTIONS');
+        /** @var DropdownButton $dropdown */
+        $dropdown = $toolbar->dropdownButton('status-group', Text::_('ACTIONS'))
+            ->buttonClass('btn btn-action')
+            ->icon('icon-ellipsis-h')
+            ->listCheck(true);
         $dropdown->toggleSplit(false);
-        $dropdown->icon('icon-ellipsis-h');
-        $dropdown->buttonClass('btn btn-action');
-        $dropdown->listCheck(true);
-
         $childBar = $dropdown->getChildToolbar();
 
-        if ($actions->get('core.edit')) {
-            $button = $childBar->popupButton('roles');
-            $button->icon('fa fa-hat-wizard');
-            $button->text('GROUPS_BATCH_ROLES');
-            $button->selector('batchRoles');
-            $button->listCheck(true);
+        if (Can::batchProcess()) {
+            $this->allowBatch = true;
+            $childBar->popupButton('batch', Text::_('BATCH_LEVELS'))
+                ->popupType('inline')
+                ->textHeader(Text::_('BATCH_LEVELS'))
+                ->url('#groups-batch')
+                ->modalWidth('800px')
+                ->modalHeight('fit-content')
+                ->listCheck(true);
+
+            $batchBar = Toolbar::instance('batch');
+            $batchBar->standardButton('batch', Text::_('PROCESS'), 'groups.batch');
         }
 
-        if ($actions->get('core.edit')) {
-            $button = $childBar->popupButton('levels');
-            $button->icon('icon-eye');
-            $button->text('GROUPS_BATCH_LEVELS');
-            $button->selector('batchLevels');
-            $button->listCheck(true);
-        }
-
-        if ($actions->get('core.delete')) {
-            $button = $childBar->delete('users.delete');
-            $button->text('GROUPS_REMOVE');
-            $button->message('GROUPS_REMOVE_CONFIRM');
-            $button->listCheck(true);
+        if (Can::delete()) {
+            $childBar->delete('groups.delete', Text::_('REMOVE'))->message(Text::_('DELETE_CONFIRMATION'))->listCheck(true);
         }
 
         parent::addToolbar();
-    }
-
-    /** @inheritDoc */
-    public function display($tpl = null): void
-    {
-        $this->toDo = [
-            'Add batch processing for adding / removing roles.',
-            'Add batch processing for view levels.'
-        ];
-
-        parent::display($tpl);
     }
 
     /** @inheritDoc */

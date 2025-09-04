@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
+    <fields name="batch">
+        <field name="levels" type="ViewLevels" label="GROUPS_LEVELS"/>
+    </fields>
     <fields name="filter">
         <field name="search" type="text" label="GROUPS_SEARCH" hint="GROUPS_SEARCH_TERMS"/>
         <field name="levelID" type="ViewLevels" label="GROUPS_LEVEL" onchange="this.form.submit();">

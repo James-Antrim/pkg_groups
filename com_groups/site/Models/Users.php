@@ -109,8 +109,6 @@ class Users extends ListModel
         $items = parent::getItems();
 
         foreach ($items as $item) {
-            // Management access is a prerequisite of accessing this view at all.
-            $item->access    = true;
             $item->activated = empty($item->activation);
             $item->editLink  = Route::_('index.php?option=com_groups&view=profile&id=' . $item->id);
             $item->groups    = $this->getAssocs($item->id);
@@ -126,6 +124,7 @@ class Users extends ListModel
 
         $query->select([
             DB::qn('u') . '.*',
+            DB::quote(1) . ' AS ' . DB::qn('access'),
             'COALESCE(' . DB::qn('surnames') . ', ' . DB::qn('name') . ') AS ' . DB::qn('surnames')
         ])->from(DB::qn('#__users', 'u'));
 

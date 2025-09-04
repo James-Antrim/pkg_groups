@@ -38,7 +38,7 @@ class Can
      */
     public static function batchProcess(string $context = 'com_users'): bool
     {
-        if (self::administrate($context)) {
+        if (self::manage($context)) {
             return true;
         }
 
@@ -96,11 +96,14 @@ class Can
 
     /**
      * Checks whether the user has access to configure the component.
+     *
+     * @param   string  $context  the context of the access request
+     *
      * @return bool
      */
-    public static function configure(): bool
+    public static function configure(string $context = 'com_users'): bool
     {
-        return (self::administrate() or User::authorise('core.options', 'com_users'));
+        return (self::administrate($context) or User::authorise('core.options', $context));
     }
 
     /**
@@ -231,11 +234,14 @@ class Can
 
     /**
      * Checks whether the user has administrative (back-end) access to the component.
+     *
+     * @param   string  $context  the context of the access request
+     *
      * @return bool true if the user has 'manage' access, otherwise false
      */
     public static function manage(string $context = 'com_users'): bool
     {
-        return (self::administrate() or User::authorise('core.manage', $context));
+        return (self::administrate($context) or User::authorise('core.manage', $context));
     }
 
     /**
@@ -248,7 +254,7 @@ class Can
      */
     public static function reorder(string $context = 'com_content', int $resourceID = 0): bool
     {
-        if (self::administrate($context) or self::manage($context) or self::changeState($context, $resourceID)) {
+        if (self::manage($context) or self::changeState($context, $resourceID)) {
             return true;
         }
         return false;
@@ -286,7 +292,7 @@ class Can
      */
     public static function save(string $context, int $resourceID = 0): bool
     {
-        if (self::administrate($context) or self::manage($context)) {
+        if (self::manage($context)) {
             return true;
         }
 

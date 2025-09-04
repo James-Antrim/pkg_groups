@@ -13,8 +13,7 @@ namespace THM\Groups\Models;
 use Joomla\CMS\Helper\UserGroupsHelper as UGH;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\CMS\Router\Route;
-use Joomla\Database\ParameterType;
-use Joomla\Database\QueryInterface;
+use Joomla\Database\{ParameterType, QueryInterface};
 use stdClass;
 use THM\Groups\Adapters\{Application, Database as DB};
 use THM\Groups\Tools\Migration;
@@ -57,9 +56,13 @@ class Groups extends ListModel
     /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
-        $select = ['DISTINCT ' . DB::qn('g.id', 'id'), DB::qn('g.name_' . Application::tag(), 'name'), DB::qn('ug.parent_id')];
         $query  = DB::query();
-        $query->select($select)
+        $query->select([
+            'DISTINCT ' . DB::qn('g.id', 'id'),
+            DB::quote(1) . ' AS ' . DB::qn('access'),
+            DB::qn('g.name_' . Application::tag(), 'name'),
+            DB::qn('ug.parent_id')
+        ])
             ->from(DB::qn('#__groups_groups', 'g'))
             ->innerJoin(DB::qn('#__usergroups', 'ug'), DB::qc('ug.id', 'g.id'))
             ->leftJoin(
