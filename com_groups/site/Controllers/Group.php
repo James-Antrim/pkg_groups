@@ -10,9 +10,7 @@
 
 namespace THM\Groups\Controllers;
 
-use Joomla\Utilities\ArrayHelper;
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\Input;
+use THM\Groups\Adapters\{Application, Database as DB, Input};
 use THM\Groups\Tables\{Table, ViewLevels, UserGroups};
 
 class Group extends FormController
@@ -43,35 +41,49 @@ class Group extends FormController
             return $id;
         }
 
-        // Save the group first in case it is new / as copy
-        $groupData = ['parent_id' => $data['parent_id'], 'title' => $data['title']];
+        $title = empty($data['title']) ? $data['name_de'] : $data['title'];
 
-        if (!$groups->save($groupData)) {
+        // Save the group first in case it is new / as copy
+        if (!$groups->save(['title' => $title, 'parent_id' => $data['parent_id']])) {
             Application::message($groups->getError(), Application::ERROR);
 
             return $id;
         }
 
-        $id         = $groups->id;
-        $data['id'] = $id;
+        // Joomla can't handle a primary key that is also a foreign key.
+        if ($id) {
+            if (!$table->save($data)) {
+                Application::message($table->getError(), Application::ERROR);
 
-        if (!$table->save($data)) {
-            Application::message($table->getError(), Application::ERROR);
+                return $id;
+            }
+        }
+        else {
+            $query = DB::query();
+            $query->insert(DB::qn('#__groups_groups'))
+                ->columns(DB::qn(['id', 'name_de', 'name_en']))
+                ->values("$groups->id, " . DB::quote($data['name_de']) . ', ' . DB::quote($data['name_en']));
+            DB::set($query);
 
-            return $id;
+            if (!DB::execute()) {
+                Application::message('500', Application::ERROR);
+
+                return $groups->id;
+            }
         }
 
-        /**
-         * The group => level association is saved as a JSON string in rules. As a consequence every level has to be
-         * iterated; deprecated associations have to be sought and removed, requested associations have to be added.
-         */
-        $db    = Application::database();
-        $query = $db->getQuery(true);
-        $query->select($db->quoteName('id'))->from($db->quoteName('#__viewlevels'));
-        $db->setQuery($query);
-        $levelIDs = ArrayHelper::toInteger($db->loadColumn());
+        // The id is now set regardless of whether the entries are new.
+        $id = $groups->id;
 
-        foreach ($levelIDs as $levelID) {
+        /**
+         * The group => level association is saved as a JSON string in rules. As a consequence every level has to be iterated;
+         * deprecated associations have to be sought and removed, requested associations have to be added.
+         */
+        $query = DB::query();
+        $query->select(DB::qn('id'))->from(DB::qn('#__viewlevels'));
+        DB::set($query);
+
+        foreach (DB::integers() as $levelID) {
 
             $levels = new ViewLevels();
             $levels->load($levelID);
@@ -99,10 +111,9 @@ class Group extends FormController
             $update        = json_encode($groups);
             $levels->rules = $update;
             $levels->store();
-
         }
 
-        return $table->id;
+        return $id;
     }
 
 }

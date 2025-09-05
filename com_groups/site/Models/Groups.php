@@ -68,7 +68,8 @@ class Groups extends ListModel
             ->leftJoin(
                 DB::qn('#__usergroups', 'p'),
                 DB::qn('p.lft') . '<' . DB::qn('ug.lft') . ' AND ' . DB::qn('ug.rgt') . '<' . DB::qn('p.rgt')
-            );
+            )
+            ->group(DB::qn('ug.id'));
 
         if ($filterRoleID = (int) $this->getState('filter.roleID')) {
             $condition = DB::qc('ra.groupID', 'g.id');
