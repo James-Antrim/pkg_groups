@@ -26,8 +26,6 @@ class Groups extends ListView
     /** @inheritDoc */
     protected function addToolbar(): void
     {
-        $this->toDo[] = 'Finish controller implementation for batch level assignments.';
-
         $toolbar = Toolbar::instance();
 
         if (Can::create()) {
