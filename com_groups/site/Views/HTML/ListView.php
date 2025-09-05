@@ -155,7 +155,7 @@ abstract class ListView extends Core
             parent::display($tpl);
         }
         catch (Exception $exception) {
-            Application::error($exception->getCode());
+            Application::error($exception->getCode(), $exception->getMessage());
         }
     }
 

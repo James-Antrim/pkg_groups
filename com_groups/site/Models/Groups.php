@@ -60,6 +60,7 @@ class Groups extends ListModel
         $query = DB::query();
         $query->select([
             'DISTINCT ' . DB::qn('ug.id', 'id'),
+            // User management access is required to access the view
             DB::quote(1) . ' AS ' . DB::qn('access'),
             DB::qn('g.name_' . Application::tag(), 'name'),
             DB::qn('ug.parent_id'),

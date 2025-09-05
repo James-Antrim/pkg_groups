@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Models;
 
-use Joomla\CMS\{Form\Form, Router\Route};
+use Joomla\CMS\Form\Form;
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Database\{DatabaseQuery, QueryInterface};
 use stdClass;
@@ -106,12 +106,8 @@ class Users extends ListModel
     /** @inheritDoc */
     public function getItems(): array
     {
-        $items = parent::getItems();
-
-        foreach ($items as $item) {
-            $item->activated = empty($item->activation);
-            $item->editLink  = Route::_('index.php?option=com_groups&view=profile&id=' . $item->id);
-            $item->groups    = $this->getAssocs($item->id);
+        foreach ($items = parent::getItems() as $item) {
+            $item->groups = $this->getAssocs($item->id);
         }
 
         return $items;
@@ -120,12 +116,14 @@ class Users extends ListModel
     /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
+        $url   = 'index.php?option=com_groups&view=user&id=';
         $query = DB::query();
-
         $query->select([
             DB::qn('u') . '.*',
+            // User management access is required to access the view
             DB::quote(1) . ' AS ' . DB::qn('access'),
-            'COALESCE(' . DB::qn('surnames') . ', ' . DB::qn('name') . ') AS ' . DB::qn('surnames')
+            'COALESCE(' . DB::qn('surnames') . ', ' . DB::qn('name') . ') AS ' . DB::qn('surnames'),
+            $query->concatenate([DB::quote($url), DB::qn('u.id')], '') . ' AS ' . DB::qn('url')
         ])->from(DB::qn('#__users', 'u'));
 
         $activation = $this->state->get('filter.activation');

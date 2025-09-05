@@ -93,14 +93,13 @@ class Users extends ListView
     /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        $item->activated     = HTML::toggle($index, Helper::activatedStates[$item->activated], 'users');
         $item->block         = HTML::toggle($index, Helper::blockedStates[$item->block], 'users');
         $item->content       = HTML::toggle($index, Helper::contentStates[$item->content], 'users');
         $item->editing       = HTML::toggle($index, Helper::editingStates[$item->editing], 'users');
         $item->editLink      = Route::_('index.php?option=com_groups&view=user&id=' . $item->id);
         $item->groups        = $this->formatGroups($item->groups);
         $item->lastvisitDate = $item->lastvisitDate ?: Text::_('NEVER');
-        $item->name          = $item->forenames ? "$item->forenames $item->surnames" : $item->surnames;
+        $item->name          = $item->forenames ? "$item->surnames, $item->forenames" : $item->surnames;
         $item->published     = HTML::toggle($index, Helper::publishedStates[$item->published], 'users');
         $item->viewLink      = Route::_('index.php?option=com_groups&view=profile&id=' . $item->id);
     }
@@ -114,9 +113,9 @@ class Users extends ListView
      */
     private function formatGroups(array $groups): string
     {
-        if (count($groups) >= 3) {
+        /*if (count($groups) >= 3) {
             return Text::_('MULTIPLE_GROUPS');
-        }
+        }*/
 
         foreach ($groups as $groupID => $group) {
             $roles = match (count($group['roles'])) {
@@ -167,11 +166,6 @@ class Users extends ListView
             'block'         => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
                 'title'      => Text::_('ENABLED'),
-                'type'       => 'value'
-            ],
-            'activated'     => [
-                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('ACTIVATED'),
                 'type'       => 'value'
             ],
             'lastvisitDate' => [

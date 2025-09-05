@@ -21,26 +21,9 @@ class Users
 {
     use Persistent;
 
-    public const ACTIVATED = true, PENDING = false;
     public const ENABLED = 1, DISABLED = 0;
     public const BLOCKED = 1, UNBLOCKED = 0;
     public const PUBLISHED = 1, HIDDEN = 0;
-
-    // Pending state comes into effect through user interaction with the login component.
-    public const activatedStates = [
-        self::ACTIVATED => [
-            'class'  => 'publish',
-            'column' => 'activated',
-            'task'   => '',
-            'tip'    => 'GROUPS_TOGGLE_TIP_ACTIVATED'
-        ],
-        self::PENDING   => [
-            'class'  => 'unpublish',
-            'column' => 'activated',
-            'task'   => 'activate',
-            'tip'    => 'GROUPS_TOGGLE_TIP_USER_PENDING'
-        ]
-    ];
 
     // Display semantic is reversed
     public const blockedStates = [
