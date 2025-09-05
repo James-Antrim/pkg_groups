@@ -153,8 +153,8 @@ class Groups extends Selectable
     public static function prefix(int $level): string
     {
         $prefix = '';
-        if ($level > 1) {
-            $prefix .= str_repeat('&#8942;&nbsp;&nbsp;&nbsp;', $level - 2) . '&ndash;&nbsp;';
+        if ($level) {
+            $prefix .= str_repeat('&#8942;&nbsp;&nbsp;&nbsp;', $level - 1) . '&ndash;&nbsp;';
         }
 
         return $prefix;

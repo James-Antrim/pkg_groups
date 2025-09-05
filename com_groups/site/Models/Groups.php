@@ -56,12 +56,14 @@ class Groups extends ListModel
     /** @inheritDoc */
     protected function getListQuery(): QueryInterface
     {
+        $url   = 'index.php?option=com_groups&view=group&id=';
         $query = DB::query();
         $query->select([
             'DISTINCT ' . DB::qn('ug.id', 'id'),
             DB::quote(1) . ' AS ' . DB::qn('access'),
             DB::qn('g.name_' . Application::tag(), 'name'),
-            DB::qn('ug.parent_id')
+            DB::qn('ug.parent_id'),
+            $query->concatenate([DB::quote($url), DB::qn('ug.id')], '') . ' AS ' . DB::qn('url')
         ])
             ->from(DB::qn('#__usergroups', 'ug'))
             ->leftJoin(DB::qn('#__groups_groups', 'g'), DB::qc('g.id', 'ug.id'))
