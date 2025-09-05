@@ -36,7 +36,6 @@ class Groups extends ListController
 
         $levels   = Input::batches()->get('levels');
         $levelIDs = array_filter(array_map('intval', (array) $levels));
-        echo "<pre>" . print_r($levelIDs, true) . "</pre>";
         $updated = 0;
 
         foreach ($groupIDs as $groupID) {
