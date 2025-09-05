@@ -2,6 +2,11 @@
 <form>
     <fields name="batch">
         <field name="levels" type="ViewLevels" label="GROUPS_LEVELS"/>
+        <field name="action" type="radio" label="GROUPS_LEVEL_ACTION">
+            <option value="">GROUPS_NO_ACTION</option>
+            <option value="1">GROUPS_ADD</option>
+            <option value="0">GROUPS_REMOVE</option>
+        </field>
     </fields>
     <fields name="filter">
         <field name="search" type="text" label="GROUPS_SEARCH" hint="GROUPS_SEARCH_TERMS"/>

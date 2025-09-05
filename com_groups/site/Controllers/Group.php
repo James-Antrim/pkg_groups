@@ -88,7 +88,7 @@ class Group extends FormController
             $levels = new ViewLevels();
             $levels->load($levelID);
 
-            $groups      = json_decode($levels->rules);
+            $groups      = empty($levels->rules) ? [] : json_decode($levels->rules, true);
             $existingKey = array_search($id, $groups);
             $existent    = $existingKey !== false;
             $requested   = in_array($levelID, $data['viewLevels']);
@@ -108,8 +108,7 @@ class Group extends FormController
                 unset($groups[$existingKey]);
             }
 
-            $update        = json_encode($groups);
-            $levels->rules = $update;
+            $levels->rules = json_encode(array_values($groups));
             $levels->store();
         }
 
