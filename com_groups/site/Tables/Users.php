@@ -27,7 +27,7 @@ class Users extends User
      * VARCHAR(100) NOT NULL DEFAULT ''
      * @var string
      */
-    public $activation;
+    public string $activation;
 
     /**
      * VARCHAR(255) DEFAULT NULL
@@ -40,21 +40,21 @@ class Users extends User
      * Name of used authentication plugin
      * @var string
      */
-    public $authProvider;
+    public string $authProvider;
 
     /**
      * TINYINT(4) NOT NULL DEFAULT 0
      * @var int
      * @bool
      */
-    public $block;
+    public int $block;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var int
      * @bool
      */
-    public $content;
+    public int $content;
 
     /**
      * INT(11) DEFAULT NULL
@@ -67,14 +67,14 @@ class Users extends User
      * @var int
      * @bool
      */
-    public $editing;
+    public int $editing;
 
     /**
      * VARCHAR(100) NOT NULL DEFAULT ''
      * Magic property in parent.
      * @var string
      */
-    public $email;
+    public string $email;
 
     /**
      * VARCHAR(255) DEFAULT null
@@ -88,27 +88,27 @@ class Users extends User
      * Magic property in parent.
      * @var int
      */
-    public $id;
+    public int $id;
 
     /**
      * DATETIME
      * Magic property in parent.
      * @var string
      */
-    public $lastResetTime;
+    public string $lastResetTime;
 
     /**
      * DATETIME
      * Magic property in parent.
      * @var string
      */
-    public $lastvisitDate;
+    public string $lastvisitDate;
 
     /**
      * VARCHAR(400) NOT NULL DEFAULT ''
      * @var string
      */
-    public $name;
+    public string $name;
 
     /**
      * VARCHAR(1000) DEFAULT ''
@@ -116,7 +116,7 @@ class Users extends User
      * Magic property in parent.
      * @var string
      */
-    public $otep;
+    public string $otep;
 
     /**
      * VARCHAR(1000) DEFAULT ''
@@ -124,41 +124,41 @@ class Users extends User
      * Magic property in parent.
      * @var string
      */
-    public $otpKey;
+    public string $otpKey;
 
     /**
      * MEDIUMTEXT NOT NULL
      * JSON String
      * @var string
      */
-    public $params;
+    public string $params;
 
     /**
      * VARCHAR(100) NOT NULL DEFAULT ''
      * @var string
      */
-    public $password;
+    public string $password;
 
     /**
      * DATETIME NOT NULL
      * Magic property in parent.
      * @var string
      */
-    public $registerDate;
+    public string $registerDate;
 
     /**
      * TINYINT(4) DEFAULT 0
      * Require user to reset password on next login
      * @var int
      */
-    public $requireReset;
+    public int $requireReset;
 
     /**
      * INT(11) NOT NULL DEFAULT 0
      * Count of password resets since lastResetTime
      * @var int
      */
-    public $resetCount;
+    public int $resetCount;
 
     /**
      * TINYINT(4) DEFAULT 0
@@ -166,7 +166,7 @@ class Users extends User
      * @var int
      * @bool
      */
-    public $sendEmail;
+    public int $sendEmail;
 
     /**
      * VARCHAR(255) DEFAULT NULL
@@ -178,7 +178,7 @@ class Users extends User
      * VARCHAR(150) NOT NULL DEFAULT ''
      * @var string
      */
-    public $username;
+    public string $username;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)

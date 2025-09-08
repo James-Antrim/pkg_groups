@@ -26,20 +26,20 @@ class Roles extends Table
      * VARCHAR(100) NOT NULL
      * @var string
      */
-    public $plural_de;
+    public string $plural_de;
 
     /**
      * VARCHAR(100) NOT NULL
      * @var string
      */
-    public $plural_en;
+    public string $plural_en;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var int
      * @bool
      */
-    public $protected;
+    public int $protected;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)

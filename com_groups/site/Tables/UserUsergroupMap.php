@@ -24,13 +24,13 @@ class UserUsergroupMap extends Table
      * INT(10) UNSIGNED NOT NULL (user_usergroup_map.group_id -> usergroups.id)
      * @var int
      */
-    public $group_id;
+    public int $group_id;
 
     /**
      * INT(10) UNSIGNED NOT NULL (user_usergroup_map.user_id -> users.id)
      * @var int
      */
-    public $user_id;
+    public int $user_id;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)

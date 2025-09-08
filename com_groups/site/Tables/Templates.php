@@ -27,21 +27,21 @@ class Templates extends Table
      * @var int
      * @bool
      */
-    public $cards;
+    public int $cards;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var int
      * @bool
      */
-    public $roles;
+    public int $roles;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var int
      * @bool
      */
-    public $vcards;
+    public int $vcards;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)

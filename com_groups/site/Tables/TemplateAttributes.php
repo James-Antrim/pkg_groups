@@ -26,26 +26,26 @@ class TemplateAttributes extends Table
      * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
      * @var int
      */
-    public $attributeID;
+    public int $attributeID;
 
     /**
      * TINYINT(1) UNSIGNED  NOT NULL DEFAULT 0
      * @var int
      * @bool
      */
-    public $showLabel;
+    public int $showLabel;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var int
      */
-    public $showIcon;
+    public int $showIcon;
 
     /**
      * INT(11) UNSIGNED NOT NULL AUTO_INCREMENT
      * @var int
      */
-    public $templateID;
+    public int $templateID;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)

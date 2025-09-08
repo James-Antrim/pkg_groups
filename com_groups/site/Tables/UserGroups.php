@@ -27,31 +27,31 @@ class UserGroups extends Usergroup
      * INT(10) UNSIGNED NOT NULL COMMENT 'Primary Key'
      * @var int
      */
-    public $id = 0;
+    public int $id = 0;
 
     /**
      * INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Nested set lft.'
      * @var int
      */
-    public $lft;
+    public int $lft;
 
     /**
      * VARCHAR(100) NOT NULL DEFAULT ''
      * @var string
      */
-    public $title;
+    public string $title;
 
     /**
      * INT(10) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Adjacency List Reference'
      * @var int
      */
-    public $parent_id;
+    public int $parent_id;
 
     /**
      * INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'Nested set rgt.'
      * @var int
      */
-    public $rgt;
+    public int $rgt;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)

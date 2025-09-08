@@ -26,62 +26,62 @@ class Attributes extends Table
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => Both, 1 => Profile, 2 => Group'
      * @var int
      */
-    public $context;
+    public int $context;
 
     /**
      * VARCHAR(255) NOT NULL DEFAULT ''
      * @var string
      */
-    public $icon;
+    public string $icon;
 
     /**
      * VARCHAR(100) NOT NULL
      * @var string
      */
-    public $label_de;
+    public string $label_de;
 
     /**
      * VARCHAR(100) NOT NULL
      * @var string
      */
-    public $label_en;
+    public string $label_en;
 
     /**
      * TEXT
      * @var string
      */
-    public $options;
+    public string $options;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0
      * @var int
      * @bool
      */
-    public $required;
+    public int $required;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 COMMENT '0 => No, 1 => Yes'
      * @var int
      */
-    public $showIcon;
+    public int $showIcon;
 
     /**
      * TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 COMMENT '0 => No, 1 => Yes'
      * @var int
      */
-    public $showLabel;
+    public int $showLabel;
 
     /**
      * INT(11) UNSIGNED NOT NULL (fk_attributes_typeID -> groups_types.id)
      * @var int
      */
-    public $typeID;
+    public int $typeID;
 
     /**
      * INT(10) UNSIGNED DEFAULT 1 (fk_attributes_viewLevelID -> viewlevels.id)
      * @var int
      */
-    public $viewLevelID;
+    public int $viewLevelID;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)

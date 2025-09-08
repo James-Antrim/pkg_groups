@@ -17,5 +17,5 @@ trait Ordered
      * INT(3) UNSIGNED NOT NULL DEFAULT 0
      * @var int
      */
-    public $ordering;
+    public int $ordering;
 }

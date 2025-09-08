@@ -24,13 +24,13 @@ class RoleAssociations extends Table
      * INT(11) UNSIGNED NOT NULL (fk: user_usergroups_map.id)
      * @var int
      */
-    public $mapID;
+    public int $mapID;
 
     /**
      * INT(11) UNSIGNED NOT NULL (fk: roles.id)
      * @var int
      */
-    public $roleID;
+    public int $roleID;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)

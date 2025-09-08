@@ -25,25 +25,25 @@ class ViewLevels extends ViewLevel
      * INT(10) UNSIGNED NOT NULL AUTOINCREMENT COMMENT 'Primary Key'
      * @var int
      */
-    public $id;
+    public int $id;
 
     /**
      * INT(11) NOT NULL DEFAULT 0
      * @var int
      */
-    public $ordering;
+    public int $ordering;
 
     /**
      * VARCHAR(5120) NOT NULL COMMENT 'JSON encoded access control.'
      * @var string
      */
-    public $rules;
+    public string $rules;
 
     /**
      * VARCHAR(100) NOT NULL DEFAULT ''
      * @var string
      */
-    public $title;
+    public string $title;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)

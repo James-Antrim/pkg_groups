@@ -26,19 +26,19 @@ class ProfileAttributes extends Table
      * INT(11) UNSIGNED NOT NULL (fk_pAttribs_attributeID -> groups_attributes.id)
      * @var int
      */
-    public $attributeID;
+    public int $attributeID;
 
     /**
      * INT(11) NOT NULL (fk_pAttribs_personID -> persons.id -> fk: users.id)
      * @var int
      */
-    public $userID;
+    public int $userID;
 
     /**
      * TEXT
      * @var string
      */
-    public $value;
+    public string $value;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)
