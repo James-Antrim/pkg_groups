@@ -11,89 +11,14 @@
 use Joomla\CMS\Log\Log;
 use THM\Groups\Adapters\{Application, Database as DB, Input};
 use THM\Groups\Controllers\Category as CategoryController;
-use THM\Groups\Helpers\{Attributes, Can, Categories, Groups, Pages, Users};
-use THM\Groups\Tables\{Categories as CategoriesTable, UserUsergroupMap, Users as UsersTable};
-
-require_once HELPERS . 'profiles.php';
+use THM\Groups\Helpers\{Attributes, Can, Categories, Pages, Users};
+use THM\Groups\Tables\{Categories as CategoriesTable, Users as UsersTable};
 
 /**
  * Class loads form data to edit an entry.
  */
 class THM_GroupsModelProfile extends JModelLegacy
 {
-    /**
-     * Associates a group and potentially multiple roles with the selected users
-     *
-     * @return  bool true on success, otherwise false.
-     */
-    public function batch(): bool
-    {
-        if (!Can::manage()) {
-            Application::message('JLIB_RULES_NOT_ALLOWED', Application::ERROR);
-
-            return false;
-        }
-
-        $newProfileData  = Application::userRequestState('.profiles', 'profiles', [], 'array');
-        $requestedAssocs = json_decode(urldecode(Input::string('batch-data')), true);
-        $selectedIDs     = Input::selectedIDs();
-
-        if ($selectedIDs and !empty($requestedAssocs)) {
-            return $this->batchRoles($selectedIDs, $requestedAssocs);
-        }
-        elseif (!empty($newProfileData['groupIDs']) and !empty($newProfileData['profileIDs'])) {
-            $this->batchProfiles($newProfileData['groupIDs'], $newProfileData['profileIDs']);
-            return true;
-        }
-
-        Application::message('JLIB_APPLICATION_ERROR_INSUFFICIENT_BATCH_INFORMATION', Application::ERROR);
-
-        return false;
-    }
-
-    /**
-     * Associates the profiles with the given groups default group/role association.
-     *
-     * @param   int[]  $groupIDs  the ids of the selected groups
-     * @param   int[]  $userIDs   the ids of the selected profiles
-     *
-     * @return void
-     */
-    private function batchProfiles(array $groupIDs, array $userIDs): void
-    {
-        foreach ($groupIDs as $groupID) {
-            $assignedIDs   = Groups::profileIDs($groupID);
-            $unassignedIDs = array_diff($userIDs, $assignedIDs);
-
-            foreach ($unassignedIDs as $userID) {
-                $assoc = ['group_id' => $groupID, 'user_id' => $userID];
-                $map   = new UserUsergroupMap();
-                if ($map->load($assoc)) {
-                    continue;
-                }
-
-                $map->save($assoc);
-            }
-        }
-    }
-
-    /**
-     * Associates the selected users with the selected group/role associations.
-     *
-     * @param   array  $userIDs
-     * @param   array  $requestedAssocs  the ids of the group/role association with which the profiles should be associated
-     *
-     * @return bool
-     */
-    private function batchRoles(array $userIDs, array $requestedAssocs): bool
-    {
-        if (!$this->setJoomlaAssociations($userIDs, $requestedAssocs)) {
-            return false;
-        }
-
-        return $this->setGroupsAssociations($userIDs, $requestedAssocs);
-    }
-
     /**
      * Deletes the value for a specific profile picture attribute
      *
@@ -138,33 +63,6 @@ class THM_GroupsModelProfile extends JModelLegacy
         DB::execute();
 
         return true;
-    }
-
-    /**
-     * Returns a list of group assoc ids matching the request data
-     *
-     * @param   array  $requestedAssocs  An array with groups and roles
-     *
-     * @return  array
-     */
-    private function getGroupAssociations(array $requestedAssocs): array
-    {
-        $assocs = [];
-
-        foreach ($requestedAssocs as $requestedAssoc) {
-            foreach ($requestedAssoc['roles'] as $role) {
-                $query = DB::query();
-                $query->select('id')
-                    ->from('#__thm_groups_role_associations')
-                    ->where("groupID = '{$requestedAssoc['id']}'")
-                    ->where("roleID = {$role['id']}");
-                DB::set($query);
-                $assocID          = DB::integer();
-                $assocs[$assocID] = $assocID;
-            }
-        }
-
-        return $assocs;
     }
 
     /**
@@ -392,86 +290,6 @@ class THM_GroupsModelProfile extends JModelLegacy
         }
 
         return true;
-    }
-
-    /**
-     * Associates the profile with the given groups/roles
-     *
-     * @param   array  $profileIDs       the profile IDs which assignments are being edited
-     * @param   array  $requestedAssocs  an array of groups and roles
-     *
-     * @return  bool
-     */
-    private function setGroupsAssociations(array $profileIDs, array $requestedAssocs): bool
-    {
-        // Can only occur by manipulation.
-        if (empty($profileIDs) or empty($requestedAssocs)) {
-            return true;
-        }
-
-        $roleAssociations = $this->getGroupAssociations($requestedAssocs);
-
-        // Can only occur by manipulation.
-        if (empty($roleAssociations)) {
-            return false;
-        }
-
-        $completeSuccess = true;
-        $partialSuccess  = false;
-
-        foreach ($profileIDs as $profileID) {
-
-            $profileAssociations = THM_GroupsHelperProfiles::getRoleAssociations($profileID);
-
-            foreach ($roleAssociations as $assocID) {
-                if (!in_array($assocID, $profileAssociations)) {
-                    $success         = THM_GroupsHelperProfiles::associateRole($profileID, $assocID);
-                    $completeSuccess = ($completeSuccess and $success);
-                    $partialSuccess  = ($partialSuccess or $success);
-                }
-            }
-        }
-
-        if ($completeSuccess) {
-            return true;
-        }
-
-        // Is also a partial fail.
-        if ($partialSuccess) {
-            Application::message('PARTIAL_ASSOCIATION_FAIL', Application::WARNING);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Maps users to Joomla user groups.
-     *
-     * @param   array  $profileIDs  an array with profile ids (joomla user ids)
-     * @param   array  $batchData   an array with groups and roles
-     *
-     * @return bool
-     */
-    private function setJoomlaAssociations(array $profileIDs, array $batchData): bool
-    {
-        $existingQuery = DB::query();
-        $existingQuery->select('id')->from('#__user_usergroup_map')
-            ->where("user_id IN ('" . implode("','", $profileIDs) . "')");
-        $query = DB::query();
-        $query->insert('#__user_usergroup_map')->columns('user_id, group_id');
-        $values = [];
-
-        foreach ($profileIDs as $profileID) {
-            foreach ($batchData as $groupData) {
-                $values[] = [$profileID, $groupData['id']];
-            }
-        }
-
-        $query->values($values);
-        DB::set($query);
-        return DB::execute();
     }
 
     /**

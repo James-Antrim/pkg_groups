@@ -14,7 +14,7 @@ use THM\Groups\Adapters\Form;
 require_once 'fields.php';
 
 /**
- * Class providing helper functions for batch select options
+ * Class providing helper functions for attribute types.
  */
 class THM_GroupsHelperAttribute_Types
 {

@@ -26,6 +26,8 @@ class Groups extends ListView
     /** @inheritDoc */
     protected function addToolbar(): void
     {
+        $this->toDo[] = 'Add associated template to batch and rows.';
+
         $toolbar = Toolbar::instance();
 
         if (Can::create()) {

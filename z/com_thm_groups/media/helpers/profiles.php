@@ -19,7 +19,7 @@ require_once JPATH_ROOT . '/administrator/components/com_thm_groups/tables/profi
 require_once JPATH_ROOT . '/administrator/components/com_thm_groups/tables/profile_attributes.php';
 
 /**
- * Class providing helper functions for batch select options
+ * Class providing helper functions for profiles.
  */
 class THM_GroupsHelperProfiles
 {

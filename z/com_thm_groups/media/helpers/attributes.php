@@ -15,7 +15,7 @@ require_once 'attribute_types.php';
 require_once 'fields.php';
 
 /**
- * Class providing helper functions for batch select options
+ * Class providing helper functions for attributes.
  */
 class THM_GroupsHelperAttributes
 {

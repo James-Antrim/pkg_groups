@@ -13,7 +13,7 @@ use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
 use THM\Groups\Helpers\{Categories, Pages, Profiles, Users};
 
 /**
- * Class providing helper functions for batch select options
+ * Class providing helper functions for routing.
  */
 class THM_GroupsHelperRouter
 {
