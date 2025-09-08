@@ -10,9 +10,7 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Joomla\CMS\Helper\UserGroupsHelper as UGH;
-use Joomla\CMS\Router\Route;
-use Joomla\CMS\Toolbar\Button\DropdownButton;
+use Joomla\CMS\{Helper\UserGroupsHelper as UGH, Router\Route};
 use stdClass;
 use THM\Groups\Adapters\{HTML, Text, Toolbar};
 use THM\Groups\Helpers\{Can, Groups as Helper};
@@ -34,19 +32,11 @@ class Groups extends ListView
             $toolbar->addNew('groups.add');
         }
 
-        /** @var DropdownButton $dropdown */
-        $dropdown = $toolbar->dropdownButton('status-group', Text::_('ACTIONS'))
-            ->buttonClass('btn btn-action')
-            ->icon('icon-ellipsis-h')
-            ->listCheck(true);
-        $dropdown->toggleSplit(false);
-        $childBar = $dropdown->getChildToolbar();
-
         if (Can::batchProcess()) {
             $this->allowBatch = true;
-            $childBar->popupButton('batch', Text::_('BATCH_LEVELS'))
+            $toolbar->popupButton('batch', Text::_('BATCH'))
                 ->popupType('inline')
-                ->textHeader(Text::_('BATCH_LEVELS'))
+                ->textHeader(Text::_('BATCH'))
                 ->url('#groups-batch')
                 ->modalWidth('800px')
                 ->modalHeight('fit-content')
@@ -57,7 +47,7 @@ class Groups extends ListView
         }
 
         if (Can::delete()) {
-            $childBar->delete('groups.delete', Text::_('REMOVE'))->message(Text::_('DELETE_CONFIRMATION'))->listCheck(true);
+            $toolbar->delete('groups.delete', Text::_('REMOVE'))->message(Text::_('DELETE_CONFIRMATION'))->listCheck(true);
         }
 
         parent::addToolbar();

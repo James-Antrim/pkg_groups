@@ -14,12 +14,10 @@ use Joomla\CMS\Form\Field\ListField;
 use THM\Groups\Helpers\Roles as Helper;
 
 /**
- * Provides a list of context relevant groups.
+ * Provides a list of roles.
  */
 class Roles extends ListField
 {
-    protected $type = 'Roles';
-
     /**
      * Method to get the group options.
      *

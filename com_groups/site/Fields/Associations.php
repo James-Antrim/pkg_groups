@@ -15,12 +15,10 @@ use THM\Groups\Helpers\Groups;
 use THM\Groups\Helpers\Roles;
 
 /**
- * Provides a list of context relevant groups.
+ * Provides a list of existing group & role associations.
  */
 class Associations extends ListField
 {
-    protected $type = 'Associations';
-
     /**
      * Method to get the group options.
      *

@@ -14,12 +14,10 @@ use Joomla\CMS\Form\Field\ListField;
 use THM\Groups\Adapters\Database as DB;
 
 /**
- * Provides a list of context relevant groups.
+ * Provides a list of view levels.
  */
 class ViewLevels extends ListField
 {
-    protected $type = 'ViewLevels';
-
     /**
      * Method to get the group options.
      *

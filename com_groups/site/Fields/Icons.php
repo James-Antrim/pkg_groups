@@ -14,12 +14,10 @@ use Joomla\CMS\Form\Field\ListField;
 use THM\Groups\Helpers\Icons as Helper;
 
 /**
- * Provides a list of context relevant groups.
+ * Provides a list of icons.
  */
 class Icons extends ListField
 {
-    protected $type = 'Icons';
-
     /** @inheritDoc */
     public function getInput(): string
     {

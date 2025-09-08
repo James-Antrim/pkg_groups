@@ -15,12 +15,10 @@ use SimpleXMLElement;
 use THM\Groups\Adapters\Database as DB;
 
 /**
- * Provides a list of context relevant groups.
+ * Provides a list buttons for the purpose of exclusion from an editor field.
  */
 class ExcludedButtons extends ListField
 {
-    protected $type = 'ExcludedButtons';
-
     /**
      * Method to get the group options.
      *

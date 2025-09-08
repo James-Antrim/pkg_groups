@@ -14,12 +14,10 @@ use Joomla\CMS\Form\Field\ListField;
 use THM\Groups\Helpers\Types as Helper;
 
 /**
- * Provides a list of context relevant groups.
+ * Provides a list of attribute/field types.
  */
 class Types extends ListField
 {
-    protected $type = 'Types';
-
     /**
      * Method to get the group options.
      *
