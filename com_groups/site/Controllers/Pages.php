@@ -12,7 +12,7 @@ namespace THM\Groups\Controllers;
 
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text, User};
 use THM\Groups\Helpers\{Can, Pages as Helper, Users};
-use THM\Groups\Tables\{Content as CTable, Pages as PTable};
+use THM\Groups\Tables\{Categories as CaTable, Content as CoTable, Pages as PTable};
 
 /** @inheritDoc */
 class Pages extends ListController
@@ -38,24 +38,45 @@ class Pages extends ListController
     {
         $query = DB::query();
         $query->select(DB::qn(
-            ['co.id', 'co.created_by', 'p.userID', 'categories.created_user_id'],
-            ['contentID', 'coUserID', 'pUserID', 'caUserID']
+            ['co.id', 'co.created_by', 'p.userID', 'ca.id', 'ca.created_user_id', 'u.id'],
+            ['contentID', 'coUserID', 'pUserID', 'categoryID', 'caUserID', 'userID']
         ))
             ->from(DB::qn('#__content', 'co'))
             ->innerJoin(DB::qn('#__categories', 'ca'), DB::qc('ca.id', 'co.catid'))
+            ->leftJoin(DB::qn('#__users', 'u'), DB::qc('u.alias', 'ca.alias'))
             ->leftJoin(DB::qn('#__groups_pages', 'p'), DB::qc('p.contentID', 'co.id'));
         DB::set($query);
 
         foreach (DB::arrays() as $result) {
+            if (empty($result['caUserID'])) {
+                // Authorship cannot be resolved here
+                if (empty($result['userID'])) {
+                    continue;
+                }
+
+                $category = new CaTable();
+                // A seemingly bigger problem which can also not be resolved here
+                if (!$category->load($result['categoryID'])) {
+                    continue;
+                }
+
+                $category->created_user_id = $result['userID'];
+                $category->store();
+            }
+
+            $syncID = empty($result['caUserID']) ? $result['userID'] : $result['caUserID'];
+
+            // Sync category users with content authors
             if ($result['coUserID'] !== $result['caUserID']) {
-                $table = new CTable();
+                $table = new CoTable();
                 $table->load($result['contentID']);
-                $table->created_by = $result['caUserID'];
+                $table->created_by = $syncID;
                 $table->store();
             }
 
-            if (empty($result['pUserID']) or $result['pUserID'] !== $result['caUserID']) {
-                Page::associate($result['contentID'], $result['caUserID']);
+            // Sync category users with page users
+            if (empty($result['pUserID']) or $result['pUserID'] !== $syncID) {
+                Page::associate($result['contentID'], $syncID);
             }
         }
     }
@@ -188,7 +209,7 @@ class Pages extends ListController
         $value = (int) $value;
 
         foreach ($selectedIDs as $selectedID) {
-            $table = new CTable();
+            $table = new CoTable();
 
             if ($table->load($selectedID) and $table->state !== $value) {
                 $table->state = $value;

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+    <fields name="filter" addfieldpath="/media/com_thm_groups/fields">
+        <field name="search" type="text" label="GROUPS_SEARCH" hint="GROUPS_SEARCH_TERMS"/>
+        <field name="userID" type="Authors" label="GROUPS_USER" onchange="this.form.submit();">
+            <option value="">GROUPS_SELECT_USER</option>
+        </field>
+        <field name="state" type="list" label="GROUPS_STATUS" onchange="this.form.submit();">
+            <option value="">GROUPS_SELECT_STATE</option>
+            <option value="1">GROUPS_PUBLISHED</option>
+            <option value="0">GROUPS_HIDDEN</option>
+            <option value="2">GROUPS_ARCHIVED</option>
+            <option value="-2">GROUPS_TRASHED</option>
+        </field>
+        <field name="featured" type="list" label="GROUPS_FEATURED" onchange="this.form.submit();">
+            <option value="-1">GROUPS_SELECT_FEATURED</option>
+            <option value="1">GROUPS_FEATURED</option>
+            <option value="0">GROUPS_UNFEATURED</option>
+        </field>
+    </fields>
+    <fields name="list">
+        <field name="limit" type="limitbox" class="input-mini" label="JGLOBAL_LIST_LIMIT" onchange="this.form.submit();"/>
+    </fields>
+</form>

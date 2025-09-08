@@ -19,6 +19,8 @@ use THM\Groups\Adapters\Application;
  */
 class Content extends Core
 {
+    use Resettable;
+
     /**
      * INT(10) UNSIGNED NOT NULL DEFAULT 0'
      * @var int
@@ -76,9 +78,9 @@ class Content extends Core
 
     /**
      * INT(10) UNSIGNED NOT NULL DEFAULT 0
-     * @var int
+     * @var int|null
      */
-    public int $created_by = 0;
+    public int|null $created_by = 0;
 
     /**
      * VARCHAR(255) NOT NULL DEFAULT ''
