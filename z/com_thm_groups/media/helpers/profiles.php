@@ -8,10 +8,8 @@
  * @link        www.thm.de
  */
 
-use THM\Groups\Adapters\{Database as DB, HTML, Text};
+use THM\Groups\Adapters\{HTML, Text};
 use THM\Groups\Helpers\{Attributes, Profiles as Helper, Templates, Types};
-use THM\Groups\Controllers\Profile;
-use THM\Groups\Tables\Users;
 
 require_once 'attributes.php';
 require_once 'router.php';
@@ -23,37 +21,6 @@ require_once JPATH_ROOT . '/administrator/components/com_thm_groups/tables/profi
  */
 class THM_GroupsHelperProfiles
 {
-    /**
-     * Associates a profile with a given group/role association
-     *
-     * @param   int  $profileID  the id of the profile to associate
-     * @param   int  $assocID    the id of the group/role association with which to associate it
-     *
-     * @return int
-     */
-    public static function associateRole(int $profileID, int $assocID): int
-    {
-        if ($existingID = THM_GroupsHelperRoles::getAssocID($assocID, $profileID, 'profile')) {
-            return $existingID;
-        }
-
-        $table = new Users();
-
-        // Profile is new
-        if (!$table->load($profileID) and empty($table->surnames)) {
-            Profile::create($profileID);
-        }
-
-        $query = DB::query();
-        $query->insert(DB::qn('#__groups_profile_associations'))
-            ->columns(['profileID', 'role_associationID'])
-            ->values([$profileID, $assocID]);
-        DB::set($query);
-        DB::execute();
-
-        return THM_GroupsHelperRoles::getAssocID($assocID, $profileID, 'profile');
-    }
-
     /**
      * Creates HTML for the display of a profile
      *
@@ -119,24 +86,6 @@ class THM_GroupsHelperProfiles
         $vCardLink = self::getVCardLink($profileID);
 
         return '<div class="attribute-wrap attribute-header">' . $link . $vCardLink . '<div class="clearFix"></div></div>';
-    }
-
-    /**
-     * Gets the role association ids associated with the profile
-     *
-     * @param   int  $profileID  the id of the profile
-     *
-     * @return array the role association ids associated with the profile
-     */
-    public static function getRoleAssociations(int $profileID): array
-    {
-        $query = DB::query();
-        $query->select('role_associationID')
-            ->from('#__groups_profile_associations')
-            ->where("profileID = $profileID");
-        DB::set($query);
-
-        return DB::integers() ?: [];
     }
 
     /**

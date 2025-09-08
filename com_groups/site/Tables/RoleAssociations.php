@@ -1,5 +1,4 @@
-<?php /** @noinspection PhpMissingFieldTypeInspection */
-
+<?php
 /**
  * @package     Groups
  * @extension   com_groups
@@ -39,22 +38,5 @@ class RoleAssociations extends Table
 
         /** @var DatabaseDriver $dbo */
         parent::__construct('#__groups_role_associations', 'id', $dbo);
-    }
-
-    /**
-     * Gets the id of the association for the given group and role ids.
-     *
-     * @param   int  $mapID
-     * @param   int  $roleID
-     *
-     * @return int|null the id if existent, otherwise null
-     */
-    public function getAssocID(int $mapID, int $roleID): ?int
-    {
-        if ($this->load(['mapID' => $mapID, 'roleID' => $roleID])) {
-            return $this->id;
-        }
-
-        return null;
     }
 }
