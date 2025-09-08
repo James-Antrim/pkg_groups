@@ -88,21 +88,23 @@ class Templates extends Selectable
         return DB::objects('id');
     }
 
-    /**
-     * @inheritDoc
-     *
-     * @param   bool  $bound  whether the role must already be associated
-     */
-    public static function options(bool $associated = true): array
+    /** @inheritDoc */
+    public static function options(): array
     {
-        return [];
+        $name    = 'name_' . Application::tag();
+        $options = [];
+        foreach (self::resources() as $templateID => $template) {
+
+            $options[] = (object) ['text' => $template->$name, 'value' => $templateID];
+        }
+        return $options;
     }
 
     /** @inheritDoc */
     public static function resources(): array
     {
         $query = DB::query();
-        $query->select('*')->from(DB::qn('#__groups_templates'))->order(DB::qn('plural_' . Application::tag()));
+        $query->select('*')->from(DB::qn('#__groups_templates'))->order(DB::qn('name_' . Application::tag()));
         DB::set($query);
 
         return DB::objects('id');
