@@ -35,6 +35,8 @@ class Groups extends Selectable
         self::SUPER_ADMIN
     ];
 
+    public const REMOVE = 0;
+
     /**
      * Retrieves a map of roleIDs => userIDs for the given group.
      *

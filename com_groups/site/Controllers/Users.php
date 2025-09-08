@@ -20,14 +20,7 @@ class Users extends ListController
 {
     use Associated;
 
-    // Add or remove a group / role association.
-    private const ADD = 1, REMOVE = 0;
-
-    // Reset the selected user, or stop the reset process.
-    private const RESET = 1, STOP = 0;
-
-    // The values are redundant, but understandable
-    private const ACTIONS = [self::ADD, self::REMOVE, self::RESET, self::STOP];
+    private const INVALID = null, RESET = 1;
 
     /** @inheritDoc */
     protected string $item = 'user';
@@ -110,58 +103,51 @@ class Users extends ListController
         $this->checkToken();
         $this->authorize();
 
-        $user  = User::instance();
-        $super = $user->get('isRoot');
+        $batch   = Input::batches();
+        $groupID = (int) $batch->get('groupID');
+        $mAction = $batch->get('action');
+        $mAction = (is_numeric($mAction) and in_array((int) $mAction, Input::BINARY)) ? $mAction : self::INVALID;
+        $rAction = $batch->get('reset');
+        $rAction = (is_numeric($rAction) and in_array((int) $rAction, Input::BINARY)) ? $rAction : self::INVALID;
 
-        $batchItems  = Input::batches();
         $selectedIDs = Input::selectedIDs();
 
-        // Will always have a non-zero value if the Joomla UI was used.
-        $selected = count($selectedIDs);
+        $assign = ($mAction !== self::INVALID and $groupID);
+        if (!$selected = count($selectedIDs) or (!$assign and $rAction === self::INVALID)) {
+            Application::message('NO_ACTION_CHOSEN', Application::NOTICE);
+            $this->farewell($selected);
+        }
 
-        $actionValue = $batchItems->get('action');
-        $batchMap    = false;
-        $groupID     = (int) $batchItems->get('groupID');
-        $roleID      = 0;
+        $roleID = (int) $batch->get('roleID');
+        $user   = User::instance();
+        $super  = $user->get('isRoot');
 
-        if (is_numeric($actionValue) and in_array((int) $actionValue, self::ACTIONS) and $groupID) {
+        if ($assign) {
             /**
              * Joomla programmed a hard error if a non-super user batch processed a superuser at all. I am only going
              * to throw an error if the batch process is to add or remove a group assignment which would add or remove
              * super authorization.
              */
             if (!$super and Access::checkGroup($groupID, 'core.admin')) {
-                Application::message('GROUPS_CANNOT_BATCH_SUPER_ADMIN', Application::ERROR);
+                Application::message('CANNOT_BATCH_SUPER_ADMIN', Application::ERROR);
                 $this->farewell($selected);
             }
-
-            $actionValue = (int) $actionValue;
-            $batchMap    = true;
-            $roleID      = (int) $batchItems->get('roleID');
         }
 
-        $resetValue = $batchItems->get('reset');
-        $batchReset = false;
-        $resetting  = false;
+        $resetting = false;
 
-        if (is_numeric($resetValue) and in_array((int) $resetValue, self::ACTIONS)) {
-            $resetValue = (int) $resetValue;
-            $batchReset = true;
-            $resetting  = $resetValue === self::RESET;
-        }
-
-        if (!$batchMap and !$batchReset) {
-            Application::message('GROUPS_NO_ACTION_CHOSEN', Application::NOTICE);
-            $this->farewell();
+        if ($batchReset = $rAction !== self::INVALID) {
+            $resetting = $rAction === self::RESET;
         }
 
         $updated = 0;
 
         foreach ($selectedIDs as $selectedID) {
+            $mapped = $reset = false;
             if ($batchReset) {
                 if ($resetting) {
                     if (!$super and Access::check($selectedID, 'core.admin')) {
-                        Application::message('GROUPS_CANNOT_BATCH_SUPER_ADMIN', Application::WARNING);
+                        Application::message('CANNOT_BATCH_SUPER_ADMIN', Application::WARNING);
                         continue;
                     }
 
@@ -171,21 +157,15 @@ class Users extends ListController
                     }
                 }
 
-                $reset = $this->reset($selectedID, $resetValue);
-            }
-            else {
-                $reset = true;
+                $reset = $this->reset($selectedID, $rAction);
             }
 
-            if ($batchMap) {
-                $mapped = $this->associate($selectedID, $actionValue, $groupID, $roleID);
-            }
-            else {
-                $mapped = true;
+            if ($assign) {
+                $mapped = $this->associate($selectedID, $mAction, $groupID, $roleID);
             }
 
 
-            if ($mapped and $reset) {
+            if ($mapped or $reset) {
                 $updated++;
             }
         }

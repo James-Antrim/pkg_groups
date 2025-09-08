@@ -1,5 +1,4 @@
-<?php /** @noinspection PhpMissingFieldTypeInspection */
-
+<?php
 /**
  * @package     Groups
  * @extension   com_groups
@@ -93,16 +92,16 @@ class Users extends User
     /**
      * DATETIME
      * Magic property in parent.
-     * @var string
+     * @var string|null
      */
-    public string $lastResetTime;
+    public string|null $lastResetTime;
 
     /**
      * DATETIME
      * Magic property in parent.
-     * @var string
+     * @var string|null
      */
-    public string $lastvisitDate;
+    public string|null $lastvisitDate;
 
     /**
      * VARCHAR(400) NOT NULL DEFAULT ''
@@ -129,9 +128,9 @@ class Users extends User
     /**
      * MEDIUMTEXT NOT NULL
      * JSON String
-     * @var string
+     * @var string|null
      */
-    public string $params;
+    public string|null $params = '';
 
     /**
      * VARCHAR(100) NOT NULL DEFAULT ''
@@ -142,9 +141,9 @@ class Users extends User
     /**
      * DATETIME NOT NULL
      * Magic property in parent.
-     * @var string
+     * @var string|null
      */
-    public string $registerDate;
+    public string|null $registerDate;
 
     /**
      * TINYINT(4) DEFAULT 0

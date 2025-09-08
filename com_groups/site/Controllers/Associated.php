@@ -32,7 +32,7 @@ trait Associated
         $map     = new UUGM();
         $map->load($mapData);
 
-        if ($action === self::REMOVE) {
+        if ($action === Groups::REMOVE) {
             // Mapping doesn't exist
             if (!$map->id) {
                 return false;
@@ -60,7 +60,7 @@ trait Associated
             return false;
         }
 
-        // No role requested or
+        // No role requested or the role requested would be in a joomla standard group which themselves are site roles.
         if (!$roleID or in_array($groupID, Groups::STANDARD_GROUPS)) {
             return true;
         }
