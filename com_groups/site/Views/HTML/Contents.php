@@ -13,7 +13,7 @@ namespace THM\Groups\Views\HTML;
 use Joomla\CMS\Toolbar\Button\DropdownButton;
 use stdClass;
 use THM\Groups\Adapters\{Application, HTML, Text, Toolbar};
-use THM\Groups\Helpers\{Categories, Pages as Helper, Pages};
+use THM\Groups\Helpers\{Categories, Pages as Helper};
 use THM\Groups\Layouts\HTML\Row;
 
 /** @inheritDoc */
@@ -22,14 +22,36 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function addToolbar(): void
     {
-        $this->toDo[] = 'Everything :)';
-        $this->toDo[] = 'Authors as field => associated with a category whether currently allowed or not.';
-        $toolbar      = Toolbar::instance();
+        $this->toDo[] = 'Authors as filter field => associated with a category whether currently allowed or not.';
+        $this->toDo[] = 'Joomla batch functions for language and level. No current plans for tags implementation.';
+        $this->toDo[] = 'Joomla batch functions for category with consequences if shoved into a profile category.';
+        $this->toDo[] = 'Show all contents regardless of relevance, but filter for relevance on initial display.';
+        $this->toDo[] = 'Delete button if set to trashed state.';
+        $this->toDo[] = 'Remove columns when corresponding filter is set';
+        $this->toDo[] = 'Form the title as joomla content list.';
 
         if (Categories::root()) {
+            $toolbar = Toolbar::instance();
+
+            $toolbar->addNew('contents.add');
+
             // select articles and authors to add/reassign
             $this->allowBatch = true;
-            $toolbar->popupButton('batch', Text::_('BATCH'))
+
+            /** @var DropdownButton $dropdown */
+            $dropdown = $toolbar->dropdownButton('contents')
+                ->buttonClass('btn btn-action')
+                ->icon('icon-ellipsis-h')
+                ->listCheck(true);
+            $dropdown->toggleSplit(false);
+            $childBar = $dropdown->getChildToolbar();
+            $childBar->publish('contents.feature', Text::_('FEATURE'));
+            $childBar->unpublish('contents.unfeature', Text::_('UNFEATURE'));
+            $childBar->publish('contents.publish');
+            $childBar->unpublish('contents.hide');
+            $childBar->archive('contents.archive');
+            $childBar->trash('contents.trash');
+            $childBar->popupButton('batch', Text::_('BATCH'))
                 ->popupType('inline')
                 ->textHeader(Text::_('BATCH'))
                 ->url('#groups-batch')
@@ -39,16 +61,6 @@ class Contents extends ListView
 
             $batchBar = Toolbar::instance('batch');
             $batchBar->standardButton('batch', Text::_('PROCESS'), 'contents.batch');
-
-            /** @var DropdownButton $dropdown */
-            $dropdown = $toolbar->dropdownButton('account-group', Text::_('USER_ACTIONS'))
-                ->buttonClass('btn btn-action')
-                ->icon('icon-ellipsis-h')
-                ->listCheck(true);
-            $dropdown->toggleSplit(false);
-            $childBar = $dropdown->getChildToolbar();
-            $childBar->publish('contents.feature', Text::_('FEATURE'));
-            $childBar->publish('contents.unfeature', Text::_('UNFEATURE'));
         }
         else {
             Application::message('NO_ROOT', Application::NOTICE);
@@ -63,8 +75,8 @@ class Contents extends ListView
         $this->toDo[] = 'Author/Category as subtitle';
         $this->toDo[] = 'J-Assoc and Language both as language column.';
 
-        $item->featured = HTML::toggle($item->id, Pages::FEATURED_STATES[$item->featured], 'pages');
-        $item->state    = HTML::toggle($index, Helper::STATES[$item->state], 'pages');
+        $item->featured = HTML::toggle($item->id, Helper::FEATURED_STATES[$item->featured], 'contents');
+        $item->state    = HTML::toggle($index, Helper::STATES[$item->state], 'contents');
     }
 
     /** @inheritDoc */
