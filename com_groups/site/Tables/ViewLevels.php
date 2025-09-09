@@ -1,5 +1,4 @@
-<?php /** @noinspection PhpMissingFieldTypeInspection */
-
+<?php
 /**
  * @package     Groups
  * @extension   com_groups
@@ -21,17 +20,13 @@ use THM\Groups\Adapters\Application;
  */
 class ViewLevels extends ViewLevel
 {
+    use Ordered;
+
     /**
      * INT(10) UNSIGNED NOT NULL AUTOINCREMENT COMMENT 'Primary Key'
      * @var int
      */
     public int $id;
-
-    /**
-     * INT(11) NOT NULL DEFAULT 0
-     * @var int
-     */
-    public int $ordering;
 
     /**
      * VARCHAR(5120) NOT NULL COMMENT 'JSON encoded access control.'

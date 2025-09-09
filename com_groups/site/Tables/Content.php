@@ -19,6 +19,7 @@ use THM\Groups\Adapters\Application;
  */
 class Content extends Core
 {
+    use Ordered;
     use Resettable;
 
     /**
@@ -174,12 +175,6 @@ class Content extends Core
      * @var string
      */
     public string $note = '';
-
-    /**
-     * INT(11) NOT NULL DEFAULT 0
-     * @var int
-     */
-    public int $ordering = 0;
 
     /**
      * DATETIME DEFAULT NULL

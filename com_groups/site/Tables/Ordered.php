@@ -1,5 +1,4 @@
-<?php /** @noinspection PhpMissingFieldTypeInspection */
-
+<?php
 /**
  * @package     Groups
  * @extension   com_groups
@@ -14,8 +13,8 @@ namespace THM\Groups\Tables;
 trait Ordered
 {
     /**
-     * INT(3) UNSIGNED NOT NULL DEFAULT 0
+     * INT(x) UNSIGNED NOT NULL DEFAULT 0
      * @var int
      */
-    public int $ordering;
+    public int $ordering = 0;
 }

@@ -19,6 +19,8 @@ use THM\Groups\Adapters\Application;
  */
 class Pages extends Table
 {
+    use Ordered;
+
     /**
      * INT(11) UNSIGNED NOT NULL (fk_pages_contentID -> content.id)
      * @var int
