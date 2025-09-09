@@ -363,6 +363,40 @@ class Migration
     }
 
     /**
+     * Migrates groups content.
+     * @return void
+     */
+    private static function content(): void
+    {
+        $aliased  = DB::qn(['c.id', 'profileID'], ['contentID', 'userID']);
+        $selected = DB::qn(['gc.featured', 'c.ordering']);
+        $query    = DB::query();
+        $query->select(array_merge($aliased, $selected))
+            ->from(DB::qn('#__thm_groups_content', 'gc'))
+            ->innerJoin(DB::qn('#__content', 'c'), DB::qc('c.id', 'gc.id'))
+            ->order(DB::qn(['profileID', 'ordering']));
+        DB::set($query);
+
+        $current = $ordering = 0;
+        foreach (DB::arrays() as $result) {
+            if (empty($current) or $current !== $result['userID']) {
+                $current  = $result['userID'];
+                $ordering = 0;
+            }
+
+            $data  = ['contentID' => $result['contentID'], 'userID' => $current];
+            $table = new Tables\Pages();
+            if (!$table->load($data)) {
+                $data['featured'] = $result['featured'];
+                $data['ordering'] = $ordering;
+                $table->save($data);
+            }
+
+            $ordering++;
+        }
+    }
+
+    /**
      * Migrates the existing store of usergroups to groups.
      */
     private static function groups(): void
@@ -396,7 +430,6 @@ class Migration
      */
     public static function migrate(): void
     {
-        //Integration::getTestResults();
         $session = Application::session();
 
         if (!$session->get('com_groups.migrated.settings')) {
@@ -407,6 +440,11 @@ class Migration
         if (!$session->get('com_groups.migrated.categories')) {
             self::categories();
             $session->set('com_groups.migrated.categories', true);
+        }
+
+        if (!$session->get('com_groups.migrated.content')) {
+            self::content();
+            $session->set('com_groups.migrated.content', true);
         }
 
         if (!$session->get('com_groups.migrated.groups')) {
@@ -435,7 +473,6 @@ class Migration
         }
 
         // todo migrate menu assignments
-        // todo migrate profile content associations
     }
 
     /**
@@ -448,10 +485,12 @@ class Migration
     private static function personAttributes(array $map): void
     {
         $oldKeys = array_keys($map);
+        $value   = DB::qn('value');
         $query   = DB::query();
         $query->select('*')
             ->from(DB::qn('#__thm_groups_profile_attributes'))
-            ->whereIn(DB::qn('attributeID'), $oldKeys);
+            ->whereIn(DB::qn('attributeID'), $oldKeys)
+            ->where("($value != '' AND $value IS NOT NULL)");
         DB::set($query);
 
         if (!$pas = DB::objects()) {

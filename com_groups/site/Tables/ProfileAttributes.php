@@ -1,5 +1,4 @@
-<?php /** @noinspection PhpMissingFieldTypeInspection */
-
+<?php
 /**
  * @package     Groups
  * @extension   com_groups
@@ -11,8 +10,7 @@
 
 namespace THM\Groups\Tables;
 
-use Joomla\Database\DatabaseDriver;
-use Joomla\Database\DatabaseInterface;
+use Joomla\Database\{DatabaseDriver, DatabaseInterface};
 use THM\Groups\Adapters\Application;
 
 /**
@@ -36,9 +34,9 @@ class ProfileAttributes extends Table
 
     /**
      * TEXT
-     * @var string
+     * @var string|null
      */
-    public string $value;
+    public string|null $value;
 
     /** @inheritDoc */
     public function __construct(DatabaseInterface $dbo = null)
