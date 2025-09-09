@@ -26,64 +26,59 @@ class Users extends ListView
     protected function addToolbar(): void
     {
         $this->toDo[] = 'Expand system plugin to overwrite com_users => users view links to this view.';
+        $this->toDo[] = 'Restrict default display to those users not strictly assigned to standard groups.';
         $this->toDo[] = 'Implement the add feature.';
 
         // Get the toolbar object instance
         $toolbar = Toolbar::instance();
 
-        if (Can::create()) {
-            $toolbar->addNew('users.add');
+        $toolbar->addNew('users.add');
+
+        /** @var DropdownButton $accDD */
+        $accDD = $toolbar->dropdownButton('account-group', Text::_('USER_ACTIONS'))
+            ->buttonClass('btn btn-action')
+            ->icon('icon-ellipsis-h')
+            ->listCheck(true);
+        $accDD->toggleSplit(false);
+        $accBar = $accDD->getChildToolbar();
+
+        $accBar->standardButton('block', Text::_('BLOCK_USER'), 'users.block')->icon('fa fa-door-closed');
+        $accBar->standardButton('unblock', Text::_('UNBLOCK_USER'), 'users.unblock')->icon('fa fa-door-open');
+        $accBar->standardButton('activate', Text::_('ACTIVATE_USER'), 'users.activate')->icon('fa fa-check-square');
+
+        if (Can::delete()) {
+            $accBar->delete('users.delete', Text::_('REMOVE'))->message(Text::_('DELETE_CONFIRMATION'));
         }
 
-        if (Can::changeState()) {
-            /** @var DropdownButton $accDD */
-            $accDD = $toolbar->dropdownButton('account-group', Text::_('USER_ACTIONS'))
-                ->buttonClass('btn btn-action')
-                ->icon('icon-ellipsis-h')
-                ->listCheck(true);
-            $accDD->toggleSplit(false);
-            $accBar = $accDD->getChildToolbar();
+        /** @var DropdownButton $profileDD */
+        $profileDD = $toolbar->dropdownButton('profile-group', Text::_('PROFILE_ACTIONS'))
+            ->buttonClass('btn btn-action')
+            ->icon('icon-ellipsis-h')
+            ->listCheck(true);
+        $profileDD->toggleSplit(false);
+        $profileBar = $profileDD->getChildToolbar();
 
-            $accBar->standardButton('block', Text::_('BLOCK_USER'), 'users.block')->icon('fa fa-door-closed');
-            $accBar->standardButton('unblock', Text::_('UNBLOCK_USER'), 'users.unblock')->icon('fa fa-door-open');
-            $accBar->standardButton('activate', Text::_('ACTIVATE_USER'), 'users.activate')->icon('fa fa-check-square');
+        $profileBar->standardButton('publish', Text::_('PUBLISH_PROFILE'), 'users.publish')->icon('fa fa-eye');
+        $profileBar->standardButton('hide', Text::_('HIDE_PROFILE'), 'users.hide')->icon('fa fa-eye-slash');
+        $profileBar->standardButton('enableEditing', Text::_('ENABLE_EDITING'), 'users.enableEditing')
+            ->icon('fa fa-edit');
+        $profileBar->standardButton('disableEditing', Text::_('DISABLE_EDITING'), 'users.disableEditing')
+            ->icon('fa fa-minus-circle');
+        $profileBar->standardButton('enableContent', Text::_('ENABLE_CONTENT'), 'users.enableContent')
+            ->icon('fa fa-folder-open');
+        $profileBar->standardButton('disableContent', Text::_('DISABLE_CONTENT'), 'users.disableContent')
+            ->icon('fa fa-folder');
 
-            if (Can::delete()) {
-                $accBar->delete('users.delete', Text::_('REMOVE'))->message(Text::_('DELETE_CONFIRMATION'));
-            }
-
-            /** @var DropdownButton $profileDD */
-            $profileDD = $toolbar->dropdownButton('profile-group', Text::_('PROFILE_ACTIONS'))
-                ->buttonClass('btn btn-action')
-                ->icon('icon-ellipsis-h')
-                ->listCheck(true);
-            $profileDD->toggleSplit(false);
-            $profileBar = $profileDD->getChildToolbar();
-
-            $profileBar->standardButton('publish', Text::_('PUBLISH_PROFILE'), 'users.publish')->icon('fa fa-eye');
-            $profileBar->standardButton('hide', Text::_('HIDE_PROFILE'), 'users.hide')->icon('fa fa-eye-slash');
-            $profileBar->standardButton('enableEditing', Text::_('ENABLE_EDITING'), 'users.enableEditing')
-                ->icon('fa fa-edit');
-            $profileBar->standardButton('disableEditing', Text::_('DISABLE_EDITING'), 'users.disableEditing')
-                ->icon('fa fa-minus-circle');
-            $profileBar->standardButton('enableContent', Text::_('ENABLE_CONTENT'), 'users.enableContent')
-                ->icon('fa fa-folder-open');
-            $profileBar->standardButton('disableContent', Text::_('DISABLE_CONTENT'), 'users.disableContent')
-                ->icon('fa fa-folder');
-        }
-
-        if (Can::batchProcess()) {
-            $this->allowBatch = true;
-            $toolbar->popupButton('batch', Text::_('BATCH'))
-                ->listCheck(true)
-                ->modalHeight('fit-content')
-                ->modalWidth('800px')
-                ->popupType('inline')
-                ->textHeader(Text::_('BATCH'))
-                ->url('#groups-batch');
-            $batchBar = Toolbar::instance('batch');
-            $batchBar->standardButton('batch', Text::_('PROCESS'), 'users.batch');
-        }
+        $this->allowBatch = true;
+        $toolbar->popupButton('batch', Text::_('BATCH'))
+            ->listCheck(true)
+            ->modalHeight('fit-content')
+            ->modalWidth('800px')
+            ->popupType('inline')
+            ->textHeader(Text::_('BATCH'))
+            ->url('#groups-batch');
+        $batchBar = Toolbar::instance('batch');
+        $batchBar->standardButton('batch', Text::_('PROCESS'), 'users.batch');
 
         /*if (Can::configure()) {
             $toolbar->preferences('com_users');

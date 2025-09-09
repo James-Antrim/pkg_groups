@@ -30,26 +30,6 @@ class Can
     }
 
     /**
-     * Checks whether the user has access to perform batch processing on component resources.
-     *
-     * @param   string  $context  the context in which access is being checked
-     *
-     * @return bool true if the user has 'create' access, otherwise false
-     */
-    public static function batchProcess(string $context = 'com_users'): bool
-    {
-        if (self::manage($context)) {
-            return true;
-        }
-
-        return (
-            User::authorise('core.create', $context)
-            and User::authorise('core.edit', $context)
-            and User::authorise('core.edit.state', $context)
-        );
-    }
-
-    /**
      * Checks whether the user has access to change resource states.
      *
      * @param   string  $context     the context of the access request

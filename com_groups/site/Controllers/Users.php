@@ -79,15 +79,7 @@ class Users extends ListController
     /** @inheritDoc */
     protected function authorize(): void
     {
-        $authorized = match (debug_backtrace()[1]) {
-            'activate', 'disableContent', 'disableEditing', 'enableContent', 'enableEditing', 'toggleBlock'
-            => Can::changeState(),
-            'batch' => Can::batchProcess(),
-            'delete' => Can::delete(),
-            default => Can::administrate()
-        };
-
-        if (!$authorized) {
+        if (!Can::manage()) {
             Application::error(403);
         }
     }
