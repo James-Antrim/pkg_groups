@@ -11,7 +11,6 @@
 namespace THM\Groups\Plugin\Content;
 
 use Joomla\CMS\Plugin\CMSPlugin;
-use Joomla\CMS\Table\Content as CoreTable;
 use Joomla\Event\{Event, SubscriberInterface};
 use THM\Groups\Adapters\{Application, Input};
 use THM\Groups\Controllers\Page as Controller;
@@ -41,7 +40,6 @@ class Groups extends CMSPlugin implements SubscriberInterface
      */
     public function associate(Event $event): bool
     {
-        /** @var CoreTable $article */
         [$context, $article] = array_values($event->getArguments());
 
         if (($context != 'com_content.form' and $context != 'com_content.article')) {
@@ -57,7 +55,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
             return true;
         }
 
-        return Controller::associate($article->id, $cUserID);
+        return Controller::page($article->id, $cUserID);
     }
 
     /**
@@ -69,7 +67,6 @@ class Groups extends CMSPlugin implements SubscriberInterface
      */
     public function disassociate(Event $event): void
     {
-        /** @var CoreTable $article */
         [$context, $article] = array_values($event->getArguments());
 
         if (($context != 'com_content.form' and $context != 'com_content.article')) {
@@ -77,7 +74,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
         }
 
         if (!$userID = Categories::userID($article->catid)) {
-            Controller::disassociate($article->id);
+            Controller::unpage($article->id);
         }
 
         $article->created_by = $userID;
@@ -96,7 +93,6 @@ class Groups extends CMSPlugin implements SubscriberInterface
             return;
         }
 
-        /** @var CoreTable $article */
         [$context, $article] = array_values($event->getArguments());
 
         if ($context == 'com_finder.indexer') {
