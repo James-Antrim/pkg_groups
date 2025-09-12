@@ -122,22 +122,22 @@ ALTER TABLE `#__user_usergroup_map`
 
 # add necessary columns to users
 ALTER TABLE `#__users`
-    ADD COLUMN `surnames`   VARCHAR(255)     DEFAULT NULL AFTER `email`,
-    ADD COLUMN `forenames`  VARCHAR(255)     DEFAULT NULL AFTER `surnames`,
-    ADD COLUMN `alias`      VARCHAR(255)     DEFAULT NULL AFTER `forenames`,
-    ADD COLUMN `content`    TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `block`,
-    ADD COLUMN `editing`    TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `content`,
-    ADD COLUMN `published`  TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `editing`,
-    ADD COLUMN `converisID` INT(11) UNSIGNED DEFAULT NULL,
-    ADD UNIQUE KEY (`alias`),
-    ADD UNIQUE KEY (`converisID`);
+    ADD COLUMN `surnames`  VARCHAR(255) DEFAULT NULL AFTER `email`,
+    ADD COLUMN `forenames` VARCHAR(255) DEFAULT NULL AFTER `surnames`,
+    ADD COLUMN `alias`     VARCHAR(255) DEFAULT NULL AFTER `forenames`,
+    ADD COLUMN `content`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `block`,
+    ADD COLUMN `editing`   TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `content`,
+    ADD COLUMN `published` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 AFTER `editing`,
+    ADD UNIQUE KEY (`alias`);
 
-# fix categories structure user table id structure was not held consistent with these two columns
+# fix categories and content structure user table id structure was not held consistent with these two columns
 ALTER TABLE `#__categories`
     CHANGE `created_user_id` `created_user_id` INT(11) DEFAULT NULL,
     CHANGE `modified_user_id` `modified_user_id` INT(11) DEFAULT NULL;
 
-# fix categories values deleted and zero user.id values are in these columns which are invalid references
+ALTER TABLE `#__content` CHANGE `created_by` `created_by` INT(11) DEFAULT NULL;
+
+# fix categories and content values deleted and zero user.id values are in these columns which are invalid references
 UPDATE `#__categories`
 SET `created_user_id` = NULL
 WHERE `created_user_id` NOT IN (SELECT id
@@ -147,6 +147,10 @@ UPDATE `#__categories`
 SET `modified_user_id` = NULL
 WHERE `modified_user_id` NOT IN (SELECT id
                                  FROM `#__users`);
+UPDATE `#__content`
+SET `created_by` = NULL
+WHERE `created_by` NOT IN (SELECT id
+                           FROM `#__users`);
 #endregion
 
 #endregion
@@ -262,6 +266,11 @@ ALTER TABLE `#__categories`
         ON UPDATE CASCADE
         ON DELETE SET NULL,
     ADD CONSTRAINT `fk_categories_modifiedID` FOREIGN KEY (`modified_user_id`) REFERENCES `#__users` (`id`)
+        ON UPDATE CASCADE
+        ON DELETE SET NULL;
+
+ALTER TABLE `#__content`
+    ADD CONSTRAINT `fk_content_createdID` FOREIGN KEY (`created_by`) REFERENCES `#__users` (`id`)
         ON UPDATE CASCADE
         ON DELETE SET NULL;
 
