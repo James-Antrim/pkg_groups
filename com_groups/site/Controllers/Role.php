@@ -41,7 +41,7 @@ class Role extends FormController
         }
 
         if (empty($table->ordering)) {
-            $data['ordering'] = Helper::getMaxOrdering('roles') + 1;
+            $data['ordering'] = Helper::next();
         }
 
         if ($table->save($data)) {

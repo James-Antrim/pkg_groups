@@ -11,37 +11,48 @@
 namespace THM\Groups\Helpers;
 
 use Joomla\CMS\Table\Table;
-use THM\Groups\Adapters\Application;
+use THM\Groups\Adapters\Database as DB;
 
 trait Persistent
 {
     /**
-     * Gets the current maximum value in the ordering column.
-     * @return mixed the current maximum value in the ordering column
+     * Gets the current maximum value of the table and column specified, optionally filtered the values of other columns.
+     *
+     * @param   string  $table    the table to query
+     * @param   string  $column   the column whose max value is sought
+     * @param   array   $filters  restrictions to filter the result set by as key => value pairs
+     *
+     * @return mixed
      */
-    public static function getMax(string $table, string $column, array $filters = []): mixed
+    public static function max(string $table, string $column, array $filters = []): mixed
     {
-        $db     = Application::database();
-        $query  = $db->getQuery(true);
-        $column = $db->quoteName($column);
-        $query->select("MAX($column)")->from($db->quoteName("#__groups_$table"));
+        $column = DB::qn($column);
+        $query  = DB::query()->select("MAX($column)")->from(DB::qn("#__groups_$table"));
 
         foreach ($filters as $filter => $value) {
-            $query->where($db->quoteName($filter) . " = $value");
+            $query->where(DB::qc($filter, $value));
         }
 
-        $db->setQuery($query);
+        DB::set($query);
 
-        return $db->loadResult();
+        return DB::result();
     }
 
     /**
-     * Gets the current maximum value in the ordering column.
-     * @return int the current maximum value in the ordering column
+     * Gets the next ordering value to use for insertions.
+     *
+     * @param   array  $filters  restrictions to filter the result set by as key => value pairs
+     *
+     * @return int
      */
-    public static function getMaxOrdering(string $table, array $filters = []): int
+    public static function next(array $filters = []): int
     {
-        return (int) self::getMax($table, 'ordering', $filters);
+        $helper   = get_called_class();
+        $segments = explode('\\', $helper);
+        $table    = array_pop($segments);
+
+        $max = self::max($table, 'ordering', $filters);
+        return ($max === null) ? 0 : (int) $max + 1;
     }
 
     /**

@@ -328,7 +328,7 @@ class Migration
                 $data['icon']        = $oldAttribute->icon ?? $icon;
                 $data['context']     = Attributes::PERSONS_CONTEXT;
                 $data['viewLevelID'] = $oldAttribute->viewLevelID;
-                $data['ordering']    = Attributes::getMaxOrdering('attributes');
+                $data['ordering']    = Attributes::next();
 
                 $new = new Tables\Attributes();
                 $new->save($data);

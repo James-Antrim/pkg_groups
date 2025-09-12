@@ -34,7 +34,7 @@ class TemplateAttributes extends Attributed
                 Application::message('GROUPS_EXISTS', Application::NOTICE);
             }
             else {
-                $data['ordering'] = Helper::getMaxOrdering('template_attributes', ['templateID' => $templateID]) + 1;
+                $data['ordering'] = Helper::next(['templateID' => $templateID]);
                 if ($table->save($data)) {
                     Application::message('GROUPS_SAVED');
                 }
