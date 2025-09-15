@@ -12,7 +12,7 @@ namespace THM\Groups\Models;
 
 use Joomla\Database\DatabaseQuery;
 use THM\Groups\Adapters\{Database as DB, Input};
-use THM\Groups\Controllers\Pages as Controller;
+use THM\Groups\Controllers\Contents as Controller;
 use THM\Groups\Helpers\{Categories, Pages};
 
 /**
@@ -41,7 +41,8 @@ class Contents extends ListModel
             return $query;
         }
 
-        $select = DB::qn([
+        $select  = DB::qn([
+            'content.id',
             'content.title',
             'content.state',
             'user.surnames',
@@ -49,17 +50,18 @@ class Contents extends ListModel
             'page.featured',
             'page.ordering'
         ]);
-        $aliased = DB::qn([['content.id'], ['contentID']]);
+        $aliased = DB::qn(['category.id', 'category.parent_id'], ['categoryID', 'parentID']);
         // User management access is required to access the view
         $special = [DB::quote(1) . ' AS ' . DB::qn('access')];
 
         $query->select(array_merge($select, $aliased, $special))
             ->from(DB::qn('#__content', 'content'))
-            ->innerJoin(DB::qn('#__users', 'user'), DB::qc('user.id', 'content.created_by'))
-            ->innerJoin(DB::qn('#__pages', 'page'), DB::qc('page.userID', 'content.created_by'))
-            ->innerJoin(DB::qn('#__categories', 'category'), DB::qc('category.created_user_id', 'content.created_by'))
+            ->innerJoin(DB::qn('#__categories', 'category'), DB::qc('category.id', 'content.catid'))
+            ->innerJoin(DB::qn('#__users', 'user'), DB::qc('user.id', 'category.created_user_id'))
+            ->innerJoin(DB::qn('#__groups_pages', 'page'), DB::qc('page.userID', 'content.created_by'))
             ->innerJoin(DB::qn('#__viewlevels', 'level'), DB::qc('level.id', 'content.access'))
-            ->where(DB::qc('category.parent_id', $rootCategory));
+            ->where(DB::qc('category.parent_id', $rootCategory))
+            ->group(DB::qn('content.id'));
 
         if ($search = $this->state->get('filter.search')) {
             $query->where("(content.title LIKE '%" . implode("%' OR content.title LIKE '%", explode(' ', $search)) . "%')");

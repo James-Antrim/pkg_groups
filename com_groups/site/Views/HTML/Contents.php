@@ -29,6 +29,8 @@ class Contents extends ListView
         $this->toDo[] = 'Delete button if set to trashed state.';
         $this->toDo[] = 'Remove columns when corresponding filter is set';
         $this->toDo[] = 'Form the title as joomla content list.';
+        $this->toDo[] = 'Author/Category as subtitle';
+        $this->toDo[] = 'J-Assoc and Language both as language column.';
 
         if (Categories::root()) {
             $toolbar = Toolbar::instance();
@@ -72,11 +74,8 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        $this->toDo[] = 'Author/Category as subtitle';
-        $this->toDo[] = 'J-Assoc and Language both as language column.';
-
         $item->featured = HTML::toggle($item->id, Helper::FEATURED_STATES[$item->featured], 'contents');
-        $item->state    = HTML::toggle($index, Helper::STATES[$item->state], 'contents');
+        $item->state    = HTML::toggle($item->id, Helper::STATES[$item->state], 'contents');
     }
 
     /** @inheritDoc */
