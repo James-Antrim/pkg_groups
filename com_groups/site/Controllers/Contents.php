@@ -11,12 +11,14 @@
 namespace THM\Groups\Controllers;
 
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
-use THM\Groups\Helpers\Can;
+use THM\Groups\Helpers\{Can, Categories};
 use THM\Groups\Tables\{Categories as CaTable, Content as CoTable};
 
 /** @inheritDoc */
 class Contents extends Contented
 {
+    use Paged;
+
     /** @inheritDoc */
     protected string $item = 'Content';
 
@@ -36,49 +38,84 @@ class Contents extends Contented
      */
     public static function clean(): void
     {
-        return;
-        $query = DB::query();
-        $query->select(DB::qn(
-            ['co.id', 'co.created_by', 'p.userID', 'ca.id', 'ca.created_user_id', 'u.id'],
-            ['contentID', 'coUserID', 'pUserID', 'categoryID', 'caUserID', 'userID']
-        ))
+        if (!$rootID = Categories::root()) {
+            Application::message('NO_ROOT', Application::WARNING);
+            return;
+        }
+
+        $query = DB::query()
+            ->select(DB::qn(
+                ['ca.id', 'ca.created_user_id', 'co.id', 'co.created_by', 'p.userID'],
+                ['caID', 'caUID', 'coID', 'coUID', 'pUID']
+            ))
             ->from(DB::qn('#__content', 'co'))
             ->innerJoin(DB::qn('#__categories', 'ca'), DB::qc('ca.id', 'co.catid'))
-            ->leftJoin(DB::qn('#__users', 'u'), DB::qc('u.alias', 'ca.alias'))
-            ->leftJoin(DB::qn('#__groups_pages', 'p'), DB::qc('p.contentID', 'co.id'));
+            ->leftJoin(DB::qn('#__groups_pages', 'p'), DB::qc('p.contentID', 'co.id'))
+            ->where(DB::qc('ca.parent_id', $rootID));
         DB::set($query);
 
-        foreach (DB::arrays() as $result) {
-            if (empty($result['caUserID'])) {
-                // Authorship cannot be resolved here
-                if (empty($result['userID'])) {
+        $deprecatedCategories = [];
+        foreach (DB::arrays('coID') as $result) {
+            $categoryID  = $result['caID'];
+            $categoryUID = $result['caUID'];
+            $contentID   = $result['coID'];
+            $contentUID  = $result['coUID'];
+            $pageUID     = $result['pUID'];
+
+            $capConsistent  = ($categoryUID === $pageUID);
+            $cocaConsistent = ($contentUID === $categoryUID);
+
+            if ($cocaConsistent and $capConsistent) {
+                // Category, content and page reference the same user.
+                if ($contentUID) {
                     continue;
                 }
 
-                $category = new CaTable();
-                // A seemingly bigger problem which can also not be resolved here
-                if (!$category->load($result['categoryID'])) {
-                    continue;
-                }
-
-                $category->created_user_id = $result['userID'];
-                $category->store();
-            }
-
-            $syncID = empty($result['caUserID']) ? $result['userID'] : $result['caUserID'];
-
-            // Sync category users with content authors
-            if ($result['coUserID'] !== $result['caUserID']) {
+                // Both category and content do not reference a user => deleted user with deprecated personal content
                 $table = new CoTable();
-                $table->load($result['contentID']);
-                $table->created_by = $syncID;
-                $table->store();
+                $table->load($contentID);
+                $table->delete();
+
+                // Delete category when content has been removed
+                $deprecatedCategories[$categoryID] = $categoryID;
+                continue;
             }
 
-            // Sync category users with page users
-            if (empty($result['pUserID']) or $result['pUserID'] !== $syncID) {
-                Page::associate($result['contentID'], $syncID);
+            if ($cocaConsistent) {
+                // Category and content reference the same user => update the page user
+                if ($contentUID) {
+                    self::page($contentID, $contentUID);
+                    continue;
+                }
+
+                // Category and content reference no user => set to page user
+                $table = new CoTable();
+                $table->load($contentID);
+                $table->created_by = $pageUID;
+                $table->store();
+                $table = new CaTable();
+                $table->load($categoryID);
+                $table->created_user_id = $pageUID;
+                $table->store();
+                continue;
             }
+
+            // Content created for user category by a content manager
+            if ($categoryUID and $categoryUID === Categories::userID($categoryID)) {
+                $table = new CoTable();
+                $table->load($contentID);
+                $table->created_by = $categoryUID;
+                $table->store();
+
+                self::page($contentID, $categoryUID);
+            }
+        }
+
+        // This allows joomla to run table related consistency functions such as those related to nesting.
+        foreach ($deprecatedCategories as $categoryID) {
+            $table = new CaTable();
+            $table->load($categoryID);
+            $table->delete();
         }
     }
 
