@@ -47,19 +47,18 @@ class Contents extends ListView
                 ->listCheck(true);
             $dropdown->toggleSplit(false);
             $childBar = $dropdown->getChildToolbar();
-            $childBar->publish('contents.feature', Text::_('FEATURE'));
-            $childBar->unpublish('contents.unfeature', Text::_('UNFEATURE'));
             $childBar->publish('contents.publish');
             $childBar->unpublish('contents.hide');
             $childBar->archive('contents.archive');
             $childBar->trash('contents.trash');
+            $childBar->standardButton('feature', Text::_('FEATURE'), 'contents.feature')->icon('fa fa-eye');
+            $childBar->standardButton('unfeature', Text::_('UNFEATURE'), 'contents.unfeature')->icon('fa fa-eye-slash');
             $childBar->popupButton('batch', Text::_('BATCH'))
                 ->popupType('inline')
                 ->textHeader(Text::_('BATCH'))
                 ->url('#groups-batch')
                 ->modalWidth('800px')
-                ->modalHeight('fit-content')
-                ->listCheck(true);
+                ->modalHeight('fit-content');
 
             $batchBar = Toolbar::instance('batch');
             $batchBar->standardButton('batch', Text::_('PROCESS'), 'contents.batch');
