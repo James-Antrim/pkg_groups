@@ -59,6 +59,7 @@
         <folder>Tools</folder>
         <folder>Views</folder>
         <filename>Component.php</filename>
+        <filename>metadata.xml</filename>
     </files>
     <updateservers>
         <server type="extension" name="Groups Component Update Site" priority="1">
