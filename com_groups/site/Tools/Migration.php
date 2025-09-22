@@ -554,6 +554,7 @@ class Migration
             ]))
             ->bind(':profileID', $profileID);
 
+        // Migrate existing data from the old component as available.
         foreach ($profiles as $profileID => $profile) {
             $user = new Tables\Users();
 
@@ -573,6 +574,14 @@ class Migration
             }
 
             $user->store();
+        }
+
+        // Supplement any user accounts not previously referenced
+        $query = DB::query()->select(DB::qn('id'))->from(DB::qn('#__users'))->where(DB::qn('surnames') . ' IS NULL');
+        DB::set($query);
+
+        foreach (DB::integers() as $userID) {
+            Consistency::supplementUser($userID);
         }
     }
 

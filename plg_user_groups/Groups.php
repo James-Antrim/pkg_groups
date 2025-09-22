@@ -14,10 +14,10 @@ use Joomla\CMS\Event\{Model\AfterSaveEvent as modelASE, User\AfterSaveEvent as u
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Utilities\ArrayHelper;
-use THM\Groups\Controllers\Profile as Controller;
+use THM\Groups\Adapters\Application;
 use THM\Groups\Helpers\{Groups as GH, Users as UH};
 use THM\Groups\Tables\{Groups as GT, Users as UT};
-use THM\Groups\Adapters\Application;
+use THM\Groups\Tools\Consistency;
 
 /**
  * Groups User Plugin
@@ -106,7 +106,7 @@ final class Groups extends CMSPlugin implements SubscriberInterface
         }
 
         if (empty($user->surnames)) {
-            Controller::create($user->id);
+            Consistency::supplementUser($user->id);
         }
     }
 }

@@ -9,18 +9,28 @@
  */
 defined('_JEXEC') or die;
 
-use Joomla\CMS\Factory;
+use Joomla\CMS\{Application\AdministratorApplication, Helper\UserGroupsHelper, Language\Text};
 use Joomla\CMS\Installer\{InstallerAdapter, InstallerScriptInterface};
-use Joomla\CMS\Helper\UserGroupsHelper;
-use Joomla\CMS\Language\Text;
-use Joomla\Database\ParameterType;
-use THM\Groups\Adapters\{Application, Database as DB};
-use THM\Groups\Controllers\Profile as Controller;
+use Joomla\Database\{DatabaseDriver, ParameterType};
 
 return new class () implements InstallerScriptInterface {
 
+    private AdministratorApplication $app;
+    private DatabaseDriver $db;
     private string $minimumJoomla = '5.0.0';
     private string $minimumPhp = '8.1.0';
+
+    /**
+     * Sets up the installer.
+     *
+     * @param   AdministratorApplication  $app
+     * @param   DatabaseDriver            $db
+     */
+    public function __construct(AdministratorApplication $app, DatabaseDriver $db)
+    {
+        $this->app = $app;
+        $this->db  = $db;
+    }
 
     /**
      * Adds basic entries for group localizations.
@@ -29,9 +39,9 @@ return new class () implements InstallerScriptInterface {
      */
     private function groups(): void
     {
-        $query = DB::query();
-        $query->insert(DB::qn('#__groups_groups'))
-            ->columns(DB::qn(['id', 'name_de', 'name_en']))
+        $query = $this->db->getQuery(true);
+        $query->insert($this->db->quoteName('#__groups_groups'))
+            ->columns($this->db->quoteName((['id', 'name_de', 'name_en'])))
             ->values(":id, :name_de, :name_en")
             ->bind(':id', $groupID, ParameterType::INTEGER)
             ->bind(':name_de', $name)
@@ -40,8 +50,8 @@ return new class () implements InstallerScriptInterface {
         // Make no exception for standard groups here, in order to have comparable output to the users component.
         foreach (UserGroupsHelper::getInstance()->getAll() as $groupID => $group) {
             $name = $group->title;
-            DB::set($query);
-            DB::execute();
+            $this->db->setQuery($query);
+            $this->db->execute();
         }
     }
 
@@ -52,13 +62,12 @@ return new class () implements InstallerScriptInterface {
         require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/autoloader.php';
 
         $this->groups();
-        $this->profiles();
 
         $path = JPATH_ROOT . '/images/com_groups';
 
         if (!file_exists($path) && !mkdir($path, 0755, true)) {
             $msg = "Failed to create the images directory $path. This can lead to errors saving image attributes.";
-            Application::message($msg, Application::ERROR);
+            $this->app->enqueueMessage($msg, 'error');
         }
 
         return true;
@@ -71,35 +80,17 @@ return new class () implements InstallerScriptInterface {
      */
     private function installedVersion(): string
     {
-        $query = DB::query();
-        $query->select(DB::qn('manifest_cache'))->from(DB::qn('#__extensions'))->where(DB::qc('name', 'com_groups', '=', true));
-        DB::set($query);
+        $query = $this->db->getQuery(true);
+        $query->select($this->db->quoteName('manifest_cache'))
+            ->from($this->db->quoteName('#__extensions'))
+            ->where($this->db->quoteName('name') . ' = ' . $this->db->quote('com_groups'));
+        $this->db->setQuery($query);
 
-        if ($manifest = json_decode(DB::string()) and !empty($manifest['version'])) {
+        if ($manifest = json_decode((string) $this->db->loadResult()) and !empty($manifest['version'])) {
             return $manifest['version'];
         }
 
         return '';
-    }
-
-    /**
-     * Creates rudimentary profiles based on user table data.
-     *
-     * @return void
-     */
-    private function profiles(): void
-    {
-        $query = DB::query();
-        $query->select(DB::qn('id'))->from(DB::qn('#__users'));
-        DB::set($query);
-
-        if (!$userIDs = DB::integers()) {
-            return;
-        }
-
-        foreach ($userIDs as $userID) {
-            Controller::create($userID);
-        }
     }
 
     /** @inheritDoc */
@@ -118,13 +109,12 @@ return new class () implements InstallerScriptInterface {
     public function preflight(string $type, InstallerAdapter $adapter): bool
     {
         if (version_compare(PHP_VERSION, $this->minimumPhp, '<')) {
-            Factory::getApplication()->enqueueMessage(sprintf(Text::_('JLIB_INSTALLER_MINIMUM_PHP'), $this->minimumPhp), 'error');
+            $this->app->enqueueMessage(sprintf(Text::_('JLIB_INSTALLER_MINIMUM_PHP'), $this->minimumPhp), 'error');
             return false;
         }
 
         if (version_compare(JVERSION, $this->minimumJoomla, '<')) {
-            Factory::getApplication()->enqueueMessage(sprintf(Text::_('JLIB_INSTALLER_MINIMUM_JOOMLA'), $this->minimumJoomla),
-                'error');
+            $this->app->enqueueMessage(sprintf(Text::_('JLIB_INSTALLER_MINIMUM_JOOMLA'), $this->minimumJoomla), 'error');
             return false;
         }
 
@@ -139,7 +129,7 @@ return new class () implements InstallerScriptInterface {
             $version = '<br/>' . $thisVersion;
         }
 
-        echo '<h1>THM Groups ' . strtoupper($type) . $version . '</h1>';
+        echo '<h1>Groups ' . strtoupper($type) . $version . '</h1>';
         return true;
     }
 

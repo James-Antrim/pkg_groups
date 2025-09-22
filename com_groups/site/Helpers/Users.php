@@ -192,16 +192,16 @@ class Users
     /**
      * Gets the value of a table property.
      *
-     * @param   int     $personID
+     * @param   int     $userID
      * @param   string  $property
      *
      * @return mixed
      */
-    public static function get(int $personID, string $property): mixed
+    public static function get(int $userID, string $property): mixed
     {
         /** @var Table $table */
         $table = self::getTable();
-        if (!$table->load($personID)) {
+        if (!$table->load($userID)) {
             return null;
         }
 
