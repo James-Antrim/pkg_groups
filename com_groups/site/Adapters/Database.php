@@ -474,7 +474,13 @@ class Database
      */
     public static function set(string|DatabaseQuery $query, int $offset = 0, int $limit = 0): void
     {
-        Application::database()->setQuery($query, $offset, $limit);
+        try {
+            Application::database()->setQuery($query, $offset, $limit);
+        }
+        catch (Exception $exception) {
+            echo "<pre>" . print_r((string) $query, true) . "</pre>";
+            Application::handleException($exception);
+        }
     }
 
     /**
