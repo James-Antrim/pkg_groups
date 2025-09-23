@@ -96,35 +96,38 @@ return new class () implements ServiceProviderInterface {
                 /** @inheritDoc */
                 public function preflight(string $type, InstallerAdapter $adapter): bool
                 {
-                    if (version_compare(PHP_VERSION, $this->minimumPhp, '<')) {
-                        $this->app->enqueueMessage(sprintf(Text::_('JLIB_INSTALLER_MINIMUM_PHP'), $this->minimumPhp), 'error');
-                        return false;
-                    }
-
-                    if (version_compare(JVERSION, $this->minimumJoomla, '<')) {
-                        $this->app->enqueueMessage(sprintf(Text::_('JLIB_INSTALLER_MINIMUM_JOOMLA'), $this->minimumJoomla),
-                            'error');
-                        return false;
-                    }
-
-                    echo '<hr>';
-                    $thisVersion = $adapter->getManifest()->version;
-                    $version     = '';
-
-                    if ($type == 'update') {
-                        $query = $this->db->getQuery(true);
-                        $query->select($this->db->quoteName('manifest_cache'))
-                            ->from($this->db->quoteName('#__extensions'))
-                            ->where($this->db->quoteName('name') . ' = ' . $this->db->quote('com_groups'));
-                        $this->db->setQuery($query);
-
-                        if ($manifest = json_decode((string) $this->db->loadResult()) and !empty($manifest['version'])) {
-                            $version = $manifest['version'];
+                    $version = '';
+                    if ($type === 'install' or $type === 'update') {
+                        if (version_compare(PHP_VERSION, $this->minimumPhp, '<')) {
+                            $this->app->enqueueMessage(sprintf(Text::_('JLIB_INSTALLER_MINIMUM_PHP'), $this->minimumPhp),
+                                'error');
+                            return false;
                         }
-                        $version = '<br/>' . $version . ' &rArr; ' . $thisVersion;
-                    }
-                    elseif ($type == 'install') {
-                        $version = '<br/>' . $thisVersion;
+
+                        if (version_compare(JVERSION, $this->minimumJoomla, '<')) {
+                            $this->app->enqueueMessage(sprintf(Text::_('JLIB_INSTALLER_MINIMUM_JOOMLA'), $this->minimumJoomla),
+                                'error');
+                            return false;
+                        }
+
+                        echo '<hr>';
+                        $thisVersion = $adapter->getManifest()->version;
+
+                        if ($type === 'update') {
+                            $query = $this->db->getQuery(true);
+                            $query->select($this->db->quoteName('manifest_cache'))
+                                ->from($this->db->quoteName('#__extensions'))
+                                ->where($this->db->quoteName('name') . ' = ' . $this->db->quote('com_groups'));
+                            $this->db->setQuery($query);
+
+                            if ($manifest = json_decode((string) $this->db->loadResult()) and !empty($manifest['version'])) {
+                                $version = $manifest['version'];
+                            }
+                            $version = '<br/>' . $version . ' &rArr; ' . $thisVersion;
+                        }
+                        else {
+                            $version = '<br/>' . $thisVersion;
+                        }
                     }
 
                     echo '<h1>Groups ' . strtoupper($type) . $version . '</h1>';

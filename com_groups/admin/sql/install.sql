@@ -131,9 +131,7 @@ ALTER TABLE `#__users`
     ADD UNIQUE KEY (`alias`);
 
 # fix categories and content structure user table id structure was not held consistent with these two columns
-ALTER TABLE `#__categories`
-    CHANGE `created_user_id` `created_user_id` INT(11) DEFAULT NULL,
-    CHANGE `modified_user_id` `modified_user_id` INT(11) DEFAULT NULL;
+ALTER TABLE `#__categories` CHANGE `created_user_id` `created_user_id` INT(11) DEFAULT NULL;
 
 ALTER TABLE `#__content` CHANGE `created_by` `created_by` INT(11) DEFAULT NULL;
 
@@ -143,10 +141,6 @@ SET `created_user_id` = NULL
 WHERE `created_user_id` NOT IN (SELECT id
                                 FROM `#__users`);
 
-UPDATE `#__categories`
-SET `modified_user_id` = NULL
-WHERE `modified_user_id` NOT IN (SELECT id
-                                 FROM `#__users`);
 UPDATE `#__content`
 SET `created_by` = NULL
 WHERE `created_by` NOT IN (SELECT id
@@ -263,9 +257,6 @@ VALUES (1, 'Cards', 'Cards', 1, 1, 0),
 #region Reference
 ALTER TABLE `#__categories`
     ADD CONSTRAINT `fk_categories_createdID` FOREIGN KEY (`created_user_id`) REFERENCES `#__users` (`id`)
-        ON UPDATE CASCADE
-        ON DELETE SET NULL,
-    ADD CONSTRAINT `fk_categories_modifiedID` FOREIGN KEY (`modified_user_id`) REFERENCES `#__users` (`id`)
         ON UPDATE CASCADE
         ON DELETE SET NULL;
 
