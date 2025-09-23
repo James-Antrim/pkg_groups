@@ -12,7 +12,7 @@ namespace THM\Groups\Tools;
 
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
-use THM\Groups\Adapters\{Application, Database as DB, Text};
+use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
 use THM\Groups\Helpers\{Attributes, Groups, Profiles, Types};
 use THM\Groups\Tables;
 
@@ -454,7 +454,6 @@ class Migration
 
         if (!$session->get('com_groups.migrated.profiles')) {
             self::profiles();
-            Integration::fillIDs();
             $session->set('com_groups.migrated.profiles', true);
         }
 
@@ -752,13 +751,20 @@ class Migration
 
         if ($deprecated = DB::string()) {
             $deprecated = json_decode($deprecated, true);
+            $category   = (isset($deprecated['rootCategory']) and is_numeric($deprecated['rootCategory'])) ?
+                (int) $deprecated['rootCategory'] : null;
+            $content    = (isset($deprecated['enabled']) and is_numeric($deprecated['enabled'])) ?
+                (int) $deprecated['enabled'] : Profiles::DISABLED;
+            $context    = (isset($deprecated['dynamicContext']) and is_numeric($deprecated['dynamicContext'])) ?
+                (int) $deprecated['dynamicContext'] : null;
+            $management = (isset($deprecated['editownprofile']) and is_numeric($deprecated['editownprofile'])) ?
+                (int) $deprecated['editownprofile'] : Profiles::DECENTRALIZED;
             $params     = [
                 'automatic-publishing' => Profiles::ENABLED,
-                'module-context'       => !isset($deprecated['dynamicContext']) ? null : $deprecated['dynamicContext'],
-                'profile-management'   => !isset($deprecated['editownprofile']) ?
-                    Profiles::DECENTRALIZED : $deprecated['editownprofile'],
-                'profile-content'      => !isset($deprecated['enabled']) ? Profiles::DISABLED : $deprecated['enabled'],
-                'root-category'        => !isset($deprecated['rootCategory']) ? null : $deprecated['rootCategory'],
+                'module-context'       => $context,
+                'profile-management'   => in_array($management, Input::BINARY) ? $management : Profiles::DECENTRALIZED,
+                'profile-content'      => in_array($content, Input::BINARY) ? $content : Profiles::DISABLED,
+                'root-category'        => $category,
             ];
 
             $query = DB::query();

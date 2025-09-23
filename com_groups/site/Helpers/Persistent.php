@@ -49,7 +49,7 @@ trait Persistent
     {
         $helper   = get_called_class();
         $segments = explode('\\', $helper);
-        $table    = array_pop($segments);
+        $table    = strtolower(array_pop($segments));
 
         $max = self::max($table, 'ordering', $filters);
         return ($max === null) ? 0 : (int) $max + 1;

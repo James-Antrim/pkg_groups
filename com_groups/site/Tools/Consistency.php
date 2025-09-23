@@ -31,28 +31,28 @@ class Consistency
             return;
         }
 
-        [$forenames, $surnames] = UH::parseNames($user->name);
+        [$surnames, $forenames] = UH::parseNames($user->name);
 
         $names = $forenames ? $surnames : "$forenames $surnames";
         $alias = UH::createAlias($userID, $names);
 
         $params    = Input::parameters();
-        $content   = $params->get('profile-content');
-        $content   = in_array($content, [PH::DISABLED, PH::ENABLED]) ? $content : PH::DISABLED;
-        $editing   = $params->get('profile-management');
-        $editing   = in_array($editing, [PH::DISABLED, PH::ENABLED]) ? $editing : PH::DECENTRALIZED;
-        $published = $params->get('automatic-publishing');
-        $published = in_array($published, [PH::DISABLED, PH::ENABLED]) ? $published : PH::ENABLED;
+        $content   = $params->get('profile-content', PH::DISABLED);
+        $content   = in_array($content, Input::BINARY) ? $content : PH::DISABLED;
+        $editing   = $params->get('profile-management', PH::DECENTRALIZED);
+        $editing   = in_array($editing, Input::BINARY) ? $editing : PH::DECENTRALIZED;
+        $published = $params->get('automatic-publishing', PH::ENABLED);
+        $published = in_array($published, Input::BINARY) ? $published : PH::ENABLED;
 
         $query = DB::query();
         $query->update(DB::qn('#__users'))
             ->set([
-                DB::qc('alias', $alias),
+                DB::qc('alias', $alias, '=', true),
                 DB::qc('content', $content),
                 DB::qc('editing', $editing),
-                DB::qc('forenames', $forenames),
+                DB::qc('forenames', $forenames, '=', true),
                 DB::qc('published', $published),
-                DB::qc('surnames', $surnames),
+                DB::qc('surnames', $surnames, '=', true),
             ])
             ->where(DB::qc('id', $userID));
         DB::set($query);
