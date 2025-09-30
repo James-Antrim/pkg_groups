@@ -31,6 +31,7 @@ class Contents extends ListView
         $this->toDo[] = 'Form the title as joomla content list.';
         $this->toDo[] = 'Author/Category as subtitle';
         $this->toDo[] = 'J-Assoc and Language both as language column.';
+        $this->toDo[] = 'Checkin function implementation.';
 
         if (Categories::root()) {
             $toolbar = Toolbar::instance();
@@ -73,8 +74,24 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
+        echo "<pre>" . print_r($item, true) . "</pre>";
+        $checkin        = HTML::button($item->id, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents');
         $item->featured = HTML::toggle($item->id, Helper::FEATURED_STATES[$item->featured], 'contents');
         $item->state    = HTML::toggle($item->id, Helper::STATES[$item->state], 'contents');
+
+        /*
+         ->checkin toggle - check
+        ->edit link
+        <a href=URL; ?>" title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape($item->title); ?>"><?php echo $this->escape($item->title); ?></a>
+        ->
+        <div class="small break-word">
+            <?php if (empty($item->note)) : ?>
+                <?php echo Text::sprintf('JGLOBAL_LIST_ALIAS', $this->escape($item->alias)); ?>
+            <?php else : ?>
+                <?php echo Text::sprintf('JGLOBAL_LIST_ALIAS_NOTE', $this->escape($item->alias), $this->escape($item->note)); ?>
+            <?php endif; ?>
+        </div>
+         */
     }
 
     /** @inheritDoc */
@@ -83,12 +100,12 @@ class Contents extends ListView
         $this->headers = [
             'check'    => ['type' => 'check'],
             'ordering' => ['active' => false, 'type' => 'ordering'],
-            'name'     => [
+            'title'    => [
                 'column'     => 'title',
                 'link'       => Row::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title'      => Text::_('TITLE'),
-                'type'       => 'sort'
+                'type'       => 'header'
             ],
             'state'    => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],

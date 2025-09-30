@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Models;
 
-use Joomla\Database\DatabaseQuery;
+use Joomla\{Database\DatabaseQuery, Registry\Registry};
 use THM\Groups\Adapters\{Database as DB, Input};
 use THM\Groups\Controllers\Contents as Controller;
 use THM\Groups\Helpers\{Categories, Pages};
@@ -31,6 +31,19 @@ class Contents extends ListModel
     }
 
     /** @inheritDoc */
+    public function getItems(): array
+    {
+        $items = parent::getItems();
+        foreach ($items as $item) {
+            if (isset($item->metadata)) {
+                $registry       = new Registry($item->metadata);
+                $item->metadata = $registry->toArray();
+            }
+        }
+        return $items;
+    }
+
+    /** @inheritDoc */
     protected function getListQuery(): DatabaseQuery
     {
         $query = DB::query();
@@ -42,6 +55,7 @@ class Contents extends ListModel
         }
 
         $select  = DB::qn([
+            'content.checked_out',
             'content.id',
             'content.title',
             'content.state',
@@ -50,9 +64,13 @@ class Contents extends ListModel
             'page.featured',
             'page.ordering'
         ]);
-        $aliased = DB::qn(['category.id', 'category.parent_id'], ['categoryID', 'parentID']);
-        // User management access is required to access the view
-        $special = [DB::quote(1) . ' AS ' . DB::qn('access')];
+        $aliased = DB::qn(['category.id', 'category.parent_id', 'level.title'], ['categoryID', 'parentID', 'level']);
+        $url     = 'index.php?option=com_groups&view=content&id=';
+        $special = [
+            // Content management access is required to access the view
+            DB::quote(1) . ' AS ' . DB::qn('access'),
+            $query->concatenate([DB::quote($url), DB::qn('content.id')], '') . ' AS ' . DB::qn('url')
+        ];
 
         $query->select(array_merge($select, $aliased, $special))
             ->from(DB::qn('#__content', 'content'))

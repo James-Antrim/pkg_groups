@@ -67,6 +67,23 @@ class Pages
         ],
     ];
 
+    public const CHECKED_IN = 0, CHECKED_OUT = 1;
+
+    public const CHECKED_STATES = [
+        self::CHECKED_IN  => [
+            'class'  => '',
+            'column' => '',
+            'task'   => '',
+            'tip'    => ''
+        ],
+        self::CHECKED_OUT => [
+            'class'  => 'fa fa-lock',
+            'column' => 'checked_out',
+            'task'   => 'checkin',
+            'tip'    => 'TOGGLE_TIP_CHECKEDOUT'
+        ]
+    ];
+
     private const URL = 1, PATH = 2, QUERY = 3;
 
     /**
