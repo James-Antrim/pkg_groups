@@ -76,7 +76,7 @@ class Contents extends ListView
     {
         //echo "<pre>" . print_r($item, true) . "</pre>";
         //$checkin        = HTML::button($item->id, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents');
-        $item->user   = $item->forenames ? "$item->surnames, $item->forenames" : $item->surnames;
+        $item->user     = $item->forenames ? "$item->surnames, $item->forenames" : $item->surnames;
         $item->featured = HTML::toggle($item->id, Helper::FEATURED_STATES[$item->featured], 'contents');
         $item->state    = HTML::toggle($item->id, Helper::STATES[$item->state], 'contents');
 
@@ -109,8 +109,8 @@ class Contents extends ListView
                 'title'      => Text::_('TITLE'),
                 'type'       => 'sort'
             ],
-            'user'   => [
-                'column'     => 'user.alias',
+            'user'     => [
+                'column'     => 'user.surnames, user.forenames',
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title'      => Text::_('USER'),
                 'type'       => 'sort'

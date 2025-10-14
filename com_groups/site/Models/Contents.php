@@ -14,17 +14,24 @@ use Joomla\{Database\DatabaseQuery, Registry\Registry};
 use THM\Groups\Adapters\{Database as DB, Input};
 use THM\Groups\Controllers\Contents as Controller;
 use THM\Groups\Helpers\{Categories, Pages};
+use THM\Groups\Tools\Migration;
 
 /**
  * THM_GroupsModelContent_Manager is a class which deals with the information preparation for the administrator view.
  */
 class Contents extends ListModel
 {
-    protected string $defaultOrdering = 'user.alias';
+    protected string $defaultOrdering = 'user.surnames, user.forenames';
 
     /** @inheritDoc */
     public function __construct($config = [])
     {
+        Migration::migrate();
+
+        if (empty($config['filter_fields'])) {
+            $config['filter_fields'] = ['userID', 'featured'];
+        }
+
         parent::__construct($config);
 
         Controller::clean();
