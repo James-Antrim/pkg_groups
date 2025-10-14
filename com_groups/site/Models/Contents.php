@@ -20,7 +20,7 @@ use THM\Groups\Helpers\{Categories, Pages};
  */
 class Contents extends ListModel
 {
-    protected string $defaultOrdering = 'user.alias, title';
+    protected string $defaultOrdering = 'user.alias';
 
     /** @inheritDoc */
     public function __construct($config = [])

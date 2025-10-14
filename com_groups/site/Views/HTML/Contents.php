@@ -74,8 +74,9 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        echo "<pre>" . print_r($item, true) . "</pre>";
-        $checkin        = HTML::button($item->id, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents');
+        //echo "<pre>" . print_r($item, true) . "</pre>";
+        //$checkin        = HTML::button($item->id, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents');
+        $item->user   = $item->forenames ? "$item->surnames, $item->forenames" : $item->surnames;
         $item->featured = HTML::toggle($item->id, Helper::FEATURED_STATES[$item->featured], 'contents');
         $item->state    = HTML::toggle($item->id, Helper::STATES[$item->state], 'contents');
 
@@ -97,6 +98,7 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function initializeColumns(): void
     {
+        $this->toDo[]  = 'Show ordering only when author/category filter is on.';
         $this->headers = [
             'check'    => ['type' => 'check'],
             'ordering' => ['active' => false, 'type' => 'ordering'],
@@ -105,7 +107,13 @@ class Contents extends ListView
                 'link'       => Row::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title'      => Text::_('TITLE'),
-                'type'       => 'header'
+                'type'       => 'sort'
+            ],
+            'user'   => [
+                'column'     => 'user.alias',
+                'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+                'title'      => Text::_('USER'),
+                'type'       => 'sort'
             ],
             'state'    => [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
