@@ -32,12 +32,14 @@ class Headers
 
     /**
      * Renders an icon for the ordering column header.
+     *
+     * @param   string  $column  the current query column that the results are being sorted by
      */
-    private static function ordering(): void
+    private static function ordering(string $column): void
     {
-        ?>
+        $icon = HTML::icon('fa fa-arrows-alt-v'); ?>
         <th class="w-1 text-center d-none d-md-table-cell" scope="col">
-            <?php echo HTML::icon('fa fa-arrows-alt-v'); ?>
+            <?php echo $column === 'ordering' ? $icon : HTML::orderingSort($column); ?>
         </th>
         <?php
     }
@@ -85,7 +87,7 @@ class Headers
                     self::check();
                     break;
                 case 'ordering':
-                    self::ordering();
+                    self::ordering($column);
                     break;
                 case 'sort':
                     self::sort($header, $column, $direction);

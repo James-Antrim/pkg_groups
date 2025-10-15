@@ -113,4 +113,20 @@ class Contents extends ListModel
 
         return $query;
     }
+
+
+    /** @inheritDoc */
+    protected function populateState($ordering = null, $direction = null): void
+    {
+        parent::populateState($ordering, $direction);
+
+        $ordering = $this->state->get('list.ordering');
+        $userID   = $this->state->get('filter.userID');
+
+        if ($ordering === $this->defaultOrdering and $userID) {
+            $this->state->set('list.fullordering', 'ordering ASC');
+            $this->state->set('list.ordering', 'ordering');
+            $this->state->set('list.direction', 'ASC');
+        }
+    }
 }

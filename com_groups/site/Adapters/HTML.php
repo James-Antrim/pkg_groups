@@ -152,6 +152,29 @@ class HTML extends HTMLHelper
     }
 
     /**
+     * Method to create a column header for activating the sort column when multiple list columns can be sorted.
+     *
+     * @param   string  $currentColumn  the current query column that the results are being sorted by
+     *
+     * @return  string
+     * @see SearchTools::sort()
+     */
+    public static function orderingSort(string $currentColumn): string
+    {
+        return SearchTools::sort(
+            '',
+            'ordering',
+            'asc',
+            $currentColumn,
+            null,
+            'asc',
+            '',
+            HTML::icon('fa fa-arrows-alt-v')
+
+        );
+    }
+
+    /**
      * Generates a string containing property information for an HTML element to be output
      *
      * @param   mixed &$element  the element being processed
