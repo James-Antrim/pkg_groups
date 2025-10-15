@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-use Joomla\CMS\{Language\Text, Router\Route, Session\Session};
+use Joomla\CMS\{Language\Text, Router\Route};
 use THM\Groups\Adapters\{Application, HTML};
 use THM\Groups\Layouts\HTML\{Batch, EmptySet, Headers, HiddenInputs, Row, Tools};
 use THM\Groups\Views\HTML\ListView;
@@ -29,7 +29,7 @@ $dragProps   = '';
 
 if ($dragEnabled) {
     $baseURL = 'index.php?option=com_groups';
-    $dragURL = "$baseURL&task=$this->_name.saveOrderAjax&tmpl=component" . Session::getFormToken() . '=1';
+    $dragURL = "$baseURL&task=$this->_name.saveOrderAjax&tmpl=component";
     HTML::_('draggablelist.draggable');
     $dragProps = [
         'properties' => [

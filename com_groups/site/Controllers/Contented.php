@@ -10,8 +10,10 @@
 
 namespace THM\Groups\Controllers;
 
+use JetBrains\PhpStorm\NoReturn;
+use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\Pages as Helper;
-use THM\Groups\Tables\{Content as CTable, Pages as PTable};
+use THM\Groups\Tables\{Content as CTable, Pages as PTable, Pages as PaTable};
 
 abstract class Contented extends ListController
 {
@@ -49,6 +51,28 @@ abstract class Contented extends ListController
     public function publish(): void
     {
         $this->toggle('state', Helper::PUBLISHED);
+    }
+
+    /** @inheritDoc */
+    #[NoReturn] public function saveOrderAjax(): void
+    {
+        $this->checkToken();
+        $this->authorizeAJAX();
+
+        $ordering    = 0;
+        $resourceIDs = Input::array('cid');
+
+        foreach ($resourceIDs as $resourceID) {
+            $table = new PaTable();
+            $table->load(['contentID' => $resourceID]);
+            $table->ordering = $ordering;
+            $table->store();
+            $ordering++;
+        }
+
+        echo Text::_('Request performed successfully.');
+
+        Application::close();
     }
 
     /** @inheritDoc */

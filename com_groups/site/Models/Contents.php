@@ -83,7 +83,10 @@ class Contents extends ListModel
             ->from(DB::qn('#__content', 'content'))
             ->innerJoin(DB::qn('#__categories', 'category'), DB::qc('category.id', 'content.catid'))
             ->innerJoin(DB::qn('#__users', 'user'), DB::qc('user.id', 'category.created_user_id'))
-            ->innerJoin(DB::qn('#__groups_pages', 'page'), DB::qc('page.userID', 'content.created_by'))
+            ->innerJoin(
+                DB::qn('#__groups_pages', 'page'),
+                DB::qcs([['page.userID', 'content.created_by'], ['page.contentID', 'content.id']])
+            )
             ->innerJoin(DB::qn('#__viewlevels', 'level'), DB::qc('level.id', 'content.access'))
             ->where(DB::qc('category.parent_id', $rootCategory))
             ->group(DB::qn('content.id'));
