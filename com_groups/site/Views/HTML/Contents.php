@@ -12,7 +12,7 @@ namespace THM\Groups\Views\HTML;
 
 use Joomla\CMS\Toolbar\Button\DropdownButton;
 use stdClass;
-use THM\Groups\Adapters\{Application, HTML, Text, Toolbar};
+use THM\Groups\Adapters\{Application, HTML, Input, Text, Toolbar};
 use THM\Groups\Helpers\{Categories, Pages as Helper};
 use THM\Groups\Layouts\HTML\Row;
 
@@ -22,14 +22,11 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function addToolbar(): void
     {
-        $this->toDo[] = 'Authors as filter field => associated with a category whether currently allowed or not.';
         $this->toDo[] = 'Joomla batch functions for language and level. No current plans for tags implementation.';
         $this->toDo[] = 'Joomla batch functions for category with consequences if shoved into a profile category.';
-        $this->toDo[] = 'Show all contents regardless of relevance, but filter for relevance on initial display.';
         $this->toDo[] = 'Delete button if set to trashed state.';
         $this->toDo[] = 'Remove columns when corresponding filter is set';
         $this->toDo[] = 'Form the title as joomla content list.';
-        $this->toDo[] = 'Author/Category as subtitle';
         $this->toDo[] = 'J-Assoc and Language both as language column.';
         $this->toDo[] = 'Checkin function implementation.';
 
@@ -98,48 +95,58 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function initializeColumns(): void
     {
-        $this->toDo[]  = 'Show ordering only when author/category filter is on.';
-        $this->headers = [
-            'check'    => ['type' => 'check'],
-            'ordering' => ['active' => false, 'type' => 'ordering'],
-            'title'    => [
-                'column'     => 'title',
-                'link'       => Row::DIRECT,
-                'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('TITLE'),
-                'type'       => 'sort'
-            ],
-            'user'     => [
+        $this->headers = ['check' => ['type' => 'check']];
+
+        $userID = Input::integer('userID');
+        if ($userID) {
+            $this->headers['ordering'] = ['active' => false, 'type' => 'ordering'];
+        }
+
+        $this->headers['title'] = [
+            'column'     => 'title',
+            'link'       => Row::DIRECT,
+            'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+            'title'      => Text::_('TITLE'),
+            'type'       => 'sort'
+        ];
+
+        if (!$userID) {
+            $this->headers['user'] = [
                 'column'     => 'user.surnames, user.forenames',
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title'      => Text::_('USER'),
                 'type'       => 'sort'
-            ],
-            'state'    => [
-                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('STATUS'),
-                'type'       => 'value'
-            ],
-            'featured' => [
-                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('FEATURED'),
-                'type'       => 'value'
-            ],
-            'level'    => [
-                'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('LEVEL'),
-                'type'       => 'value'
-            ],
-            'language' => [
-                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('LANGUAGE'),
-                'type'       => 'value'
-            ],
-            'id'       => [
-                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('ID'),
-                'type'       => 'value'
-            ]
+            ];
+        }
+
+        $this->headers['state'] = [
+            'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+            'title'      => Text::_('STATUS'),
+            'type'       => 'value'
+        ];
+
+        $this->headers['featured'] = [
+            'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+            'title'      => Text::_('FEATURED'),
+            'type'       => 'value'
+        ];
+
+        $this->headers['level'] = [
+            'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+            'title'      => Text::_('LEVEL'),
+            'type'       => 'value'
+        ];
+
+        $this->headers['language'] = [
+            'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+            'title'      => Text::_('LANGUAGE'),
+            'type'       => 'value'
+        ];
+
+        $this->headers['id'] = [
+            'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+            'title'      => Text::_('ID'),
+            'type'       => 'value'
         ];
     }
 }
