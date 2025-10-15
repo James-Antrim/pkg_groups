@@ -72,7 +72,9 @@ class Contents extends ListView
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
         //echo "<pre>" . print_r($item, true) . "</pre>";
-        //$checkin        = HTML::button($item->id, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents');
+        if ($checkin = HTML::toggle($item->id, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents')) {
+            $item->title = "$checkin $item->title";
+        }
         $item->user     = $item->forenames ? "$item->surnames, $item->forenames" : $item->surnames;
         $item->featured = HTML::toggle($item->id, Helper::FEATURED_STATES[$item->featured], 'contents');
         $item->state    = HTML::toggle($item->id, Helper::STATES[$item->state], 'contents');

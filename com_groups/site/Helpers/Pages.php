@@ -75,7 +75,7 @@ class Pages
             'class'  => 'fa fa-lock',
             'column' => 'checked_out',
             'task'   => 'checkin',
-            'tip'    => 'TOGGLE_TIP_CHECKEDOUT'
+            'tip'    => 'TOGGLE_TIP_CHECKED_OUT'
         ]
     ];
 
