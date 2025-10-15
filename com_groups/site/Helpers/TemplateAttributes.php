@@ -20,13 +20,13 @@ class TemplateAttributes
 
     public const showIconStates = [
         self::HIDDEN    => [
-            'class'  => 'unpublish',
+            'class'  => 'fa fa-times',
             'column' => 'showIcon',
             'task'   => 'showIcon',
             'tip'    => 'GROUPS_TOGGLE_TIP_HIDDEN'
         ],
         self::PUBLISHED => [
-            'class'  => 'publish',
+            'class'  => 'fa fa-check',
             'column' => 'showIcon',
             'task'   => 'hideIcon',
             'tip'    => 'GROUPS_TOGGLE_TIP_PUBLISHED'
@@ -35,13 +35,13 @@ class TemplateAttributes
 
     public const showLabelStates = [
         self::PUBLISHED => [
-            'class'  => 'publish',
+            'class'  => 'fa fa-check',
             'column' => 'showLabel',
             'task'   => 'hideLabel',
             'tip'    => 'GROUPS_TOGGLE_TIP_PUBLISHED'
         ],
         self::HIDDEN    => [
-            'class'  => 'unpublish',
+            'class'  => 'fa fa-times',
             'column' => 'showLabel',
             'task'   => 'showLabel',
             'tip'    => 'GROUPS_TOGGLE_TIP_HIDDEN'

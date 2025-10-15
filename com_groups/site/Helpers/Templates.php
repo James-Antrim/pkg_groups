@@ -24,13 +24,13 @@ class Templates extends Selectable
 
     public const CARDS = [
         self::DEFAULT => [
-            'class'  => 'publish',
+            'class'  => 'fa fa-check',
             'column' => 'cards',
             'task'   => '',
             'tip'    => 'GROUPS_TOGGLE_TIP_DEFAULT_CARDS_CONTEXT'
         ],
         self::NOT     => [
-            'class'  => 'unpublish',
+            'class'  => 'fa fa-times',
             'column' => 'cards',
             'task'   => 'defaultCard',
             'tip'    => 'GROUPS_TOGGLE_TIP_NOT_DEFAULT_CARDS_CONTEXT'
@@ -39,13 +39,13 @@ class Templates extends Selectable
 
     public const ROLES = [
         self::DEFAULT => [
-            'class'  => 'publish',
+            'class'  => 'fa fa-check',
             'column' => 'roles',
             'task'   => 'hideRoles',
             'tip'    => 'GROUPS_TOGGLE_TIP_ROLES_PUBLISHED'
         ],
         self::NOT     => [
-            'class'  => 'unpublish',
+            'class'  => 'fa fa-times',
             'column' => 'roles',
             'task'   => 'showRoles',
             'tip'    => 'GROUPS_TOGGLE_TIP_ROLES_HIDDEN'
@@ -54,13 +54,13 @@ class Templates extends Selectable
 
     public const VCARDS = [
         self::DEFAULT => [
-            'class'  => 'publish',
+            'class'  => 'fa fa-check',
             'column' => 'vcard',
             'task'   => '',
             'tip'    => 'GROUPS_TOGGLE_TIP_DEFAULT_VCARDS_CONTEXT'
         ],
         self::NOT     => [
-            'class'  => 'unpublish',
+            'class'  => 'fa fa-times',
             'column' => 'vcard',
             'task'   => 'defaultVCard',
             'tip'    => 'GROUPS_TOGGLE_TIP_NOT_DEFAULT_VCARDS_CONTEXT'

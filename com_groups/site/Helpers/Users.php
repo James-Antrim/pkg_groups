@@ -28,13 +28,13 @@ class Users
     // Display semantic is reversed
     public const blockedStates = [
         self::BLOCKED   => [
-            'class'  => 'unpublish',
+            'class'  => 'fa fa-times',
             'column' => 'block',
             'task'   => 'unblock',
             'tip'    => 'GROUPS_TOGGLE_TIP_BLOCKED'
         ],
         self::UNBLOCKED => [
-            'class'  => 'publish',
+            'class'  => 'fa fa-check',
             'column' => 'block',
             'task'   => 'block',
             'tip'    => 'GROUPS_TOGGLE_TIP_USER_UNBLOCKED'
@@ -51,13 +51,13 @@ class Users
 
     public const contentStates = [
         self::ENABLED  => [
-            'class'  => 'publish',
+            'class'  => 'fa fa-check',
             'column' => 'content',
             'task'   => 'disableContent',
             'tip'    => 'GROUPS_TOGGLE_TIP_CONTENTS_ENABLED'
         ],
         self::DISABLED => [
-            'class'  => 'unpublish',
+            'class'  => 'fa fa-times',
             'column' => 'content',
             'task'   => 'enableContent',
             'tip'    => 'GROUPS_TOGGLE_TIP_CONTENTS_DISABLED'
@@ -66,13 +66,13 @@ class Users
 
     public const editingStates = [
         self::ENABLED  => [
-            'class'  => 'publish',
+            'class'  => 'fa fa-check',
             'column' => 'editing',
             'task'   => 'disableEditing',
             'tip'    => 'GROUPS_TOGGLE_TIP_EDITING_ENABLED'
         ],
         self::DISABLED => [
-            'class'  => 'unpublish',
+            'class'  => 'fa fa-times',
             'column' => 'editing',
             'task'   => 'enableEditing',
             'tip'    => 'GROUPS_TOGGLE_TIP_EDITING_DISABLED'
@@ -81,13 +81,13 @@ class Users
 
     public const publishedStates = [
         self::PUBLISHED => [
-            'class'  => 'publish',
+            'class'  => 'fa fa-check',
             'column' => 'published',
             'task'   => 'hide',
             'tip'    => 'GROUPS_TOGGLE_TIP_PROFILE_PUBLISHED'
         ],
         self::HIDDEN    => [
-            'class'  => 'unpublish',
+            'class'  => 'fa fa-times',
             'column' => 'published',
             'task'   => 'publish',
             'tip'    => 'GROUPS_TOGGLE_TIP_PROFILE_HIDDEN'

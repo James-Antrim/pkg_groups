@@ -40,13 +40,13 @@ class Attributes extends Selectable
 
     public const showIconStates = [
         self::PUBLISHED => [
-            'class'  => 'publish',
+            'class'  => 'fa fa-check',
             'column' => 'showIcon',
             'task'   => 'hideIcon',
             'tip'    => 'TOGGLE_TIP_PUBLISHED'
         ],
         self::HIDDEN    => [
-            'class'  => 'unpublish',
+            'class'  => 'fa fa-times',
             'column' => 'showIcon',
             'task'   => 'showIcon',
             'tip'    => 'TOGGLE_TIP_HIDDEN'
@@ -55,13 +55,13 @@ class Attributes extends Selectable
 
     public const showLabelStates = [
         self::PUBLISHED => [
-            'class'  => 'publish',
+            'class'  => 'fa fa-check',
             'column' => 'showLabel',
             'task'   => 'hideLabel',
             'tip'    => 'TOGGLE_TIP_PUBLISHED'
         ],
         self::HIDDEN    => [
-            'class'  => 'unpublish',
+            'class'  => 'fa fa-times',
             'column' => 'showLabel',
             'task'   => 'showLabel',
             'tip'    => 'TOGGLE_TIP_HIDDEN'

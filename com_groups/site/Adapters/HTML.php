@@ -23,50 +23,6 @@ use stdClass;
 class HTML extends HTMLHelper
 {
     /**
-     * Returns an action on a grid
-     *
-     * @param   int     $index       the row index
-     * @param   array   $state       the state configuration
-     * @param   string  $controller  the name of the controller class
-     *
-     * @return  string
-     */
-    public static function button(int $index, array $state, string $controller): string
-    {
-        $task = $state['task'] ?? null;
-
-        // A button must have a purpose
-        if (!$task) {
-            return '';
-        }
-
-        $active     = $state['class'] === 'publish';
-        $ariaID     = "{$state['column']}-$index";
-        $attributes = [
-            'class'   => $active ? 'tbody-icon active' : 'tbody-icon',
-            'href'    => 'javascript:void(0);',
-            'onclick' => "return Joomla.listItemTask('cb$index','$controller.$task','adminForm')"
-        ];
-        $icon       = $active ? 'fa fa-check' : $state['class'];
-        $icon       = self::icon($icon);
-        $tip        = '';
-
-        if (!empty($state['tip'])) {
-            $attributes['aria-labelledby'] = $ariaID;
-
-            $tip = Text::_($state['tip']);
-        }
-
-        $return = '<a ' . ArrayHelper::toString($attributes) . '>' . $icon . '</a>';
-
-        if ($tip) {
-            $return .= "<div role=\"tooltip\" id=\"$ariaID\">$tip</div>";
-        }
-
-        return $return;
-    }
-
-    /**
      * Method to check all checkboxes in a resource table.
      * @return  string
      * @see Grid::checkall()
@@ -256,13 +212,17 @@ class HTML extends HTMLHelper
         $class  = $state['class'];
         $return = '';
 
+        if (!$class) {
+            return $return;
+        }
+
         if ($neither) {
             $iconClass = 'fa fa-minus';
             $task      = '';
             $tip       = $neither;
         }
         else {
-            $iconClass = $class === 'publish' ? 'fa fa-check' : 'fa fa-times';
+            $iconClass = $class;
             $task      = $state['task'];
             $tip       = Text::_($state['tip']);
         }
@@ -270,7 +230,7 @@ class HTML extends HTMLHelper
         $icon = self::icon($iconClass);
 
         if ($task and $controller) {
-            $attributes['class']   .= $class === 'publish' ? ' active' : '';
+            $attributes['class']   .= $class === 'fa fa-check' ? ' active' : '';
             $attributes['href']    = 'javascript:void(0);';
             $attributes['onclick'] = "return Joomla.listItemTask('cb$index','$controller.$task','adminForm')";
 
