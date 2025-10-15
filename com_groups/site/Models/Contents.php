@@ -131,5 +131,10 @@ class Contents extends ListModel
             $this->state->set('list.ordering', 'ordering');
             $this->state->set('list.direction', 'ASC');
         }
+        elseif ($ordering === 'ordering' and !$userID) {
+            $this->state->set('list.fullordering', "$this->defaultOrdering ASC");
+            $this->state->set('list.ordering', $this->defaultOrdering);
+            $this->state->set('list.direction', 'ASC');
+        }
     }
 }
