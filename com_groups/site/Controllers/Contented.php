@@ -27,6 +27,22 @@ abstract class Contented extends ListController
     }
 
     /**
+     * Sets the page related content to archived.
+     * @return void
+     */
+    public function checkin(): void
+    {
+        $this->checkToken();
+        $this->authorize();
+
+        $selectedID = Input::selectedID();
+        $table = new CTable();
+        $updated = $table->checkIn($selectedID) ? 1 : 0;
+
+        $this->farewell(1, $updated);
+    }
+
+    /**
      * Adds the selected pages in the user's personal menu.
      * @return void
      */

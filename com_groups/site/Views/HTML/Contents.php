@@ -28,7 +28,6 @@ class Contents extends ListView
         $this->toDo[] = 'Remove columns when corresponding filter is set';
         $this->toDo[] = 'Form the title as joomla content list.';
         $this->toDo[] = 'J-Assoc and Language both as language column.';
-        $this->toDo[] = 'Checkin function implementation.';
 
         if (Categories::root()) {
             $toolbar = Toolbar::instance();
@@ -72,12 +71,12 @@ class Contents extends ListView
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
         //echo "<pre>" . print_r($item, true) . "</pre>";
-        if ($checkin = HTML::toggle($item->id, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents')) {
+        if ($checkin = HTML::toggle($index, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents')) {
             $item->title = "$checkin $item->title";
         }
         $item->user     = $item->forenames ? "$item->surnames, $item->forenames" : $item->surnames;
-        $item->featured = HTML::toggle($item->id, Helper::FEATURED_STATES[$item->featured], 'contents');
-        $item->state    = HTML::toggle($item->id, Helper::STATES[$item->state], 'contents');
+        $item->featured = HTML::toggle($index, Helper::FEATURED_STATES[$item->featured], 'contents');
+        $item->state    = HTML::toggle($index, Helper::STATES[$item->state], 'contents');
 
         /*
          ->checkin toggle - check
