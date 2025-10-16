@@ -10,7 +10,10 @@
 
 namespace THM\Groups\Helpers;
 
+use Exception;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Content\Administrator\Service\HTML\AdministratorService as ContentService;
+use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Database as DB;
 use THM\Groups\Tables\{Content as CTable, Pages as PTable};
 
@@ -95,6 +98,26 @@ class Pages
             return $table->alias;
         }
         return '';
+    }
+
+    /**
+     * Render the list of associated items
+     *
+     * @param   int  $contentID
+     *
+     * @return  string
+     * @see ContentService::association()
+     */
+    public static function association(int $contentID): string
+    {
+        $service = new ContentService();
+        try {
+            return $service->association($contentID);
+        }
+        catch (Exception $exc) {
+            Application::message($exc->getMessage(), Application::WARNING);
+            return '';
+        }
     }
 
     /**

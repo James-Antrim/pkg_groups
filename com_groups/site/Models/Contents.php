@@ -64,6 +64,7 @@ class Contents extends ListModel
         $select  = DB::qn([
             'content.checked_out',
             'content.id',
+            'content.language',
             'content.title',
             'content.state',
             'user.surnames',
@@ -71,7 +72,10 @@ class Contents extends ListModel
             'page.featured',
             'page.ordering'
         ]);
-        $aliased = DB::qn(['category.id', 'category.parent_id', 'level.title'], ['categoryID', 'parentID', 'level']);
+        $aliased = DB::qn(
+            ['category.id', 'category.parent_id', 'language.image', 'language.title', 'level.title'],
+            ['categoryID', 'parentID', 'language_image', 'language_title', 'level']
+        );
         $url     = 'index.php?option=com_groups&view=content&id=';
         $special = [
             // Content management access is required to access the view
@@ -88,6 +92,7 @@ class Contents extends ListModel
                 DB::qcs([['page.userID', 'content.created_by'], ['page.contentID', 'content.id']])
             )
             ->innerJoin(DB::qn('#__viewlevels', 'level'), DB::qc('level.id', 'content.access'))
+            ->leftJoin(DB::qn('#__languages', 'language'), DB::qc('language.lang_code', 'content.language'))
             ->where(DB::qc('category.parent_id', $rootCategory))
             ->group(DB::qn('content.id'));
 
