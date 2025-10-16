@@ -59,7 +59,7 @@ class Pages extends Contented
     }
 
     /** @inheritDoc */
-    protected function toggle(string $column, bool $value): void
+    protected function update(string $column, bool|int $value): void
     {
         $this->checkToken();
 

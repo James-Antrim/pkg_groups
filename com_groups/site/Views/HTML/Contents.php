@@ -25,8 +25,6 @@ class Contents extends ListView
         $this->toDo[] = 'Joomla batch functions for language and level. No current plans for tags implementation.';
         $this->toDo[] = 'Joomla batch functions for category with consequences if shoved into a profile category.';
         $this->toDo[] = 'Delete button if set to trashed state.';
-        $this->toDo[] = 'Remove columns when corresponding filter is set';
-        $this->toDo[] = 'Form the title as joomla content list.';
         $this->toDo[] = 'J-Assoc and Language both as language column.';
 
         if (Categories::root()) {

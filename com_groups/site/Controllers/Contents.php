@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Controllers;
 
-use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
+use THM\Groups\Adapters\{Application, Database as DB, Text};
 use THM\Groups\Helpers\{Can, Categories};
 use THM\Groups\Tables\{Categories as CaTable, Content as CoTable};
 
@@ -117,20 +117,5 @@ class Contents extends Contented
             $table->load($categoryID);
             $table->delete();
         }
-    }
-
-    /** @inheritDoc */
-    protected function toggle(string $column, bool $value): void
-    {
-        $this->checkToken();
-
-        $selectedIDs = Input::selectedIDs();
-        $selected    = count($selectedIDs);
-
-        $updated = $column === 'featured' ?
-            $this->updateFeatured($selectedIDs, $value) :
-            $this->updateState($selectedIDs, $value);
-
-        $this->farewell($selected, $updated);
     }
 }

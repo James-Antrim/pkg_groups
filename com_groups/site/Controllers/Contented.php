@@ -13,7 +13,7 @@ namespace THM\Groups\Controllers;
 use JetBrains\PhpStorm\NoReturn;
 use THM\Groups\Adapters\{Application, Input, Text};
 use THM\Groups\Helpers\Pages as Helper;
-use THM\Groups\Tables\{Content as CTable, Pages as PTable, Pages as PaTable};
+use THM\Groups\Tables\{Content as CTable, Pages as PTable};
 
 abstract class Contented extends ListController
 {
@@ -23,7 +23,7 @@ abstract class Contented extends ListController
      */
     public function archive(): void
     {
-        $this->toggle('state', Helper::ARCHIVED);
+        $this->update('state', Helper::ARCHIVED);
     }
 
     /**
@@ -36,8 +36,8 @@ abstract class Contented extends ListController
         $this->authorize();
 
         $selectedID = Input::selectedID();
-        $table = new CTable();
-        $updated = $table->checkIn($selectedID) ? 1 : 0;
+        $table      = new CTable();
+        $updated    = $table->checkIn($selectedID) ? 1 : 0;
 
         $this->farewell(1, $updated);
     }
@@ -48,7 +48,7 @@ abstract class Contented extends ListController
      */
     public function feature(): void
     {
-        $this->toggle('featured', Helper::FEATURED);
+        $this->update('featured', Helper::FEATURED);
     }
 
     /**
@@ -57,7 +57,7 @@ abstract class Contented extends ListController
      */
     public function hide(): void
     {
-        $this->toggle('state', Helper::HIDDEN);
+        $this->update('state', Helper::HIDDEN);
     }
 
     /**
@@ -66,7 +66,7 @@ abstract class Contented extends ListController
      */
     public function publish(): void
     {
-        $this->toggle('state', Helper::PUBLISHED);
+        $this->update('state', Helper::PUBLISHED);
     }
 
     /** @inheritDoc */
@@ -79,7 +79,7 @@ abstract class Contented extends ListController
         $resourceIDs = Input::array('cid');
 
         foreach ($resourceIDs as $resourceID) {
-            $table = new PaTable();
+            $table = new PTable();
             $table->load(['contentID' => $resourceID]);
             $table->ordering = $ordering;
             $table->store();
@@ -91,28 +91,35 @@ abstract class Contented extends ListController
         Application::close();
     }
 
-    /** @inheritDoc */
-    protected function toggle(string $column, bool $value): void
-    {
-        // Inheriting classes must implement this themselves
-    }
-
-    /**
-     * Sets the page related content to trashed.
-     * @return void
-     */
-    public function trash(): void
-    {
-        $this->toggle('state', Helper::TRASHED);
-    }
-
     /**
      * Removes the selected pages from the user's personal menu.
      * @return void
      */
     public function unfeature(): void
     {
-        $this->toggle('featured', Helper::UNFEATURED);
+        $this->update('featured', Helper::UNFEATURED);
+    }
+
+    /**
+     * Updates a series of column values.
+     *
+     * @param   string  $column  the column in which the values are stored
+     * @param   bool    $value   the target value
+     *
+     * @return void
+     */
+    protected function update(string $column, bool|int $value): void
+    {
+        $this->checkToken();
+
+        $selectedIDs = Input::selectedIDs();
+        $selected    = count($selectedIDs);
+
+        $updated = $column === 'featured' ?
+            $this->updateFeatured($selectedIDs, $value) :
+            $this->updateState($selectedIDs, $value);
+
+        $this->farewell($selected, $updated);
     }
 
     /**
@@ -129,8 +136,7 @@ abstract class Contented extends ListController
         $value = (int) $value;
 
         foreach ($selectedIDs as $selectedID) {
-            /** @var PTable $table */
-            $table = $this->getTable();
+            $table = new PTable();
 
             if ($table->load(['contentID' => $selectedID]) and $table->featured !== $value) {
                 $table->featured = $value;
@@ -151,14 +157,13 @@ abstract class Contented extends ListController
      * Updates the state column for the content table.
      *
      * @param   array  $selectedIDs  the ids of the resources whose properties will be updated
-     * @param   bool   $value        the value to update to
+     * @param   int    $value        the value to update to
      *
      * @return int
      */
-    protected function updateState(array $selectedIDs, bool $value): int
+    protected function updateState(array $selectedIDs, int $value): int
     {
         $total = 0;
-        $value = (int) $value;
 
         foreach ($selectedIDs as $selectedID) {
             $table = new CTable();
@@ -173,5 +178,14 @@ abstract class Contented extends ListController
         }
 
         return $total;
+    }
+
+    /**
+     * Sets the page related content to trashed.
+     * @return void
+     */
+    public function trash(): void
+    {
+        $this->update('state', Helper::TRASHED);
     }
 }
