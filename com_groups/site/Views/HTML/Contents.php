@@ -20,6 +20,7 @@ use THM\Groups\Layouts\HTML\Row;
 /** @inheritDoc */
 class Contents extends ListView
 {
+    private bool $showDelete;
     private bool $showLanguages;
 
     /**
@@ -39,7 +40,7 @@ class Contents extends ListView
     {
         $this->toDo[] = 'Joomla batch functions for language and level. No current plans for tags implementation.';
         $this->toDo[] = 'Joomla batch functions for category with consequences if shoved into a profile category.';
-        $this->toDo[] = 'Delete button if set to trashed state.';
+        $this->toDo[] = 'Add empty trash implementation.';
 
         if (Categories::root()) {
             $toolbar = Toolbar::instance();
@@ -71,6 +72,10 @@ class Contents extends ListView
 
             $batchBar = Toolbar::instance('batch');
             $batchBar->standardButton('batch', Text::_('PROCESS'), 'contents.batch');
+
+            if ($this->showDelete) {
+                $toolbar->delete('contents.delete', Text::_('EMPTY_TRASH'));
+            }
         }
         else {
             Application::message('NO_ROOT', Application::NOTICE);
@@ -82,17 +87,23 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        if ($checkin = HTML::toggle($index, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents')) {
-            $item->title = "$checkin $item->title";
-        }
-        $item->user     = $item->forenames ? "$item->surnames, $item->forenames" : $item->surnames;
         $item->featured = HTML::toggle($index, Helper::FEATURED_STATES[$item->featured], 'contents');
 
         if ($this->showLanguages) {
             $item->language = Helper::languageDisplay($item);
         }
 
+        if ($item->state === Helper::TRASHED) {
+            $this->showDelete = true;
+        }
+
         $item->state = HTML::toggle($index, Helper::STATES[$item->state], 'contents');
+
+        if ($checkin = HTML::toggle($index, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents')) {
+            $item->title = "$checkin $item->title";
+        }
+
+        $item->user = $item->forenames ? "$item->surnames, $item->forenames" : $item->surnames;
     }
 
     /** @inheritDoc */
