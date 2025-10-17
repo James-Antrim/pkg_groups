@@ -38,9 +38,8 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function addToolbar(): void
     {
-        $this->toDo[] = 'Joomla batch functions for language and level. No current plans for tags implementation.';
-        $this->toDo[] = 'Joomla batch functions for category with consequences if shoved into a profile category.';
-        $this->toDo[] = 'Hits.';
+        $this->toDo[] = 'Add server side batch implementation.';
+        $this->toDo[] = 'Add hits column & how are hits recorded???.';
 
         if (Categories::root()) {
             $toolbar = Toolbar::instance();
