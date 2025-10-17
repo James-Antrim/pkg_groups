@@ -40,7 +40,8 @@ class Contents extends ListView
     {
         $this->toDo[] = 'Joomla batch functions for language and level. No current plans for tags implementation.';
         $this->toDo[] = 'Joomla batch functions for category with consequences if shoved into a profile category.';
-        $this->toDo[] = 'Add view language and level filter.';
+        $this->toDo[] = 'Add level filter.';
+        $this->toDo[] = 'Hits.';
 
         if (Categories::root()) {
             $toolbar = Toolbar::instance();

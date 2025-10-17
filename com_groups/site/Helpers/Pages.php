@@ -196,8 +196,24 @@ class Pages
     public static function languageDisplay(stdClass $item): string
     {
         $contentID = $item->id;
-        $html      = '<div class="small" style="display:inline-block">'
-            . LayoutHelper::render('joomla.content.language', $item) . '</div>';
+        $html      = '<div class="small" style="display:inline-block">';
+
+        $title = $item->language_title ? htmlspecialchars($item->language_title, ENT_COMPAT, 'UTF-8') : '';
+
+        if ($item->language === '*') {
+            $html .= Text::_('NOT_CONFIGURED');
+        }
+        elseif ($item->language_image) {
+            $html .= HTML::_('image', 'mod_languages/' . $item->language_image . '.gif', '', ['class' => 'me-1'], true) . $title;
+        }
+        elseif ($item->language_title) {
+            $html .= $title;
+        }
+        else {
+            $html .= Text::_('NOT_CONFIGURED');
+        }
+
+        $html .= '</div>';
 
         // Get the associations
         if ($localizations = self::localizations($contentID)) {

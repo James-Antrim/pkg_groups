@@ -29,7 +29,7 @@ class Contents extends ListModel
         Migration::migrate();
 
         if (empty($config['filter_fields'])) {
-            $config['filter_fields'] = ['userID', 'featured'];
+            $config['filter_fields'] = ['featured', 'language', 'level', 'state', 'userID'];
         }
 
         parent::__construct($config);
@@ -109,6 +109,11 @@ class Contents extends ListModel
         if (is_numeric($featured) and in_array((int) $featured, Input::BINARY)) {
             $featured = (int) $featured;
             $query->where(DB::qc('page.featured', $featured));
+        }
+
+        $language = $this->state->get('filter.language');
+        if ($language and preg_match('/^(\*|[a-z]{2}-[A-Z]{2})$/', $language)) {
+            $query->where(DB::qc('content.language', $language, '=', true));
         }
 
         $status = $this->state->get('filter.state');

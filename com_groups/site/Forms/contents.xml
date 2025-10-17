@@ -17,6 +17,10 @@
             <option value="1">GROUPS_FEATURED</option>
             <option value="0">GROUPS_UNFEATURED</option>
         </field>
+        <field name="language" type="language" label="GROUPS_LANGUAGE" onchange="this.form.submit();">
+            <option value="">GROUPS_SELECT_LANGUAGE</option>
+            <option value="*">GROUPS_NOT_CONFIGURED</option>
+        </field>
     </fields>
     <fields name="list">
         <field name="limit" type="limitbox" class="input-mini" label="JGLOBAL_LIST_LIMIT" onchange="this.form.submit();"/>
