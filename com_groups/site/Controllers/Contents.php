@@ -23,6 +23,14 @@ class Contents extends Contented
     protected string $item = 'Content';
 
     /** @inheritDoc */
+    protected function authorize(): void
+    {
+        if (!Can::manage('com_content')) {
+            Application::error(403);
+        }
+    }
+
+    /** @inheritDoc */
     protected function authorizeAJAX(): void
     {
         if (!Can::manage('com_content')) {

@@ -10,7 +10,6 @@
 
 namespace THM\Groups\Controllers;
 
-use JetBrains\PhpStorm\NoReturn;
 use THM\Groups\Adapters\{Application, Input, Text, User};
 use THM\Groups\Helpers\{Can, Pages as Helper, Users};
 
@@ -21,9 +20,31 @@ class Pages extends Contented
     protected string $item = 'Page';
 
     /** @inheritDoc */
-    #[NoReturn] protected function authorizeAJAX(): void
+    protected function authorize(): void
     {
-        echo Text::_('503');
+        if (Can::manage('com_content')) {
+            return;
+        }
+
+        if ($profileID = Input::integer('profileID') and $profileID === User::id()) {
+            return;
+        }
+
+        Application::error(403);
+    }
+
+    /** @inheritDoc */
+    protected function authorizeAJAX(): void
+    {
+        if (Can::manage('com_content')) {
+            return;
+        }
+
+        if ($profileID = Input::integer('profileID') and $profileID === User::id()) {
+            return;
+        }
+
+        echo Text::_('403');
         Application::close();
     }
 
