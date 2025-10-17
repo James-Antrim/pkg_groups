@@ -12,7 +12,6 @@
         <field name="search" type="text" label="GROUPS_SEARCH" hint="GROUPS_SEARCH_TERMS"/>
         <field name="levelID" type="ViewLevels" label="GROUPS_LEVEL" onchange="this.form.submit();">
             <option value="">GROUPS_ALL_LEVELS</option>
-            <option value="-1">GROUPS_NO_LEVELS</option>
         </field>
         <field name="roleID" type="Roles" label="GROUPS_ROLE" onchange="this.form.submit();">
             <option value="">GROUPS_ALL_ROLES</option>
