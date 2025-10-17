@@ -17,6 +17,9 @@
             <option value="1">GROUPS_FEATURED</option>
             <option value="0">GROUPS_UNFEATURED</option>
         </field>
+        <field name="levelID" type="ViewLevels" label="GROUPS_LEVEL" relevant="1" onchange="this.form.submit();">
+            <option value="">GROUPS_SELECT_LEVEL</option>
+        </field>
         <field name="language" type="language" label="GROUPS_LANGUAGE" onchange="this.form.submit();">
             <option value="">GROUPS_SELECT_LANGUAGE</option>
             <option value="*">GROUPS_NOT_CONFIGURED</option>

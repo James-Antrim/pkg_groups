@@ -11,7 +11,8 @@
 namespace THM\Groups\Fields;
 
 use Joomla\CMS\Form\Field\ListField;
-use THM\Groups\Adapters\Database as DB;
+use THM\Groups\Adapters\{Database as DB, Input};
+use THM\Groups\Helpers\{Categories, Users};
 
 /**
  * Provides a list of view levels.
@@ -25,32 +26,30 @@ class ViewLevels extends ListField
      */
     protected function getOptions(): array
     {
-        $defaultOptions = parent::getOptions();
-
-        $db    = $this->getDatabase();
-        $query = $db->getQuery(true);
-
-        $levels = $db->quoteName('#__viewlevels', 'vl');
-        $rules  = $db->quoteName('vl.rules');
-        $text   = $db->quoteName('vl.title', 'text');
-        $title  = $db->quoteName('vl.title');
-        $value  = 'DISTINCT ' . $db->quoteName('vl.id', 'value');
+        $query = DB::query();
+        $query->select(['DISTINCT ' . DB::qn('vl.id', 'value'), DB::qn('vl.title', 'text')])
+            ->from(DB::qn('#__viewlevels', 'vl'))
+            ->order(DB::qn('text'));
 
         $context = $this->form->getName();
-        $query->select([$value, $text])->from($levels)->order($title);
 
         if ($context === 'com_groups.attributes.filter') {
-            $attributes = $db->quoteName('#__groups_attributes', 'a');
-            $condition  = $db->quoteName('a.viewLevelID') . ' = ' . $db->quoteName('vl.id');
-            $query->join('inner', $attributes, $condition);
+            $query->innerJoin(DB::qn('#__groups_attributes', 'a'), DB::qc('a.viewLevelID', 'vl.id'));
+        }
+        elseif (in_array($context, ['com_groups.contents.filter', 'com_groups.pages.filter']) and $rootID = Categories::root()) {
+            $query->innerJoin(DB::qn('#__content', 'co'), DB::qc('co.access', 'vl.id'))
+                ->innerJoin(DB::qn('#__categories', 'ca'), DB::qc('ca.id', 'co.catid'))
+                ->where(DB::qc('ca.parent_id', $rootID));
+            if ($context === 'com_groups.pages.filter' and $categoryID = Users::categoryID(Input::integer('profileID'))) {
+                $query->where(DB::qc('ca.id', $categoryID));
+            }
+        }
+        elseif ($context === 'com_groups.groups.filter') {
+            $query->where(DB::qc('vl.rules', '[]', '!=', true));
         }
 
-        if ($context === 'com_groups.groups.filter') {
-            $query->where("$rules != '[]'");
-        }
+        DB::set($query);
 
-        $db->setQuery($query);
-
-        return array_merge($defaultOptions, DB::objects());
+        return array_merge(parent::getOptions(), DB::objects());
     }
 }

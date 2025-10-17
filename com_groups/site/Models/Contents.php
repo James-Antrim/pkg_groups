@@ -100,11 +100,6 @@ class Contents extends ListModel
             $query->where("(content.title LIKE '%" . implode("%' OR content.title LIKE '%", explode(' ', $search)) . "%')");
         }
 
-        // Category and user are semantically identical
-        if ($userID = (int) $this->state->get('filter.userID')) {
-            $query->where(DB::qc('user.id', $userID));
-        }
-
         $featured = $this->state->get('filter.featured');
         if (is_numeric($featured) and in_array((int) $featured, Input::BINARY)) {
             $featured = (int) $featured;
@@ -116,10 +111,21 @@ class Contents extends ListModel
             $query->where(DB::qc('content.language', $language, '=', true));
         }
 
+        if ($levelID = $this->state->get('filter.levelID') and is_numeric($levelID)) {
+            $levelID = (int) $levelID;
+            $query->where(DB::qc('content.access', $levelID));
+        }
+
         $status = $this->state->get('filter.state');
         if (is_numeric($status) and in_array((int) $status, array_keys(Pages::STATES))) {
             $status = (int) $status;
             $query->where(DB::qc('content.state', $status));
+        }
+
+        // Category <=> User
+        if ($userID = $this->state->get('filter.userID') and is_numeric($userID)) {
+            $userID = (int) $userID;
+            $query->where(DB::qc('user.id', $userID));
         }
 
         $this->orderBy($query);
