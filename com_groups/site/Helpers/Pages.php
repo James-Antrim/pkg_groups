@@ -10,11 +10,9 @@
 
 namespace THM\Groups\Helpers;
 
-use Exception;
-use Joomla\CMS\Uri\Uri;
-use Joomla\Component\Content\Administrator\Service\HTML\AdministratorService as ContentService;
-use THM\Groups\Adapters\Application;
-use THM\Groups\Adapters\Database as DB;
+use Joomla\CMS\{Language\LanguageHelper, Layout\LayoutHelper, Router\Route, Uri\Uri};
+use stdClass;
+use THM\Groups\Adapters\{Application, Database as DB, HTML, Text};
 use THM\Groups\Tables\{Content as CTable, Pages as PTable};
 
 /**
@@ -101,23 +99,43 @@ class Pages
     }
 
     /**
-     * Render the list of associated items
+     * Get references to the localizations of the specified content.
      *
      * @param   int  $contentID
      *
-     * @return  string
-     * @see ContentService::association()
+     * @return  array
      */
-    public static function association(int $contentID): string
+    public static function localizations(int $contentID): array
     {
-        $service = new ContentService();
-        try {
-            return $service->association($contentID);
+        // To avoid doing duplicate database queries.
+        static $associations = [];
+
+        // Multilanguage association array key. If the key is already in the array we don't need to run the query again, just return it.
+        $key = md5(serialize(['content', $contentID]));
+
+        if (!empty($associations[$key])) {
+            return $associations[$key];
         }
-        catch (Exception $exc) {
-            Application::message($exc->getMessage(), Application::WARNING);
-            return '';
+
+        $associations[$key] = [];
+
+        $query = DB::query();
+        $query->select(DB::qn(['c2.language', 'c2.id']))
+            ->from(DB::qn('#__content', 'c'))
+            ->innerJoin(DB::qn('#__associations', 'a'), DB::qc('a.id', 'c.id'))
+            ->innerJoin(DB::qn('#__associations', 'a2'), DB::qc('a.key', 'a2.key'))
+            ->innerJoin(DB::qn('#__content', 'c2'), DB::qn('a2.id') . ' = ' . DB::qn('c2.id'))
+            ->where(DB::qcs([['a.context', 'com_content.item', '=', true], ['c.id', $contentID]]));
+        DB::set($query);
+
+        foreach (DB::objects('language') as $tag => $item) {
+            // No identity references
+            if ((int) $item->id !== $contentID) {
+                $associations[$key][$tag] = $item;
+            }
         }
+
+        return $associations[$key];
     }
 
     /**
@@ -166,6 +184,69 @@ class Pages
     {
         $pattern = '/{(thm[_]?)?groups[A-Za-z0-9]*\s.*?}/';
         $html    = preg_replace($pattern, "", $html);
+    }
+
+    /**
+     * Render the list of associated items
+     *
+     * @param   stdClass  $item  the content/page resource to generate the language display for
+     *
+     * @return  string
+     */
+    public static function languageDisplay(stdClass $item): string
+    {
+        $contentID = $item->id;
+        $html      = '<div class="small" style="display:inline-block">'
+            . LayoutHelper::render('joomla.content.language', $item) . '</div>';
+
+        // Get the associations
+        if ($localizations = self::localizations($contentID)) {
+
+            foreach ($localizations as $tag => $localization) {
+                $localizations[$tag] = (int) $localization->id;
+            }
+
+            // Get the associated menu items
+            $query = DB::query()
+                ->select(array_merge(DB::qn(['c.id', 'c.title', 'l.lang_code']), DB::qn(['l.title'], ['language_title'])))
+                ->from(DB::qn('#__content', 'c'))
+                ->leftJoin(DB::qn('#__languages', 'l'), DB::qc('c.language', 'l.lang_code'))
+                ->whereIn(DB::qn('c.id'), $localizations);
+
+            DB::set($query);
+
+            if ($associations = DB::objects('id')) {
+                $languages         = LanguageHelper::getContentLanguages([0, 1]);
+                $content_languages = array_column($languages, 'lang_code');
+
+                foreach ($associations as $association) {
+                    if (in_array($association->lang_code, $content_languages)) {
+                        $url               = Route::_('index.php?option=com_groups&view=content&layout=edit&id=' . $association->id);
+                        $language          = htmlspecialchars($association->language_title, ENT_QUOTES, 'UTF-8');
+                        $title             = htmlspecialchars($association->title, ENT_QUOTES, 'UTF-8');
+                        $association->link = HTML::tip(
+                            $association->lang_code,
+                            "localization-tip-$contentID",
+                            '<strong>' . $language . '</strong><br>' . $title,
+                            ['class' => 'badge bg-secondary'],
+                            $url
+                        );
+                    }
+                    else {
+                        // Display warning if Content Language is trashed or deleted
+                        Application::message(
+                            Text::sprintf('CONTENT_LANGUAGE_WARNING', $association->lang_code),
+                            Application::WARNING
+                        );
+                    }
+                }
+            }
+
+            $associations = LayoutHelper::render('joomla.content.associations', $associations);
+            $html         .= "&nbsp;<div style=\"display:inline-block\">$associations</div>";
+        }
+
+        return $html;
     }
 
     /**
@@ -251,7 +332,7 @@ class Pages
         if (is_numeric($potentialContent)) {
             $contentID = (int) $potentialContent;
         }
-        elseif (preg_match('/^(\d+)\-[a-zA-Z\-]+$/', $potentialContent, $matches)) {
+        elseif (preg_match('/^(\d+)-[a-zA-Z\-]+$/', $potentialContent, $matches)) {
             $contentID = (int) $matches[1];
         }
 

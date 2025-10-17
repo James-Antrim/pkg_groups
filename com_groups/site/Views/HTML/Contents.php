@@ -10,9 +10,7 @@
 
 namespace THM\Groups\Views\HTML;
 
-use Exception;
 use Joomla\CMS\Language\{Associations, Multilanguage};
-use Joomla\CMS\Layout\LayoutHelper;
 use Joomla\CMS\Toolbar\Button\DropdownButton;
 use stdClass;
 use THM\Groups\Adapters\{Application, HTML, Input, Text, Toolbar};
@@ -42,7 +40,6 @@ class Contents extends ListView
         $this->toDo[] = 'Joomla batch functions for language and level. No current plans for tags implementation.';
         $this->toDo[] = 'Joomla batch functions for category with consequences if shoved into a profile category.';
         $this->toDo[] = 'Delete button if set to trashed state.';
-        $this->toDo[] = 'Create internal layout for associated content links.';
 
         if (Categories::root()) {
             $toolbar = Toolbar::instance();
@@ -85,9 +82,6 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        if ($item->id === 580) {
-            echo "<pre>" . print_r($item, true) . "</pre>";
-        }
         if ($checkin = HTML::toggle($index, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents')) {
             $item->title = "$checkin $item->title";
         }
@@ -95,17 +89,7 @@ class Contents extends ListView
         $item->featured = HTML::toggle($index, Helper::FEATURED_STATES[$item->featured], 'contents');
 
         if ($this->showLanguages) {
-            try {
-                $associations = '<div style="display:inline-block">' . Helper::association($item->id) . '</div>';
-                $language     = '<div class="small" style="display:inline-block">'
-                    . LayoutHelper::render('joomla.content.language', $item) . '</div>';
-            }
-            catch (Exception $exception) {
-                Application::message($exception->getMessage(), Application::WARNING);
-                $associations = $language = '';
-            }
-
-            $item->language = $language . '&nbsp;' . $associations;
+            $item->language = Helper::languageDisplay($item);
         }
 
         $item->state = HTML::toggle($index, Helper::STATES[$item->state], 'contents');
