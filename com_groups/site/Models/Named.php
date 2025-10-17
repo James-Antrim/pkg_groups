@@ -28,13 +28,11 @@ trait Named
      */
     public function setContext(): void
     {
-        if (empty($this->context)) {
-            $this->context = strtolower($this->option . '.' . $this->getName());
+        $this->context = strtolower('com_groups.' . $this->getName());
 
-            // Make sure the filters from different instances of the same model don't bleed
-            if ($menuItem = Application::menuItem() and $menuID = $menuItem->id) {
-                $this->context .= '.' . $menuID;
-            }
+        // Make sure the filters from different instances of the same model don't bleed
+        if ($menuItem = Application::menuItem() and $menuID = $menuItem->id) {
+            $this->context .= '.' . $menuID;
         }
     }
 
@@ -44,10 +42,8 @@ trait Named
      */
     public function getName(): string
     {
-        if (empty($this->name) or empty($this->option)) {
-            $this->name   = Application::uqClass($this);
-            $this->option = 'com_groups';
-        }
+        $this->name   = Application::uqClass($this);
+        $this->option = 'com_groups';
 
         return $this->name;
     }
