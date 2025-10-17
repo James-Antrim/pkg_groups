@@ -133,25 +133,33 @@ class Contents extends ListView
             ];
         }
 
-        $this->headers['state'] = [
-            'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title'      => Text::_('STATUS'),
-            'type'       => 'value'
-        ];
+        if (!$state = $this->state->get('filter.state') or !in_array((int) $state, array_keys(Helper::STATES))) {
+            $this->headers['state'] = [
+                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+                'title'      => Text::_('STATUS'),
+                'type'       => 'value'
+            ];
+        }
 
-        $this->headers['featured'] = [
-            'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title'      => Text::_('FEATURED'),
-            'type'       => 'value'
-        ];
+        if (!$featured = $this->state->get('filter.featured')
+            or !in_array((int) $featured, array_keys(Helper::FEATURED_STATES))
+        ) {
+            $this->headers['featured'] = [
+                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+                'title'      => Text::_('FEATURED'),
+                'type'       => 'value'
+            ];
+        }
 
-        $this->headers['level'] = [
-            'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-            'title'      => Text::_('LEVEL'),
-            'type'       => 'value'
-        ];
+        if (!$levelID = $this->state->get('filter.levelID') or !is_numeric($levelID)) {
+            $this->headers['level'] = [
+                'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
+                'title'      => Text::_('LEVEL'),
+                'type'       => 'value'
+            ];
+        }
 
-        if ($this->showLanguages) {
+        if ($this->showLanguages and !$language = $this->state->get('filter.language')) {
             $this->headers['language'] = [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
                 'title'      => Text::_('LANGUAGE'),
