@@ -11,8 +11,8 @@
 namespace THM\Groups\Controllers;
 
 use JetBrains\PhpStorm\NoReturn;
-use THM\Groups\Adapters\{Application, Input, Text};
-use THM\Groups\Helpers\Pages as Helper;
+use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
+use THM\Groups\Helpers\{Categories as CaHelper, Pages as Helper, Users as UHelper};
 use THM\Groups\Tables\{Content as CTable, Pages as PTable};
 
 abstract class Contented extends ListController
@@ -40,6 +40,58 @@ abstract class Contented extends ListController
         $updated    = $table->checkIn($selectedID) ? 1 : 0;
 
         $this->farewell(1, $updated);
+    }
+
+    /** @inheritDoc */
+    public function delete(): void
+    {
+        $this->checkToken();
+        $this->authorize();
+
+        $myCategoryID = 0;
+
+        if ($profileID = Input::integer('profileID')) {
+            $myCategoryID = UHelper::categoryID($profileID);
+        }
+
+        if (!$selectedIDs = Input::selectedIDs()) {
+            $root  = CaHelper::root();
+            $query = DB::query();
+            $query->select(DB::qn('co.id'))
+                ->from(DB::qn('#__content', 'co'))
+                ->innerJoin(DB::qn('#__categories', 'ca'), DB::qc('ca.id', 'co.catid'))
+                ->where(DB::qcs([['ca.parent_id', $root], ['co.state', Helper::TRASHED]]));
+
+            if ($myCategoryID) {
+                $query->where(DB::qn('co.catid', $myCategoryID));
+            }
+
+            DB::set($query);
+            $selectedIDs = DB::integers();
+        }
+
+        $deleted  = 0;
+        $selected = count($selectedIDs);
+
+        foreach ($selectedIDs as $selectedID) {
+            $table = new CTable();
+
+            if (!$table->load($selectedID) or $table->state !== Helper::TRASHED) {
+                Application::message('412');
+                continue;
+            }
+
+            if ($myCategoryID and $table->catid !== $myCategoryID) {
+                Application::message('403');
+                continue;
+            }
+
+            if ($table->delete($selectedID)) {
+                $deleted++;
+            }
+        }
+
+        $this->farewell($selected, $deleted, true);
     }
 
     /**

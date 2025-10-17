@@ -20,7 +20,7 @@ use THM\Groups\Layouts\HTML\Row;
 /** @inheritDoc */
 class Contents extends ListView
 {
-    private bool $showDelete;
+    private bool $showDelete = false;
     private bool $showLanguages;
 
     /**
@@ -40,7 +40,7 @@ class Contents extends ListView
     {
         $this->toDo[] = 'Joomla batch functions for language and level. No current plans for tags implementation.';
         $this->toDo[] = 'Joomla batch functions for category with consequences if shoved into a profile category.';
-        $this->toDo[] = 'Add empty trash implementation.';
+        $this->toDo[] = 'Add view language and level filter.';
 
         if (Categories::root()) {
             $toolbar = Toolbar::instance();
