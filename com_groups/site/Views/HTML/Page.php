@@ -9,6 +9,8 @@
  */
 
 
+namespace THM\Groups\Views\HTML;
+
 jimport('joomla.application.component.view');
 require_once HELPERS . 'profiles.php';
 require_once JPATH_COMPONENT . '/../com_content/helpers/route.php';
@@ -17,18 +19,21 @@ require_once JPATH_COMPONENT . '/../com_content/models/article.php';
 
 jimport('joomla.application.component.helper');
 
+use JError;
+use JEventDispatcher;
+use JFactory;
 use Joomla\CMS\Component\ComponentHelper;
+use JPluginHelper;
+use THM\Groups\Adapters\Application;
 use THM\Groups\Adapters\Text;
-use THM\Groups\Views\HTML\Titled;
+use THM_GroupsHelperRouter;
 
 /**
  * View class for a list of articles
  */
-class Page extends JViewLegacy
+class Page extends FormView
 {
     use Titled;
-
-    protected stdClass $item;
 
     protected $params;
 
@@ -46,6 +51,8 @@ class Page extends JViewLegacy
      */
     public function display($tpl = null): void
     {
+        $this->toDo[] = 'Ensure hits are incremented.';
+
         // Initialise variables.
         $app   = JFactory::getApplication();
         $input = $app->input;
@@ -119,10 +126,7 @@ class Page extends JViewLegacy
 
         // Check the view access to the article (the model has already computed the values).
         if ($item->params->get('access-view') != true && (($item->params->get('show_noauth') != true && $user->get('guest')))) {
-            JError::raiseWarning(401, Text::_('JERROR_ALERTNOAUTHOR'));
-
-            return;
-
+            Application::error(401);
         }
 
         if ($item->params->get('show_intro', '1') == '1') {

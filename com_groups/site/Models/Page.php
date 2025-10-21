@@ -8,16 +8,31 @@
  * @link        www.thm.de
  */
 
+namespace THM\Groups\Models;
+
 defined('_JEXEC') or die;
 
+use ContentHelperAssociation;
+use ContentHelperRoute;
+use JError;
+use JException;
+use JFactory;
+use JLanguageMultilang;
 use Joomla\Registry\Registry;
+use JRoute;
+use JTable;
+use JText;
+use stdClass;
+use THM\Groups\Adapters\Input;
+use THM_GroupsHelperContent;
+use THM\Groups\Adapters\Database as DB;
 
 require_once HELPERS . 'content.php';
 
 /**
  * Content Model
  */
-class THM_GroupsModelContent extends JModelItem
+class Page extends FormModel
 {
     /**
      * Model context string.
@@ -27,66 +42,46 @@ class THM_GroupsModelContent extends JModelItem
     protected $_context = 'com_content.article';
 
     /**
-     * Method to check a row in if the necessary properties/fields exist. Checking a row in will allow other users the
-     * ability to edit the row.
-     *
-     * @return  bool  true on success, otherwise false
-     * @throws Exception
-     */
-    public function checkIn()
-    {
-        $selectedArray = JFactory::getApplication()->input->get('cid', [], 'array');
-
-        if (empty($selectedArray) or empty($selectedArray[0])) {
-            return true;
-        }
-
-        $table = JTable::getInstance('Content', 'JTable');
-
-        return $table->checkIn($selectedArray[0]);
-    }
-
-    /**
      * Retrieves the content for the given ID.
      *
      * @param $contentID
      *
      * @return mixed object on success, otherwise false
      */
-    private function getContent($contentID)
+    private function getContent(int $contentID): stdClass
     {
         $user  = JFactory::getUser();
         $dbo   = $this->getDbo();
-        $query = $dbo->getQuery(true);
+        $query = DB::query();
 
+        $aliased  = DB::qn(
+            ['ca.title', 'ca.alias', 'ca.access', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['category_title', 'category_alias', 'category_access', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+        );
+        $selected = DB::qn(['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
         $query->select(
             $this->getState(
-                'item.select', 'art.id, art.asset_id, art.title, art.alias, art.introtext, art.fulltext, ' .
-                'art.state, art.catid, art.created, art.created_by, art.created_by_alias, ' .
+                'item.select', 'co.id, co.asset_id, co.title, co.alias, co.introtext, co.fulltext, ' .
+                'co.state, co.catid, co.created, co.created_by, co.created_by_alias, ' .
                 // Use created if modified is 0
-                'CASE WHEN art.modified = ' . $dbo->quote($dbo->getNullDate()) . ' THEN art.created ELSE art.modified END as modified, ' .
-                'art.modified_by, art.checked_out, art.checked_out_time, art.publish_up, art.publish_down, ' .
-                'art.images, art.urls, art.attribs, art.version, art.ordering, ' .
-                'art.metakey, art.metadesc, art.access, art.hits, art.metadata, art.featured, art.language, art.xreference'
+                'CASE WHEN co.modified = ' . $dbo->quote($dbo->getNullDate()) . ' THEN co.created ELSE co.modified END as modified, ' .
+                'co.modified_by, co.checked_out, co.checked_out_time, co.publish_up, co.publish_down, ' .
+                'co.images, co.urls, co.attribs, co.version, co.ordering, ' .
+                'co.metakey, co.metadesc, co.access, co.hits, co.metadata, co.featured, co.language, co.xreference'
             )
         );
-        $query->from('#__content AS art')->where('art.id = ' . (int) $contentID);
+        $query->from(DB::qn('#__content', 'co'))
+            ->where(DB::qc('co.id', $contentID));
 
         // Join on category table.
-        $query->select('cat.title AS category_title, cat.alias AS category_alias, cat.access AS category_access');
-        $query->innerJoin('#__categories AS cat on cat.id = art.catid')->where('cat.published > 0');
+        $query->innerJoin('#__categories AS cat on ca.id = co.catid')->where('ca.published > 0');
 
         // Join on user table.
-        $query->select('usr.name AS author')->join('LEFT', '#__users AS usr on usr.id = art.created_by');
+        $query->select('usr.name AS author')->leftJoin('#__users AS usr on usr.id = co.created_by');
 
         // Join over the categories to get parent category titles
         $query->select('parent.title AS parent_title, parent.id AS parent_id, parent.path AS parent_route, parent.alias AS parent_alias');
-        $query->join('LEFT', '#__categories as parent ON parent.id = cat.parent_id');
-
-        //TODO: does anyone need this?
-        // Join on voting table
-        $query->select('ROUND(v.rating_sum / v.rating_count, 0) AS rating, v.rating_count AS rating_count');
-        $query->join('LEFT', '#__content_rating AS v ON art.id = v.content_id');
+        $query->leftJoin('#__categories as parent ON parent.id = ca.parent_id');
 
         $canEdit      = $user->authorise('core.edit', 'com_content');
         $canEditState = $user->authorise('core.edit.state', 'com_content');
@@ -99,8 +94,8 @@ class THM_GroupsModelContent extends JModelItem
             $date     = JFactory::getDate();
             $nowDate  = $dbo->quote($date->toSql());
 
-            $query->where('(art.publish_up = ' . $nullDate . ' OR art.publish_up <= ' . $nowDate . ')');
-            $query->where('(art.publish_down = ' . $nullDate . ' OR art.publish_down >= ' . $nowDate . ')');
+            $query->where('(co.publish_up = ' . $nullDate . ' OR co.publish_up <= ' . $nowDate . ')');
+            $query->where('(co.publish_down = ' . $nullDate . ' OR co.publish_down >= ' . $nowDate . ')');
         }
 
         // Filter by published state.
@@ -108,27 +103,12 @@ class THM_GroupsModelContent extends JModelItem
         $archived  = $this->getState('filter.archived');
 
         if (is_numeric($published) or is_numeric($archived)) {
-            $query->where('(art.state = ' . (int) $published . ' OR art.state =' . (int) $archived . ')');
+            $query->where('(co.state = ' . (int) $published . ' OR co.state =' . (int) $archived . ')');
         }
 
         $dbo->setQuery($query);
 
-        try {
-            $content = $dbo->loadObject();
-        }
-        catch (Exception $exception) {
-            if ($exception->getCode() == 404) {
-                // Need to go thru the error handler to allow Redirect to work.
-                JError::raiseError($exception->getCode(), $exception->getMessage());
-            }
-            else {
-                $this->setError($exception);
-
-                return false;
-            }
-        }
-
-        return empty($content) ? false : $content;
+        return DB::object();
     }
 
     /**
@@ -308,7 +288,7 @@ class THM_GroupsModelContent extends JModelItem
     private function setViewAccess(&$content)
     {
         // Compute view access permissions.
-        if ($access = $this->getState('filter.access')) {
+        if ($this->getState('filter.access')) {
             // If the access filter has been set, we already know this user can view.
             $content->params->set('access-view', true);
 
