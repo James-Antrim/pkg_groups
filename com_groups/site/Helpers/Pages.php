@@ -80,6 +80,8 @@ class Pages
         ]
     ];
 
+    public const NOT_LOCALIZED = '*';
+
     private const URL = 1, PATH = 2, QUERY = 3;
 
     /**
@@ -96,6 +98,17 @@ class Pages
             return $table->alias;
         }
         return '';
+    }
+
+    /**
+     * Retrieves the ids of all view access levels.
+     * @return array
+     */
+    public static function levelIDs(): array
+    {
+        $query = DB::query()->select(DB::qn('id'))->from(DB::qn('#__viewlevels'));
+        DB::set($query);
+        return DB::integers();
     }
 
     /**

@@ -11,7 +11,8 @@
 namespace THM\Groups\Controllers;
 
 use JetBrains\PhpStorm\NoReturn;
-use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
+use Joomla\CMS\Language\LanguageHelper;
+use THM\Groups\Adapters\{Application, Database as DB, Input, Text, User};
 use THM\Groups\Helpers\{Categories as CaHelper, Pages as Helper, Users as UHelper};
 use THM\Groups\Tables\{Content as CTable, Pages as PTable};
 
@@ -24,6 +25,64 @@ abstract class Contented extends ListController
     public function archive(): void
     {
         $this->update('state', Helper::ARCHIVED);
+    }
+
+    /**
+     * Batch processing allows updating the configured languages or access levels of multiple contents/pages simultaneously.
+     *
+     * @return void
+     */
+    public function batch(): void
+    {
+        $this->checkToken();
+        $this->authorize();
+
+        $batches     = Input::batches();
+        $contentIDs  = Input::selectedIDs();
+        $doubleCheck = Application::uqClass($this) !== 'Contents';
+        $levelID     = $batches->get('levelID');
+        $selected    = count($contentIDs);
+        $tag         = $batches->get('language');
+        $updated     = 0;
+
+        if ($levelID and !in_array($levelID, Helper::levelIDs())) {
+            Application::message('412', Application::WARNING);
+            $levelID = null;
+        }
+
+        if ($tag and !($tag === Helper::NOT_LOCALIZED or in_array($tag, array_keys(LanguageHelper::getKnownLanguages())))) {
+            Application::message('412', Application::WARNING);
+            $tag = null;
+        }
+
+        if ($levelID or $tag) {
+            foreach ($contentIDs as $contentID) {
+                $table = new CTable();
+
+                if (!$table->load($contentID)) {
+                    Application::message('412', Application::WARNING);
+                    continue;
+                }
+
+                if ($doubleCheck and $table->created_by !== User::id()) {
+                    Application::error(403);
+                }
+
+                if ($levelID) {
+                    $table->access = $levelID;
+                }
+
+                if ($tag) {
+                    $table->language = $tag;
+                }
+
+                if ($table->store()) {
+                    $updated++;
+                }
+            }
+        }
+
+        $this->farewell($selected, $updated);
     }
 
     /**

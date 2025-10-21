@@ -38,7 +38,6 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function addToolbar(): void
     {
-        $this->toDo[] = 'Add server side batch implementation.';
         $this->toDo[] = 'Add hits column & how are hits recorded???.';
 
         if (Categories::root()) {

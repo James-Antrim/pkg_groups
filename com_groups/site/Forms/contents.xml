@@ -3,6 +3,7 @@
     <fields name="batch" addfieldpath="/media/com_thm_groups/fields">
         <field name="language" type="language" label="GROUPS_SET_LANGUAGE">
             <option value="">GROUPS_KEEP_LANGUAGE</option>
+            <option value="*">GROUPS_REMOVE_LANGUAGE</option>
         </field>
         <field name="levelID" type="ViewLevels" label="GROUPS_SET_LEVEL">
             <option value="">GROUPS_KEEP_LEVEL</option>
