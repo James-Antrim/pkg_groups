@@ -33,19 +33,23 @@ class ViewLevels extends ListField
 
         $context = $this->form->getName();
 
-        if ($context === 'com_groups.attributes.filter') {
-            $query->innerJoin(DB::qn('#__groups_attributes', 'a'), DB::qc('a.viewLevelID', 'vl.id'));
-        }
-        elseif (in_array($context, ['com_groups.contents.filter', 'com_groups.pages.filter']) and $rootID = Categories::root()) {
-            $query->innerJoin(DB::qn('#__content', 'co'), DB::qc('co.access', 'vl.id'))
-                ->innerJoin(DB::qn('#__categories', 'ca'), DB::qc('ca.id', 'co.catid'))
-                ->where(DB::qc('ca.parent_id', $rootID));
-            if ($context === 'com_groups.pages.filter' and $categoryID = Users::categoryID(Input::integer('profileID'))) {
-                $query->where(DB::qc('ca.id', $categoryID));
+        // Batch will potentially apply unused levels or levels beyond the authorization of the profile user.
+        if ($this->group !== 'batch') {
+            if ($context === 'com_groups.attributes.filter') {
+                $query->innerJoin(DB::qn('#__groups_attributes', 'a'), DB::qc('a.viewLevelID', 'vl.id'));
             }
-        }
-        elseif ($context === 'com_groups.groups.filter') {
-            $query->where(DB::qc('vl.rules', '[]', '!=', true));
+            elseif (in_array($context,
+                    ['com_groups.contents.filter', 'com_groups.pages.filter']) and $rootID = Categories::root()) {
+                $query->innerJoin(DB::qn('#__content', 'co'), DB::qc('co.access', 'vl.id'))
+                    ->innerJoin(DB::qn('#__categories', 'ca'), DB::qc('ca.id', 'co.catid'))
+                    ->where(DB::qc('ca.parent_id', $rootID));
+                if ($context === 'com_groups.pages.filter' and $categoryID = Users::categoryID(Input::integer('profileID'))) {
+                    $query->where(DB::qc('ca.id', $categoryID));
+                }
+            }
+            elseif ($context === 'com_groups.groups.filter') {
+                $query->where(DB::qc('vl.rules', '[]', '!=', true));
+            }
         }
 
         DB::set($query);

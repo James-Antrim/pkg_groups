@@ -21,6 +21,11 @@ class Groups extends ListController
     /** @inheritDoc */
     protected string $item = 'Group';
 
+    /**
+     * Batch processing allows assignment or removal of multiple access levels to/from multiple groups.
+     *
+     * @return void
+     */
     public function batch(): void
     {
         $this->checkToken();
@@ -36,7 +41,7 @@ class Groups extends ListController
 
         $levels   = Input::batches()->get('levels');
         $levelIDs = array_filter(array_map('intval', (array) $levels));
-        $updated = 0;
+        $updated  = 0;
 
         foreach ($groupIDs as $groupID) {
             $altered = false;

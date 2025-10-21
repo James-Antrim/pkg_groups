@@ -73,6 +73,7 @@ class Contents extends ListView
             $batchBar->standardButton('batch', Text::_('PROCESS'), 'contents.batch');
 
             if ($this->showDelete) {
+                // No list check necessary as function can be applied generally in the displayed context.
                 $toolbar->delete('contents.delete', Text::_('EMPTY_TRASH'));
             }
         }
@@ -158,7 +159,7 @@ class Contents extends ListView
             ];
         }
 
-        if ($this->showLanguages and !$language = $this->state->get('filter.language')) {
+        if ($this->showLanguages and !$this->state->get('filter.language')) {
             $this->headers['language'] = [
                 'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
                 'title'      => Text::_('LANGUAGE'),
