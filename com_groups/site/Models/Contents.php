@@ -64,6 +64,7 @@ class Contents extends ListModel
         $select  = DB::qn([
             'content.checked_out',
             'content.id',
+            'content.hits',
             'content.language',
             'content.title',
             'content.state',

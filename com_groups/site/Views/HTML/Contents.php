@@ -38,8 +38,6 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function addToolbar(): void
     {
-        $this->toDo[] = 'Add hits column & how are hits recorded???.';
-
         if (Categories::root()) {
             $toolbar = Toolbar::instance();
 
@@ -169,6 +167,12 @@ class Contents extends ListView
         $this->headers['id'] = [
             'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
             'title'      => Text::_('ID'),
+            'type'       => 'value'
+        ];
+
+        $this->headers['hits'] = [
+            'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
+            'title'      => Text::_('HITS'),
             'type'       => 'value'
         ];
     }
