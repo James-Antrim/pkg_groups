@@ -23,7 +23,7 @@
         <field name="functional" type="list" label="GROUPS_FUNCTIONAL_SELECT" onchange="this.form.submit();">
             <option value="">GROUPS_FUNCTIONAL_SELECT</option>
             <option value="1">GROUPS_FUNCTIONAL_ACCOUNT</option>
-            <option value="0">GROUPS_PERSONAL_ACCOUNT</option>
+            <option value="0">GROUPS_PROFILE_ACCOUNT</option>
         </field>
         <field name="association" type="Associations" label="GROUPS_ASSOCIATION_SELECT" onchange="this.form.submit();">
             <option value="">GROUPS_ASSOCIATION_SELECT</option>

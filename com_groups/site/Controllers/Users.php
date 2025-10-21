@@ -537,7 +537,7 @@ class Users extends ListController
 
         $selectedIDs = Input::selectedIDs();
 
-        // Deviating authorization because of personal account access
+        // Deviating authorization because of profile account access
         if (!Can::changeState()) {
             $selectedIDs = $this->filterSelected($selectedIDs);
         }

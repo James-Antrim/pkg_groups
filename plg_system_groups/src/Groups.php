@@ -55,7 +55,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
             return true;
         }
 
-        // Personal profile as item
+        // Profile as item
         $referrer = Input::referrer();
         $user     = User::instance();
 

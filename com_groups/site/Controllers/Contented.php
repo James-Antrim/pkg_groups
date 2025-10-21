@@ -154,7 +154,7 @@ abstract class Contented extends ListController
     }
 
     /**
-     * Adds the selected pages in the user's personal menu.
+     * Adds the selected pages in the profile menu.
      * @return void
      */
     public function feature(): void
@@ -203,7 +203,7 @@ abstract class Contented extends ListController
     }
 
     /**
-     * Removes the selected pages from the user's personal menu.
+     * Removes the selected pages from the profile menu.
      * @return void
      */
     public function unfeature(): void

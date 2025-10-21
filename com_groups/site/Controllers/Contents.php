@@ -79,7 +79,7 @@ class Contents extends Contented
                     continue;
                 }
 
-                // Both category and content do not reference a user => deleted user with deprecated personal content
+                // Both category and content do not reference a user => deleted user with deprecated profile content
                 $table = new CoTable();
                 $table->load($contentID);
                 $table->delete();

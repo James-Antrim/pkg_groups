@@ -12,7 +12,7 @@ icons. The exception to this customization
 are the attributes for names, titles and pictures which receive special
 handling in formatting and as a rule are never labeled.
 
-Profiles can be allowed to create personalized content and will then be
+Profiles can be allowed to create individualized content and will then be
 associated with a category which shares their name.
 
 Groups can be assigned roles. While semantically similar to user groups. They
@@ -30,8 +30,8 @@ extensions.
 ### Public views
 
 * Advanced - a formatted display of profiles associated with a group
-* Content Manager - a list of the content in a profile's personal category
-* Content - a single personal content item
+* Content Manager - a list of the content in a profile's associated category
+* Content - a single profile content item
 * Overview - a list of links to the profiles associated with a group
 * Profile - a single profile with all published attributes
 * Profile Editor - a form for editing profile attribute values and publication
@@ -42,7 +42,7 @@ extensions.
 Creates a menu related to the profile or profile related content being
 displayed. This will always display menu-published content, and can be
 configured to display a link to the profile itself. Administrators and the
-profile user will also be shown links to views which manage personal resources:
+profile user will also be shown links to views which manage profile resources:
 the profile editor, the content manager and the joomla content editor
 (with the category restricted).
 
