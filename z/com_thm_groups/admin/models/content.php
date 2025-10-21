@@ -16,7 +16,7 @@ require_once HELPERS . 'content.php';
 class THM_GroupsModelContent extends JModelLegacy
 {
     /**
-     * Activates personal menu display for specific content articles.
+     * Activates profile menu display for specific content articles.
      *
      * @return  bool  true on success, otherwise false
      * @throws Exception
@@ -31,7 +31,7 @@ class THM_GroupsModelContent extends JModelLegacy
     }
 
     /**
-     * Deactivates personal menu display for specific content articles.
+     * Deactivates profile menu display for specific content articles.
      *
      * @return  bool true on success, otherwise false
      * @throws Exception

@@ -28,8 +28,6 @@ use THM\Groups\Adapters\Text;
     <div class="description"><?php echo Text::_('PROFILE_EDIT_LABEL_DESC_LONG'); ?></div>
     <div class="label"><?php echo Text::_('CONTENT_ENABLED'); ?></div>
     <div class="description"><?php echo Text::_('CONTENT_ENABLED_DESC_LONG'); ?></div>
-    <div class="label"><?php echo Text::_('ASSOCIATED_GROUPS_AND_ROLES'); ?></div>
-    <div class="description"><?php echo Text::_('ASSOCIATED_GROUPS_AND_ROLES_DESC_LONG'); ?></div>
     <div class="clearFix"></div>
 </div>
 </body>

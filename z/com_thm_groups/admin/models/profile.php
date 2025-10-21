@@ -96,7 +96,7 @@ class THM_GroupsModelProfile extends JModelLegacy
     }
 
     /**
-     * Allows public display of personal content. Access checks are performed in toggle.
+     * Allows public display of profile content. Access checks are performed in toggle.
      *
      * @return bool
      */
