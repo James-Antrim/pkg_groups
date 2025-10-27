@@ -26,8 +26,6 @@ class Pages extends Contents
     /** @inheritDoc */
     public function addToolBar(): void
     {
-        $this->toDo[] = 'Flesh out the implementation of the authorizeAJAX function for the profile user.';
-
         parent::addToolBar();
 
         $title = $this->own ? Text::_('MY_PAGES') : Text::sprintf('MANAGE_PAGES', Profiles::name($this->profileID));

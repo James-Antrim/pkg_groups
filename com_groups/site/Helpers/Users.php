@@ -447,6 +447,6 @@ class Users
      */
     public static function surnames(int $userID): string
     {
-        return (string) self::get($userID, 'forenames');
+        return (string) self::get($userID, 'surnames');
     }
 }
