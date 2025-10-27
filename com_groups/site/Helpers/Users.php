@@ -117,7 +117,7 @@ class Users
     {
         $table = new CTable();
         if ($table->load(['created_user_id' => $userID, 'parent_id' => CHelper::root()])) {
-            return $table->categoryID;
+            return $table->id;
         }
 
         return 0;
