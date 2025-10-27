@@ -27,8 +27,6 @@ class Pages extends Contents
     public function addToolBar(): void
     {
         $this->toDo[] = 'Flesh out the implementation of the authorizeAJAX function for the profile user.';
-        $this->toDo[] = 'Set the form Itemid. //$this->menuID = Input::itemID()';
-        $this->toDo[] = 'Set the form profile id.';
 
         parent::addToolBar();
 

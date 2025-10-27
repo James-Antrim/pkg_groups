@@ -11,9 +11,6 @@
     </fields>
     <fields name="filter">
         <field name="search" type="text" label="GROUPS_SEARCH" hint="GROUPS_SEARCH_TERMS"/>
-        <field name="userID" type="Authors" label="GROUPS_USER" onchange="this.form.submit();">
-            <option value="">GROUPS_SELECT_USER</option>
-        </field>
         <field name="state" type="list" label="GROUPS_STATUS" onchange="this.form.submit();">
             <option value="">GROUPS_SELECT_STATE</option>
             <option value="1">GROUPS_PUBLISHED</option>
@@ -33,6 +30,10 @@
             <option value="">GROUPS_SELECT_LANGUAGE</option>
             <option value="*">GROUPS_NOT_CONFIGURED</option>
         </field>
+    </fields>
+    <fields name="hidden">
+        <field name="Itemid" type="hidden"/>
+        <field name="profileID" type="hidden"/>
     </fields>
     <fields name="list">
         <field name="limit" type="limitbox" class="input-mini" label="JGLOBAL_LIST_LIMIT" onchange="this.form.submit();"/>

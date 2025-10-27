@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Models;
 
+use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\Database\DatabaseQuery;
 use THM\Groups\Adapters\{Database as DB, Input, User};
 use THM\Groups\Helpers\Categories;
@@ -23,6 +24,15 @@ class Pages extends ListModel
 
     protected string $defaultOrdering = 'ordering';
 
+    public function __construct($config = [], MVCFactoryInterface $factory = null)
+    {
+        if (empty($config['filter_fields'])) {
+            $config['filter_fields'] = ['featured', 'language', 'level', 'state'];
+        }
+        parent::__construct($config, $factory);
+        $this->profileID = Input::integer('profileID', User::id());
+    }
+
     /** @inheritDoc */
     protected function getListQuery(): DatabaseQuery
     {
@@ -32,8 +42,16 @@ class Pages extends ListModel
 
         $query = $this->query();
 
-        $query->where(DB::qc('user.id', Input::integer('profileID', User::id())));
+        $query->where(DB::qc('user.id', $this->profileID));
 
         return $query;
+    }
+
+    protected function loadFormData()
+    {
+        if ($data = parent::loadFormData()) {
+            $data->hidden = ['Itemid' => Input::itemID(), 'profileID' => $this->profileID];
+        }
+        return $data;
     }
 }

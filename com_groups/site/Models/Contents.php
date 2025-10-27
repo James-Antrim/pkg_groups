@@ -10,7 +10,7 @@
 
 namespace THM\Groups\Models;
 
-use Joomla\{Database\DatabaseQuery, Registry\Registry};
+use Joomla\Database\DatabaseQuery;
 use THM\Groups\Adapters\Database as DB;
 use THM\Groups\Controllers\Contents as Controller;
 use THM\Groups\Helpers\Categories;
@@ -37,19 +37,6 @@ class Contents extends ListModel
         parent::__construct($config);
 
         Controller::clean();
-    }
-
-    /** @inheritDoc */
-    public function getItems(): array
-    {
-        $items = parent::getItems();
-        foreach ($items as $item) {
-            if (isset($item->metadata)) {
-                $registry       = new Registry($item->metadata);
-                $item->metadata = $registry->toArray();
-            }
-        }
-        return $items;
     }
 
     /** @inheritDoc */
