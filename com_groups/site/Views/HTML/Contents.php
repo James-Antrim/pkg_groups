@@ -4,7 +4,7 @@
  * @extension   com_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2018 TH Mittelhessen
- * @license     GNU GPL v.2
+ * @license     GNU GPL v.3
  * @link        www.thm.de
  */
 
@@ -20,6 +20,9 @@ use THM\Groups\Layouts\HTML\Row;
 /** @inheritDoc */
 class Contents extends ListView
 {
+    use Contented;
+
+    public bool $allowBatch = true;
     private bool $showDelete = false;
     private bool $showLanguages;
 
@@ -39,26 +42,24 @@ class Contents extends ListView
     protected function addToolbar(): void
     {
         if (Categories::root()) {
-            $toolbar = Toolbar::instance();
+            $controller = strtolower(Application::uqClass($this));
+            $toolbar    = Toolbar::instance();
 
             $toolbar->addNew('contents.add');
 
-            // select articles and authors to add/reassign
-            $this->allowBatch = true;
-
             /** @var DropdownButton $dropdown */
-            $dropdown = $toolbar->dropdownButton('contents')
+            $dropdown = $toolbar->dropdownButton($controller)
                 ->buttonClass('btn btn-action')
                 ->icon('icon-ellipsis-h')
                 ->listCheck(true);
             $dropdown->toggleSplit(false);
             $childBar = $dropdown->getChildToolbar();
-            $childBar->publish('contents.publish');
-            $childBar->unpublish('contents.hide');
-            $childBar->archive('contents.archive');
-            $childBar->trash('contents.trash');
-            $childBar->standardButton('feature', Text::_('FEATURE'), 'contents.feature')->icon('fa fa-eye');
-            $childBar->standardButton('unfeature', Text::_('UNFEATURE'), 'contents.unfeature')->icon('fa fa-eye-slash');
+            $childBar->publish("$controller.publish");
+            $childBar->unpublish("$controller.hide");
+            $childBar->archive("$controller.archive");
+            $childBar->trash("$controller.trash");
+            $childBar->standardButton('feature', Text::_('FEATURE'), "$controller.feature")->icon('fa fa-eye');
+            $childBar->standardButton('unfeature', Text::_('UNFEATURE'), "$controller.unfeature")->icon('fa fa-eye-slash');
             $childBar->popupButton('batch', Text::_('BATCH'))
                 ->popupType('inline')
                 ->textHeader(Text::_('BATCH'))
@@ -67,11 +68,11 @@ class Contents extends ListView
                 ->modalHeight('fit-content');
 
             $batchBar = Toolbar::instance('batch');
-            $batchBar->standardButton('batch', Text::_('PROCESS'), 'contents.batch');
+            $batchBar->standardButton('batch', Text::_('PROCESS'), "$controller.batch");
 
             if ($this->showDelete) {
                 // No list check necessary as function can be applied generally in the displayed context.
-                $toolbar->delete('contents.delete', Text::_('EMPTY_TRASH'));
+                $toolbar->delete("$controller.delete", Text::_('EMPTY_TRASH'));
             }
         }
         else {
@@ -84,7 +85,8 @@ class Contents extends ListView
     /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        $item->featured = HTML::toggle($index, Helper::FEATURED_STATES[$item->featured], 'contents');
+        $controller     = strtolower(Application::uqClass($this));
+        $item->featured = HTML::toggle($index, Helper::FEATURED_STATES[$item->featured], $controller);
 
         if ($this->showLanguages) {
             $item->language = Helper::languageDisplay($item);
@@ -94,9 +96,9 @@ class Contents extends ListView
             $this->showDelete = true;
         }
 
-        $item->state = HTML::toggle($index, Helper::STATES[$item->state], 'contents');
+        $item->state = HTML::toggle($index, Helper::STATES[$item->state], $controller);
 
-        if ($checkin = HTML::toggle($index, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], 'contents')) {
+        if ($checkin = HTML::toggle($index, Helper::CHECKED_STATES[(int) ($item->checked_out > 0)], $controller)) {
             $item->title = "$checkin $item->title";
         }
 
@@ -130,50 +132,6 @@ class Contents extends ListView
             ];
         }
 
-        if (!$state = $this->state->get('filter.state') or !in_array((int) $state, array_keys(Helper::STATES))) {
-            $this->headers['state'] = [
-                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('STATUS'),
-                'type'       => 'value'
-            ];
-        }
-
-        if (!$featured = $this->state->get('filter.featured')
-            or !in_array((int) $featured, array_keys(Helper::FEATURED_STATES))
-        ) {
-            $this->headers['featured'] = [
-                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('FEATURED'),
-                'type'       => 'value'
-            ];
-        }
-
-        if (!$levelID = $this->state->get('filter.levelID') or !is_numeric($levelID)) {
-            $this->headers['level'] = [
-                'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('LEVEL'),
-                'type'       => 'value'
-            ];
-        }
-
-        if ($this->showLanguages and !$this->state->get('filter.language')) {
-            $this->headers['language'] = [
-                'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-                'title'      => Text::_('LANGUAGE'),
-                'type'       => 'value'
-            ];
-        }
-
-        $this->headers['id'] = [
-            'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title'      => Text::_('ID'),
-            'type'       => 'value'
-        ];
-
-        $this->headers['hits'] = [
-            'properties' => ['class' => 'w-5 d-none d-md-table-cell', 'scope' => 'col'],
-            'title'      => Text::_('HITS'),
-            'type'       => 'value'
-        ];
+        $this->filteredColumns();
     }
 }
