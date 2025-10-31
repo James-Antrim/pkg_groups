@@ -16,8 +16,14 @@ class Content extends FormView
     /** @inheritDoc */
     protected function addToolbar(array $buttons = [], string $constant = ''): void
     {
-        $this->toDo[] = 'Everything';
-        $buttons      = empty($this->item->id) ? ['save', 'apply', 'save2new'] : ['save', 'apply', 'save2copy', 'save2new'];
+        $this->toDo[] = 'If no root category has been set display a warning.';
+        $this->toDo[] = 'Differentiate between content and pages regarding featured and ordering while saving.';
+        $this->toDo[] = 'Finish the form manifest.';
+        $this->toDo[] = 'Associations.';
+        $this->toDo[] = 'Preview?.';
+        $this->toDo[] = 'Everything.';
+
+        $buttons = empty($this->item->id) ? ['save', 'apply', 'save2new'] : ['save', 'apply', 'save2copy', 'save2new'];
         parent::addToolbar($buttons);
     }
 }

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form>
+    <fieldset name="details">
+        <field name="id" type="hidden" default="0"/>
+        <field name="asset_id" type="hidden" filter="unset"/>
+        <field name="title" type="text" label="GROUPS_TITLE" required="true" maxlength="255"/>
+        <field name="alias" type="text" label="GROUPS_ALIAS" maxlength="255"/>
+        <field name="articletext" type="editor" label="GROUPS_CONTENT_FIELD" buttons="true"/>
+        <field name="catid" type="Categories" label="GROUPS_PROFILE" required="true" default="">
+            <option value="">GROUPS_SELECT_PROFILE</option>
+        </field>
+        <field name="state" type="list" label="GROUPS_STATUS" class="form-select-color-state" default="1" validate="options">
+            <option value="1">GROUPS_PUBLISHED</option>
+            <option value="0">GROUPS_UNPUBLISHED</option>
+            <option value="2">GROUPS_ARCHIVED</option>
+            <option value="-2">GROUPS_TRASHED</option>
+        </field>
+        <field name="access" type="accesslevel" label="GROUPS_LEVEL" filter="UINT" validate="options"/>
+        <field name="language" type="language" label="GROUPS_LANGUAGE">
+            <option value="*">GROUPS_ALL_LANGUAGES</option>
+        </field>
+        <field name="featured" type="radio" label="GROUPS_FEATURED" layout="joomla.form.field.radio.switcher" default="0">
+            <option value="0">GROUPS_UNFEATURED</option>
+            <option value="1">GROUPS_FEATURED</option>
+        </field>
+    </fieldset>
+</form>

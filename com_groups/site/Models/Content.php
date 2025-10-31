@@ -15,5 +15,5 @@ namespace THM\Groups\Models;
  */
 class Content extends EditModel
 {
-    // we shall see
+    protected string $tableClass = 'Content';
 }
