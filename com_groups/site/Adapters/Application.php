@@ -355,7 +355,7 @@ class Application
     }
 
     /**
-     * Masks the Joomla application enqueueMessage function
+     * Masks the Joomla application enqueueMessage function. (Implicit localization.)
      *
      * @param   string  $message  the message to enqueue
      * @param   string  $type     how the message is to be presented
