@@ -23,12 +23,8 @@ $wa->useScript('keepalive')->useScript('form.validate');
 $formName  = strtoupper($this->getName());
 $ariaLabel = Text::_("GROUPS_{$formName}_FORM");
 
-$input          = Input::instance();
-$forcedLanguage = $input->get('forcedLanguage', '');
-$return         = $input->getBase64('return');
-
 $tabs   = $this->form->getFieldsets();
-$tabbed = count($this->form->getFieldsets()) > 1;
+$tabbed = count($tabs) > 1;
 
 $this->renderTasks();
 ?>
@@ -63,8 +59,8 @@ $this->renderTasks();
             </fieldset>
         <?php endif; ?>
         <input type="hidden" name="task" value="<?php echo $this->defaultTask; ?>">
-        <input type="hidden" name="return" value="<?php echo $return; ?>">
-        <input type="hidden" name="forcedLanguage" value="<?php echo $forcedLanguage; ?>">
+        <input type="hidden" name="return" value="<?php echo Input::instance()->getBase64('return'); ?>">
+        <input type="hidden" name="forcedLanguage" value="<?php echo Input::string('forcedLanguage'); ?>">
         <?php echo HTML::token(); ?>
     </div>
 </form>

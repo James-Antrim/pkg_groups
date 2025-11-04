@@ -14,6 +14,9 @@ namespace THM\Groups\Views\HTML;
 class Content extends FormView
 {
     /** @inheritDoc */
+    protected string $layout = 'content';
+
+    /** @inheritDoc */
     protected function addToolbar(array $buttons = [], string $constant = ''): void
     {
         $this->toDo[] = 'If no root category has been set display a warning.';
@@ -21,7 +24,9 @@ class Content extends FormView
         $this->toDo[] = 'Finish the form manifest.';
         $this->toDo[] = 'Associations.';
         $this->toDo[] = 'Preview?.';
-        $this->toDo[] = 'Everything.';
+        $this->toDo[] = 'Associations.';
+        $this->toDo[] = 'Localizations.';
+        $this->toDo[] = 'Change the nature of the categories field according to the number of options.';
 
         $buttons = empty($this->item->id) ? ['save', 'apply', 'save2new'] : ['save', 'apply', 'save2copy', 'save2new'];
         parent::addToolbar($buttons);
