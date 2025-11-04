@@ -13,7 +13,7 @@
         </field>
         <field name="state" type="list" label="GROUPS_STATUS" class="form-select-color-state" default="1" validate="options">
             <option value="1">GROUPS_PUBLISHED</option>
-            <option value="0">GROUPS_UNPUBLISHED</option>
+            <option value="0">GROUPS_HIDDEN</option>
             <option value="2">GROUPS_ARCHIVED</option>
             <option value="-2">GROUPS_TRASHED</option>
         </field>
