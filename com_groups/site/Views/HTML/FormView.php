@@ -64,7 +64,6 @@ abstract class FormView extends Core
         parent::__construct($config);
 
         $this->configure();
-        $this->toDo[] = 'ARIA Form labels.';
     }
 
     /**
