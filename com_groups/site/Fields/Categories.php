@@ -14,16 +14,10 @@ use Joomla\CMS\Form\Field\ListField;
 use THM\Groups\Adapters\{Database as DB, User as UAdapter};
 use THM\Groups\Helpers\{Can, Categories as Helper, Users as UHelper};
 
-/**
- * Provides a list of view levels.
- */
+/** @inheritDoc */
 class Categories extends ListField
 {
-    /**
-     * Method to get the group options.
-     *
-     * @return  array  the group option objects
-     */
+    /** @inheritDoc */
     protected function getOptions(): array
     {
         $default = parent::getOptions();
@@ -42,6 +36,7 @@ class Categories extends ListField
                 // Can't manage and is not assigned a category
                 return $default;
             }
+
             $query->where(DB::qc('id', $pCategoryID));
             DB::set($query);
 
@@ -50,7 +45,6 @@ class Categories extends ListField
         }
 
         DB::set($query);
-
         return array_merge($default, DB::objects());
     }
 }

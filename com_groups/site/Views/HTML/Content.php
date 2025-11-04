@@ -25,7 +25,6 @@ class Content extends FormView
         $this->toDo[] = 'Associations.';
         $this->toDo[] = 'Preview?.';
         $this->toDo[] = 'Associations.';
-        $this->toDo[] = 'Change the nature of the categories field according to the number of options.';
 
         $buttons = empty($this->item->id) ? ['save', 'apply', 'save2new'] : ['save', 'apply', 'save2copy', 'save2new'];
         parent::addToolbar($buttons);
