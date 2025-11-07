@@ -11,9 +11,7 @@
 namespace THM\Groups\Controllers;
 
 use THM\Groups\Adapters\Input;
-use THM\Groups\Helpers\Attributes as Helper;
-use THM\Groups\Helpers\Icons;
-use THM\Groups\Helpers\Types;
+use THM\Groups\Helpers\{Attributes as Helper, Icons, Types, Users};
 
 class Attribute extends FormController
 {
@@ -32,7 +30,7 @@ class Attribute extends FormController
             'label_en'    => Input::string('label_en'),
             'showIcon'    => (int) Input::bool('showIcon'),
             'showLabel'   => (int) Input::bool('showLabel'),
-            'viewLevelID' => Input::integer('viewLevelID', Helper::PUBLIC)
+            'viewLevelID' => Input::integer('viewLevelID', Users::PUBLIC_ACCESS)
         ];
 
         $typeID         = Input::integer('typeID');

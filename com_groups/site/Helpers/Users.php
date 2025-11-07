@@ -21,6 +21,7 @@ class Users
 {
     use Persistent;
 
+    public const PUBLIC_ACCESS = 1;
     public const ENABLED = 1, DISABLED = 0;
     public const BLOCKED = 1, UNBLOCKED = 0;
     public const PUBLISHED = 1, HIDDEN = 0;

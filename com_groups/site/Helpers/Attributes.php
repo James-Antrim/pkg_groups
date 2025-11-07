@@ -19,8 +19,6 @@ class Attributes extends Selectable
 
     public const HIDDEN = 0, PUBLISHED = 1;
 
-    public const PUBLIC = 1;
-
     public const BOTH_CONTEXTS = 0, GROUPS_CONTEXT = 2, PERSONS_CONTEXT = 1;
 
     public const CONTEXTS = [self::BOTH_CONTEXTS, self::GROUPS_CONTEXT, self::PERSONS_CONTEXT];
@@ -139,7 +137,7 @@ class Attributes extends Selectable
         }
 
         $subQuery = DB::query();
-        $subQuery->select(DB::qn('title'))->from(DB::qn('#__viewlevels', 'vl2'))->where(DB::qc('vl2.id', self::PUBLIC));
+        $subQuery->select(DB::qn('title'))->from(DB::qn('#__viewlevels', 'vl2'))->where(DB::qc('vl2.id', Users::PUBLIC_ACCESS));
         $query->select('(' . $subQuery . ') AS ' . DB::qn('defaultLevel'));
 
         DB::set($query);
