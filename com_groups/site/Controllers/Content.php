@@ -10,6 +10,7 @@
 
 namespace THM\Groups\Controllers;
 
+use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\{Filter\OutputFilter as OF, String\StringHelper};
 use THM\Groups\Adapters\{Application, Input, User};
 use THM\Groups\Helpers\Categories;
@@ -38,6 +39,17 @@ class Content extends FormController
         $titles = $this->newTitles($data['catid'], $data['alias'], $data['title']);
 
         $data['alias'] = end($titles);
+    }
+
+    /** @inheritDoc */
+    public function display($cachable = false, $urlparams = []): BaseController
+    {
+        if (!Categories::root()) {
+            Application::message('NO_ROOT', Application::WARNING);
+            Application::redirect(Input::referrer(), 412);
+        }
+
+        return parent::display($cachable, $urlparams);
     }
 
     /** @inheritDoc */

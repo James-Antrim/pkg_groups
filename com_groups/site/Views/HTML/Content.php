@@ -19,7 +19,6 @@ class Content extends FormView
     /** @inheritDoc */
     protected function addToolbar(array $buttons = [], string $constant = ''): void
     {
-        $this->toDo[] = 'If no root category has been set display a warning.';
         $this->toDo[] = 'Differentiate between content and pages regarding featured and ordering while saving.';
         $this->toDo[] = 'Finish the form manifest.';
         $this->toDo[] = 'Associations.';
