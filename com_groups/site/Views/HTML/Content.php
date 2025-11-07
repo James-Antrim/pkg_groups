@@ -21,9 +21,7 @@ class Content extends FormView
     {
         $this->toDo[] = 'Differentiate between content and pages regarding featured and ordering while saving.';
         $this->toDo[] = 'Finish the form manifest.';
-        $this->toDo[] = 'Associations.';
-        $this->toDo[] = 'Preview?.';
-        $this->toDo[] = 'Associations.';
+        $this->toDo[] = 'Associations: tasks in files';
 
         $buttons = empty($this->item->id) ? ['save', 'apply', 'save2new'] : ['save', 'apply', 'save2copy', 'save2new'];
         parent::addToolbar($buttons);

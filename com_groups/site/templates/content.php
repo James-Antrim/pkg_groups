@@ -12,19 +12,16 @@ use Joomla\CMS\Router\Route;
 use THM\Groups\Adapters\{Application, HTML, Input, Text};
 use THM\Groups\Views\HTML\FormView;
 
-/** @var FormView $this */
-
 // Core behaviour scripts
 $wa = Application::document()->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
+$return = Input::instance()->getBase64('return');
+/** @var FormView $this */
 $this->renderTasks();
 
-$formName = strtoupper($this->getName());
-$return   = Input::instance()->getBase64('return');
-
 ?>
-<form action="<?php echo Route::_('index.php?option=com_groups'); ?>"
-      aria-label="<?php echo Text::_("GROUPS_{$formName}_FORM"); ?>"
+<form action="<?php echo Route::_('index.php?option=com_groups&view=content'); ?>"
+      aria-label="<?php echo Text::_("GROUPS_CONTENT_FORM"); ?>"
       class="form-validate"
       enctype="multipart/form-data"
       id="adminForm"
@@ -39,6 +36,7 @@ $return   = Input::instance()->getBase64('return');
             </div>
             <div class="col-lg-3">
                 <?php echo $this->form->renderFieldset('properties'); ?>
+                <!-- todo echo the associations field(s) here which are not a part of the form manifest -->
             </div>
         </div>
         <input type="hidden" name="task" value="<?php echo $this->defaultTask; ?>">
