@@ -540,7 +540,7 @@ class Migration
             $session->set('com_groups.migrated.profiles', true);
         }
 
-        if (true) {//!$session->get('com_groups.migrated.categories')) {
+        if (!$session->get('com_groups.migrated.categories')) {
             self::categories();
             $session->set('com_groups.migrated.categories', true);
         }
