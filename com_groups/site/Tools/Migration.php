@@ -13,7 +13,7 @@ namespace THM\Groups\Tools;
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
-use THM\Groups\Helpers\{Attributes, Groups, Profiles, Types};
+use THM\Groups\Helpers\{Attributes, Groups, Profiles, Types, Users};
 use THM\Groups\Tables;
 
 /**
@@ -345,20 +345,118 @@ class Migration
      */
     private static function categories(): void
     {
-        $query = DB::query();
+        $completed  = [];
+        $deprecated = [];
+        $rootID     = null;
+        $query      = DB::query();
         $query->select(DB::qn(['id', 'profileID'], ['id', 'created_user_id']))
             ->from(DB::qn('#__thm_groups_categories'));
         DB::set($query);
 
+        // Existing category => profile associations
         foreach (DB::arrays() as $result) {
             $table = new Tables\Categories();
+            $table->load($result['id']);
+            $rootID = $table->parent_id;
 
-            // Already there
-            if ($table->load($result['id']) and $table->created_user_id === $result['created_user_id']) {
+            // Category entry already has the profile id correctly stored
+            if ($table->created_user_id === $result['created_user_id']) {
+                $completed[$table->id] = $table->id;
                 continue;
             }
 
-            $table->save($result);
+            // Update the categories table with the correct profile id
+            if ($table->save($result)) {
+                $completed[$table->id] = $table->id;
+            }
+        }
+
+        // Missing category => profile associations
+        if ($rootID) {
+            $query = DB::query();
+            $query->select(DB::qn(['c.id', 'p.id'], ['id', 'created_user_id']))
+                ->from(DB::qn('#__categories', 'c'))
+                ->innerJoin(DB::qn('#__thm_groups_profiles', 'p'), DB::qc('p.alias', 'c.alias'))
+                ->where(DB::qc('c.parent_id', $rootID))
+                ->whereNotIn(DB::qn('c.id'), $completed);
+            DB::set($query);
+
+            foreach (DB::arrays() as $result) {
+                $table = new Tables\Categories();
+                $table->load($result['id']);
+
+                // Category entry already has the profile id correctly stored
+                if ($table->created_user_id === $result['created_user_id']) {
+                    $completed[$table->id] = $table->id;
+                    continue;
+                }
+
+                // Update the categories table with the correct profile id
+                if ($table->save($result)) {
+                    $completed[$table->id] = $table->id;
+                }
+            }
+
+            // What categories are left unresolved?
+            $query = DB::query();
+            $query->select(DB::qn(['id', 'alias']))
+                ->from(DB::qn('#__categories'))
+                ->where(DB::qc('parent_id', $rootID))
+                ->whereNotIn(DB::qn('id'), $completed);
+            DB::set($query);
+
+            foreach (DB::arrays('id') as $from => $unresolved) {
+                // Without an alias there is no basis for resolution. Die trash!
+                if (empty($unresolved['alias'])) {
+                    $deprecated[$from] = $from;
+                    continue;
+                }
+
+                // Any alias without the divergent id as suffix would have been picked up in the previous step. Die trash!
+                $parts = explode('-', $unresolved['alias']);
+                if (!is_numeric(end($parts))) {
+                    $deprecated[$from] = $from;
+                    continue;
+                }
+
+                $userID = (int) array_pop($parts);
+                $alias  = implode('-', $parts);
+
+                // Check against the id in the alias directly
+                $query = DB::query()->select(DB::qn(['id', 'alias']))->from(DB::qn('#__users'))->where(DB::qc('id', $userID));
+                DB::set($query);
+                if ($user = DB::array() and $to = Users::categoryID($user['id'])) {
+                    // The category is already where it is supposed to be. Fix any reference issues.
+                    if ($from === $to) {
+                        self::updateCategory($from, $user['alias'], $user['id']);
+                    }
+                    else {
+                        self::transferContents($from, $to);
+                        $deprecated[$from] = $from;
+                    }
+                    continue;
+                }
+
+                // Check against the alias text, only an exact match can be resolved automatically.
+                $query->clear('where')->where(DB::qc('alias', $alias, '=', true));
+                DB::set($query);
+                if ($user = DB::array() and $to = Users::categoryID($user['id'])) {
+                    if ($from === $to) {
+                        self::updateCategory($from, $user['alias'], $user['id']);
+                    }
+                    else {
+                        self::transferContents($from, $to);
+                        $deprecated[$from] = $from;
+                    }
+                }
+
+                // Leave anything that cannot be manually resolved by these steps.
+            }
+        }
+
+        foreach ($deprecated as $deprecatedID) {
+            $category = new Tables\Categories();
+            $category->delete($deprecatedID);
         }
     }
 
@@ -437,7 +535,12 @@ class Migration
             $session->set('com_groups.migrated.settings', true);
         }
 
-        if (!$session->get('com_groups.migrated.categories')) {
+        if (!$session->get('com_groups.migrated.profiles')) {
+            self::profiles();
+            $session->set('com_groups.migrated.profiles', true);
+        }
+
+        if (true) {//!$session->get('com_groups.migrated.categories')) {
             self::categories();
             $session->set('com_groups.migrated.categories', true);
         }
@@ -450,11 +553,6 @@ class Migration
         if (!$session->get('com_groups.migrated.groups')) {
             self::groups();
             $session->set('com_groups.migrated.groups', true);
-        }
-
-        if (!$session->get('com_groups.migrated.profiles')) {
-            self::profiles();
-            $session->set('com_groups.migrated.profiles', true);
         }
 
         if (!$session->get('com_groups.migrated.roles')) {
@@ -818,6 +916,28 @@ class Migration
     }
 
     /**
+     * Transfers contents associated with one category to another.
+     *
+     * @param   int  $from
+     * @param   int  $to
+     *
+     * @return void
+     */
+    private static function transferContents(int $from, int $to): void
+    {
+        $query = DB::query();
+        $query->select(DB::qn('id'))->from(DB::qn('#__content'))->where(DB::qc('catid', $from));
+        DB::set($query);
+
+        foreach (DB::integers() as $contentID) {
+            $table = new Tables\Content();
+            $table->load($contentID);
+            $table->catid = $to;
+            $table->store();
+        }
+    }
+
+    /**
      * Migrates the old templates to the new table.
      * @return array a map of the old template ids to the new
      */
@@ -849,5 +969,23 @@ class Migration
         }
 
         return $map;
+    }
+
+    /**
+     * Updates the category columns referencing user values.
+     *
+     * @param   int     $categoryID  the id of the category to update
+     * @param   string  $alias       the user alias, which in groups context is identical to
+     * @param   int     $userID      the user id
+     *
+     * @return void
+     */
+    private static function updateCategory(int $categoryID, string $alias, int $userID): void
+    {
+        $cTable = new Tables\Categories();
+        $cTable->load($categoryID);
+        $cTable->alias           = $alias;
+        $cTable->created_user_id = $userID;
+        $cTable->store();
     }
 }
