@@ -13,7 +13,7 @@ namespace THM\Groups\Tools;
 use Joomla\CMS\Helper\UserGroupsHelper;
 use Joomla\Database\ParameterType;
 use THM\Groups\Adapters\{Application, Database as DB, Input, Text};
-use THM\Groups\Helpers\{Attributes, Groups, Profiles, Types, Users};
+use THM\Groups\Helpers\{Attributes, Categories, Groups, Profiles, Types, Users};
 use THM\Groups\Tables;
 
 /**
@@ -345,9 +345,12 @@ class Migration
      */
     private static function categories(): void
     {
+        if (!$rootID = Categories::root()) {
+            return;
+        }
+
         $completed  = [];
         $deprecated = [];
-        $rootID     = null;
         $query      = DB::query();
         $query->select(DB::qn(['id', 'profileID'], ['id', 'created_user_id']))
             ->from(DB::qn('#__thm_groups_categories'));
@@ -357,7 +360,33 @@ class Migration
         foreach (DB::arrays() as $result) {
             $table = new Tables\Categories();
             $table->load($result['id']);
-            $rootID = $table->parent_id;
+
+            // Category entry already has the profile id correctly stored and is associated with the correct root category
+            if ($table->created_user_id === $result['created_user_id'] and $table->parent_id === $rootID) {
+                $completed[$table->id] = $table->id;
+                continue;
+            }
+
+            $result['parent_id'] = $rootID;
+
+            // Update the categories table with the correct profile id
+            if ($table->save($result)) {
+                $completed[$table->id] = $table->id;
+            }
+        }
+
+        // Missing category => profile associations
+        $query = DB::query();
+        $query->select(DB::qn(['c.id', 'p.id'], ['id', 'created_user_id']))
+            ->from(DB::qn('#__categories', 'c'))
+            ->innerJoin(DB::qn('#__thm_groups_profiles', 'p'), DB::qc('p.alias', 'c.alias'))
+            ->where(DB::qc('c.parent_id', $rootID))
+            ->whereNotIn(DB::qn('c.id'), $completed);
+        DB::set($query);
+
+        foreach (DB::arrays() as $result) {
+            $table = new Tables\Categories();
+            $table->load($result['id']);
 
             // Category entry already has the profile id correctly stored
             if ($table->created_user_id === $result['created_user_id']) {
@@ -371,92 +400,69 @@ class Migration
             }
         }
 
-        // Missing category => profile associations
-        if ($rootID) {
-            $query = DB::query();
-            $query->select(DB::qn(['c.id', 'p.id'], ['id', 'created_user_id']))
-                ->from(DB::qn('#__categories', 'c'))
-                ->innerJoin(DB::qn('#__thm_groups_profiles', 'p'), DB::qc('p.alias', 'c.alias'))
-                ->where(DB::qc('c.parent_id', $rootID))
-                ->whereNotIn(DB::qn('c.id'), $completed);
-            DB::set($query);
+        // What categories are left unresolved?
+        $query = DB::query();
+        $query->select(DB::qn(['id', 'alias']))
+            ->from(DB::qn('#__categories'))
+            ->where(DB::qc('parent_id', $rootID))
+            ->whereNotIn(DB::qn('id'), $completed);
+        DB::set($query);
 
-            foreach (DB::arrays() as $result) {
-                $table = new Tables\Categories();
-                $table->load($result['id']);
-
-                // Category entry already has the profile id correctly stored
-                if ($table->created_user_id === $result['created_user_id']) {
-                    $completed[$table->id] = $table->id;
-                    continue;
-                }
-
-                // Update the categories table with the correct profile id
-                if ($table->save($result)) {
-                    $completed[$table->id] = $table->id;
-                }
+        foreach (DB::arrays('id') as $from => $unresolved) {
+            // Without an alias there is no basis for resolution. Die trash!
+            if (empty($unresolved['alias'])) {
+                $deprecated[$from] = $from;
+                continue;
             }
 
-            // What categories are left unresolved?
-            $query = DB::query();
-            $query->select(DB::qn(['id', 'alias']))
-                ->from(DB::qn('#__categories'))
-                ->where(DB::qc('parent_id', $rootID))
-                ->whereNotIn(DB::qn('id'), $completed);
-            DB::set($query);
-
-            foreach (DB::arrays('id') as $from => $unresolved) {
-                // Without an alias there is no basis for resolution. Die trash!
-                if (empty($unresolved['alias'])) {
-                    $deprecated[$from] = $from;
-                    continue;
-                }
-
-                // Any alias without the divergent id as suffix would have been picked up in the previous step. Die trash!
-                $parts = explode('-', $unresolved['alias']);
-                if (!is_numeric(end($parts))) {
-                    $deprecated[$from] = $from;
-                    continue;
-                }
-
-                $userID = (int) array_pop($parts);
-                $alias  = implode('-', $parts);
-
-                // Check against the id in the alias directly
-                $query = DB::query()->select(DB::qn(['id', 'alias']))->from(DB::qn('#__users'))->where(DB::qc('id', $userID));
-                DB::set($query);
-                if ($user = DB::array() and $to = Users::categoryID($user['id'])) {
-                    // The category is already where it is supposed to be. Fix any reference issues.
-                    if ($from === $to) {
-                        self::updateCategory($from, $user['alias'], $user['id']);
-                    }
-                    else {
-                        self::transferContents($from, $to);
-                        $deprecated[$from] = $from;
-                    }
-                    continue;
-                }
-
-                // Check against the alias text, only an exact match can be resolved automatically.
-                $query->clear('where')->where(DB::qc('alias', $alias, '=', true));
-                DB::set($query);
-                if ($user = DB::array() and $to = Users::categoryID($user['id'])) {
-                    if ($from === $to) {
-                        self::updateCategory($from, $user['alias'], $user['id']);
-                    }
-                    else {
-                        self::transferContents($from, $to);
-                        $deprecated[$from] = $from;
-                    }
-                }
-
-                // Leave anything that cannot be manually resolved by these steps.
+            // Any alias without the divergent id as suffix would have been picked up in the previous step. Die trash!
+            $parts = explode('-', $unresolved['alias']);
+            if (!is_numeric(end($parts))) {
+                $deprecated[$from] = $from;
+                continue;
             }
+
+            $userID = (int) array_pop($parts);
+            $alias  = implode('-', $parts);
+
+            // Check against the id in the alias directly
+            $query = DB::query()->select(DB::qn(['id', 'alias']))->from(DB::qn('#__users'))->where(DB::qc('id', $userID));
+            DB::set($query);
+            if ($user = DB::array() and $to = Users::categoryID($user['id'])) {
+                // The category is already where it is supposed to be. Fix any reference issues.
+                if ($from === $to) {
+                    self::updateCategory($from, $user['alias'], $user['id']);
+                }
+                else {
+                    self::transferContents($from, $to);
+                    $deprecated[$from] = $from;
+                }
+                continue;
+            }
+
+            // Check against the alias text, only an exact match can be resolved automatically.
+            $query->clear('where')->where(DB::qc('alias', $alias, '=', true));
+            DB::set($query);
+            if ($user = DB::array() and $to = Users::categoryID($user['id'])) {
+                if ($from === $to) {
+                    self::updateCategory($from, $user['alias'], $user['id']);
+                }
+                else {
+                    self::transferContents($from, $to);
+                    $deprecated[$from] = $from;
+                }
+                continue;
+            }
+
+            // Leave anything that cannot be manually resolved by these steps.
+            self::removeContents($from);
+            $deprecated[$from] = $from;
         }
 
         foreach ($deprecated as $deprecatedID) {
             $category = new Tables\Categories();
-            $category->delete($deprecatedID);
+            $category->load($deprecatedID);
+            $category->delete();
         }
     }
 
@@ -679,6 +685,25 @@ class Migration
 
         foreach (DB::integers() as $userID) {
             Consistency::supplementUser($userID);
+        }
+    }
+
+    /**
+     * Deletes contents associated with a category.
+     *
+     * @param   int  $from  the category id to delete the contents of
+     *
+     * @return void
+     */
+    private static function removeContents(int $from): void
+    {
+        $query = DB::query();
+        $query->select(DB::qn('id'))->from(DB::qn('#__content'))->where(DB::qc('catid', $from));
+        DB::set($query);
+
+        foreach (DB::integers() as $contentID) {
+            $table = new Tables\Content();
+            $table->delete($contentID);
         }
     }
 
