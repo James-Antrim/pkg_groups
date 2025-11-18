@@ -8,7 +8,7 @@
     <fieldset name="properties">
         <field name="id" type="hidden" default="0"/>
         <field name="asset_id" type="hidden" filter="unset"/>
-        <field name="catid" type="Categories" label="GROUPS_PROFILE" required="true" default="">
+        <field name="catid" type="Categories" label="GROUPS_PROFILE" required="true" default="" onchange="this.form.submit();">
             <option value="">GROUPS_SELECT_PROFILE</option>
         </field>
         <field name="state" type="list" label="GROUPS_STATUS" class="form-select-color-state" default="1" validate="options">
@@ -17,7 +17,7 @@
             <option value="2">GROUPS_ARCHIVED</option>
             <option value="-2">GROUPS_TRASHED</option>
         </field>
-        <field name="access" type="accesslevel" label="GROUPS_LEVEL" filter="UINT" validate="options"/>
+        <field name="access" type="ViewLevels" label="GROUPS_LEVEL" filter="UINT" validate="options"/>
         <field name="language" type="language" label="GROUPS_LANGUAGE">
             <option value="*">GROUPS_ALL_LANGUAGES</option>
         </field>

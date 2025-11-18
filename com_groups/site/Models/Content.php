@@ -10,6 +10,9 @@
 
 namespace THM\Groups\Models;
 
+use THM\Groups\Adapters\{Input, User as UserAdapter};
+use THM\Groups\Helpers\{Categories, Users as UHelper};
+
 /** @inheritDoc */
 class Content extends EditModel
 {
@@ -28,6 +31,15 @@ class Content extends EditModel
         $item->fulltext    = trim((string) $item->fulltext);
         $item->articletext = $item->fulltext ?
             $item->introtext . '<hr id="system-readmore">' . $item->fulltext : $item->introtext;
+
+        if ($rCategoryID = Input::integer('catid') and $rCategoryID !== $item->catid) {
+            $item->catid = $rCategoryID;
+
+            $rLevels = UserAdapter::levels(Categories::userID($rCategoryID));
+            if (!in_array($item->access, $rLevels)) {
+                $item->access = UHelper::PUBLIC_ACCESS;
+            }
+        }
 
         return $item;
     }

@@ -11,7 +11,7 @@
 namespace THM\Groups\Fields;
 
 use Joomla\CMS\Form\Field\ListField;
-use THM\Groups\Adapters\{Database as DB, Input};
+use THM\Groups\Adapters\{Database as DB, Input, User};
 use THM\Groups\Helpers\{Categories, Users};
 
 /**
@@ -49,6 +49,10 @@ class ViewLevels extends ListField
             }
             elseif ($context === 'com_groups.groups.filter') {
                 $query->where(DB::qc('vl.rules', '[]', '!=', true));
+            }
+            elseif ($context === 'com_groups.content') {
+                $userID = Categories::userID(Input::integer('catid'));
+                $query->whereIn(DB::qn('vl.id'), User::levels($userID));
             }
         }
 

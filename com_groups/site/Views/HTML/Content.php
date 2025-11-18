@@ -17,6 +17,13 @@ class Content extends FormView
     protected string $layout = 'content';
 
     /** @inheritDoc */
+    public function __construct(array $config)
+    {
+        $config['layout'] = $this->layout;
+        parent::__construct($config);
+    }
+
+    /** @inheritDoc */
     protected function addToolbar(array $buttons = [], string $constant = ''): void
     {
         $this->toDo[] = 'Differentiate between content and pages regarding featured and ordering while saving.';
