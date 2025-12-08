@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <config>
     <fieldset name="general" label="GROUPS_FEATURES" description="GROUPS_FEATURES_DESC">
+        <field name="root-category" type="category" label="GROUPS_ROOT_CATEGORY" description="GROUPS_ROOT_CATEGORY_DESC"
+               extension="com_content"/>
         <field name="automatic-publishing" type="list" label="GROUPS_AUTOMATIC_PROFILE_PUBLISHING" default="1">
             <option value="0">GROUPS_DISABLED</option>
             <option value="1">GROUPS_ENABLED</option>
@@ -9,7 +11,7 @@
             <option value="0">GROUPS_CENTRALIZED</option>
             <option value="1">GROUPS_DECENTRALIZED</option>
         </field>
-        <field name="profile-content" type="list" label="GROUPS_PROFILE_CONTENT" default="0">
+        <field name="profile-content" type="list" label="GROUPS_CONTENTS" default="0">
             <option value="0">GROUPS_DISABLED</option>
             <option value="1">GROUPS_ENABLED</option>
         </field>
@@ -17,12 +19,9 @@
         <field name="itemid" type="menuitem" label="GROUPS_MENU_ITEM" description="GROUPS_MENU_ITEM_DESC"/>
         <field name="organizer" type="text" label="GROUPS_ORGANIZER_URL" description="GROUPS_ORGANIZER_URL_DESC"
                default="www.thm.de/organizer"/>
-        <field name="fis" type="text" label="GROUPS_FIS_URL" description="GROUPS_FIS_URL_DESC"/>
-        <field name="fisKey" type="text" label="GROUPS_FIS_KEY" description="GROUPS_FIS_KEY_DESC"/>
-        <field name="fisToken" type="text" label="GROUPS_FIS_TOKEN" description="GROUPS_FIS_TOKEN_DESC"/>
     </fieldset>
     <fieldset name="permissions" label="GROUPS_PERMISSIONS" description="GROUPS_PERMISSIONS_DESC">
-        <field name="rules" type="rules" component="com_groups" filter="rules" validate="rules" label="JCONFIG_PERMISSIONS_LABEL"
-               section="component"/>
+        <field name="rules" type="rules" label="JCONFIG_PERMISSIONS_LABEL" component="com_groups" filter="rules"
+               section="component" validate="rules"/>
     </fieldset>
 </config>
