@@ -11,7 +11,7 @@
 namespace THM\Groups\Models;
 
 use THM\Groups\Adapters\{Input, User as UserAdapter};
-use THM\Groups\Helpers\{Categories, Users as UHelper};
+use THM\Groups\Helpers\{Categories, Pages as Helper, Users as UHelper};
 
 /** @inheritDoc */
 class Content extends EditModel
@@ -41,6 +41,7 @@ class Content extends EditModel
             }
         }
 
+        $item->featured = Helper::featured($item->id);
         return $item;
     }
 

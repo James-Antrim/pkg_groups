@@ -13,8 +13,8 @@ namespace THM\Groups\Controllers;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\{Filter\OutputFilter as OF, String\StringHelper};
 use THM\Groups\Adapters\{Application, Input, User};
-use THM\Groups\Helpers\Categories;
-use THM\Groups\Tables\Content as Table;
+use THM\Groups\Helpers\{Categories, Pages as PHelper};
+use THM\Groups\Tables\{Content as CTable, Pages as PTable};
 
 /** @inheritDoc */
 class Content extends FormController
@@ -24,13 +24,13 @@ class Content extends FormController
     /**
      * Checks a new alias to ensure it is unique in its category context.
      *
-     * @param   array  $data
+     * @param array $data
      *
      * @return void
      */
     private function checkAlias(array &$data): void
     {
-        $check = new Table();
+        $check = new CTable();
 
         if ($check->load(['alias' => $data['alias'], 'catid' => $data['catid']])) {
             Application::message('ALIAS_EXISTS', Application::WARNING);
@@ -67,33 +67,26 @@ class Content extends FormController
         $task = Input::task();
 
         $copy  = $task === 'save2copy';
-        $table = new Table();
+        $table = new CTable();
 
         if ($id = $copy ? 0 : (int) $data['id']) {
             $table->load($id);
         }
 
+        $state = (!isset($data['state']) or !in_array($data['state'], array_keys(PHelper::STATES))) ? PHelper::HIDDEN : (int) $data['state'];
 
-        /**
-         * Content properties not added to form and explicitly ignored:
-         * -too advanced in features and access rights for most users
-         * --attribs tab, images tab, metadata tab, metakey, metadesc, rules, urls tab, version, version_note
-         * -inappropriate or useless
-         * --created_by_alias, checked_out, checked_out_time, featured_up, featured_down, hits, note, publish_up, publish_down
-         * -dual use: fields exist in both tables and do slightly different things
-         * --featured, ordering
-         * -wrong use
-         * --fulltext, introtext
-         * -wtf
-         * --schema
-         */
+        $data['created']          = $table->created ?? date('Y-m-d H:i:s');
+        $data['created_by']       = $authorID;
+        $data['created_by_alias'] = '';
+        $data['featured']         = in_array($data['featured'], array_keys(PHelper::FEATURED_STATES)) ? $data['featured'] : PHelper::UNFEATURED;
+        $data['modified']         = date('Y-m-d H:i:s');
+        $data['modified_by']      = User::id();
+        $data['state']            = $state;
 
-        $implicit = [
-            'created'     => $table->created ?? date('Y-m-d H:i:s'),
-            'created_by'  => $authorID,
-            'modified'    => date('Y-m-d H:i:s'),
-            'modified_by' => User::id(),
-        ];
+        $data['images']     = '';
+        $data['metadata']   = ['author' => '', 'rights' => '', 'robots' => '', 'xreference' => ''];
+        $data['transition'] = '';
+        $data['urls']       = '';
 
         /**
          * Properties needing work:
@@ -105,7 +98,7 @@ class Content extends FormController
 
         // Alter the title for save as copy
         if ($copy) {
-            $original = new Table();
+            $original = new CTable();
             $original->load($data['id']);
 
             if ($data['title'] === $original->title) {
@@ -131,23 +124,71 @@ class Content extends FormController
             $this->checkAlias($data);
         }
 
-        // todo: featured value has a different meaning that has to be specially handled
-
         return $data;
     }
 
     /**
+     * Code common in storing resource data.
+     * @return int
+     */
+    protected function process(): int
+    {
+        $this->checkToken();
+        $this->authorize();
+
+        $id = Input::id();
+
+        $this->data = $this->prepareData();
+        // For save to copy, will otherwise be identical.
+        $this->data['id'] = $id;
+
+        $featured               = $this->data['featured'];
+        $this->data['featured'] = PHelper::UNFEATURED;
+
+        $table = new CTable();
+        if ($id and !$table->load($id)) {
+            Application::message('412', Application::ERROR);
+
+            return $id;
+        }
+
+        if (!$table->save($this->data)) {
+            Application::message('NOT_SAVED');
+            return $id;
+        }
+
+        Application::message('SAVED');
+        $contentID = $table->id;
+
+        $table  = new PTable();
+        $userID = Categories::userID($this->data['catid']);
+        $data   = ['contentID' => $contentID, 'userID' => $userID];
+
+        if ($table->load($data)) {
+            $table->featured = $featured;
+            $table->store();
+        }
+        else {
+            $data['featured'] = $featured;
+            $table->save($data);
+        }
+
+        return $contentID;
+    }
+
+
+    /**
      * Increments the title and alias as necessary within a category context
      *
-     * @param   int     $categoryID  the id of the category providing context for incrementation
-     * @param   string  $alias
-     * @param   string  $title
+     * @param int    $categoryID the id of the category providing context for incrementation
+     * @param string $alias
+     * @param string $title
      *
      * @return array
      */
     private function newTitles(int $categoryID, string $alias, string $title): array
     {
-        $table = new Table();
+        $table = new CTable();
         while ($table->load(['alias' => $alias, 'catid' => $categoryID])) {
             if ($title === $table->title) {
                 $title = StringHelper::increment($title);

@@ -87,7 +87,7 @@ class Pages
     /**
      * Gets the content alias.
      *
-     * @param   int  $contentID
+     * @param int $contentID
      *
      * @return string
      */
@@ -98,6 +98,21 @@ class Pages
             return $table->alias;
         }
         return '';
+    }
+
+    /**
+     * Gets the page's featured status.
+     *
+     * @param int $contentID
+     * @return int
+     */
+    public static function featured(int $contentID): int
+    {
+        $table = new PTable();
+        if ($table->load(['contentID' => $contentID])) {
+            return $table->featured;
+        }
+        return self::UNFEATURED;
     }
 
     /**
@@ -114,7 +129,7 @@ class Pages
     /**
      * Get references to the localizations of the specified content.
      *
-     * @param   int  $contentID
+     * @param int $contentID
      *
      * @return  array
      */
@@ -154,7 +169,7 @@ class Pages
     /**
      * Gets the id of the category associated with the content.
      *
-     * @param   int  $contentID
+     * @param int $contentID
      *
      * @return int
      */
@@ -170,8 +185,8 @@ class Pages
     /**
      * Gets the id of the content with the given alias.
      *
-     * @param   string  $alias   the parsed alias
-     * @param   int     $userID  the parsed user id
+     * @param string $alias  the parsed alias
+     * @param int    $userID the parsed user id
      *
      * @return int
      */
@@ -189,7 +204,7 @@ class Pages
     /**
      * Removes profile parameter stubs from content.
      *
-     * @param   string  $html
+     * @param string $html
      *
      * @return void
      */
@@ -202,7 +217,7 @@ class Pages
     /**
      * Render the list of associated items
      *
-     * @param   stdClass  $item  the content/page resource to generate the language display for
+     * @param stdClass $item the content/page resource to generate the language display for
      *
      * @return  string
      */
@@ -281,7 +296,7 @@ class Pages
     /**
      * Replaces relevant links to categories and articles with links to profiles and pages.
      *
-     * @param   string  $html  the string containing potential links to alter
+     * @param string $html the string containing potential links to alter
      *
      * @return void
      */
@@ -319,7 +334,7 @@ class Pages
     /**
      * Replaces groups URLS with queries with groups SEF-URLs.
      *
-     * @param   string  $html
+     * @param string $html
      *
      * @return void
      */
@@ -351,7 +366,7 @@ class Pages
     /**
      * Parses the given string to check for content associated with the component
      *
-     * @param   int|string  $potentialContent  the segment being checked
+     * @param int|string $potentialContent the segment being checked
      *
      * @return int the id of the associated content if existent, otherwise 0
      */
@@ -375,7 +390,7 @@ class Pages
     /**
      * Gets the title of the content with the given id.
      *
-     * @param   int  $contentID
+     * @param int $contentID
      *
      * @return string
      */
@@ -391,8 +406,8 @@ class Pages
     /**
      * Gets the id of the author associated with the content.
      *
-     * @param   int  $contentID
-     * @param   int  $userID
+     * @param int $contentID
+     * @param int $userID
      *
      * @return int
      */
