@@ -42,9 +42,9 @@ trait Titled
     /**
      * Prepares the title for standard HTML output. (Localizes)
      *
-     * @param   string  $standard     the title to display
-     * @param   string  $conditional  the conditional title to display
-     * @param   string  $icon         the icon class
+     * @param string $standard    the title to display
+     * @param string $conditional the conditional title to display
+     * @param string $icon        the icon class
      *
      * @return void
      */
@@ -70,7 +70,7 @@ trait Titled
 
         // Title for the document / the browser tab
         $title = strip_tags($title) . ' - ' . Application::instance()->get('sitename');
-        $title .= Application::backend() ? ' - ' . Text::_('ADMINISTRATION') : '';
+        $title .= Application::backend() ? ' - ' . Text::_('SITE_ADMINISTRATION') : '';
 
         Document::title($title);
     }
