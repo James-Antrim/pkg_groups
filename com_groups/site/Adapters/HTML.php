@@ -23,6 +23,16 @@ use stdClass;
 class HTML extends HTMLHelper
 {
     /**
+     * addTab wrapper: only the last three parameters had value.
+     * @param stdClass $tab the tab / fieldset object created from the form manifest
+     * @return string
+     */
+    public static function addFieldSet(stdClass $tab): string
+    {
+        return self::_('uitab.addTab', 'myTab', $tab->name, Text::_($tab->label), Text::_($tab->description));
+    }
+
+    /**
      * Method to check all checkboxes in a resource table.
      * @return  string
      * @see Grid::checkall()
@@ -35,8 +45,8 @@ class HTML extends HTMLHelper
     /**
      * Method to create a checkbox for a resource table row.
      *
-     * @param   int  $rowNumber  the row number in the HTML output
-     * @param   int  $rowID      the id of the resource row in the database
+     * @param int $rowNumber the row number in the HTML output
+     * @param int $rowID     the id of the resource row in the database
      *
      * @return  string
      */
@@ -46,9 +56,27 @@ class HTML extends HTMLHelper
     }
 
     /**
+     * endTab wrapper: parameterless and
+     * @return string
+     */
+    public static function endTab(): string
+    {
+        return self::_('uitab.endTab');
+    }
+
+    /**
+     * endTabSet wrapper: parameterless...
+     * @return string
+     */
+    public static function endTabs(): string
+    {
+        return self::_('uitab.endTabSet');
+    }
+
+    /**
      * Creates an icon with tooltip as appropriate.
      *
-     * @param   string  $class  the icon class(es)
+     * @param string $class the icon class(es)
      *
      * @return string
      */
@@ -61,10 +89,10 @@ class HTML extends HTMLHelper
      * Method to create a sorting column header for a resource table. Header text key is automatically prefaced and
      * localized.
      *
-     * @param   string  $constant       the text to display in the table header
-     * @param   string  $column         the query column that this link sorts by
-     * @param   string  $direction      the current sort direction for this query column
-     * @param   string  $currentColumn  the current query column that the results are being sorted by
+     * @param string $constant      the text to display in the table header
+     * @param string $column        the query column that this link sorts by
+     * @param string $direction     the current sort direction for this query column
+     * @param string $currentColumn the current query column that the results are being sorted by
      *
      * @return  string
      * @see SearchTools::sort()
@@ -96,9 +124,9 @@ class HTML extends HTMLHelper
     /**
      * Create an object that represents an option in an option list.
      *
-     * @param   int|string  $value    the option value
-     * @param   string      $text     the option text
-     * @param   bool        $disable  whether the option is disabled
+     * @param int|string $value   the option value
+     * @param string     $text    the option text
+     * @param bool       $disable whether the option is disabled
      *
      * @return  stdClass
      */
@@ -110,7 +138,7 @@ class HTML extends HTMLHelper
     /**
      * Method to create a column header for activating the sort column when multiple list columns can be sorted.
      *
-     * @param   string  $currentColumn  the current query column that the results are being sorted by
+     * @param string $currentColumn the current query column that the results are being sorted by
      *
      * @return  string
      * @see SearchTools::sort()
@@ -133,7 +161,7 @@ class HTML extends HTMLHelper
     /**
      * Generates a string containing property information for an HTML element to be output
      *
-     * @param   mixed &$element  the element being processed
+     * @param mixed &$element the element being processed
      *
      * @return string the HTML attribute output for the item
      */
@@ -152,24 +180,24 @@ class HTML extends HTMLHelper
     /**
      * Generates an HTML selection list.
      *
-     * @param   string            $name        the field name.
-     * @param   stdClass[]        $options     the field options
-     * @param   array|int|string  $selected    the selected resource designators; called function accepts array|string
-     * @param   array             $properties  additional HTML properties for the select tag
-     * @param   string            $textKey     name of the name column when working directly with table rows
-     * @param   string            $valueKey    name of the value column when working directly with table rows
-     * @param   bool|string       $id          the optional id for the select box
+     * @param string           $name       the field name.
+     * @param stdClass[]       $options    the field options
+     * @param array|int|string $selected   the selected resource designators; called function accepts array|string
+     * @param array            $properties additional HTML properties for the select tag
+     * @param string           $textKey    name of the name column when working directly with table rows
+     * @param string           $valueKey   name of the value column when working directly with table rows
+     * @param bool|string      $id         the optional id for the select box
      *
      * @return  string
      */
     public static function selectBox(
-        string $name,
-        array $options,
+        string           $name,
+        array            $options,
         array|int|string $selected = [],
-        array $properties = [],
-        string $textKey = 'text',
-        string $valueKey = 'value',
-        bool|string $id = false
+        array            $properties = [],
+        string           $textKey = 'text',
+        string           $valueKey = 'value',
+        bool|string      $id = false
     ): string
     {
         /**
@@ -179,6 +207,17 @@ class HTML extends HTMLHelper
         $selected = gettype($selected) === 'integer' ? (string) $selected : $selected;
 
         return Select::genericlist($options, $name, $properties, $valueKey, $textKey, $selected, $id, true);
+    }
+
+    /**
+     * startTabSet wrapper: it was only being used with the same parameters every time anyway.
+     * @param string $active     the name of the tab to use as the active tab set on rendering
+     * @param int    $breakPoint the width of the tab
+     * @return string
+     */
+    public static function startTabs(string $active = 'details', int $breakPoint = 768): string
+    {
+        return self::_('uitab.startTabSet', 'myTab', ['active' => $active, 'recall' => true, $breakPoint => 768]);
     }
 
     /**
@@ -194,10 +233,10 @@ class HTML extends HTMLHelper
     /**
      * Returns an action on a grid
      *
-     * @param   int     $index       the row index
-     * @param   array   $state       the state configuration
-     * @param   string  $controller  the name of the controller class
-     * @param   string  $neither     text for columns which cannot be toggled
+     * @param int    $index      the row index
+     * @param array  $state      the state configuration
+     * @param string $controller the name of the controller class
+     * @param string $neither    text for columns which cannot be toggled
      *
      * @return  string
      */
@@ -248,12 +287,12 @@ class HTML extends HTMLHelper
     /**
      * The content wrapped with a link referencing a tip and the tip.
      *
-     * @param   string  $content  the content referenced by the tip
-     * @param   string  $context
-     * @param   string  $tip      the tip to be displayed
-     * @param   array   $properties
-     * @param   string  $url      the url linked by the tip as applicable
-     * @param   bool    $newTab   whether the url should open in a new tab
+     * @param string $content the content referenced by the tip
+     * @param string $context
+     * @param string $tip     the tip to be displayed
+     * @param array  $properties
+     * @param string $url     the url linked by the tip as applicable
+     * @param bool   $newTab  whether the url should open in a new tab
      *
      * @return string
      */
@@ -261,9 +300,9 @@ class HTML extends HTMLHelper
         string $content,
         string $context,
         string $tip,
-        array $properties = [],
+        array  $properties = [],
         string $url = '',
-        bool $newTab = false
+        bool   $newTab = false
     ): string
     {
         if (empty($tip) and empty($url)) {

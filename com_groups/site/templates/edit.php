@@ -37,20 +37,20 @@ $this->renderTasks();
       name="adminForm">
     <div class="main-card">
         <?php if ($tabbed): ?>
-            <?php echo HTML::_('uitab.startTabSet', 'myTab', ['active' => 'details', 'recall' => true, 'breakpoint' => 768]); ?>
+            <?php echo HTML::startTabs(); ?>
             <?php foreach ($tabs as $name => $tab): ?>
                 <?php if (!$this->form->getFieldset($name)) {
                     continue;
                 } ?>
-                <?php echo HTML::_('uitab.addTab', 'myTab', $tab->name, Text::_($tab->label)); ?>
+                <?php echo HTML::addFieldSet($tab); ?>
                 <fieldset class="options-form">
                     <div class="form-grid">
                         <?php echo $this->form->renderFieldset($name); ?>
                     </div>
                 </fieldset>
-                <?php echo HTML::_('uitab.endTab'); ?>
+                <?php echo HTML::endTab(); ?>
             <?php endforeach; ?>
-            <?php echo HTML::_('uitab.endTabSet'); ?>
+            <?php echo HTML::endTabs(); ?>
         <?php else: ?>
             <fieldset class="options-form">
                 <div class="form-grid">
