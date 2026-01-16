@@ -42,7 +42,7 @@ $this->renderTasks();
                 <?php if (!$this->form->getFieldset($name)) {
                     continue;
                 } ?>
-                <?php echo HTML::addFieldSet($tab); ?>
+                <?php echo HTML::addTab($tab); ?>
                 <fieldset class="options-form">
                     <div class="form-grid">
                         <?php echo $this->form->renderFieldset($name); ?>

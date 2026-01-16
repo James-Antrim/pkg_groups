@@ -37,28 +37,28 @@ $this->renderTasks();
       name="adminForm">
     <div class="main-card">
         <?php echo HTML::startTabs(); ?>
-        <?php echo HTML::addFieldSet($account); ?>
+        <?php echo HTML::addTab($account); ?>
         <fieldset class="options-form">
             <div class="form-grid">
                 <?php echo $this->form->renderFieldset('account'); ?>
             </div>
         </fieldset>
         <?php echo HTML::endTab(); ?>
-        <?php echo HTML::addFieldSet($administration); ?>
+        <?php echo HTML::addTab($administration); ?>
         <fieldset class="options-form">
             <div class="form-grid">
                 <?php echo $this->form->renderFieldset('administration'); ?>
             </div>
         </fieldset>
         <?php echo HTML::endTab(); ?>
-        <?php echo HTML::addFieldSet($settings); ?>
+        <?php echo HTML::addTab($settings); ?>
         <fieldset class="options-form">
             <div class="form-grid">
                 <?php echo $this->form->renderFieldset('settings'); ?>
             </div>
         </fieldset>
         <?php echo HTML::endTab(); ?>
-        <?php echo HTML::addFieldSet($accessibility); ?>
+        <?php echo HTML::addTab($accessibility); ?>
         <fieldset class="options-form">
             <div class="form-grid">
                 <?php echo $this->form->renderFieldset('accessibility'); ?>

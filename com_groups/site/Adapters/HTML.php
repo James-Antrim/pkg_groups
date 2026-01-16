@@ -24,12 +24,17 @@ class HTML extends HTMLHelper
 {
     /**
      * addTab wrapper: only the last three parameters had value.
-     * @param stdClass $tab the tab / fieldset object created from the form manifest
+     * @param stdClass|string $tab         the tab (fieldset) object created from the form manifest or the name of tab
+     * @param string          $label       implicit localization
+     * @param string          $description implicit localization
      * @return string
      */
-    public static function addFieldSet(stdClass $tab): string
+    public static function addTab(stdClass|string $tab, string $label = '', string $description = ''): string
     {
-        return self::_('uitab.addTab', 'myTab', $tab->name, Text::_($tab->label), Text::_($tab->description));
+        if (is_object($tab)) {
+            return self::_('uitab.addTab', 'myTab', $tab->name, Text::_($tab->label), Text::_($tab->description));
+        }
+        return self::_('uitab.addTab', 'myTab', $tab, Text::_($label), Text::_($description));
     }
 
     /**
