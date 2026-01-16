@@ -22,17 +22,21 @@ class RoleAssociations
     /**
      * Gets the ids of the associated roles
      *
-     * @param   int  $groupID  the id of the group
+     * @param int $groupID the id of the group
      *
      * @return int[] the associated groups in the form assocID => roleID
      */
-    public static function byGroupID(int $groupID): array
+    public static function byGroupID(int $groupID, int $userID = 0): array
     {
         $query = DB::query();
         $query->select(DB::qn('ra') . '.*')
             ->from(DB::qn('#__groups_role_associations', 'ra'))
             ->innerJoin(DB::qn('#__user_usergroup_map', 'm'), DB::qc('m.id', 'ra.mapID'))
             ->where(DB::qc('m.group_id', $groupID));
+
+        if ($userID) {
+            $query->where(DB::qc('m.user_id', $userID));
+        }
         DB::set($query);
 
         return DB::arrays('id', 'roleID');
@@ -41,7 +45,7 @@ class RoleAssociations
     /**
      * Gets the ids of the associated groups
      *
-     * @param   int  $roleID  the id of the role
+     * @param int $roleID the id of the role
      *
      * @return int[] the associated groups in the form assocID => groupID
      */
