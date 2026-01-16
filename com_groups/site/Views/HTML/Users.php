@@ -15,6 +15,7 @@ use Joomla\CMS\Toolbar\Button\DropdownButton;
 use stdClass;
 use THM\Groups\Adapters\{HTML, Text, Toolbar};
 use THM\Groups\Helpers\{Can, Users as Helper};
+use THM\Groups\Layouts\HTML\Row;
 
 /**
  * View class for displaying available persons.
@@ -89,19 +90,12 @@ class Users extends ListView
     /** @inheritDoc */
     protected function completeItem(int $index, stdClass $item, array $options = []): void
     {
-        $icon = HTML::icon('fa fa-address-card');
-        $name = $item->forenames ? "$item->surnames, $item->forenames" : $item->surnames;
-        $pTip = Text::_('EDIT_PROFILE');
-        $url  = Route::_("index.php?option=com_groups&view=profile&id=$item->id&layout=edit");
-        $uTip = Text::_('EDIT_USER');
-
         $item->block         = HTML::toggle($index, Helper::blockedStates[$item->block], 'users');
         $item->content       = HTML::toggle($index, Helper::contentStates[$item->content], 'users');
         $item->editing       = HTML::toggle($index, Helper::editingStates[$item->editing], 'users');
         $item->groups        = $this->formatGroups($item->groups);
-        $item->icon          = '&nbsp;&nbsp;' . HTML::tip($icon, "profile-link-$item->id", $pTip, [], $url);
         $item->lastvisitDate = $item->lastvisitDate ?: Text::_('NEVER');
-        $item->name          = HTML::tip($name, "user-link-$item->id", $uTip, [], $item->url);
+        $item->name          = $item->forenames ? "$item->surnames, $item->forenames" : $item->surnames;
         $item->published     = HTML::toggle($index, Helper::publishedStates[$item->published], 'users');
         $item->viewLink      = Route::_('index.php?option=com_groups&view=profile&id=' . $item->id);
     }
@@ -140,6 +134,7 @@ class Users extends ListView
             'check'         => ['type' => 'check'],
             'name'          => [
                 'column'     => 'surnames, forenames',
+                'link'       => Row::DIRECT,
                 'properties' => ['class' => 'w-10 d-none d-md-table-cell', 'scope' => 'col'],
                 'title'      => Text::_('USER'),
                 'type'       => 'sort'
