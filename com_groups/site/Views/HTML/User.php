@@ -12,6 +12,9 @@ namespace THM\Groups\Views\HTML;
 
 class User extends FormView
 {
+    /** @inheritdoc */
+    protected string $layout = 'user';
+
     /** @inheritDoc */
     public function display($tpl = null): void
     {
