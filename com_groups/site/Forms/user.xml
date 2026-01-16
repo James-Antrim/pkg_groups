@@ -22,8 +22,6 @@
                class="readonly" filter="user_utc" readonly="true" showtime="true" translateformat="true"/>
         <field name="resetCount" type="number" label="GROUPS_RESET_COUNT" class="readonly" default="0" readonly="true"/>
     </fieldset>
-    <field name="profile" type="hidden"/>
-    <field name="groups" type="hidden"/>
     <fieldset name="administration" label="GROUPS_ADMINISTRATION">
         <field name="block" type="radio" label="GROUPS_BLOCK_USER" default="0"
                layout="joomla.form.field.radio.switcher">

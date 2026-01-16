@@ -16,6 +16,14 @@ class User extends FormView
     protected string $layout = 'user';
 
     /** @inheritDoc */
+    public function __construct(array $config)
+    {
+        $config['layout'] = $this->layout;
+
+        parent::__construct($config);
+    }
+
+    /** @inheritDoc */
     public function display($tpl = null): void
     {
         $this->toDo = [

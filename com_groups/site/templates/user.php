@@ -12,6 +12,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Router\Route;
 use THM\Groups\Adapters\{Application, HTML, Input, Text};
+use THM\Groups\Helpers\{Can, Users};
 use THM\Groups\Views\HTML\User;
 
 // Core behaviour scripts
@@ -19,12 +20,22 @@ $wa = Application::document()->getWebAssetManager();
 $wa->useScript('keepalive')->useScript('form.validate');
 
 /** @var User $this */
-$ariaLabel      = Text::_("GROUPS_USER_FORM");
+$ariaLabel = Text::_("GROUPS_USER_FORM");
+
+$manage  = Can::manage();
+$profile = Users::editOwn($this->item->id);
+$active  = $profile ? 'profile' : 'details';
+
 $sets           = $this->form->getFieldsets();
 $accessibility  = $sets['accessibility'];
 $account        = $sets['account'];
 $administration = $sets['administration'];
 $settings       = $sets['settings'];
+
+// Global restriction or account to be edited does not belong to the user.
+//if (!Input::parameters()->get('profile-management') or $accountID != $userID) {
+//    return false;
+//}
 
 $this->renderTasks();
 ?>
@@ -36,7 +47,7 @@ $this->renderTasks();
       method="post"
       name="adminForm">
     <div class="main-card">
-        <?php echo HTML::startTabs(); ?>
+        <?php echo HTML::startTabs($active); ?>
         <?php echo HTML::addTab($account); ?>
         <fieldset class="options-form">
             <div class="form-grid">
@@ -44,13 +55,29 @@ $this->renderTasks();
             </div>
         </fieldset>
         <?php echo HTML::endTab(); ?>
-        <?php echo HTML::addTab($administration); ?>
-        <fieldset class="options-form">
-            <div class="form-grid">
-                <?php echo $this->form->renderFieldset('administration'); ?>
-            </div>
-        </fieldset>
-        <?php echo HTML::endTab(); ?>
+        <?php if ($manage or $profile): ?>
+            <?php echo HTML::addTab('profile', 'PROFILE'); ?>
+            <fieldset class="options-form">
+                <div class="form-grid">
+                </div>
+            </fieldset>
+            <?php echo HTML::endTab(); ?>
+        <?php endif; ?>
+        <?php if ($manage): ?>
+            <?php echo HTML::addTab('associations', 'ASSOCIATIONS'); ?>
+            <fieldset class="options-form">
+                <div class="form-grid">
+                </div>
+            </fieldset>
+            <?php echo HTML::endTab(); ?>
+            <?php echo HTML::addTab($administration); ?>
+            <fieldset class="options-form">
+                <div class="form-grid">
+                    <?php echo $this->form->renderFieldset('administration'); ?>
+                </div>
+            </fieldset>
+            <?php echo HTML::endTab(); ?>
+        <?php endif; ?>
         <?php echo HTML::addTab($settings); ?>
         <fieldset class="options-form">
             <div class="form-grid">
