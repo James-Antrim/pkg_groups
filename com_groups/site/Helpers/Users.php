@@ -22,8 +22,11 @@ class Users
     use Persistent;
 
     public const PUBLIC_ACCESS = 1;
+
     public const ENABLED = 1, DISABLED = 0;
+
     public const BLOCKED = 1, UNBLOCKED = 0;
+
     public const PUBLISHED = 1, HIDDEN = 0;
 
     // Display semantic is reversed
@@ -98,7 +101,7 @@ class Users
     /**
      * Returns the user's alias.
      *
-     * @param   int  $userID
+     * @param int $userID
      *
      * @return string
      */
@@ -110,7 +113,7 @@ class Users
     /**
      * Returns the id of the category associated with the user.
      *
-     * @param   int  $userID
+     * @param int $userID
      *
      * @return int
      */
@@ -127,7 +130,7 @@ class Users
     /**
      * Returns the user's content status.
      *
-     * @param   int  $userID
+     * @param int $userID
      *
      * @return bool
      */
@@ -152,8 +155,8 @@ class Users
     /**
      * Creates an alias based on the user's fore- and surnames.
      *
-     * @param   int     $userID  the user's id
-     * @param   string  $names   the user's names
+     * @param int    $userID the user's id
+     * @param string $names  the user's names
      *
      * @return string
      */
@@ -193,8 +196,8 @@ class Users
     /**
      * Gets the value of a table property.
      *
-     * @param   int     $userID
-     * @param   string  $property
+     * @param int    $userID
+     * @param string $property
      *
      * @return mixed
      */
@@ -228,13 +231,13 @@ class Users
     /**
      * Returns the user's editing status.
      *
-     * @param   int  $userID
+     * @param int $userID
      *
      * @return bool
      */
     public static function editing(int $userID): bool
     {
-        if (!$accountID = Account::id()) {
+        if (!Account::id()) {
             return false;
         }
 
@@ -242,8 +245,18 @@ class Users
             return true;
         }
 
+        return self::editOwn($userID);
+    }
+
+    /**
+     * Determines whether the current user is the user being accessed and whether that user can edit their own profile.
+     * @param int $userID
+     * @return bool
+     */
+    public static function editOwn(int $userID): bool
+    {
         // Global restriction or account to be edited does not belong to the user.
-        if (!Input::parameters()->get('profile-management') or $accountID != $userID) {
+        if (!Input::parameters()->get('profile-management') or Account::id() != $userID) {
             return false;
         }
 
@@ -254,7 +267,7 @@ class Users
     /**
      * Returns the user's forenames.
      *
-     * @param   int  $userID
+     * @param int $userID
      *
      * @return string
      */
@@ -266,7 +279,7 @@ class Users
     /**
      * Returns the id of the user assigned the given alias.
      *
-     * @param   string  $alias
+     * @param string $alias
      *
      * @return int|string
      */
@@ -286,7 +299,7 @@ class Users
      * Returns the id of the user approximated by the given names. If multiple users approximate the terms an 'alias' is returned
      * for disambiguation generation.
      *
-     * @param   string  $qParts
+     * @param string $qParts
      *
      * @return int|string
      */
@@ -329,7 +342,7 @@ class Users
     /**
      * Parses the user account name to try and derive fore- and surnames from it.
      *
-     * @param   string  $accountName  the name column of the users table entry
+     * @param string $accountName the name column of the users table entry
      *
      * @return array [surnames, forenames]
      */
@@ -376,7 +389,7 @@ class Users
     /**
      * Returns the user's published status.
      *
-     * @param   int  $userID
+     * @param int $userID
      *
      * @return bool
      */
@@ -388,7 +401,7 @@ class Users
     /**
      * Attempts to resolve the given string to a valid profile.
      *
-     * @param   string  $segment  the url segment being checked
+     * @param string $segment the url segment being checked
      *
      * @return int|string non
      * -zero int if the clue resolved to a specific profile, string if the clue resolved to multiple
@@ -442,7 +455,7 @@ class Users
     /**
      * Returns the user's surnames.
      *
-     * @param   int  $userID
+     * @param int $userID
      *
      * @return string
      */
