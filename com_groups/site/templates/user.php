@@ -59,6 +59,7 @@ $this->renderTasks();
             <?php echo HTML::addTab('profile', 'PROFILE'); ?>
             <fieldset class="options-form">
                 <div class="form-grid">
+                    <?php require_once 'profile_edit.php'; ?>
                 </div>
             </fieldset>
             <?php echo HTML::endTab(); ?>
@@ -67,6 +68,7 @@ $this->renderTasks();
             <?php echo HTML::addTab('associations', 'ASSOCIATIONS'); ?>
             <fieldset class="options-form">
                 <div class="form-grid">
+                    <?php require_once 'associations.php'; ?>
                 </div>
             </fieldset>
             <?php echo HTML::endTab(); ?>
