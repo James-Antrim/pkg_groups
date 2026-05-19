@@ -10,6 +10,8 @@
     </dependencies>
     <description>PLG_SYSTEM_GROUPS_DESC</description>
     <files>
+        <filename>LICENSE.txt</filename>
+        <folder>language</folder>
         <folder plugin="groups">services</folder>
         <folder>src</folder>
     </files>

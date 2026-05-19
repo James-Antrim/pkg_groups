@@ -4,7 +4,7 @@
  * @extension   plg_groups_system
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2019 TH Mittelhessen
- * @license     GNU GPL v.2
+ * @license     GNU GPL v.3
  * @link        www.thm.de
  */
 
@@ -22,7 +22,7 @@ class Parser
     /**
      * Checks whether the second last path item to a groups profile item
      *
-     * @param   string  $possibleCategory  the path segment being checked
+     * @param string $possibleCategory the path segment being checked
      *
      * @return array the query items which could be resolved
      */
@@ -51,7 +51,7 @@ class Parser
     /**
      * Checks whether the path items provide the information required for dynamic linking via legacy configurations
      *
-     * @param   array  $pathItems  the segments of the path
+     * @param array $pathItems the segments of the path
      *
      * @return array the parsed attributes
      */
@@ -140,7 +140,7 @@ class Parser
     /**
      * Checks whether the segments provide the information required for dynamic linking from groups to groups
      *
-     * @param   array &$pathItems  the segments of the path
+     * @param array &$pathItems the segments of the path
      *
      * @return array the query
      */
@@ -231,7 +231,7 @@ class Parser
      * Checks whether the segments provide the information required for dynamic linking from groups to groups using the
      * links as joomla would have created them with the old router.
      *
-     * @param   array &$pathItems  the segments of the path
+     * @param array &$pathItems the segments of the path
      *
      * @return array the query
      */

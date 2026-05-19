@@ -24,7 +24,7 @@ class Toolbar
      * deprecated => use the container, but the container is explicitly not allowed to set toolbars because they are
      * GLOBAL and used by joomla to display component items outside the component context.
      *
-     * @param   string  $name  The name of the toolbar.
+     * @param string $name The name of the toolbar.
      *
      * @return  Core  The Toolbar object.
      * @see HtmlDocument::getToolbar()
@@ -37,8 +37,8 @@ class Toolbar
     /**
      * Renders a toolbar. Wraps the base function due to errors thrown by button rendering.
      *
-     * @param   string  $name     the name of the toolbar to render, defaults to global 'toolbar'
-     * @param   array   $options  the options used to render the toolbar
+     * @param string $name    the name of the toolbar to render, defaults to global 'toolbar'
+     * @param array  $options the options used to render the toolbar
      *
      * @return string
      * @see Core::render()
@@ -50,8 +50,7 @@ class Toolbar
 
         try {
             $html = $bar->render($options);
-        }
-        catch (Exception $exception) {
+        } catch (Exception $exception) {
             Application::handleException($exception);
         }
 

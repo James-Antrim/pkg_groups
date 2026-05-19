@@ -4,7 +4,7 @@
  * @extension   plg_content_groups
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2017 TH Mittelhessen
- * @license     GNU GPL v.2
+ * @license     GNU GPL v.3
  * @link        www.thm.de
  */
 
@@ -34,7 +34,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
     /**
      * Ensures consistency for content saved in the context of com_thm_groups
      *
-     * @param   Event  $event  the event to which the function is subscribed
+     * @param Event $event the event to which the function is subscribed
      *
      * @return  bool
      */
@@ -61,7 +61,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
     /**
      * Ensures consistency for content saved in the context of com_thm_groups
      *
-     * @param   Event  $event  the event to which the function is subscribed
+     * @param Event $event the event to which the function is subscribed
      *
      * @return  void
      */
@@ -83,7 +83,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
     /**
      * Removes Groups parameters from articles texts.
      *
-     * @param   Event  $event  the event to which the function is subscribed
+     * @param Event $event the event to which the function is subscribed
      *
      * @return  void
      */

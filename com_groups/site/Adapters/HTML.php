@@ -159,7 +159,6 @@ class HTML extends HTMLHelper
             'asc',
             '',
             HTML::icon('fa fa-arrows-alt-v')
-
         );
     }
 
@@ -236,7 +235,7 @@ class HTML extends HTMLHelper
     }
 
     /**
-     * Returns an action on a grid
+     * Returns an action on a grid. Deviates from organizer, because of groups offering a disabled toggle as a third option.
      *
      * @param int    $index      the row index
      * @param array  $state      the state configuration

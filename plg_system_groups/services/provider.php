@@ -8,11 +8,8 @@
  * @link        www.thm.de
  */
 
-use Joomla\CMS\Extension\PluginInterface;
-use Joomla\CMS\Factory;
-use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\DI\Container;
-use Joomla\DI\ServiceProviderInterface;
+use Joomla\CMS\{Extension\PluginInterface, Factory, Plugin\PluginHelper};
+use Joomla\DI\{Container, ServiceProviderInterface};
 use Joomla\Event\DispatcherInterface;
 use THM\Plugin\System\Groups\Extension\Groups;
 
