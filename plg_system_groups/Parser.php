@@ -8,7 +8,7 @@
  * @link        www.thm.de
  */
 
-namespace THM\Plugin\System\Groups\Extension;
+namespace THM\Groups\Plugin\System;
 
 use Joomla\CMS\Language\Text;
 use THM\Groups\Adapters\Application;

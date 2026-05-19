@@ -12,14 +12,15 @@
     <files>
         <file>LICENSE.txt</file>
         <folder>language</folder>
-        <folder>src</folder>
+        <file>Groups.php</file>
+        <file>Parser.php</file>
         <folder plugin="groups">services</folder>
     </files>
     <languages folder="language">
         <language tag="de-DE">de-DE/plg_system_groups.sys.ini</language>
         <language tag="en-GB">en-GB/plg_system_groups.sys.ini</language>
     </languages>
-    <licence>GNU GPL v.3</licence>
+    <license>GNU GPL v.3</license>
     <name>plg_system_groups</name>
     <namespace path="src">THM\Plugin\System\Groups</namespace>
     <updateservers>

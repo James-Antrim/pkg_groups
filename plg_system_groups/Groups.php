@@ -8,9 +8,7 @@
  * @link        www.thm.de
  */
 
-namespace THM\Plugin\System\Groups\Extension;
-
-require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/autoloader.php';
+namespace THM\Groups\Plugin\System;
 
 use Joomla\CMS\{Plugin\CMSPlugin, Router\Router, Session\Session, Uri\Uri};
 use Joomla\Event\SubscriberInterface;
@@ -22,7 +20,7 @@ require_once JPATH_ROOT . '/media/com_thm_groups/helpers/router.php';
 /**
  * Class tries to resolve teacher stub calls from thm organizer to thm groups profiles.
  */
-class Groups extends CMSPlugin implements SubscriberInterface
+final class Groups extends CMSPlugin implements SubscriberInterface
 {
     /** @inheritDoc */
     public static function getSubscribedEvents(): array
@@ -36,7 +34,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
     /**
      * Determines whether the given path is a menu alias not referencing the profile view.
      *
-     * @param   string  $alias  the potential menu alias.
+     * @param string $alias the potential menu alias.
      *
      * @return bool
      */
@@ -112,8 +110,8 @@ class Groups extends CMSPlugin implements SubscriberInterface
     /**
      * Add parse rule to router.
      *
-     * @param   Router  $router  JRouter object.
-     * @param   Uri     $uri     JUri object.
+     * @param Router $router JRouter object.
+     * @param Uri    $uri    JUri object.
      *
      * @return array
      * @noinspection PhpUnusedParameterInspection
@@ -144,7 +142,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
     /**
      * Redirects the user according to the query.
      *
-     * @param   array  $query
+     * @param array $query
      *
      * @return void
      */
@@ -410,7 +408,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
     /**
      * Replaces organizer stubs referencing persons via the username with profile links
      *
-     * @param   string &$output  the output used for the application
+     * @param string &$output the output used for the application
      *
      * @return void modifies the output
      */
@@ -469,7 +467,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
     /**
      * Prepares the input object to route correctly.
      *
-     * @param   array  $parameters
+     * @param array $parameters
      *
      * @return void
      */
@@ -490,7 +488,7 @@ class Groups extends CMSPlugin implements SubscriberInterface
     /**
      * Validates the query against the dynamic content parameters
      *
-     * @param   array &$query  the query parameters
+     * @param array &$query the query parameters
      *
      * @return ?bool true if the query has all required parameters, and they are valid, false if the query is invalid,
      *               int 0 if the validity could not be determined due to missing parameters.

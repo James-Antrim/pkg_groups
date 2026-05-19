@@ -8,10 +8,12 @@
  * @link        www.thm.de
  */
 
+require_once JPATH_ADMINISTRATOR . '/components/com_groups/services/autoloader.php';
+
 use Joomla\CMS\{Extension\PluginInterface, Factory, Plugin\PluginHelper};
 use Joomla\DI\{Container, ServiceProviderInterface};
 use Joomla\Event\DispatcherInterface;
-use THM\Plugin\System\Groups\Extension\Groups;
+use THM\Groups\Plugin\System\Groups;
 
 return new class() implements ServiceProviderInterface {
     public function register(Container $container): void
@@ -19,13 +21,11 @@ return new class() implements ServiceProviderInterface {
         $container->set(
             PluginInterface::class,
             function (Container $container) {
-
-                $config  = (array) PluginHelper::getPlugin('system', 'groups');
-                $subject = $container->get(DispatcherInterface::class);
-                $app     = Factory::getApplication();
-
-                $plugin = new Groups($subject, $config);
-                $plugin->setApplication($app);
+                $plugin = new Groups(
+                    $container->get(DispatcherInterface::class),
+                    (array) PluginHelper::getPlugin('system', 'groups')
+                );
+                $plugin->setApplication(Factory::getApplication());
 
                 return $plugin;
             }
