@@ -4,7 +4,7 @@
  * @extension   plg_groups_system
  * @author      James Antrim, <james.antrim@nm.thm.de>
  * @copyright   2022 TH Mittelhessen
- * @license     GNU GPL v.2
+ * @license     GNU GPL v.3
  * @link        www.thm.de
  */
 
