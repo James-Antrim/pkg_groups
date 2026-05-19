@@ -10,6 +10,8 @@
     </dependencies>
     <description>PLG_CONTENT_GROUPS_DESC</description>
     <files>
+        <file>LICENSE.txt</file>
+        <folder>language</folder>
         <file>Groups.php</file>
         <folder plugin="groups">services</folder>
     </files>

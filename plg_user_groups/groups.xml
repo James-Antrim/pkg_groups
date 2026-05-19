@@ -10,6 +10,8 @@
     </dependencies>
     <description>PLG_USER_GROUPS_DESC</description>
     <files>
+        <file>LICENSE.txt</file>
+        <folder>language</folder>
         <file>Groups.php</file>
         <folder plugin="groups">services</folder>
     </files>
@@ -17,7 +19,7 @@
         <language tag="de-DE">de-DE/plg_user_groups.sys.ini</language>
         <language tag="en-GB">en-GB/plg_user_groups.sys.ini</language>
     </languages>
-    <licence>GNU GPL v.3</licence>
+    <license>GNU GPL v.3</license>
     <name>plg_user_groups</name>
     <updateservers>
         <server type="extension" name="Groups User Plugin Update Site" priority="1">
